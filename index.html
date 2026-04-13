@@ -29,12 +29,21 @@
       padding: calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 24px);
     }
 
+    .app.hidden,
+    .album-screen {
+      display: none;
+    }
+
+    .album-screen.open {
+      display: block;
+    }
+
     .screen-topbar {
       position: sticky;
       top: 0;
       z-index: 10;
       padding-bottom: 16px;
-      background: linear-gradient(to bottom, var(--bg) 85%, rgba(247,247,248,0));
+      background: linear-gradient(to bottom, var(--bg) 85%, rgba(247, 247, 248, 0));
     }
 
     .back-btn {
@@ -46,9 +55,9 @@
       align-items: center;
       justify-content: center;
       padding: 0;
-      background: rgba(255,255,255,0.92);
+      background: rgba(255, 255, 255, 0.92);
       color: #111111;
-      box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
       cursor: pointer;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -58,8 +67,8 @@
     .back-btn:hover,
     .back-btn:active {
       transform: translateY(-1px);
-      box-shadow: 0 10px 26px rgba(0,0,0,0.14);
-      background: rgba(255,255,255,0.98);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+      background: rgba(255, 255, 255, 0.98);
     }
 
     .back-btn svg {
@@ -83,7 +92,8 @@
       text-align: center;
     }
 
-    .album-card.add-album-card {
+    .album-card.add-album-card,
+    .album-cover {
       cursor: pointer;
     }
 
@@ -96,7 +106,6 @@
       justify-content: center;
       margin: 0 auto;
       user-select: none;
-      cursor: pointer;
       filter: saturate(1.08);
       touch-action: manipulation;
     }
@@ -108,9 +117,9 @@
       border-radius: 10px 14px 14px 10px;
       background: var(--album-color, #4f7cff);
       box-shadow:
-        inset -6px 0 0 rgba(255,255,255,0.18),
-        inset 0 0 0 1px rgba(0,0,0,0.05),
-        0 8px 18px rgba(0,0,0,0.14);
+        inset -6px 0 0 rgba(255, 255, 255, 0.18),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.05),
+        0 8px 18px rgba(0, 0, 0, 0.14);
     }
 
     .book-icon::before {
@@ -121,7 +130,7 @@
       width: 8px;
       height: 100%;
       border-radius: 8px 0 0 8px;
-      background: rgba(0,0,0,0.12);
+      background: rgba(0, 0, 0, 0.12);
     }
 
     .book-icon::after {
@@ -132,7 +141,7 @@
       width: 26px;
       height: 52px;
       border-radius: 6px;
-      background: rgba(255,255,255,0.20);
+      background: rgba(255, 255, 255, 0.20);
     }
 
     .album-title {
@@ -154,8 +163,8 @@
       font-size: 34px;
       font-weight: 500;
       color: #6f6f76;
-      background: rgba(255,255,255,0.72);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
       transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
     }
 
@@ -173,11 +182,10 @@
       line-height: 1.2;
     }
 
-
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.32);
+      background: rgba(0, 0, 0, 0.32);
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -189,13 +197,17 @@
       display: flex;
     }
 
-    .modal {
+    .modal,
+    .context-menu {
       width: 100%;
       max-width: 420px;
       background: #fff;
       border-radius: 22px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+    }
+
+    .modal {
       padding: 18px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
     }
 
     .modal h3 {
@@ -242,7 +254,7 @@
       flex: 0 0 auto;
       position: relative;
       transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     }
 
     .color-option:hover,
@@ -253,7 +265,7 @@
     .color-option.selected,
     .color-picker-trigger.selected {
       border-color: #111;
-      box-shadow: 0 0 0 3px rgba(17,17,17,0.08), 0 6px 14px rgba(0,0,0,0.12);
+      box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.08), 0 6px 14px rgba(0, 0, 0, 0.12);
     }
 
     .color-picker-trigger {
@@ -261,18 +273,17 @@
       align-items: center;
       justify-content: center;
       font-size: 20px;
-      background:
-        conic-gradient(
-          #ff4d4d,
-          #ffb84d,
-          #ffe14d,
-          #6bd66b,
-          #4dc3ff,
-          #726bff,
-          #c96bff,
-          #ff6bc1,
-          #ff4d4d
-        );
+      background: conic-gradient(
+        #ff4d4d,
+        #ffb84d,
+        #ffe14d,
+        #6bd66b,
+        #4dc3ff,
+        #726bff,
+        #c96bff,
+        #ff6bc1,
+        #ff4d4d
+      );
       color: #111;
       overflow: hidden;
       user-select: none;
@@ -284,7 +295,7 @@
       width: 22px;
       height: 22px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.95);
+      background: rgba(255, 255, 255, 0.95);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -315,7 +326,7 @@
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      border: 1px solid rgba(0,0,0,0.08);
+      border: 1px solid rgba(0, 0, 0, 0.08);
       background: var(--selected-color, #4f7cff);
     }
 
@@ -346,12 +357,7 @@
     }
 
     .context-menu {
-      width: 100%;
-      max-width: 420px;
-      background: #fff;
-      border-radius: 22px;
       padding: 10px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
     }
 
     .context-header {
@@ -382,23 +388,11 @@
       color: #c62828;
     }
 
-    .album-screen {
-      display: none;
-    }
-
-    .album-screen.open {
-      display: block;
-    }
-
-    .app.hidden {
-      display: none;
-    }
-
     .screen-card {
       background: #fff;
       border-radius: 24px;
       padding: 24px 20px;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
     }
 
     .screen-title {
@@ -419,7 +413,6 @@
 <body>
   <main class="app" id="mainApp">
     <section class="albums-row" id="albumsRow"></section>
-
 
     <div class="modal-backdrop" id="editModalBackdrop">
       <div class="modal" id="editModal">
@@ -470,7 +463,7 @@
     <div class="screen-topbar">
       <button class="back-btn" id="backToAlbumsBtn" type="button" aria-label="Torna agli album">
         <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 18l-6-6 6-6"/>
+          <path d="M15 18l-6-6 6-6" />
         </svg>
       </button>
     </div>
@@ -505,14 +498,14 @@
     const screenAlbumTitle = document.getElementById('screenAlbumTitle');
     const screenAlbumMeta = document.getElementById('screenAlbumMeta');
 
-    let albumCount = 0;
+    const LONG_PRESS_MS = 500;
+    const MOVE_TOLERANCE_PX = 12;
+
     let currentAlbumCard = null;
     let selectedColor = '#4f7cff';
     let isCustomColor = false;
     let contextAlbumCard = null;
     let openedAlbumCard = null;
-
-    const LONG_PRESS_MS = 500;
 
     const presetColors = [
       { label: 'Blu', value: '#4f7cff' },
@@ -530,7 +523,7 @@
     }
 
     function isPresetColor(color) {
-      return presetColors.some(c => normalizeHexColor(c.value) === normalizeHexColor(color));
+      return presetColors.some(({ value }) => normalizeHexColor(value) === normalizeHexColor(color));
     }
 
     function updateSelectedColorPreview() {
@@ -547,7 +540,7 @@
       presetColors.forEach(({ label, value }) => {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'color-option' + (normalizeHexColor(value) === normalizedActive ? ' selected' : '');
+        btn.className = `color-option${normalizeHexColor(value) === normalizedActive ? ' selected' : ''}`;
         btn.style.background = value;
         btn.title = label;
         btn.setAttribute('aria-label', label);
@@ -564,12 +557,11 @@
       });
 
       const customWrap = document.createElement('div');
-      customWrap.className = 'color-picker-trigger' + (isCustomColor ? ' selected' : '');
+      customWrap.className = `color-picker-trigger${isCustomColor ? ' selected' : ''}`;
       customWrap.title = 'Scegli un colore personalizzato';
       customWrap.setAttribute('aria-label', 'Apri tavolozza colori');
       customWrap.setAttribute('role', 'button');
       customWrap.tabIndex = 0;
-
       customWrap.innerHTML = `
         <span>+</span>
         <input class="hidden-color-input" type="color" value="${selectedColor}" />
@@ -577,50 +569,37 @@
 
       const colorInput = customWrap.querySelector('input');
 
-      function applyCustomColor(value, final = false) {
+      function applyCustomColor(value, finalRender = false) {
         selectedColor = value;
         isCustomColor = !isPresetColor(selectedColor);
         updateSelectedColorPreview();
 
-        if (final) {
+        if (finalRender) {
           renderColorGrid(selectedColor);
         }
       }
 
-      customWrap.addEventListener('click', (e) => {
+      function triggerColorPicker(e) {
         e.preventDefault();
         e.stopPropagation();
         colorInput.click();
-      });
+      }
 
-      customWrap.addEventListener('pointerdown', (e) => {
-        e.stopPropagation();
-      });
-
-      customWrap.addEventListener('touchstart', (e) => {
-        e.stopPropagation();
-      }, { passive: true });
-
+      customWrap.addEventListener('click', triggerColorPicker);
+      customWrap.addEventListener('pointerdown', (e) => e.stopPropagation());
+      customWrap.addEventListener('touchstart', (e) => e.stopPropagation(), { passive: true });
       customWrap.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          colorInput.click();
+          triggerColorPicker(e);
         }
       });
 
-      colorInput.addEventListener('click', (e) => {
-        e.stopPropagation();
-      });
-
-      colorInput.addEventListener('pointerdown', (e) => {
-        e.stopPropagation();
-      });
-
+      colorInput.addEventListener('click', (e) => e.stopPropagation());
+      colorInput.addEventListener('pointerdown', (e) => e.stopPropagation());
       colorInput.addEventListener('input', (e) => {
         e.stopPropagation();
-        applyCustomColor(e.target.value, false);
+        applyCustomColor(e.target.value);
       });
-
       colorInput.addEventListener('change', (e) => {
         e.stopPropagation();
         applyCustomColor(e.target.value, true);
@@ -632,10 +611,10 @@
 
     function refreshOpenedAlbumScreen() {
       if (!openedAlbumCard) return;
-      const data = openedAlbumCard.albumData;
-      const totalSlots = data.pages * data.slots;
-      screenAlbumTitle.textContent = data.name;
-      screenAlbumMeta.textContent = `${data.pages} pagine • ${totalSlots} slot totali`;
+
+      const { name, pages, slots } = openedAlbumCard.albumData;
+      screenAlbumTitle.textContent = name;
+      screenAlbumMeta.textContent = `${pages} pagine • ${pages * slots} slot totali`;
     }
 
     function openAlbumScreen(card) {
@@ -653,11 +632,12 @@
 
     function openEditModal(card) {
       currentAlbumCard = card;
-      const data = card.albumData;
-      albumNameInput.value = data.name;
-      albumPagesInput.value = data.pages;
-      albumSlotsInput.value = data.slots;
-      selectedColor = data.color;
+      const { name, pages, slots, color } = card.albumData;
+
+      albumNameInput.value = name;
+      albumPagesInput.value = pages;
+      albumSlotsInput.value = slots;
+      selectedColor = color;
       isCustomColor = !isPresetColor(selectedColor);
       renderColorGrid(selectedColor);
       editModalBackdrop.classList.add('open');
@@ -681,9 +661,7 @@
 
     function renameAlbum(card) {
       const newName = window.prompt('Nuovo nome album', card.albumData.name);
-      if (newName === null) return;
-
-      const trimmedName = newName.trim();
+      const trimmedName = newName?.trim();
       if (!trimmedName) return;
 
       card.albumData.name = trimmedName;
@@ -698,10 +676,10 @@
     }
 
     function updateAlbumCard(card) {
-      const book = card.querySelector('.book-icon');
-      book.style.setProperty('--album-color', card.albumData.color);
-      card.querySelector('.album-title').textContent = card.albumData.name;
-      card.querySelector('.album-meta').textContent = `${card.albumData.pages} pag. • ${card.albumData.slots}/pag.`;
+      const { name, color, pages, slots } = card.albumData;
+      card.querySelector('.book-icon').style.setProperty('--album-color', color);
+      card.querySelector('.album-title').textContent = name;
+      card.querySelector('.album-meta').textContent = `${pages} pag. • ${slots}/pag.`;
       refreshOpenedAlbumScreen();
     }
 
@@ -714,13 +692,10 @@
       let startY = 0;
       let activePointerId = null;
 
-      const MOVE_TOLERANCE_PX = 12;
-
       function clearPressTimer() {
-        if (pressTimer) {
-          clearTimeout(pressTimer);
-          pressTimer = null;
-        }
+        if (!pressTimer) return;
+        clearTimeout(pressTimer);
+        pressTimer = null;
       }
 
       function resetPressState() {
@@ -759,12 +734,10 @@
 
         const deltaX = e.clientX - startX;
         const deltaY = e.clientY - startY;
-        const movedEnough = Math.hypot(deltaX, deltaY) > MOVE_TOLERANCE_PX;
+        if (Math.hypot(deltaX, deltaY) <= MOVE_TOLERANCE_PX) return;
 
-        if (movedEnough) {
-          pointerMoved = true;
-          clearPressTimer();
-        }
+        pointerMoved = true;
+        clearPressTimer();
       });
 
       cover.addEventListener('pointerup', (e) => {
@@ -772,7 +745,7 @@
 
         const shouldOpenAlbum = !longPressTriggered && !pointerMoved;
 
-        if (cover.releasePointerCapture && cover.hasPointerCapture && cover.hasPointerCapture(e.pointerId)) {
+        if (cover.releasePointerCapture && cover.hasPointerCapture?.(e.pointerId)) {
           try {
             cover.releasePointerCapture(e.pointerId);
           } catch (_) {}
@@ -789,8 +762,9 @@
       });
 
       cover.addEventListener('pointercancel', (e) => {
-        if (activePointerId !== e.pointerId) return;
-        resetPressState();
+        if (activePointerId === e.pointerId) {
+          resetPressState();
+        }
       });
 
       cover.addEventListener('pointerleave', (e) => {
@@ -801,7 +775,6 @@
 
       cover.addEventListener('contextmenu', (e) => e.preventDefault());
     }
-
 
     function createAddAlbumCard() {
       const card = document.createElement('article');
@@ -829,20 +802,17 @@
 
     function getNextAlbumNumber() {
       const usedNumbers = Array.from(albumsRow.querySelectorAll('.album-card:not(.add-album-card)'))
-        .map(card => {
+        .map((card) => {
           const match = card.albumData.name.match(/^Album\s+(\d+)$/i);
           return match ? Number(match[1]) : null;
         })
-        .filter(number => Number.isInteger(number) && number > 0)
+        .filter((number) => Number.isInteger(number) && number > 0)
         .sort((a, b) => a - b);
 
       let nextNumber = 1;
       for (const number of usedNumbers) {
-        if (number === nextNumber) {
-          nextNumber++;
-        } else if (number > nextNumber) {
-          break;
-        }
+        if (number > nextNumber) break;
+        if (number === nextNumber) nextNumber++;
       }
 
       return nextNumber;
@@ -850,13 +820,10 @@
 
     function createAlbum() {
       const nextAlbumNumber = getNextAlbumNumber();
-      albumCount = Math.max(albumCount + 1, nextAlbumNumber);
-
       const addCard = albumsRow.querySelector('.add-album-card');
       if (addCard) addCard.remove();
 
       const defaultColor = presetColors[(nextAlbumNumber - 1) % presetColors.length].value;
-
       const card = document.createElement('article');
       card.className = 'album-card';
       card.albumData = {
@@ -928,13 +895,8 @@
       }
     });
 
-    editModal.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
-
-    contextMenu.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
+    editModal.addEventListener('click', (e) => e.stopPropagation());
+    contextMenu.addEventListener('click', (e) => e.stopPropagation());
 
     createAlbum();
     createAlbum();
