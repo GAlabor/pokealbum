@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Album</title>
+  <style>
+    :root {
+      --bg: #f7f7f8;
+      --text: #111111;
+      --muted: #7a7a7a;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app,
+    .album-screen {
+      min-height: 100vh;
+      padding: calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 24px);
+    }
+
+    .screen-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding-bottom: 16px;
+      background: linear-gradient(to bottom, var(--bg) 85%, rgba(247,247,248,0));
+    }
+
+    .back-btn {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: rgba(255,255,255,0.92);
+      color: #111111;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .back-btn:hover,
+    .back-btn:active {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.14);
+      background: rgba(255,255,255,0.98);
+    }
+
+    .back-btn svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+    .albums-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 96px));
+      justify-content: center;
+      column-gap: 8px;
+      row-gap: 14px;
+      padding: 16px 12px 8px;
+    }
+
+    .album-card {
+      position: relative;
+      width: 96px;
+      text-align: center;
+    }
+
+    .album-card.add-album-card {
+      cursor: pointer;
+    }
+
+    .album-cover {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      user-select: none;
+      cursor: pointer;
+      filter: saturate(1.08);
+      touch-action: manipulation;
+    }
+
+    .book-icon {
+      position: relative;
+      width: 62px;
+      height: 74px;
+      border-radius: 10px 14px 14px 10px;
+      background: var(--album-color, #4f7cff);
+      box-shadow:
+        inset -6px 0 0 rgba(255,255,255,0.18),
+        inset 0 0 0 1px rgba(0,0,0,0.05),
+        0 8px 18px rgba(0,0,0,0.14);
+    }
+
+    .book-icon::before {
+      content: "";
+      position: absolute;
+      left: 8px;
+      top: 0;
+      width: 8px;
+      height: 100%;
+      border-radius: 8px 0 0 8px;
+      background: rgba(0,0,0,0.12);
+    }
+
+    .book-icon::after {
+      content: "";
+      position: absolute;
+      right: 9px;
+      top: 11px;
+      width: 26px;
+      height: 52px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.20);
+    }
+
+    .album-title {
+      margin-top: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .add-album-cover {
+      width: 62px;
+      height: 74px;
+      margin: 0 auto;
+      border-radius: 10px 14px 14px 10px;
+      border: 2px dashed #cfcfd4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 500;
+      color: #6f6f76;
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .add-album-card:hover .add-album-cover,
+    .add-album-card:active .add-album-cover {
+      transform: scale(1.04);
+      border-color: #111111;
+      color: #111111;
+    }
+
+    .album-meta {
+      margin-top: 3px;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.2;
+    }
+
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.32);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    }
+
+    .modal h3 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid #e5e5e7;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    .color-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .color-option,
+    .color-picker-trigger {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      cursor: pointer;
+      padding: 0;
+      flex: 0 0 auto;
+      position: relative;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .color-option:hover,
+    .color-picker-trigger:hover {
+      transform: scale(1.06);
+    }
+
+    .color-option.selected,
+    .color-picker-trigger.selected {
+      border-color: #111;
+      box-shadow: 0 0 0 3px rgba(17,17,17,0.08), 0 6px 14px rgba(0,0,0,0.12);
+    }
+
+    .color-picker-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background:
+        conic-gradient(
+          #ff4d4d,
+          #ffb84d,
+          #ffe14d,
+          #6bd66b,
+          #4dc3ff,
+          #726bff,
+          #c96bff,
+          #ff6bc1,
+          #ff4d4d
+        );
+      color: #111;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .color-picker-trigger span {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .hidden-color-input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .selected-color-preview {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #f4f4f6;
+      padding: 8px 10px;
+      border-radius: 999px;
+    }
+
+    .selected-color-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: var(--selected-color, #4f7cff);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .modal-btn {
+      flex: 1;
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-btn.secondary {
+      background: #f1f1f3;
+      color: #111;
+    }
+
+    .modal-btn.primary {
+      background: #111;
+      color: #fff;
+    }
+
+    .context-menu {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 22px;
+      padding: 10px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    }
+
+    .context-header {
+      padding: 10px 12px 8px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .menu-btn {
+      width: 100%;
+      border: 0;
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .menu-btn:hover,
+    .menu-btn:active {
+      background: #f4f4f6;
+    }
+
+    .menu-btn.danger {
+      color: #c62828;
+    }
+
+    .album-screen {
+      display: none;
+    }
+
+    .album-screen.open {
+      display: block;
+    }
+
+    .app.hidden {
+      display: none;
+    }
+
+    .screen-card {
+      background: #fff;
+      border-radius: 24px;
+      padding: 24px 20px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+    }
+
+    .screen-title {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 12px;
+    }
+
+    .screen-subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <main class="app" id="mainApp">
+    <section class="albums-row" id="albumsRow"></section>
+
+
+    <div class="modal-backdrop" id="editModalBackdrop">
+      <div class="modal" id="editModal">
+        <h3>Modifica album</h3>
+
+        <div class="field">
+          <label for="albumNameInput">Nome album</label>
+          <input id="albumNameInput" type="text" placeholder="Nome album" />
+        </div>
+
+        <div class="field">
+          <label>Colore libro</label>
+          <div class="color-grid" id="colorGrid"></div>
+          <div class="selected-color-preview" id="selectedColorPreview">
+            <span class="selected-color-dot" id="selectedColorDot"></span>
+            <span id="selectedColorText">Colore selezionato</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="albumPagesInput">Numero pagine</label>
+          <input id="albumPagesInput" type="number" min="1" inputmode="numeric" placeholder="Es. 10" />
+        </div>
+
+        <div class="field">
+          <label for="albumSlotsInput">Slot per pagina</label>
+          <input id="albumSlotsInput" type="number" min="1" inputmode="numeric" placeholder="Es. 9" />
+        </div>
+
+        <div class="modal-actions">
+          <button class="modal-btn secondary" id="cancelEditBtn">Annulla</button>
+          <button class="modal-btn primary" id="saveEditBtn">Salva</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="contextMenuBackdrop">
+      <div class="context-menu" id="contextMenu">
+        <div class="context-header" id="contextMenuTitle">Album</div>
+        <button class="menu-btn" id="contextEditBtn" type="button">Modifica</button>
+        <button class="menu-btn" id="contextRenameBtn" type="button">Rinomina</button>
+        <button class="menu-btn danger" id="contextDeleteBtn" type="button">Elimina</button>
+      </div>
+    </div>
+  </main>
+
+  <section class="album-screen" id="albumScreen">
+    <div class="screen-topbar">
+      <button class="back-btn" id="backToAlbumsBtn" type="button" aria-label="Torna agli album">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 18l-6-6 6-6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="screen-card">
+      <h1 class="screen-title" id="screenAlbumTitle">Album</h1>
+      <p class="screen-subtitle" id="screenAlbumMeta">0 pagine • 0 slot totali</p>
+    </div>
+  </section>
+
+  <script>
+    const mainApp = document.getElementById('mainApp');
+    const albumScreen = document.getElementById('albumScreen');
+    const albumsRow = document.getElementById('albumsRow');
+    const editModalBackdrop = document.getElementById('editModalBackdrop');
+    const editModal = document.getElementById('editModal');
+    const albumNameInput = document.getElementById('albumNameInput');
+    const albumPagesInput = document.getElementById('albumPagesInput');
+    const albumSlotsInput = document.getElementById('albumSlotsInput');
+    const colorGrid = document.getElementById('colorGrid');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const saveEditBtn = document.getElementById('saveEditBtn');
+    const selectedColorDot = document.getElementById('selectedColorDot');
+    const selectedColorText = document.getElementById('selectedColorText');
+    const contextMenuBackdrop = document.getElementById('contextMenuBackdrop');
+    const contextMenu = document.getElementById('contextMenu');
+    const contextMenuTitle = document.getElementById('contextMenuTitle');
+    const contextEditBtn = document.getElementById('contextEditBtn');
+    const contextRenameBtn = document.getElementById('contextRenameBtn');
+    const contextDeleteBtn = document.getElementById('contextDeleteBtn');
+    const backToAlbumsBtn = document.getElementById('backToAlbumsBtn');
+    const screenAlbumTitle = document.getElementById('screenAlbumTitle');
+    const screenAlbumMeta = document.getElementById('screenAlbumMeta');
+
+    let albumCount = 0;
+    let currentAlbumCard = null;
+    let selectedColor = '#4f7cff';
+    let isCustomColor = false;
+    let contextAlbumCard = null;
+    let openedAlbumCard = null;
+
+    const LONG_PRESS_MS = 500;
+
+    const presetColors = [
+      { label: 'Blu', value: '#4f7cff' },
+      { label: 'Rosso', value: '#ff5c5c' },
+      { label: 'Verde', value: '#43b86b' },
+      { label: 'Giallo', value: '#f6c744' },
+      { label: 'Viola', value: '#8c6cff' },
+      { label: 'Arancione', value: '#ff944d' },
+      { label: 'Rosa', value: '#ff78b2' },
+      { label: 'Grigio', value: '#8f98a3' }
+    ];
+
+    function normalizeHexColor(color) {
+      return color.trim().toLowerCase();
+    }
+
+    function isPresetColor(color) {
+      return presetColors.some(c => normalizeHexColor(c.value) === normalizeHexColor(color));
+    }
+
+    function updateSelectedColorPreview() {
+      selectedColorDot.style.background = selectedColor;
+      selectedColorText.textContent = isCustomColor
+        ? `Colore personalizzato: ${selectedColor.toUpperCase()}`
+        : `Colore selezionato: ${selectedColor.toUpperCase()}`;
+    }
+
+    function renderColorGrid(activeColor) {
+      colorGrid.innerHTML = '';
+      const normalizedActive = normalizeHexColor(activeColor);
+
+      presetColors.forEach(({ label, value }) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'color-option' + (normalizeHexColor(value) === normalizedActive ? ' selected' : '');
+        btn.style.background = value;
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
+
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          selectedColor = value;
+          isCustomColor = false;
+          renderColorGrid(selectedColor);
+        });
+
+        colorGrid.appendChild(btn);
+      });
+
+      const customWrap = document.createElement('div');
+      customWrap.className = 'color-picker-trigger' + (isCustomColor ? ' selected' : '');
+      customWrap.title = 'Scegli un colore personalizzato';
+      customWrap.setAttribute('aria-label', 'Apri tavolozza colori');
+      customWrap.setAttribute('role', 'button');
+      customWrap.tabIndex = 0;
+
+      customWrap.innerHTML = `
+        <span>+</span>
+        <input class="hidden-color-input" type="color" value="${selectedColor}" />
+      `;
+
+      const colorInput = customWrap.querySelector('input');
+
+      function applyCustomColor(value, final = false) {
+        selectedColor = value;
+        isCustomColor = !isPresetColor(selectedColor);
+        updateSelectedColorPreview();
+
+        if (final) {
+          renderColorGrid(selectedColor);
+        }
+      }
+
+      customWrap.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        colorInput.click();
+      });
+
+      customWrap.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+      });
+
+      customWrap.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+      }, { passive: true });
+
+      customWrap.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          colorInput.click();
+        }
+      });
+
+      colorInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
+      colorInput.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+      });
+
+      colorInput.addEventListener('input', (e) => {
+        e.stopPropagation();
+        applyCustomColor(e.target.value, false);
+      });
+
+      colorInput.addEventListener('change', (e) => {
+        e.stopPropagation();
+        applyCustomColor(e.target.value, true);
+      });
+
+      colorGrid.appendChild(customWrap);
+      updateSelectedColorPreview();
+    }
+
+    function refreshOpenedAlbumScreen() {
+      if (!openedAlbumCard) return;
+      const data = openedAlbumCard.albumData;
+      const totalSlots = data.pages * data.slots;
+      screenAlbumTitle.textContent = data.name;
+      screenAlbumMeta.textContent = `${data.pages} pagine • ${totalSlots} slot totali`;
+    }
+
+    function openAlbumScreen(card) {
+      openedAlbumCard = card;
+      refreshOpenedAlbumScreen();
+      mainApp.classList.add('hidden');
+      albumScreen.classList.add('open');
+    }
+
+    function closeAlbumScreen() {
+      openedAlbumCard = null;
+      albumScreen.classList.remove('open');
+      mainApp.classList.remove('hidden');
+    }
+
+    function openEditModal(card) {
+      currentAlbumCard = card;
+      const data = card.albumData;
+      albumNameInput.value = data.name;
+      albumPagesInput.value = data.pages;
+      albumSlotsInput.value = data.slots;
+      selectedColor = data.color;
+      isCustomColor = !isPresetColor(selectedColor);
+      renderColorGrid(selectedColor);
+      editModalBackdrop.classList.add('open');
+    }
+
+    function closeEditModal() {
+      editModalBackdrop.classList.remove('open');
+      currentAlbumCard = null;
+    }
+
+    function openContextMenu(card) {
+      contextAlbumCard = card;
+      contextMenuTitle.textContent = card.albumData.name;
+      contextMenuBackdrop.classList.add('open');
+    }
+
+    function closeContextMenu() {
+      contextMenuBackdrop.classList.remove('open');
+      contextAlbumCard = null;
+    }
+
+    function renameAlbum(card) {
+      const newName = window.prompt('Nuovo nome album', card.albumData.name);
+      if (newName === null) return;
+
+      const trimmedName = newName.trim();
+      if (!trimmedName) return;
+
+      card.albumData.name = trimmedName;
+      updateAlbumCard(card);
+    }
+
+    function deleteAlbum(card) {
+      if (openedAlbumCard === card) {
+        closeAlbumScreen();
+      }
+      card.remove();
+    }
+
+    function updateAlbumCard(card) {
+      const book = card.querySelector('.book-icon');
+      book.style.setProperty('--album-color', card.albumData.color);
+      card.querySelector('.album-title').textContent = card.albumData.name;
+      card.querySelector('.album-meta').textContent = `${card.albumData.pages} pag. • ${card.albumData.slots}/pag.`;
+      refreshOpenedAlbumScreen();
+    }
+
+    function attachAlbumInteractions(card) {
+      const cover = card.querySelector('.album-cover');
+      let pressTimer = null;
+      let longPressTriggered = false;
+      let pointerMoved = false;
+      let startX = 0;
+      let startY = 0;
+      let activePointerId = null;
+
+      const MOVE_TOLERANCE_PX = 12;
+
+      function clearPressTimer() {
+        if (pressTimer) {
+          clearTimeout(pressTimer);
+          pressTimer = null;
+        }
+      }
+
+      function resetPressState() {
+        clearPressTimer();
+        pointerMoved = false;
+        activePointerId = null;
+      }
+
+      function startPress(e) {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+        startX = e.clientX;
+        startY = e.clientY;
+        pointerMoved = false;
+        longPressTriggered = false;
+        activePointerId = e.pointerId;
+        clearPressTimer();
+
+        if (cover.setPointerCapture) {
+          try {
+            cover.setPointerCapture(e.pointerId);
+          } catch (_) {}
+        }
+
+        pressTimer = setTimeout(() => {
+          longPressTriggered = true;
+          clearPressTimer();
+          openContextMenu(card);
+        }, LONG_PRESS_MS);
+      }
+
+      cover.addEventListener('pointerdown', startPress);
+
+      cover.addEventListener('pointermove', (e) => {
+        if (activePointerId !== e.pointerId || longPressTriggered) return;
+
+        const deltaX = e.clientX - startX;
+        const deltaY = e.clientY - startY;
+        const movedEnough = Math.hypot(deltaX, deltaY) > MOVE_TOLERANCE_PX;
+
+        if (movedEnough) {
+          pointerMoved = true;
+          clearPressTimer();
+        }
+      });
+
+      cover.addEventListener('pointerup', (e) => {
+        if (activePointerId !== e.pointerId) return;
+
+        const shouldOpenAlbum = !longPressTriggered && !pointerMoved;
+
+        if (cover.releasePointerCapture && cover.hasPointerCapture && cover.hasPointerCapture(e.pointerId)) {
+          try {
+            cover.releasePointerCapture(e.pointerId);
+          } catch (_) {}
+        }
+
+        resetPressState();
+
+        if (!shouldOpenAlbum) {
+          e.preventDefault();
+          return;
+        }
+
+        openAlbumScreen(card);
+      });
+
+      cover.addEventListener('pointercancel', (e) => {
+        if (activePointerId !== e.pointerId) return;
+        resetPressState();
+      });
+
+      cover.addEventListener('pointerleave', (e) => {
+        if (e.pointerType === 'mouse' && activePointerId === e.pointerId && !longPressTriggered) {
+          resetPressState();
+        }
+      });
+
+      cover.addEventListener('contextmenu', (e) => e.preventDefault());
+    }
+
+
+    function createAddAlbumCard() {
+      const card = document.createElement('article');
+      card.className = 'album-card add-album-card';
+      card.innerHTML = `
+        <div class="album-cover" aria-label="Aggiungi album" role="button" tabindex="0">
+          <div class="add-album-cover">+</div>
+        </div>
+        <div class="album-title">Aggiungi</div>
+      `;
+
+      const trigger = () => createAlbum();
+      const cover = card.querySelector('.album-cover');
+
+      card.addEventListener('click', trigger);
+      cover.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          trigger();
+        }
+      });
+
+      return card;
+    }
+
+    function getNextAlbumNumber() {
+      const usedNumbers = Array.from(albumsRow.querySelectorAll('.album-card:not(.add-album-card)'))
+        .map(card => {
+          const match = card.albumData.name.match(/^Album\s+(\d+)$/i);
+          return match ? Number(match[1]) : null;
+        })
+        .filter(number => Number.isInteger(number) && number > 0)
+        .sort((a, b) => a - b);
+
+      let nextNumber = 1;
+      for (const number of usedNumbers) {
+        if (number === nextNumber) {
+          nextNumber++;
+        } else if (number > nextNumber) {
+          break;
+        }
+      }
+
+      return nextNumber;
+    }
+
+    function createAlbum() {
+      const nextAlbumNumber = getNextAlbumNumber();
+      albumCount = Math.max(albumCount + 1, nextAlbumNumber);
+
+      const addCard = albumsRow.querySelector('.add-album-card');
+      if (addCard) addCard.remove();
+
+      const defaultColor = presetColors[(nextAlbumNumber - 1) % presetColors.length].value;
+
+      const card = document.createElement('article');
+      card.className = 'album-card';
+      card.albumData = {
+        name: `Album ${nextAlbumNumber}`,
+        color: defaultColor,
+        pages: 10,
+        slots: 9
+      };
+
+      card.innerHTML = `
+        <div class="album-cover">
+          <div class="book-icon" style="--album-color:${card.albumData.color}"></div>
+        </div>
+        <div class="album-title"></div>
+        <div class="album-meta"></div>
+      `;
+
+      updateAlbumCard(card);
+      attachAlbumInteractions(card);
+      albumsRow.appendChild(card);
+      albumsRow.appendChild(createAddAlbumCard());
+    }
+
+    backToAlbumsBtn.addEventListener('click', closeAlbumScreen);
+    cancelEditBtn.addEventListener('click', closeEditModal);
+
+    saveEditBtn.addEventListener('click', () => {
+      if (!currentAlbumCard) return;
+
+      currentAlbumCard.albumData.name = albumNameInput.value.trim() || currentAlbumCard.albumData.name;
+      currentAlbumCard.albumData.color = selectedColor;
+      currentAlbumCard.albumData.pages = Math.max(1, Number(albumPagesInput.value) || 1);
+      currentAlbumCard.albumData.slots = Math.max(1, Number(albumSlotsInput.value) || 1);
+
+      updateAlbumCard(currentAlbumCard);
+      closeEditModal();
+    });
+
+    contextEditBtn.addEventListener('click', () => {
+      if (!contextAlbumCard) return;
+      const targetCard = contextAlbumCard;
+      closeContextMenu();
+      openEditModal(targetCard);
+    });
+
+    contextRenameBtn.addEventListener('click', () => {
+      if (!contextAlbumCard) return;
+      const targetCard = contextAlbumCard;
+      closeContextMenu();
+      renameAlbum(targetCard);
+    });
+
+    contextDeleteBtn.addEventListener('click', () => {
+      if (!contextAlbumCard) return;
+      const targetCard = contextAlbumCard;
+      closeContextMenu();
+      deleteAlbum(targetCard);
+    });
+
+    editModalBackdrop.addEventListener('click', (e) => {
+      if (e.target === editModalBackdrop) {
+        closeEditModal();
+      }
+    });
+
+    contextMenuBackdrop.addEventListener('click', (e) => {
+      if (e.target === contextMenuBackdrop) {
+        closeContextMenu();
+      }
+    });
+
+    editModal.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    contextMenu.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    createAlbum();
+    createAlbum();
+    createAlbum();
+  </script>
+</body>
+</html>
