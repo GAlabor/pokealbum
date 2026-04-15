@@ -1,5 +1,4 @@
-<<<<<<< HEAD
-const VERSION = '0.0.5';
+const VERSION = '0.0.6';
 const APP_VERSION = VERSION;
 const ICO_VERSION = 'v1.0';
 
@@ -58,37 +57,20 @@ async function handleHtmlFetch(event, req) {
   const htmlReq = normalizeHTMLRequest(req);
   const cache = await caches.open(CACHE_APP);
 
-  let preload = null;
-  if (event.preloadResponse) {
-    try {
-      preload = await event.preloadResponse;
-    } catch {}
-  }
-
-  if (preload) {
-    try {
-      await cache.put(`${ROOT}/index.html`, preload.clone());
-    } catch {}
-    return preload;
-  }
-
   try {
     const fresh = await fetch(htmlReq, {
       cache: 'no-store',
       credentials: 'same-origin'
     });
 
-    try {
-      await cache.put(`${ROOT}/index.html`, fresh.clone());
-    } catch {}
-
+    await cache.put(`${ROOT}/index.html`, fresh.clone());
     return fresh;
   } catch {
     const cached = await cache.match(`${ROOT}/index.html`);
     if (cached) return cached;
 
     return new Response(
-      '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Offline</title></head><body><h1>Offline</h1><p>PokeAlbum non è disponibile e non c’è una cache HTML salvata.</p></body></html>',
+      '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Offline</title></head><body><h1>Offline</h1><p>PokeAlbum non è disponibile.</p></body></html>',
       {
         status: 503,
         headers: {
@@ -106,20 +88,9 @@ async function cacheFirst(req, cacheName) {
 
   if (cached) return cached;
 
-  try {
-    const fresh = await fetch(req, {
-      cache: 'no-store',
-      credentials: 'same-origin'
-    });
-
-    try {
-      await cache.put(key, fresh.clone());
-    } catch {}
-
-    return fresh;
-  } catch {
-    return new Response('', { status: 504 });
-  }
+  const fresh = await fetch(req);
+  await cache.put(key, fresh.clone());
+  return fresh;
 }
 
 async function staleWhileRevalidate(event, req, cacheName) {
@@ -128,36 +99,15 @@ async function staleWhileRevalidate(event, req, cacheName) {
   const cached = await cache.match(key);
 
   if (cached) {
-    event.waitUntil((async () => {
-      try {
-        const fresh = await fetch(req, {
-          cache: 'no-store',
-          credentials: 'same-origin'
-        });
-
-        try {
-          await cache.put(key, fresh.clone());
-        } catch {}
-      } catch {}
-    })());
-
+    event.waitUntil(
+      fetch(req).then(res => cache.put(key, res.clone())).catch(()=>{})
+    );
     return cached;
   }
 
-  try {
-    const fresh = await fetch(req, {
-      cache: 'no-store',
-      credentials: 'same-origin'
-    });
-
-    try {
-      await cache.put(key, fresh.clone());
-    } catch {}
-
-    return fresh;
-  } catch {
-    return new Response('', { status: 504 });
-  }
+  const fresh = await fetch(req);
+  await cache.put(key, fresh.clone());
+  return fresh;
 }
 
 self.addEventListener('install', event => {
@@ -178,25 +128,11 @@ self.addEventListener('activate', event => {
     const keys = await caches.keys();
 
     await Promise.all(
-      keys
-        .filter(key => !keep.has(key))
-        .map(key => caches.delete(key))
+      keys.filter(key => !keep.has(key)).map(key => caches.delete(key))
     );
-
-    if (self.registration.navigationPreload) {
-      try {
-        await self.registration.navigationPreload.enable();
-      } catch {}
-    }
 
     await self.clients.claim();
   })());
-});
-
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
 });
 
 self.addEventListener('fetch', event => {
@@ -228,12 +164,3 @@ self.addEventListener('fetch', event => {
 
   event.respondWith(staleWhileRevalidate(event, req, CACHE_APP));
 });
-=======
-self.addEventListener('install', e => {
-  self.skipWaiting();
-});
-
-self.addEventListener('fetch', event => {
-  event.respondWith(fetch(event.request));
-});
->>>>>>> 977929755ce11be60a4fce3addf877ef6d8904ba
