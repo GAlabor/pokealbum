@@ -31,7 +31,8 @@ const elements = {
   navAlbumsBtn: document.getElementById('navAlbumsBtn'),
   navAddBtn: document.getElementById('navAddBtn'),
   navSearchBtn: document.getElementById('navSearchBtn'),
-  createAlbumBtn: document.getElementById('createAlbumBtn')
+  createAlbumBtn: document.getElementById('createAlbumBtn'),
+  appVersion: document.getElementById('appVersion')
 };
 
 const LONG_PRESS_MS = 500;
@@ -56,6 +57,68 @@ const state = {
   isCustomColor: false,
   activeView: 'albums'
 };
+
+
+async function extractVersionFromServiceWorker() {
+  if (!('serviceWorker' in navigator)) {
+    return '';
+  }
+
+  const registration = await navigator.serviceWorker.getRegistration();
+  const knownWorker = registration?.active || registration?.waiting || registration?.installing;
+  const candidateUrls = [];
+
+  if (knownWorker?.scriptURL) {
+    candidateUrls.push(knownWorker.scriptURL);
+  }
+
+  candidateUrls.push('sw.js', 'service-worker.js', 'serviceWorker.js');
+
+  const tried = new Set();
+
+  for (const candidate of candidateUrls) {
+    try {
+      const url = new URL(candidate, window.location.href).toString();
+
+      if (tried.has(url)) {
+        continue;
+      }
+
+      tried.add(url);
+
+      const response = await fetch(url, { cache: 'no-store' });
+
+      if (!response.ok) {
+        continue;
+      }
+
+      const source = await response.text();
+      const versionMatch = source.match(/const\s+VERSION\s*=\s*['"]([^'"]+)['"]/i)
+        || source.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/i);
+
+      if (versionMatch?.[1]) {
+        return versionMatch[1];
+      }
+    } catch (_error) {
+      // Se il browser decide di fare il browser, passiamo oltre.
+    }
+  }
+
+  return '';
+}
+
+async function renderAppVersion() {
+  const version = await extractVersionFromServiceWorker();
+
+  if (!version) {
+    elements.appVersion.hidden = true;
+    elements.appVersion.textContent = '';
+    return;
+  }
+
+  elements.appVersion.textContent = `v${version}`;
+  elements.appVersion.hidden = false;
+}
 
 function normalizeHexColor(color) {
   return String(color).trim().toLowerCase();
@@ -542,12 +605,13 @@ function bindEvents() {
   elements.searchInput.addEventListener('input', (event) => renderSearchResults(event.target.value));
 }
 
-function init() {
+async function init() {
   bindEvents();
   createAlbum();
   createAlbum();
   createAlbum();
   renderSearchResults();
+  await renderAppVersion();
 }
 
 init();

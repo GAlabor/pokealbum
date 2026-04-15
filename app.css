@@ -65,6 +65,21 @@ button {
   letter-spacing: -0.03em;
 }
 
+.screen-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.screen-version {
+  color: #9a9aa1;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
 .view {
   display: none;
 }
