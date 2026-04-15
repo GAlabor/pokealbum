@@ -1,9 +1,0 @@
-{
-  "name": "Album",
-  "short_name": "Album",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#f6f6f7",
-  "theme_color": "#d80f0f",
-  "icons": []
-}
