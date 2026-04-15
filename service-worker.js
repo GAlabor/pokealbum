@@ -1,4 +1,4 @@
-const VERSION = '0.0.8';
+const VERSION = '0.0.9';
 const APP_VERSION = VERSION;
 const ICO_VERSION = 'v1.0';
 
@@ -56,6 +56,24 @@ function normalizeHTMLRequest(req) {
 async function handleHtmlFetch(event, req) {
   const htmlReq = normalizeHTMLRequest(req);
   const cache = await caches.open(CACHE_APP);
+  const cacheKey = `${ROOT}/index.html`;
+  const cached = await cache.match(cacheKey);
+
+  if (cached) {
+    event.waitUntil((async () => {
+      try {
+        const fresh = await fetch(htmlReq, {
+          cache: 'no-store',
+          credentials: 'same-origin'
+        });
+        await cache.put(cacheKey, fresh.clone());
+      } catch {
+        // Safari su iPhone ama fare il prezioso. La cache almeno non lo segue.
+      }
+    })());
+
+    return cached;
+  }
 
   try {
     const fresh = await fetch(htmlReq, {
@@ -63,12 +81,9 @@ async function handleHtmlFetch(event, req) {
       credentials: 'same-origin'
     });
 
-    await cache.put(`${ROOT}/index.html`, fresh.clone());
+    await cache.put(cacheKey, fresh.clone());
     return fresh;
   } catch {
-    const cached = await cache.match(`${ROOT}/index.html`);
-    if (cached) return cached;
-
     return new Response(
       '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Offline</title></head><body><h1>Offline</h1><p>PokeAlbum non è disponibile.</p></body></html>',
       {

@@ -58,6 +58,23 @@ const state = {
   activeView: 'albums'
 };
 
+async function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) {
+    return null;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.register('service-worker.js', {
+      scope: './'
+    });
+
+    registration.update().catch(() => {});
+    return registration;
+  } catch (_error) {
+    return null;
+  }
+}
+
 
 async function extractVersionFromServiceWorker() {
   if (!('serviceWorker' in navigator)) {
@@ -606,11 +623,15 @@ function bindEvents() {
 }
 
 async function init() {
+  const serviceWorkerReady = registerServiceWorker();
+
   bindEvents();
   createAlbum();
   createAlbum();
   createAlbum();
   renderSearchResults();
+
+  await serviceWorkerReady;
   await renderAppVersion();
 }
 
