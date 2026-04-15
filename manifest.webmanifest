@@ -1,24 +1,28 @@
 {
-<<<<<<< HEAD
   "name": "Album di carte Pokemon",
   "short_name": "PokeAlbum",
+  "id": "./",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f6f6f7",
   "theme_color": "#d80f0f",
   "icons": [
-    { "src": "ico/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "ico/icon-512x512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "ico/apple-touch-icon-180x180-flat.png", "sizes": "180x180", "type": "image/png" }
+    {
+      "src": "ico/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "ico/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "ico/apple-touch-icon-180x180-flat.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
-=======
-  "name": "Album",
-  "short_name": "Album",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#f6f6f7",
-  "theme_color": "#d80f0f",
-  "icons": []
->>>>>>> 977929755ce11be60a4fce3addf877ef6d8904ba
 }
