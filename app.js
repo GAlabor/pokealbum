@@ -589,7 +589,10 @@ function attachAlbumInteractions(card) {
   });
 
   cover.addEventListener('contextmenu', (event) => event.preventDefault());
+  cover.addEventListener('selectstart', (event) => event.preventDefault());
+  cover.addEventListener('dragstart', (event) => event.preventDefault());
 }
+
 
 function saveAlbumChanges() {
   if (!state.currentAlbumCard) {
