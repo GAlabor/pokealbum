@@ -55,7 +55,8 @@ const state = {
   openedAlbumCard: null,
   selectedColor: '#4f7cff',
   isCustomColor: false,
-  activeView: 'albums'
+  activeView: 'albums',
+  lastMenuActionAt: 0
 };
 
 function clearTextSelection() {
@@ -355,6 +356,38 @@ function closeContextMenu() {
   state.contextAlbumCard = null;
   setSelectionSuppressed(false);
   clearTextSelection();
+}
+
+function bindImmediatePress(button, handler) {
+  let handledPointerId = null;
+
+  button.addEventListener('pointerdown', (event) => {
+    event.stopPropagation();
+  });
+
+  button.addEventListener('pointerup', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    handledPointerId = event.pointerId;
+    state.lastMenuActionAt = Date.now();
+    handler();
+  });
+
+  button.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const isImmediateFollowUpClick = handledPointerId !== null && (Date.now() - state.lastMenuActionAt) < 700;
+    handledPointerId = null;
+
+    if (isImmediateFollowUpClick) {
+      return;
+    }
+
+    state.lastMenuActionAt = Date.now();
+    handler();
+  });
 }
 
 function updateAlbumCard(card) {
@@ -667,7 +700,7 @@ function bindEvents() {
   elements.cancelEditBtn.addEventListener('click', closeEditModal);
   elements.saveEditBtn.addEventListener('click', saveAlbumChanges);
 
-  elements.contextEditBtn.addEventListener('click', () => {
+  bindImmediatePress(elements.contextEditBtn, () => {
     if (!state.contextAlbumCard) {
       return;
     }
@@ -677,7 +710,7 @@ function bindEvents() {
     openEditModal(targetCard);
   });
 
-  elements.contextRenameBtn.addEventListener('click', () => {
+  bindImmediatePress(elements.contextRenameBtn, () => {
     if (!state.contextAlbumCard) {
       return;
     }
@@ -687,7 +720,7 @@ function bindEvents() {
     renameAlbum(targetCard);
   });
 
-  elements.contextDeleteBtn.addEventListener('click', () => {
+  bindImmediatePress(elements.contextDeleteBtn, () => {
     if (!state.contextAlbumCard) {
       return;
     }
