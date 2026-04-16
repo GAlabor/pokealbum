@@ -58,6 +58,29 @@ const state = {
   activeView: 'albums'
 };
 
+function clearTextSelection() {
+  const selection = window.getSelection?.();
+
+  if (!selection) {
+    return;
+  }
+
+  try {
+    selection.removeAllRanges();
+  } catch (_error) {
+    // Safari ama complicare anche questo.
+  }
+}
+
+function setSelectionSuppressed(isSuppressed) {
+  document.documentElement.classList.toggle('suppress-selection', isSuppressed);
+  document.body?.classList.toggle('suppress-selection', isSuppressed);
+
+  if (isSuppressed) {
+    clearTextSelection();
+  }
+}
+
 function requestSkipWaiting(worker) {
   if (!worker) return;
 
@@ -330,6 +353,8 @@ function openContextMenu(card) {
 function closeContextMenu() {
   elements.contextMenuBackdrop.classList.remove('open');
   state.contextAlbumCard = null;
+  setSelectionSuppressed(false);
+  clearTextSelection();
 }
 
 function updateAlbumCard(card) {
@@ -504,6 +529,10 @@ function attachAlbumInteractions(card) {
     clearPressTimer();
     pointerMoved = false;
     activePointerId = null;
+
+    if (!elements.contextMenuBackdrop.classList.contains('open')) {
+      setSelectionSuppressed(false);
+    }
   }
 
   function startPress(event) {
@@ -517,6 +546,8 @@ function attachAlbumInteractions(card) {
     longPressTriggered = false;
     activePointerId = event.pointerId;
     clearPressTimer();
+    setSelectionSuppressed(true);
+    clearTextSelection();
 
     if (cover.setPointerCapture) {
       try {
@@ -529,6 +560,8 @@ function attachAlbumInteractions(card) {
     pressTimer = setTimeout(() => {
       longPressTriggered = true;
       clearPressTimer();
+      setSelectionSuppressed(true);
+      clearTextSelection();
       openContextMenu(card);
     }, LONG_PRESS_MS);
   }
@@ -570,9 +603,12 @@ function attachAlbumInteractions(card) {
 
     if (!shouldOpenAlbum) {
       event.preventDefault();
+      clearTextSelection();
       return;
     }
 
+    setSelectionSuppressed(false);
+    clearTextSelection();
     openAlbumScreen(card);
   });
 
@@ -587,6 +623,23 @@ function attachAlbumInteractions(card) {
       resetPressState();
     }
   });
+
+  cover.addEventListener('lostpointercapture', () => {
+    if (!longPressTriggered) {
+      resetPressState();
+    }
+  });
+
+  cover.addEventListener('touchstart', () => {
+    setSelectionSuppressed(true);
+    clearTextSelection();
+  }, { passive: true });
+  cover.addEventListener('touchend', () => {
+    if (!elements.contextMenuBackdrop.classList.contains('open')) {
+      setSelectionSuppressed(false);
+    }
+    clearTextSelection();
+  }, { passive: true });
 
   cover.addEventListener('contextmenu', (event) => event.preventDefault());
   cover.addEventListener('selectstart', (event) => event.preventDefault());

@@ -555,6 +555,17 @@ button {
 
 .context-menu {
   padding: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.context-menu *,
+.context-header,
+.menu-btn {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .context-header {
@@ -643,4 +654,14 @@ button {
   color: var(--muted);
   font-size: 15px;
   line-height: 1.5;
+}
+
+
+html.suppress-selection,
+html.suppress-selection *,
+body.suppress-selection,
+body.suppress-selection * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
 }
