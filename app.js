@@ -56,7 +56,8 @@ const state = {
   selectedColor: '#4f7cff',
   isCustomColor: false,
   activeView: 'albums',
-  lastMenuActionAt: 0
+  contextMenuOpenedAt: 0,
+  lastContextActionAt: 0
 };
 
 function clearTextSelection() {
@@ -347,6 +348,7 @@ function closeEditModal() {
 function openContextMenu(card) {
   const sourceCard = getSourceCard(card);
   state.contextAlbumCard = sourceCard;
+  state.contextMenuOpenedAt = performance.now();
   elements.contextMenuTitle.textContent = sourceCard.albumData.name;
   elements.contextMenuBackdrop.classList.add('open');
 }
@@ -354,40 +356,35 @@ function openContextMenu(card) {
 function closeContextMenu() {
   elements.contextMenuBackdrop.classList.remove('open');
   state.contextAlbumCard = null;
+  state.contextMenuOpenedAt = 0;
   setSelectionSuppressed(false);
   clearTextSelection();
 }
 
-function bindImmediatePress(button, handler) {
-  let handledPointerId = null;
+function contextMenuJustOpened() {
+  return performance.now() - state.contextMenuOpenedAt < 320;
+}
 
-  button.addEventListener('pointerdown', (event) => {
-    event.stopPropagation();
-  });
-
-  button.addEventListener('pointerup', (event) => {
+function handleContextMenuAction(action) {
+  return (event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    handledPointerId = event.pointerId;
-    state.lastMenuActionAt = Date.now();
-    handler();
-  });
-
-  button.addEventListener('click', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-
-    const isImmediateFollowUpClick = handledPointerId !== null && (Date.now() - state.lastMenuActionAt) < 700;
-    handledPointerId = null;
-
-    if (isImmediateFollowUpClick) {
+    const now = performance.now();
+    if (now - state.lastContextActionAt < 250) {
       return;
     }
 
-    state.lastMenuActionAt = Date.now();
-    handler();
-  });
+    state.lastContextActionAt = now;
+
+    if (!state.contextAlbumCard) {
+      return;
+    }
+
+    const targetCard = state.contextAlbumCard;
+    closeContextMenu();
+    action(targetCard);
+  };
 }
 
 function updateAlbumCard(card) {
@@ -700,34 +697,20 @@ function bindEvents() {
   elements.cancelEditBtn.addEventListener('click', closeEditModal);
   elements.saveEditBtn.addEventListener('click', saveAlbumChanges);
 
-  bindImmediatePress(elements.contextEditBtn, () => {
-    if (!state.contextAlbumCard) {
-      return;
-    }
-
-    const targetCard = state.contextAlbumCard;
-    closeContextMenu();
+  const onContextEdit = handleContextMenuAction((targetCard) => {
     openEditModal(targetCard);
   });
-
-  bindImmediatePress(elements.contextRenameBtn, () => {
-    if (!state.contextAlbumCard) {
-      return;
-    }
-
-    const targetCard = state.contextAlbumCard;
-    closeContextMenu();
+  const onContextRename = handleContextMenuAction((targetCard) => {
     renameAlbum(targetCard);
   });
-
-  bindImmediatePress(elements.contextDeleteBtn, () => {
-    if (!state.contextAlbumCard) {
-      return;
-    }
-
-    const targetCard = state.contextAlbumCard;
-    closeContextMenu();
+  const onContextDelete = handleContextMenuAction((targetCard) => {
     deleteAlbum(targetCard);
+  });
+
+  ['pointerup', 'click'].forEach((eventName) => {
+    elements.contextEditBtn.addEventListener(eventName, onContextEdit);
+    elements.contextRenameBtn.addEventListener(eventName, onContextRename);
+    elements.contextDeleteBtn.addEventListener(eventName, onContextDelete);
   });
 
   elements.editModalBackdrop.addEventListener('click', (event) => {
@@ -736,10 +719,32 @@ function bindEvents() {
     }
   });
 
-  elements.contextMenuBackdrop.addEventListener('click', (event) => {
-    if (event.target === elements.contextMenuBackdrop) {
-      closeContextMenu();
+  elements.contextMenuBackdrop.addEventListener('pointerup', (event) => {
+    if (event.target !== elements.contextMenuBackdrop) {
+      return;
     }
+
+    if (contextMenuJustOpened()) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    closeContextMenu();
+  });
+
+  elements.contextMenuBackdrop.addEventListener('click', (event) => {
+    if (event.target !== elements.contextMenuBackdrop) {
+      return;
+    }
+
+    if (contextMenuJustOpened()) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    closeContextMenu();
   });
 
   elements.editModal.addEventListener('click', (event) => event.stopPropagation());
