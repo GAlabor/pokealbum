@@ -58,70 +58,114 @@ const state = {
   activeView: 'albums'
 };
 
+function requestSkipWaiting(worker) {
+  if (!worker) return;
+
+  try {
+    worker.postMessage({ type: 'SKIP_WAITING' });
+  } catch (_error) {
+    // Il browser fa il browser.
+  }
+}
+
+function installAutoUpdateHooks(registration) {
+  if (!registration || !('serviceWorker' in navigator)) {
+    return;
+  }
+
+  let isRefreshing = false;
+
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (isRefreshing) {
+      return;
+    }
+
+    isRefreshing = true;
+    window.location.reload();
+  });
+
+  if (registration.waiting) {
+    requestSkipWaiting(registration.waiting);
+  }
+
+  registration.addEventListener('updatefound', () => {
+    const installingWorker = registration.installing;
+
+    if (!installingWorker) {
+      return;
+    }
+
+    installingWorker.addEventListener('statechange', () => {
+      if (installingWorker.state !== 'installed') {
+        return;
+      }
+
+      if (navigator.serviceWorker.controller) {
+        requestSkipWaiting(installingWorker);
+      }
+    });
+  });
+}
+
+async function getServiceWorkerVersion() {
+  try {
+    const response = await fetch('service-worker.js', {
+      cache: 'no-store',
+      credentials: 'same-origin'
+    });
+
+    if (!response.ok) {
+      return '';
+    }
+
+    const source = await response.text();
+    const versionMatch = source.match(/const\s+VERSION\s*=\s*['"]([^'"]+)['"]/i)
+      || source.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/i);
+
+    return versionMatch?.[1] || '';
+  } catch (_error) {
+    return '';
+  }
+}
+
 async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) {
     return null;
   }
 
   try {
-    const registration = await navigator.serviceWorker.register('service-worker.js', {
+    const swVersion = await getServiceWorkerVersion();
+    const swUrl = swVersion
+      ? `service-worker.js?v=${encodeURIComponent(swVersion)}`
+      : 'service-worker.js';
+
+    const registration = await navigator.serviceWorker.register(swUrl, {
       scope: './'
     });
 
+    installAutoUpdateHooks(registration);
+
     registration.update().catch(() => {});
+
+    window.addEventListener('load', () => {
+      registration.update().catch(() => {});
+    }, { once: true });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        registration.update().catch(() => {});
+      }
+    });
+
     return registration;
   } catch (_error) {
     return null;
   }
 }
 
-
 async function extractVersionFromServiceWorker() {
-  if (!('serviceWorker' in navigator)) {
-    return '';
-  }
-
-  const registration = await navigator.serviceWorker.getRegistration();
-  const knownWorker = registration?.active || registration?.waiting || registration?.installing;
-  const candidateUrls = [];
-
-  if (knownWorker?.scriptURL) {
-    candidateUrls.push(knownWorker.scriptURL);
-  }
-
-  candidateUrls.push('sw.js', 'service-worker.js', 'serviceWorker.js');
-
-  const tried = new Set();
-
-  for (const candidate of candidateUrls) {
-    try {
-      const url = new URL(candidate, window.location.href).toString();
-
-      if (tried.has(url)) {
-        continue;
-      }
-
-      tried.add(url);
-
-      const response = await fetch(url, { cache: 'no-store' });
-
-      if (!response.ok) {
-        continue;
-      }
-
-      const source = await response.text();
-      const versionMatch = source.match(/const\s+VERSION\s*=\s*['"]([^'"]+)['"]/i)
-        || source.match(/const\s+APP_VERSION\s*=\s*['"]([^'"]+)['"]/i);
-
-      if (versionMatch?.[1]) {
-        return versionMatch[1];
-      }
-    } catch (_error) {
-      // Se il browser decide di fare il browser, passiamo oltre.
-    }
-  }
-
-  return '';
+  const version = await getServiceWorkerVersion();
+  return version || '';
 }
 
 async function renderAppVersion() {

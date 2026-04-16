@@ -1,4 +1,4 @@
-const VERSION = '0.1.0';
+const VERSION = '0.1.1';
 const APP_VERSION = VERSION;
 const ICO_VERSION = 'v1.0';
 
@@ -35,7 +35,6 @@ const ICO_URLS = [
 
 function normalizeHTMLRequest(req) {
   const url = new URL(req.url);
-
   if (url.origin !== self.location.origin) return req;
 
   const wantsHTML =
@@ -44,10 +43,8 @@ function normalizeHTMLRequest(req) {
 
   if (!wantsHTML) return req;
 
-  if (url.pathname === ROOT || url.pathname === `${ROOT}/`) {
-    return new Request(`${ROOT}/index.html`, {
-      credentials: 'same-origin'
-    });
+  if (url.pathname === ROOT || url.pathname === ROOT + '/') {
+    return new Request(`${ROOT}/index.html`, { credentials: 'same-origin' });
   }
 
   return req;
@@ -56,23 +53,19 @@ function normalizeHTMLRequest(req) {
 async function handleHtmlFetch(event, req) {
   const htmlReq = normalizeHTMLRequest(req);
   const cache = await caches.open(CACHE_APP);
-  const cacheKey = `${ROOT}/index.html`;
-  const cached = await cache.match(cacheKey);
 
-  if (cached) {
-    event.waitUntil((async () => {
-      try {
-        const fresh = await fetch(htmlReq, {
-          cache: 'no-store',
-          credentials: 'same-origin'
-        });
-        await cache.put(cacheKey, fresh.clone());
-      } catch {
-        // Safari su iPhone ama fare il prezioso. La cache almeno non lo segue.
-      }
-    })());
+  let preload = null;
+  if (event.preloadResponse) {
+    try {
+      preload = await event.preloadResponse;
+    } catch {}
+  }
 
-    return cached;
+  if (preload) {
+    try {
+      await cache.put(`${ROOT}/index.html`, preload.clone());
+    } catch {}
+    return preload;
   }
 
   try {
@@ -80,17 +73,19 @@ async function handleHtmlFetch(event, req) {
       cache: 'no-store',
       credentials: 'same-origin'
     });
-
-    await cache.put(cacheKey, fresh.clone());
+    try {
+      await cache.put(`${ROOT}/index.html`, fresh.clone());
+    } catch {}
     return fresh;
   } catch {
+    const cached = await cache.match(`${ROOT}/index.html`);
+    if (cached) return cached;
+
     return new Response(
-      '<!doctype html><html lang="it"><head><meta charset="utf-8"><title>Offline</title></head><body><h1>Offline</h1><p>PokeAlbum non è disponibile.</p></body></html>',
+      '<h1>Offline</h1><p>Nessuna cache disponibile.</p>',
       {
-        status: 503,
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8'
-        }
+        headers: { 'Content-Type': 'text/html; charset=utf-8' },
+        status: 503
       }
     );
   }
@@ -100,12 +95,20 @@ async function cacheFirst(req, cacheName) {
   const cache = await caches.open(cacheName);
   const key = cacheKeyFor(req);
   const cached = await cache.match(key);
-
   if (cached) return cached;
 
-  const fresh = await fetch(req);
-  await cache.put(key, fresh.clone());
-  return fresh;
+  try {
+    const fresh = await fetch(req, {
+      cache: 'no-store',
+      credentials: 'same-origin'
+    });
+    try {
+      await cache.put(key, fresh.clone());
+    } catch {}
+    return fresh;
+  } catch {
+    return new Response('', { status: 504 });
+  }
 }
 
 async function staleWhileRevalidate(event, req, cacheName) {
@@ -114,15 +117,32 @@ async function staleWhileRevalidate(event, req, cacheName) {
   const cached = await cache.match(key);
 
   if (cached) {
-    event.waitUntil(
-      fetch(req).then(res => cache.put(key, res.clone())).catch(()=>{})
-    );
+    event.waitUntil((async () => {
+      try {
+        const fresh = await fetch(req, {
+          cache: 'no-store',
+          credentials: 'same-origin'
+        });
+        try {
+          await cache.put(key, fresh.clone());
+        } catch {}
+      } catch {}
+    })());
     return cached;
   }
 
-  const fresh = await fetch(req);
-  await cache.put(key, fresh.clone());
-  return fresh;
+  try {
+    const fresh = await fetch(req, {
+      cache: 'no-store',
+      credentials: 'same-origin'
+    });
+    try {
+      await cache.put(key, fresh.clone());
+    } catch {}
+    return fresh;
+  } catch {
+    return new Response('', { status: 504 });
+  }
 }
 
 self.addEventListener('install', event => {
@@ -130,8 +150,8 @@ self.addEventListener('install', event => {
     const appCache = await caches.open(CACHE_APP);
     const icoCache = await caches.open(CACHE_ICO);
 
-    await Promise.allSettled(APP_URLS.map(url => appCache.add(url)));
-    await Promise.allSettled(ICO_URLS.map(url => icoCache.add(url)));
+    await Promise.allSettled(APP_URLS.map(u => appCache.add(u)));
+    await Promise.allSettled(ICO_URLS.map(u => icoCache.add(u)));
 
     await self.skipWaiting();
   })());
@@ -141,22 +161,29 @@ self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keep = new Set([CACHE_APP, CACHE_ICO]);
     const keys = await caches.keys();
+    await Promise.all(keys.filter(k => !keep.has(k)).map(k => caches.delete(k)));
 
-    await Promise.all(
-      keys.filter(key => !keep.has(key)).map(key => caches.delete(key))
-    );
+    if (self.registration.navigationPreload) {
+      try {
+        await self.registration.navigationPreload.enable();
+      } catch {}
+    }
 
     await self.clients.claim();
   })());
 });
 
+self.addEventListener('message', ev => {
+  if (ev.data && ev.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener('fetch', event => {
   const req = event.request;
-
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
-
   if (url.origin !== self.location.origin) return;
   if (url.pathname.endsWith('/service-worker.js')) return;
 
