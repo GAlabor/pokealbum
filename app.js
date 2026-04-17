@@ -32,7 +32,13 @@ const elements = {
   navAddBtn: document.getElementById('navAddBtn'),
   navSearchBtn: document.getElementById('navSearchBtn'),
   createAlbumBtn: document.getElementById('createAlbumBtn'),
-  appVersion: document.getElementById('appVersion')
+  appVersion: document.getElementById('appVersion'),
+  albumDetailView: document.getElementById('albumDetailView'),
+  addCardView: document.getElementById('addCardView'),
+  openAddCardBtn: document.getElementById('openAddCardBtn'),
+  addFirstCardBtn: document.getElementById('addFirstCardBtn'),
+  backToAlbumBtn: document.getElementById('backToAlbumBtn'),
+  cardSearchInput: document.getElementById('cardSearchInput')
 };
 
 const LONG_PRESS_MS = 500;
@@ -56,6 +62,7 @@ const state = {
   selectedColor: '#4f7cff',
   isCustomColor: false,
   activeView: 'albums',
+  activeAlbumView: 'detail',
   contextMenuOpenedAt: 0,
   lastContextActionAt: 0
 };
@@ -301,6 +308,19 @@ function renderColorGrid(activeColor) {
   updateSelectedColorPreview();
 }
 
+function setActiveAlbumView(viewName) {
+  state.activeAlbumView = viewName;
+  elements.albumDetailView.classList.toggle('active', viewName === 'detail');
+  elements.addCardView.classList.toggle('active', viewName === 'add-card');
+
+  if (viewName === 'add-card') {
+    elements.cardSearchInput.value = '';
+    requestAnimationFrame(() => {
+      elements.cardSearchInput.focus();
+    });
+  }
+}
+
 function refreshOpenedAlbumScreen() {
   if (!state.openedAlbumCard) {
     return;
@@ -314,14 +334,28 @@ function refreshOpenedAlbumScreen() {
 function openAlbumScreen(card) {
   state.openedAlbumCard = getSourceCard(card);
   refreshOpenedAlbumScreen();
+  setActiveAlbumView('detail');
   elements.mainApp.classList.add('hidden');
   elements.albumScreen.classList.add('open');
 }
 
 function closeAlbumScreen() {
   state.openedAlbumCard = null;
+  setActiveAlbumView('detail');
   elements.albumScreen.classList.remove('open');
   elements.mainApp.classList.remove('hidden');
+}
+
+function openAddCardScreen() {
+  if (!state.openedAlbumCard) {
+    return;
+  }
+
+  setActiveAlbumView('add-card');
+}
+
+function closeAddCardScreen() {
+  setActiveAlbumView('detail');
 }
 
 function openEditModal(card) {
@@ -694,6 +728,9 @@ function saveAlbumChanges() {
 
 function bindEvents() {
   elements.backToAlbumsBtn.addEventListener('click', closeAlbumScreen);
+  elements.openAddCardBtn.addEventListener('click', openAddCardScreen);
+  elements.addFirstCardBtn.addEventListener('click', openAddCardScreen);
+  elements.backToAlbumBtn.addEventListener('click', closeAddCardScreen);
   elements.cancelEditBtn.addEventListener('click', closeEditModal);
   elements.saveEditBtn.addEventListener('click', saveAlbumChanges);
 
@@ -764,9 +801,6 @@ async function init() {
   const serviceWorkerReady = registerServiceWorker();
 
   bindEvents();
-  createAlbum();
-  createAlbum();
-  createAlbum();
   renderSearchResults();
 
   await serviceWorkerReady;

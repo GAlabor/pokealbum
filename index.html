@@ -134,17 +134,61 @@
   </main>
 
   <section class="album-screen" id="albumScreen">
-    <div class="screen-topbar">
-      <button class="back-btn" id="backToAlbumsBtn" type="button" aria-label="Torna agli album">
-        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
+    <div class="album-screen-view active" id="albumDetailView">
+      <div class="screen-topbar album-topbar">
+        <button class="back-btn" id="backToAlbumsBtn" type="button" aria-label="Torna agli album">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+
+        <button class="add-card-top-btn" id="openAddCardBtn" type="button" aria-label="Aggiungi carta">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14" />
+            <path d="M5 12h14" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="album-empty-screen">
+        <div class="album-empty-header">
+          <h1 class="screen-title album-screen-title" id="screenAlbumTitle">Album</h1>
+          <p class="screen-subtitle" id="screenAlbumMeta">0 pagine • 0 slot totali</p>
+        </div>
+
+        <div class="album-empty-state" id="albumEmptyState">
+          <div class="album-empty-illustration" aria-hidden="true">
+            <div class="empty-card-icon">
+              <div class="empty-card-ring"></div>
+            </div>
+          </div>
+          <p class="album-empty-text">L'album è vuoto</p>
+          <button class="add-first-card-btn" id="addFirstCardBtn" type="button">Aggiungi prima carta</button>
+        </div>
+      </div>
     </div>
 
-    <div class="screen-card">
-      <h1 class="screen-title" id="screenAlbumTitle">Album</h1>
-      <p class="screen-subtitle" id="screenAlbumMeta">0 pagine • 0 slot totali</p>
+    <div class="album-screen-view" id="addCardView">
+      <div class="screen-topbar add-card-topbar">
+        <button class="back-btn" id="backToAlbumBtn" type="button" aria-label="Torna all'album">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="add-card-header">
+        <h1 class="screen-title">Aggiungi carta</h1>
+      </div>
+
+      <div class="search-box add-card-search-box">
+        <input
+          id="cardSearchInput"
+          type="search"
+          placeholder="Cerca carta"
+          autocomplete="off"
+        />
+      </div>
     </div>
   </section>
 

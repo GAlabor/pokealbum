@@ -46,7 +46,15 @@ button {
 
 .album-screen.open {
   display: block;
-  padding: calc(env(safe-area-inset-top) + 18px) 16px calc(env(safe-area-inset-bottom) + 24px);
+  padding: calc(env(safe-area-inset-top) + 18px) 20px calc(env(safe-area-inset-bottom) + 32px);
+}
+
+.album-screen-view {
+  display: none;
+}
+
+.album-screen-view.active {
+  display: block;
 }
 
 .app-shell {
@@ -602,6 +610,127 @@ button {
   z-index: 10;
   padding-bottom: 16px;
   background: linear-gradient(to bottom, var(--bg) 85%, rgba(246, 246, 247, 0));
+}
+
+.album-topbar,
+.add-card-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.add-card-top-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--danger);
+  cursor: pointer;
+}
+
+.add-card-top-btn svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.album-empty-screen {
+  min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 110px);
+  display: flex;
+  flex-direction: column;
+}
+
+.album-empty-header {
+  margin-bottom: 36px;
+}
+
+.album-screen-title {
+  margin-bottom: 10px;
+  font-size: 34px;
+  letter-spacing: -0.04em;
+}
+
+.album-empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px 0 40px;
+}
+
+.album-empty-illustration {
+  margin-bottom: 28px;
+}
+
+.empty-card-icon {
+  width: 152px;
+  height: 208px;
+  border: 8px solid #d9d9de;
+  border-radius: 22px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.empty-card-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 78px;
+  height: 78px;
+  border: 6px solid #d0d0d5;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.empty-card-ring::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  border: 6px solid #d0d0d5;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.album-empty-text {
+  margin: 0 0 26px;
+  color: #8b8b8f;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.add-first-card-btn {
+  min-width: 220px;
+  min-height: 56px;
+  padding: 14px 24px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--danger);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  box-shadow: 0 14px 28px rgba(216, 15, 15, 0.22);
+  cursor: pointer;
+}
+
+.add-card-header {
+  margin-bottom: 18px;
+}
+
+.add-card-search-box {
+  margin-bottom: 0;
 }
 
 .back-btn {
