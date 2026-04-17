@@ -1,7 +1,7 @@
 const $ = (id) => document.getElementById(id);
 
 const elements = Object.fromEntries([
-  'mainApp','albumScreen','albumsRow','searchResultsRow','searchEmptyState','searchInput',
+  'mainApp','albumScreen','albumsRow','albumsEmptyState','createFirstAlbumBtn','searchResultsRow','searchEmptyState','searchInput',
   'editModalBackdrop','editModal','albumNameInput','albumPagesInput','albumSlotsInput',
   'colorGrid','cancelEditBtn','saveEditBtn','selectedColorDot','selectedColorText',
   'contextMenuBackdrop','contextMenu','contextMenuTitle','contextEditBtn','contextRenameBtn','contextDeleteBtn',
@@ -165,6 +165,12 @@ function renderAppVersion(version) {
   elements.appVersion.hidden = !version;
   elements.appVersion.textContent = version ? `v${version}` : '';
 }
+function syncAlbumsEmptyState() {
+  const hasAlbums = elements.albumsRow.querySelector('.album-card') !== null;
+  elements.albumsEmptyState.hidden = hasAlbums;
+  elements.albumsRow.hidden = !hasAlbums;
+}
+
 
 function updateSelectedColorPreview() {
   elements.selectedColorDot.style.background = state.selectedColor;
@@ -310,6 +316,7 @@ function deleteAlbum(card) {
   const sourceCard = getSourceCard(card);
   if (state.openedAlbumCard === sourceCard) closeAlbumScreen();
   sourceCard.remove();
+  syncAlbumsEmptyState();
   renderSearchResults(elements.searchInput.value);
 }
 
@@ -330,18 +337,7 @@ function getNextAlbumNumber() {
 function createAlbumCardMarkup({ color }) {
   return `
     <div class="album-cover">
-      <div class="book-icon" style="--album-color:${color}">
-        <svg class="album-book-svg" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
-          <path class="album-book-shadow" d="M34 52c0-11 9-20 20-20h98c31 0 56 25 56 56v86c0 17-13 30-30 30H72c-21 0-38-17-38-38V52Z" />
-          <path class="album-book-spine" d="M40 50c0-10 8-18 18-18h20v172H58c-10 0-18-8-18-18V50Z" />
-          <path class="album-book-cover" d="M74 36h80c31 0 56 25 56 56v82c0 17-13 30-30 30H74V36Z" />
-          <path class="album-book-gloss" d="M92 52h52c26 0 46 20 46 46v6H92V52Z" />
-          <circle class="album-book-emblem" cx="160" cy="122" r="18" />
-          <circle class="album-book-emblem-core" cx="160" cy="122" r="6" />
-          <path class="album-book-page-lines" d="M58 72v94" />
-          <path class="album-book-page-lines" d="M65 78v88" />
-        </svg>
-      </div>
+      <div class="book-icon" style="--album-color:${color}"></div>
       <div class="album-info">
         <div class="album-title"></div>
         <div class="album-meta"></div>
@@ -363,6 +359,7 @@ function createAlbum() {
   updateAlbumCard(card);
   attachAlbumInteractions(card);
   elements.albumsRow.appendChild(card);
+  syncAlbumsEmptyState();
   renderSearchResults(elements.searchInput.value);
 }
 
@@ -487,7 +484,8 @@ function bindEvents() {
     ['navAlbumsBtn', () => setSectionView('albums')],
     ['navSearchBtn', () => setSectionView('search')],
     ['navAddBtn', () => { createAlbum(); setSectionView('albums'); }],
-    ['createAlbumBtn', () => { createAlbum(); setSectionView('albums'); }]
+    ['createAlbumBtn', () => { createAlbum(); setSectionView('albums'); }],
+    ['createFirstAlbumBtn', () => { createAlbum(); setSectionView('albums'); }]
   ].forEach(([key, handler]) => elements[key].addEventListener('click', handler));
 
   const contextActions = {
@@ -517,6 +515,7 @@ function bindEvents() {
 async function init() {
   bindEvents();
   renderOwnerName();
+  syncAlbumsEmptyState();
   renderSearchResults();
   renderAppVersion(await registerServiceWorker());
 }

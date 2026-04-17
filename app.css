@@ -151,6 +151,112 @@ button {
   display: block;
 }
 
+
+.albums-empty-state {
+  min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 220px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 10px 8px;
+}
+
+.albums-empty-icon {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin-bottom: 24px;
+  display: grid;
+  place-items: center;
+}
+
+.albums-empty-book {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px 28px 28px 20px;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,0.34), transparent 26%),
+    linear-gradient(145deg, rgba(37, 99, 235, 0.92), rgba(29, 78, 216, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.32),
+    inset -14px 0 20px rgba(15, 23, 42, 0.16),
+    0 22px 38px rgba(37, 99, 235, 0.18),
+    0 10px 20px rgba(15, 23, 42, 0.08);
+  position: relative;
+}
+
+.albums-empty-book::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 14px;
+  width: 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.16);
+}
+
+.albums-empty-book::after {
+  content: "";
+  position: absolute;
+  top: 20px;
+  right: 18px;
+  left: 40px;
+  height: 34px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.albums-empty-plus {
+  position: absolute;
+  right: -2px;
+  bottom: 6px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #ffffff, #e8f0ff);
+  color: var(--accent);
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 500;
+  padding-bottom: 2px;
+  box-shadow: 0 12px 26px rgba(37, 99, 235, 0.2);
+}
+
+.albums-empty-title {
+  margin: 0 0 10px;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.albums-empty-text {
+  max-width: 280px;
+  margin: 0 0 24px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.albums-empty-btn {
+  min-width: 220px;
+  min-height: 54px;
+  padding: 14px 22px;
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22);
+  cursor: pointer;
+}
+
 .albums-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -199,10 +305,11 @@ button {
 
 .album-card.is-pressed .book-icon {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -24px 56px rgba(15, 23, 42, 0.24),
-    0 12px 20px rgba(37, 99, 235, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.28),
+    inset -14px 0 20px rgba(15, 23, 42, 0.2),
+    0 16px 28px color-mix(in srgb, var(--album-color, #4f7cff) 24%, transparent),
     0 8px 16px rgba(15, 23, 42, 0.1);
+  filter: saturate(1.04);
 }
 
 .book-icon {
@@ -210,80 +317,47 @@ button {
   inset: 0;
   width: 100%;
   height: 100%;
-  border-radius: 22px 30px 30px 22px;
+  border-radius: 20px 28px 28px 20px;
   background:
-    radial-gradient(circle at 24% 12%, rgba(255, 255, 255, 0.22), transparent 26%),
-    linear-gradient(150deg, color-mix(in srgb, var(--album-color, #4f7cff) 82%, white 18%), var(--album-color, #4f7cff) 56%, color-mix(in srgb, var(--album-color, #4f7cff) 68%, #0f172a 32%));
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,0.34), transparent 26%),
+    linear-gradient(145deg,
+      color-mix(in srgb, var(--album-color, #4f7cff) 92%, white 8%),
+      color-mix(in srgb, var(--album-color, #4f7cff) 88%, #1d4ed8 12%)
+    );
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -26px 58px rgba(15, 23, 42, 0.2),
-    0 18px 32px rgba(37, 99, 235, 0.14),
-    0 12px 24px rgba(15, 23, 42, 0.12);
-  filter: saturate(1.01);
+    inset 0 1px 0 rgba(255,255,255,0.32),
+    inset -14px 0 20px rgba(15, 23, 42, 0.16),
+    0 22px 38px color-mix(in srgb, var(--album-color, #4f7cff) 22%, transparent),
+    0 10px 20px rgba(15, 23, 42, 0.08);
   overflow: hidden;
-  transition: box-shadow 0.18s ease, transform 0.18s ease;
+  transition: box-shadow 0.18s ease, transform 0.18s ease, filter 0.18s ease;
 }
 
 .book-icon::before {
   content: "";
   position: absolute;
-  inset: 1px;
-  border-radius: 21px 29px 29px 21px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  top: 10px;
+  bottom: 10px;
+  left: 14px;
+  width: 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.16);
   pointer-events: none;
 }
 
 .book-icon::after {
   content: "";
   position: absolute;
-  top: 14px;
-  right: 14px;
-  left: 52px;
-  height: 40%;
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0));
+  top: 20px;
+  right: 18px;
+  left: 40px;
+  height: 34px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
   pointer-events: none;
 }
 
-.album-book-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
 
-.album-book-shadow {
-  fill: rgba(15, 23, 42, 0.09);
-}
-
-.album-book-spine {
-  fill: color-mix(in srgb, var(--album-color, #4f7cff) 58%, #0f172a 42%);
-}
-
-.album-book-cover {
-  fill: rgba(255, 255, 255, 0.05);
-}
-
-.album-book-gloss {
-  fill: rgba(255, 255, 255, 0.12);
-}
-
-.album-book-emblem {
-  fill: rgba(255, 255, 255, 0.12);
-  stroke: rgba(255, 255, 255, 0.32);
-  stroke-width: 3;
-}
-
-.album-book-emblem-core {
-  fill: rgba(255, 255, 255, 0.88);
-}
-
-.album-book-page-lines {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.26);
-  stroke-linecap: round;
-  stroke-width: 3;
-}
 
 .album-info {
   position: absolute;
