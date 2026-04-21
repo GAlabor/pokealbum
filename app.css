@@ -169,6 +169,16 @@ button {
   margin-bottom: 24px;
   display: grid;
   place-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.albums-empty-icon:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.28);
+  outline-offset: 8px;
+  border-radius: 30px;
 }
 
 .albums-empty-book {

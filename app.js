@@ -1,7 +1,7 @@
 const $ = (id) => document.getElementById(id);
 
 const elements = Object.fromEntries([
-  'mainApp','albumScreen','albumsRow','albumsEmptyState','createFirstAlbumBtn','searchResultsRow','searchEmptyState','searchInput',
+  'mainApp','albumScreen','albumsRow','albumsEmptyState','createFirstAlbumBtn','createFirstAlbumIcon','searchResultsRow','searchEmptyState','searchInput',
   'editModalBackdrop','editModal','albumNameInput','albumPagesInput','albumSlotsInput',
   'colorGrid','cancelEditBtn','saveEditBtn','selectedColorDot','selectedColorText',
   'contextMenuBackdrop','contextMenu','contextMenuTitle','contextEditBtn','contextRenameBtn','contextDeleteBtn',
@@ -165,12 +165,18 @@ function renderAppVersion(version) {
   elements.appVersion.hidden = !version;
   elements.appVersion.textContent = version ? `v${version}` : '';
 }
+
 function syncAlbumsEmptyState() {
   const hasAlbums = elements.albumsRow.querySelector('.album-card') !== null;
-  elements.albumsEmptyState.hidden = hasAlbums;
-  elements.albumsRow.hidden = !hasAlbums;
-}
 
+  elements.albumsEmptyState.hidden = hasAlbums;
+  elements.albumsEmptyState.classList.toggle('is-hidden', hasAlbums);
+  elements.albumsEmptyState.style.display = hasAlbums ? 'none' : '';
+
+  elements.albumsRow.hidden = !hasAlbums;
+  elements.albumsRow.classList.toggle('is-hidden', !hasAlbums);
+  elements.albumsRow.style.display = hasAlbums ? '' : 'none';
+}
 
 function updateSelectedColorPreview() {
   elements.selectedColorDot.style.background = state.selectedColor;
@@ -473,6 +479,11 @@ function saveAlbumChanges() {
 }
 
 function bindEvents() {
+  const createAndShowAlbums = () => {
+    createAlbum();
+    setSectionView('albums');
+  };
+
   [
     ['backToAlbumsBtn', closeAlbumScreen],
     ['openAddCardBtn', () => state.openedAlbumCard && setAlbumView('add-card')],
@@ -483,10 +494,17 @@ function bindEvents() {
     ['saveEditBtn', saveAlbumChanges],
     ['navAlbumsBtn', () => setSectionView('albums')],
     ['navSearchBtn', () => setSectionView('search')],
-    ['navAddBtn', () => { createAlbum(); setSectionView('albums'); }],
-    ['createAlbumBtn', () => { createAlbum(); setSectionView('albums'); }],
-    ['createFirstAlbumBtn', () => { createAlbum(); setSectionView('albums'); }]
+    ['navAddBtn', createAndShowAlbums],
+    ['createAlbumBtn', createAndShowAlbums],
+    ['createFirstAlbumBtn', createAndShowAlbums],
+    ['createFirstAlbumIcon', createAndShowAlbums]
   ].forEach(([key, handler]) => elements[key].addEventListener('click', handler));
+
+  elements.createFirstAlbumIcon.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    stop(event);
+    createAndShowAlbums();
+  });
 
   const contextActions = {
     contextEditBtn: runContextAction(openEditModal),
