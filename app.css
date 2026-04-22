@@ -92,6 +92,13 @@ button {
   margin-bottom: 18px;
 }
 
+.app-owner-block {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .app-owner-btn {
   padding: 0;
   margin: 0;
@@ -103,6 +110,15 @@ button {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
+}
+
+.app-owner-stats {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
 }
 
 .app-owner-label,

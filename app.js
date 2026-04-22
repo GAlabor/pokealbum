@@ -65,13 +65,18 @@ function setSectionView(viewName) {
   };
 
   Object.entries({ albums: 'albumsView', search: 'searchView', add: 'addView' })
-    .forEach(([name, key]) => elements[key].classList.toggle('active', name === viewName));
+    .forEach(([name, key]) => elements[key]?.classList.toggle('active', name === viewName));
 
   Object.entries({ albums: 'navAlbumsBtn', search: 'navSearchBtn', add: 'navAddBtn' })
-    .forEach(([name, key]) => elements[key].classList.toggle('active', name === viewName));
+    .forEach(([name, key]) => elements[key]?.classList.toggle('active', name === viewName));
 
-  elements.mainScreenTitle.textContent = viewMap[viewName][2];
-  if (viewName === 'search') renderSearchResults(elements.searchInput.value);
+  if (elements.mainScreenTitle) {
+    elements.mainScreenTitle.textContent = viewMap[viewName]?.[2] || '';
+  }
+
+  if (viewName === 'search' && elements.searchInput) {
+    renderSearchResults(elements.searchInput.value);
+  }
 }
 
 function setAlbumView(viewName) {
