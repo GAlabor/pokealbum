@@ -1,211 +1,1952 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Album</title>
-  <meta name="theme-color" content="#2563eb" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <link rel="apple-touch-icon" href="ico/apple-touch-icon-180x180-flat.png" />
-  <link rel="preload" href="app.css" as="style" />
-  <link rel="preload" href="app.js" as="script" />
-  <link rel="stylesheet" href="app.css" />
-  <link rel="manifest" href="manifest.webmanifest" />
-</head>
-<body>
-  <main class="app" id="mainApp">
-    <div class="app-shell">
-      <header class="screen-header screen-header-home">
-<div class="app-owner-block">
-  <button class="app-owner-btn" id="appOwnerBtn" type="button">
-    <span class="app-owner-label">POKÉALBUM DI</span>
-    <span class="app-owner-name" id="appOwnerName">IL TUO NOME</span>
-    <span class="screen-version" id="appVersion" hidden></span>
-  </button>
-  <p class="app-owner-stats">Carte 0 - Totale € 0,00</p>
-</div>
-      </header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>PokéAlbum Home</title>
+    <style>
+      :root {
+        --bg1: #edf2fb;
+        --bg2: #dfe9fb;
+        --bg3: #dff4ff;
+        --blue: #2f64ff;
+        --blue2: #5d90ff;
+        --text: #14254f;
+        --muted: #7080a3;
+        --panel: rgba(255, 255, 255, 0.54);
+        --panel-stroke: rgba(255, 255, 255, 0.7);
+        --shadow: 0 20px 50px rgba(64, 96, 170, 0.18);
+        --safe-top: max(16px, env(safe-area-inset-top));
+        --safe-bottom: max(16px, env(safe-area-inset-bottom));
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+          "Helvetica Neue", Arial, sans-serif;
+        color: var(--text);
+        overflow: hidden;
+        background:
+          radial-gradient(
+            circle at 15% 88%,
+            rgba(153, 170, 255, 0.28),
+            transparent 26%
+          ),
+          radial-gradient(
+            circle at 86% 14%,
+            rgba(124, 214, 255, 0.38),
+            transparent 23%
+          ),
+          radial-gradient(
+            circle at 50% 55%,
+            rgba(255, 255, 255, 0.78),
+            transparent 30%
+          ),
+          linear-gradient(180deg, var(--bg2), var(--bg1) 55%, #e7eefb 100%);
+      }
+      body {
+        min-height: 100svh;
+        min-height: 100dvh;
+        display: block;
+      }
+      .phone-stage {
+        width: 100%;
+        height: 100%;
+        display: block;
+        padding: 0;
+      }
+      .screen {
+        width: 100vw;
+        height: 100dvh;
+        min-height: 100svh;
+        position: relative;
+        overflow: hidden;
+        background:
+          radial-gradient(
+            circle at 18% 90%,
+            rgba(154, 170, 255, 0.22),
+            transparent 22%
+          ),
+          radial-gradient(
+            circle at 85% 10%,
+            rgba(126, 221, 255, 0.34),
+            transparent 22%
+          ),
+          radial-gradient(
+            circle at 50% 50%,
+            rgba(255, 255, 255, 0.66),
+            transparent 28%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(241, 246, 255, 0.96),
+            rgba(225, 234, 249, 0.95)
+          );
+        box-shadow: none;
+      }
+      .screen::before {
+        content: "";
+        position: absolute;
+        inset: -14% -20%;
+        background:
+          radial-gradient(
+            circle at 24% 22%,
+            rgba(255, 255, 255, 0.82),
+            transparent 16%
+          ),
+          radial-gradient(
+            circle at 73% 71%,
+            rgba(255, 255, 255, 0.4),
+            transparent 19%
+          );
+        filter: blur(22px);
+        pointer-events: none;
+      }
+      .content {
+        position: relative;
+        z-index: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: calc(var(--safe-top) + 10px) 20px
+          calc(var(--safe-bottom) + 128px);
+      }
+      .content.is-form-open {
+        padding-bottom: calc(var(--safe-bottom) + 20px);
+      }
+      .top-meta {
+        flex: 0 0 auto;
+        padding: 8px 8px 0;
+        max-width: min(100%, 760px);
+      }
+      .eyebrow {
+        margin: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: baseline;
+        column-gap: 0.45em;
+        row-gap: 0;
+        font-size: clamp(14px, 1.25vw + 8px, 24px);
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #7f8fac;
+        line-height: 1.16;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+        white-space: nowrap;
+      }
+      .eyebrow .label {
+        color: #7f8fac;
+        white-space: nowrap;
+        flex: 0 0 auto;
+      }
+      .eyebrow .accent {
+        display: inline-flex;
+        align-items: baseline;
+        position: relative;
+        color: #3f6fe9;
+        font-weight: 950;
+        padding-bottom: 4px;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+        white-space: nowrap;
+        flex: 0 0 auto;
+        max-width: none;
+      }
+      .eyebrow .accent::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 3px;
+        border-radius: 999px;
+        background: linear-gradient(
+          90deg,
+          rgba(63, 111, 233, 0),
+          rgba(63, 111, 233, 0.42) 50%,
+          rgba(63, 111, 233, 0)
+        );
+        pointer-events: none;
+      }
+      .sub {
+        margin: 0;
+        font-size: clamp(14px, 0.52vw + 12px, 21px);
+        font-weight: 350;
+        letter-spacing: 0.002em;
+        color: #7382a2;
+        line-height: 1.24;
+        -webkit-font-smoothing: antialiased;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+      }
+      .sub strong {
+        font-weight: 600;
+        color: #7382a2;
+      }
+      .sub-wrap {
+        margin: 9px 0 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .price-value {
+        transition: color 0.2s ease;
+      }
+      .price-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #8b98b6;
+        cursor: pointer;
+        border-radius: 999px;
+        transition:
+          background-color 0.18s ease,
+          color 0.18s ease,
+          transform 0.18s ease;
+      }
+      .price-toggle:hover {
+        background: rgba(47, 100, 255, 0.08);
+        color: #5c78c9;
+      }
+      .price-toggle:active {
+        transform: scale(0.96);
+      }
+      .price-toggle:focus-visible {
+        outline: 2px solid rgba(47, 100, 255, 0.28);
+        outline-offset: 2px;
+      }
+      .eye-icon {
+        width: 18px;
+        height: 18px;
+        display: block;
+      }
+      .eye-off {
+        display: none;
+      }
+      .price-toggle.is-hidden .eye-open {
+        display: none;
+      }
+      .price-toggle.is-hidden .eye-off {
+        display: block;
+      }
+      .hero {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: clamp(12px, 2.2vh, 18px);
+        padding: clamp(10px, 2vh, 18px) 8px 0;
+      }
+      .hero.is-hidden,
+      .albums-view.is-hidden {
+        display: none;
+      }
+      .album-wrap {
+        position: relative;
+        width: min(46vw, 190px);
+        aspect-ratio: 1 / 1;
+        margin-bottom: clamp(2px, 1vh, 8px);
+        filter: drop-shadow(0 18px 22px rgba(57, 91, 176, 0.14));
+      }
+      .album {
+        position: absolute;
+        inset: 0;
+        border-radius: 28px;
+        background: linear-gradient(
+          180deg,
+          rgba(94, 133, 255, 0.95),
+          rgba(42, 84, 233, 1)
+        );
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.35),
+          inset 0 -14px 30px rgba(10, 30, 120, 0.12);
+      }
+      .album::before {
+        content: "";
+        position: absolute;
+        left: 16%;
+        top: 14%;
+        width: 50%;
+        height: 22%;
+        border-radius: 18px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.22),
+          rgba(255, 255, 255, 0.1)
+        );
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+        backdrop-filter: blur(8px);
+      }
+      .album::after {
+        content: "";
+        position: absolute;
+        right: 10%;
+        top: 10%;
+        bottom: 10%;
+        width: 5.5%;
+        border-radius: 20px;
+        background: linear-gradient(
+          180deg,
+          rgba(38, 64, 191, 0.95),
+          rgba(29, 57, 181, 1)
+        );
+        opacity: 0.95;
+      }
+      .plus-badge {
+        position: absolute;
+        right: -2%;
+        bottom: -2%;
+        width: 30%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(14px);
+        box-shadow:
+          0 12px 24px rgba(78, 110, 185, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        color: var(--blue);
+        padding: 0;
+      }
+      .plus-badge::before,
+      .plus-badge::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 999px;
+        background: currentColor;
+      }
+      .plus-badge::before {
+        width: 38%;
+        height: 2.5px;
+      }
+      .plus-badge::after {
+        width: 2.5px;
+        height: 38%;
+      }
+      h1 {
+        margin: 0;
+        max-width: 290px;
+        font-size: clamp(30px, 5.2vh, 42px);
+        line-height: 0.94;
+        letter-spacing: -0.06em;
+        font-weight: 950;
+        color: #1c2e5a;
+        text-wrap: balance;
+      }
+      .lead {
+        margin: 0;
+        max-width: 280px;
+        font-size: clamp(16px, 2.3vh, 19px);
+        line-height: 1.38;
+        color: #6d7c9a;
+        text-wrap: balance;
+      }
+      .cta {
+        margin-top: clamp(4px, 0.9vh, 10px);
+        border: 0;
+        min-height: 62px;
+        width: min(100%, 320px);
+        border-radius: 999px;
+        padding: 0 28px;
+        font-size: clamp(18px, 2.7vh, 21px);
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        color: #fff;
+        background: linear-gradient(
+          135deg,
+          #7aa6ff 0%,
+          #4f83ff 38%,
+          #2f64ff 100%
+        );
+        box-shadow:
+          0 18px 36px rgba(52, 96, 220, 0.3),
+          0 8px 16px rgba(79, 131, 255, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.34),
+          inset 0 -10px 22px rgba(23, 52, 163, 0.18);
+        cursor: pointer;
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease,
+          filter 0.18s ease;
+      }
+      .cta:hover {
+        transform: translateY(-1px);
+        box-shadow:
+          0 22px 40px rgba(52, 96, 220, 0.34),
+          0 10px 18px rgba(79, 131, 255, 0.24),
+          inset 0 1px 0 rgba(255, 255, 255, 0.34),
+          inset 0 -10px 22px rgba(23, 52, 163, 0.18);
+        filter: saturate(1.04);
+      }
+      .cta:active {
+        transform: translateY(1px) scale(0.995);
+      }
+      .albums-view {
+        flex: 1 1 auto;
+        min-height: 0;
+        margin-top: clamp(14px, 2vh, 22px);
+        padding: clamp(24px, 3.2vh, 34px) 8px 0;
+        overflow: auto;
+        border-top: 1px solid rgba(108, 131, 190, 0.14);
+      }
+      .albums-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 190px));
+        gap: 24px 18px;
+        align-content: start;
+        justify-content: center;
+        justify-items: center;
+      }
+      .album-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+      }
+      .album-card .album-wrap {
+        width: 100%;
+        max-width: 190px;
+        margin-bottom: 0;
+        overflow: hidden;
+        border-radius: 32px;
+      }
+      .album-info {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px;
+        background: linear-gradient(
+          to top,
+          rgba(2, 6, 23, 0.66) 0%,
+          rgba(15, 23, 42, 0.26) 42%,
+          rgba(15, 23, 42, 0) 100%
+        );
+        border-radius: 0 0 32px 32px;
+        pointer-events: none;
+      }
+      .album-title {
+        margin: 0;
+        max-width: 100%;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 650;
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+        word-break: break-word;
+      }
+      .album-meta {
+        margin: 0;
+        min-width: 42px;
+        height: 32px;
+        padding: 0 9px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        background: rgba(255, 255, 255, 0.18);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 650;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      .album-name {
+        display: none;
+      }
+      .bottom-nav-shell {
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: calc(var(--safe-bottom) + 10px);
+        z-index: 3;
+        height: 92px;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(24px) saturate(140%);
+        box-shadow:
+          0 20px 35px rgba(67, 83, 134, 0.18),
+          inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.45);
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: end;
+        padding: 14px 18px 12px;
+        max-width: none;
+      }
+      .bottom-nav-shell.is-hidden {
+        display: none;
+      }
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        color: #9aa3b5;
+        font-weight: 700;
+        font-size: 13px;
+        min-width: 72px;
+      }
+      .nav-item.active {
+        color: var(--blue);
+      }
+      .nav-icon {
+        width: 28px;
+        height: 28px;
+        display: block;
+        opacity: 0.98;
+        overflow: visible;
+      }
+      .fab-wrap {
+        align-self: start;
+        margin-top: -34px;
+        padding: 10px;
+        border-radius: 999px;
+        background: rgba(243, 245, 251, 0.92);
+        box-shadow: 0 16px 28px rgba(66, 92, 162, 0.15);
+      }
+      .fab {
+        width: 74px;
+        height: 74px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        background: linear-gradient(180deg, #4d81ff, #2f64ff);
+        box-shadow:
+          0 18px 32px rgba(58, 101, 216, 0.32),
+          inset 0 1px 0 rgba(255, 255, 255, 0.28);
+        color: white;
+        padding: 0;
+        border: 0;
+        cursor: pointer;
+      }
+      .fab::before,
+      .fab::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 999px;
+        background: currentColor;
+      }
+      .fab::before {
+        width: 36%;
+        height: 3px;
+      }
+      .fab::after {
+        width: 3px;
+        height: 36%;
+      }
+      .app-view {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .app-view.is-hidden {
+        display: none;
+      }
+      .add-album-view {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 8px 0 0;
+      }
+      .add-album-view.is-hidden {
+        display: none;
+      }
+      .add-album-topbar {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 4px 0;
+        margin-bottom: 6px;
+        min-height: 44px;
+      }
+      .glass-icon-btn {
+        width: 42px;
+        height: 42px;
+        border: 1px solid rgba(255, 255, 255, 0.56);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.58);
+        backdrop-filter: blur(20px) saturate(145%);
+        box-shadow:
+          0 12px 24px rgba(73, 96, 157, 0.14),
+          inset 0 1px 0 rgba(255, 255, 255, 0.92);
+        color: #5c6f99;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition:
+          transform 0.18s ease,
+          background-color 0.18s ease,
+          color 0.18s ease,
+          box-shadow 0.18s ease;
+        padding: 0;
+      }
+      .glass-icon-btn:hover {
+        transform: translateY(-1px);
+        color: #3157c9;
+        background: rgba(255, 255, 255, 0.68);
+        box-shadow:
+          0 16px 28px rgba(73, 96, 157, 0.18),
+          inset 0 1px 0 rgba(255, 255, 255, 0.96);
+      }
+      .glass-icon-btn:active {
+        transform: scale(0.97);
+      }
+      .glass-icon-btn:focus-visible {
+        outline: 2px solid rgba(47, 100, 255, 0.24);
+        outline-offset: 3px;
+      }
+      .glass-icon-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2.2;
+      }
+      .glass-icon-btn.is-confirm {
+        color: var(--blue);
+      }
+      .add-album-title-wrap {
+        position: absolute;
+        left: 56px;
+        right: 56px;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 0;
+        text-align: center;
+        pointer-events: none;
+      }
+      .add-album-title {
+        margin: 0;
+        font-size: clamp(18px, 2.3vh, 22px);
+        line-height: 1.1;
+        letter-spacing: -0.03em;
+        font-weight: 850;
+        color: #1c2e5a;
+      }
+      .add-album-subtitle {
+        display: none;
+      }
+      .form-card {
+        width: 100%;
+        max-width: 420px;
+        align-self: center;
+        margin-top: 0;
+        background: rgba(255, 255, 255, 0.52);
+        border: 1px solid rgba(255, 255, 255, 0.62);
+        border-radius: 30px;
+        backdrop-filter: blur(24px) saturate(145%);
+        box-shadow:
+          0 24px 48px rgba(66, 89, 152, 0.14),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        overflow: hidden;
+        padding: 4px 0;
+      }
+      .form-row {
+        padding: 14px 16px 12px;
+        border-bottom: 1px solid rgba(111, 134, 188, 0.14);
+      }
+      .form-row:last-child {
+        border-bottom: 0;
+      }
+      .form-label {
+        display: block;
+        margin: 0;
+        font-size: 15px;
+        font-weight: 850;
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+        color: #243865;
+      }
+      .form-help {
+        margin: 2px 0 0;
+        font-size: 12px;
+        line-height: 1.2;
+        font-weight: 500;
+        color: #65779f;
+      }
+      .text-input,
+      .number-input {
+        width: 100%;
+        min-height: 48px;
+        border-radius: 18px;
+        border: 1px solid rgba(120, 146, 207, 0.18);
+        background: rgba(248, 251, 255, 0.9);
+        padding: 0 16px;
+        font-size: 15px;
+        font-weight: 650;
+        color: #20345f;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+        outline: none;
+        transition:
+          border-color 0.18s ease,
+          box-shadow 0.18s ease,
+          background-color 0.18s ease;
+      }
+      .text-input::placeholder,
+      .number-input::placeholder {
+        color: #9aa6bf;
+      }
+      .number-input {
+        text-align: left;
+      }
+      .text-input:focus,
+      .number-input:focus {
+        border-color: rgba(47, 100, 255, 0.34);
+        box-shadow:
+          0 0 0 4px rgba(47, 100, 255, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.96);
+      }
+      .color-picker-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 46px;
+        overflow: visible;
+        padding: 4px 0;
+        width: 100%;
+        min-width: 0;
+        flex-wrap: nowrap;
+      }
+      .color-picker-row::-webkit-scrollbar {
+        display: none;
+      }
+      .color-dot {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 28px;
+        height: 28px;
+        min-width: 28px;
+        min-height: 28px;
+        border-radius: 50%;
+        border: 0;
+        padding: 0;
+        position: relative;
+        cursor: pointer;
+        flex: 0 0 28px;
+        background-clip: padding-box;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.7),
+          0 8px 18px rgba(78, 101, 160, 0.16);
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease;
+      }
+      .color-dot:hover {
+        transform: translateY(-1px);
+      }
+      .color-dot:active {
+        transform: scale(0.96);
+      }
+      .color-dot.is-selected::after {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 50%;
+        border: 2px solid rgba(47, 100, 255, 0.38);
+      }
+      .color-dot.palette {
+        background: conic-gradient(
+          from 180deg,
+          #ff5f7a,
+          #ffb347,
+          #ffe56e,
+          #5bd78a,
+          #63b6ff,
+          #7b7dff,
+          #c274ff,
+          #ff5f7a
+        );
+      }
+      .form-grid-two {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      .field-line {
+        display: grid;
+        grid-template-columns: 86px minmax(0, 1fr);
+        grid-template-areas:
+          "label input"
+          "help input";
+        column-gap: 14px;
+        row-gap: 2px;
+        align-items: center;
+      }
+      .field-line .form-label {
+        grid-area: label;
+        align-self: end;
+      }
+      .field-line.no-help {
+        grid-template-areas: "label input";
+      }
+      .field-line.no-help .form-label {
+        align-self: center;
+      }
+      .field-line .form-help {
+        grid-area: help;
+        align-self: start;
+      }
+      .field-line .text-input,
+      .field-line .number-input,
+      .field-line .color-picker-row {
+        grid-area: input;
+        align-self: center;
+        min-width: 0;
+      }
+      .album-card .album {
+        background: linear-gradient(
+          180deg,
+          var(--album-color-light, rgba(94, 133, 255, 0.95)),
+          var(--album-color-dark, rgba(42, 84, 233, 1))
+        );
+      }
+      .album-card.is-pressed .album-wrap {
+        transform: translateY(1px) scale(0.98);
+        filter: drop-shadow(0 16px 20px rgba(57, 91, 176, 0.18)) saturate(1.04);
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: none;
+        padding: 0;
+        background: transparent;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+      .modal-backdrop.open {
+        display: block;
+      }
+      .context-menu {
+        position: fixed;
+        left: 16px;
+        top: 16px;
+        width: max-content;
+        min-width: 168px;
+        max-width: min(230px, calc(100vw - 32px));
+        padding: 6px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px) saturate(140%);
+        -webkit-backdrop-filter: blur(24px) saturate(150%);
+        box-shadow:
+          0 18px 34px rgba(25, 38, 82, 0.16),
+          inset 0 1px 0 rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.46);
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+      .context-menu *,
+      .context-header,
+      .menu-btn {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+      .context-header {
+        display: none;
+      }
+      .menu-btn {
+        width: 100%;
+        padding: 11px 12px;
+        border: 0;
+        border-radius: 13px;
+        background: transparent;
+        color: #243865;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .menu-icon {
+        width: 15px;
+        height: 15px;
+        flex: 0 0 15px;
+        stroke-width: 2;
+        opacity: 0.82;
+      }
+      .menu-btn:hover,
+      .menu-btn:active {
+        background: rgba(47, 100, 255, 0.08);
+      }
+      .menu-btn.danger {
+        color: #c62828;
+      }
+      html.suppress-selection,
+      html.suppress-selection *,
+      body.suppress-selection,
+      body.suppress-selection * {
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -webkit-touch-callout: none !important;
+      }
+      @media (max-width: 620px) {
+        .add-album-view {
+          gap: 14px;
+        }
+        .form-card {
+          border-radius: 26px;
+        }
+        .form-row {
+          padding: 12px 14px 10px;
+        }
+        .field-line {
+          grid-template-columns: 78px minmax(0, 1fr);
+          column-gap: 12px;
+        }
+        .glass-icon-btn {
+          width: 40px;
+          height: 40px;
+        }
+      }
+      svg {
+        overflow: visible;
+      }
+      @media (max-width: 620px) {
+        .top-meta {
+          padding: 6px 4px 0;
+        }
+        .eyebrow {
+          font-size: clamp(11px, 3.4vw, 16px);
+          letter-spacing: 0.14em;
+          column-gap: 0.35em;
+        }
+        .eyebrow .accent {
+          padding-bottom: 3px;
+        }
+        .sub {
+          font-size: clamp(12px, 3.7vw, 16px);
+        }
+        .sub-wrap {
+          gap: 8px;
+        }
+        .price-toggle {
+          width: 28px;
+          height: 28px;
+        }
+      }
+      @media (max-width: 380px) {
+        .eyebrow {
+          font-size: 11px;
+          letter-spacing: 0.12em;
+        }
+        .sub {
+          font-size: 12px;
+        }
+      }
+      @media (min-width: 1024px) {
+        .content {
+          padding-left: 32px;
+          padding-right: 32px;
+        }
+        .hero {
+          padding-left: 24px;
+          padding-right: 24px;
+        }
+        .album-wrap {
+          width: min(24vw, 210px);
+        }
+        h1 {
+          max-width: none;
+        }
+        .lead {
+          max-width: 420px;
+        }
+        .cta {
+          width: min(100%, 360px);
+        }
+        .bottom-nav-shell {
+          left: 24px;
+          right: 24px;
+        }
+        .albums-grid {
+          grid-template-columns: repeat(4, minmax(0, 210px));
+          gap: 28px 22px;
+        }
+        .album-card .album-wrap {
+          max-width: 210px;
+        }
+      }
+      @media (max-height: 760px) {
+        .content {
+          padding-top: calc(var(--safe-top) + 4px);
+          padding-bottom: calc(var(--safe-bottom) + 116px);
+        }
+        .hero {
+          gap: 12px;
+        }
+        .album-wrap {
+          width: min(40vw, 158px);
+        }
+        h1 {
+          font-size: clamp(27px, 4.5vh, 36px);
+          max-width: 260px;
+        }
+        .lead {
+          font-size: clamp(15px, 2vh, 17px);
+          max-width: 250px;
+        }
+        .cta {
+          min-height: 56px;
+          width: min(100%, 290px);
+        }
+        .bottom-nav-shell {
+          height: 86px;
+        }
+        .fab {
+          width: 68px;
+          height: 68px;
+        }
+        .albums-view {
+          margin-top: 10px;
+          padding-top: 18px;
+        }
+        .album-card .album-wrap {
+          max-width: 164px;
+        }
+      }
+      @media (max-height: 680px) {
+        .content {
+          padding-left: 18px;
+          padding-right: 18px;
+        }
+        .sub {
+          font-size: 14px;
+        }
+        .album-wrap {
+          width: min(34vw, 132px);
+        }
+        h1 {
+          font-size: clamp(24px, 4.2vh, 31px);
+          max-width: 230px;
+        }
+        .lead {
+          font-size: 15px;
+          max-width: 220px;
+        }
+        .cta {
+          min-height: 52px;
+          font-size: 18px;
+          width: min(100%, 270px);
+        }
+        .bottom-nav-shell {
+          left: 12px;
+          right: 12px;
+          height: 82px;
+          border-radius: 28px;
+        }
+        .fab {
+          width: 62px;
+          height: 62px;
+        }
+        .fab-wrap {
+          margin-top: -28px;
+        }
+        .album-card .album-wrap {
+          max-width: 144px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="phone-stage">
+      <main class="screen">
+        <section class="content">
+          <div class="app-view" id="homeView">
+            <header class="top-meta">
+              <p class="eyebrow">
+                <span class="label">Pokéalbum di</span>
+                <span class="accent">Il tuo nome</span>
+              </p>
 
-      <section class="view active" id="albumsView">
-        <div class="albums-empty-state" id="albumsEmptyState" hidden>
-          <div class="albums-empty-icon" id="createFirstAlbumIcon" role="button" tabindex="0" aria-label="Crea il primo album">
-            <div class="albums-empty-book"></div>
-            <div class="albums-empty-plus">+</div>
+              <div class="sub-wrap">
+                <p class="sub">
+                  Carte <strong>0</strong> - Totale
+                  <strong class="price-value" id="totalPriceValue"
+                    >€ 15,78</strong
+                  >
+                </p>
+                <button
+                  class="price-toggle"
+                  id="priceToggleBtn"
+                  type="button"
+                  aria-label="Nascondi totale"
+                  aria-pressed="false"
+                  title="Mostra o nascondi totale"
+                >
+                  <svg
+                    class="eye-icon eye-open"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12 18.7 18.5 12 18.5 1.5 12 1.5 12Z"
+                    ></path>
+                    <circle cx="12" cy="12" r="3.2"></circle>
+                  </svg>
+                  <svg
+                    class="eye-icon eye-off"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 3l18 18"></path>
+                    <path
+                      d="M10.6 5.7A10.9 10.9 0 0 1 12 5.5c6.7 0 10.5 6.5 10.5 6.5a18.5 18.5 0 0 1-3.2 4.2"
+                    ></path>
+                    <path
+                      d="M6.7 6.8C3.8 8.8 1.5 12 1.5 12s3.8 6.5 10.5 6.5c1.8 0 3.4-.5 4.8-1.2"
+                    ></path>
+                    <path d="M9.9 9.9a3.2 3.2 0 0 0 4.2 4.2"></path>
+                  </svg>
+                </button>
+              </div>
+            </header>
+
+            <section class="hero" id="emptyState">
+              <div class="album-wrap" aria-hidden="true">
+                <div class="album"></div>
+                <div class="plus-badge" aria-hidden="true"></div>
+              </div>
+
+              <h1>Nessun album presente</h1>
+              <p class="lead">Inizia la raccolta creando il tuo primo album.</p>
+              <button class="cta" id="createFirstAlbumBtn" type="button">
+                Aggiungi primo album
+              </button>
+            </section>
+
+            <section
+              class="albums-view is-hidden"
+              id="albumsView"
+              aria-label="Album creati"
+            >
+              <div class="albums-grid" id="albumsGrid"></div>
+            </section>
           </div>
-          <h2 class="albums-empty-title">Nessun album presente</h2>
-          <p class="albums-empty-text">Inizia la raccolta creando il tuo primo album.</p>
-          <button class="albums-empty-btn" id="createFirstAlbumBtn" type="button">Aggiungi primo album</button>
-        </div>
 
-        <section class="albums-row" id="albumsRow"></section>
-      </section>
-
-      <section class="view" id="searchView">
-        <div class="search-box">
-          <input
-            id="searchInput"
-            type="search"
-            placeholder="Cerca album"
-            autocomplete="off"
-          />
-        </div>
-        <section class="albums-row" id="searchResultsRow"></section>
-        <div class="search-results-empty" id="searchEmptyState" hidden>
-          Nessun album trovato.
-        </div>
-      </section>
-
-      <section class="view" id="addView">
-        <div class="add-panel">
-          <div class="add-preview" aria-hidden="true">
-            <div class="add-circle">+</div>
-          </div>
-
-          <button class="add-main-btn" id="createAlbumBtn" type="button">
-            <strong>Crea un nuovo album</strong>
-            <span>
-              Aggiunge un album alla raccolta mantenendo i tuoi colori e la numerazione ordinata.
-            </span>
-          </button>
-        </div>
-      </section>
-    </div>
-
-    <nav class="bottom-nav" aria-label="Navigazione principale">
-      <div class="nav-side">
-        <button class="nav-btn active" id="navAlbumsBtn" type="button" data-view="albums">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M6 4.5h9.5a2 2 0 0 1 2 2V20H8a2 2 0 0 0-2 2z"></path>
-            <path d="M6 4.5a2 2 0 0 0-2 2V20"></path>
-          </svg>
-          <span>Album</span>
-        </button>
-      </div>
-
-      <button class="nav-btn nav-btn-center" id="navAddBtn" type="button" data-view="add" aria-label="Aggiungi album">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 5v14"></path>
-          <path d="M5 12h14"></path>
-        </svg>
-      </button>
-
-      <div class="nav-side">
-        <button class="nav-btn" id="navSearchBtn" type="button" data-view="search">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="m20 20-3.5-3.5"></path>
-          </svg>
-          <span>Cerca</span>
-        </button>
-      </div>
-    </nav>
-
-    <div class="modal-backdrop" id="editModalBackdrop">
-      <div class="modal" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
-        <h3 id="editModalTitle">Modifica album</h3>
-
-        <div class="field">
-          <label for="albumNameInput">Nome album</label>
-          <input id="albumNameInput" type="text" placeholder="Nome album" />
-        </div>
-
-        <div class="field">
-          <label>Colore libro</label>
-          <div class="color-grid" id="colorGrid"></div>
-          <div class="selected-color-preview" id="selectedColorPreview">
-            <span class="selected-color-dot" id="selectedColorDot"></span>
-            <span id="selectedColorText">Colore selezionato</span>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="albumPagesInput">Numero pagine</label>
-          <input id="albumPagesInput" type="number" min="1" inputmode="numeric" placeholder="Es. 10" />
-        </div>
-
-        <div class="field">
-          <label for="albumSlotsInput">Slot per pagina</label>
-          <input id="albumSlotsInput" type="number" min="1" inputmode="numeric" placeholder="Es. 9" />
-        </div>
-
-        <div class="modal-actions">
-          <button class="modal-btn secondary" id="cancelEditBtn" type="button">Annulla</button>
-          <button class="modal-btn primary" id="saveEditBtn" type="button">Salva</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal-backdrop" id="contextMenuBackdrop">
-      <div class="context-menu" id="contextMenu" role="dialog" aria-modal="true" aria-labelledby="contextMenuTitle">
-        <div class="context-header" id="contextMenuTitle">Album</div>
-        <button class="menu-btn" id="contextEditBtn" type="button">Modifica</button>
-        <button class="menu-btn" id="contextRenameBtn" type="button">Rinomina</button>
-        <button class="menu-btn danger" id="contextDeleteBtn" type="button">Elimina</button>
-      </div>
-    </div>
-  </main>
-
-  <section class="album-screen" id="albumScreen">
-    <div class="album-screen-view active" id="albumDetailView">
-      <div class="screen-topbar album-topbar">
-        <button class="back-btn" id="backToAlbumsBtn" type="button" aria-label="Torna agli album">
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-
-        <button class="add-card-top-btn" id="openAddCardBtn" type="button" aria-label="Aggiungi carta">
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 5v14" />
-            <path d="M5 12h14" />
-          </svg>
-        </button>
-      </div>
-
-      <div class="album-empty-screen">
-        <div class="album-empty-header">
-          <h1 class="screen-title album-screen-title" id="screenAlbumTitle">Album</h1>
-          <p class="screen-subtitle" id="screenAlbumMeta">0 pagine • 0 slot totali</p>
-        </div>
-
-        <div class="album-empty-state" id="albumEmptyState">
-          <div class="album-empty-illustration" aria-hidden="true">
-            <div class="empty-card-icon">
-              <div class="empty-card-ring"></div>
+          <section
+            class="add-album-view is-hidden"
+            id="addAlbumView"
+            aria-label="Aggiungi album"
+          >
+            <div class="add-album-topbar">
+              <button
+                class="glass-icon-btn"
+                id="closeAddAlbumBtn"
+                type="button"
+                aria-label="Chiudi schermata aggiungi album"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M6 6l12 12"></path>
+                  <path d="M18 6L6 18"></path>
+                </svg>
+              </button>
+              <div class="add-album-title-wrap">
+                <h2 class="add-album-title" id="addAlbumTitle">
+                  Aggiungi album
+                </h2>
+              </div>
+              <button
+                class="glass-icon-btn is-confirm"
+                id="saveAlbumBtn"
+                type="button"
+                aria-label="Conferma creazione album"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M5 12.5l4.2 4.2L19 7.4"></path>
+                </svg>
+              </button>
             </div>
+
+            <div class="form-card">
+              <div class="form-row">
+                <div class="field-line no-help">
+                  <label class="form-label" for="albumNameInput">Nome</label>
+                  <input
+                    class="text-input"
+                    id="albumNameInput"
+                    type="text"
+                    placeholder="Nome album"
+                    maxlength="40"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field-line no-help">
+                  <span class="form-label">Colore</span>
+                  <div class="color-picker-row" id="colorPickerRow">
+                    <button
+                      class="color-dot is-selected"
+                      type="button"
+                      data-color="#4f83ff"
+                      aria-label="Blu"
+                      style="background: #4f83ff"
+                    ></button>
+                    <button
+                      class="color-dot"
+                      type="button"
+                      data-color="#ff3b30"
+                      aria-label="Rosso"
+                      style="background: #ff3b30"
+                    ></button>
+                    <button
+                      class="color-dot"
+                      type="button"
+                      data-color="#44c28d"
+                      aria-label="Verde"
+                      style="background: #44c28d"
+                    ></button>
+                    <button
+                      class="color-dot"
+                      type="button"
+                      data-color="#ffd60a"
+                      aria-label="Giallo"
+                      style="background: #ffd60a"
+                    ></button>
+                    <button
+                      class="color-dot"
+                      type="button"
+                      data-color="#63d2ff"
+                      aria-label="Celeste"
+                      style="background: #63d2ff"
+                    ></button>
+                    <button
+                      class="color-dot palette"
+                      id="paletteColorBtn"
+                      type="button"
+                      aria-label="Scegli colore personalizzato"
+                    ></button>
+                    <input
+                      id="albumColorInput"
+                      type="color"
+                      value="#4f83ff"
+                      aria-label="Tavolozza colori"
+                      style="
+                        position: absolute;
+                        opacity: 0;
+                        pointer-events: none;
+                        width: 1px;
+                        height: 1px;
+                      "
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field-line">
+                  <label class="form-label" for="totalPagesInput">Pagine</label>
+                  <input
+                    class="number-input"
+                    id="totalPagesInput"
+                    type="number"
+                    min="1"
+                    max="999"
+                    value="12"
+                  />
+                  <p class="form-help">Pagine totali</p>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="field-line">
+                  <label class="form-label" for="slotsPerPageInput">Slot</label>
+                  <input
+                    class="number-input"
+                    id="slotsPerPageInput"
+                    type="number"
+                    min="1"
+                    max="99"
+                    value="9"
+                  />
+                  <p class="form-help">Slot per pagina</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <nav class="bottom-nav-shell" id="bottomNav" aria-label="Navigazione">
+          <div class="nav-item active">
+            <svg
+              class="nav-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path
+                d="M7.25 4.75h8.6c1.35 0 2.4 1.02 2.4 2.32v10.11c0 1.3-1.05 2.32-2.4 2.32h-8.6c-1.35 0-2.4-1.02-2.4-2.32V7.07c0-1.3 1.05-2.32 2.4-2.32Z"
+              ></path>
+              <path d="M9.2 4.75v14.75"></path>
+              <path d="M10.7 7.6h5.05"></path>
+            </svg>
+            <span>Album</span>
           </div>
-          <p class="album-empty-text">L'album è vuoto</p>
-          <button class="add-first-card-btn" id="addFirstCardBtn" type="button">Aggiungi prima carta</button>
+
+          <div class="fab-wrap">
+            <button
+              class="fab"
+              id="addAlbumBtn"
+              type="button"
+              aria-label="Aggiungi album"
+            ></button>
+          </div>
+
+          <div class="nav-item">
+            <svg
+              class="nav-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="10.5" cy="10.5" r="5.6"></circle>
+              <path d="M15 15l4.15 4.15"></path>
+            </svg>
+            <span>Cerca</span>
+          </div>
+        </nav>
+
+        <div class="modal-backdrop" id="contextMenuBackdrop">
+          <div
+            class="context-menu"
+            id="contextMenu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Azioni album"
+          >
+            <button class="menu-btn" id="contextEditBtn" type="button">
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <rect x="4" y="5" width="16" height="14" rx="3"></rect>
+                <path d="M8 9h8"></path>
+                <path d="M8 13h5"></path>
+                <path d="M17 13.5l2 2"></path>
+                <path d="M19 13.5l-2 2"></path>
+              </svg>
+              <span>Modifica</span>
+            </button>
+            <button class="menu-btn" id="contextRenameBtn" type="button">
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+              </svg>
+              <span>Rinomina</span>
+            </button>
+            <button class="menu-btn danger" id="contextDeleteBtn" type="button">
+              <svg
+                class="menu-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 6h18"></path>
+                <path d="M8 6V4h8v2"></path>
+                <path d="M19 6l-1 14H6L5 6"></path>
+                <path d="M10 11v5"></path>
+                <path d="M14 11v5"></path>
+              </svg>
+              <span>Elimina</span>
+            </button>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
 
-    <div class="album-screen-view" id="addCardView">
-      <div class="screen-topbar add-card-topbar">
-        <button class="back-btn" id="backToAlbumBtn" type="button" aria-label="Torna all'album">
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M15 18l-6-6 6-6" />
-          </svg>
-        </button>
-      </div>
+    <template id="albumTemplate">
+      <article class="album-card">
+        <div class="album-wrap" aria-hidden="true">
+          <div class="album" data-album-cover></div>
+          <div class="album-info">
+            <p class="album-title">Album 1</p>
+            <p class="album-meta">0/108</p>
+          </div>
+        </div>
+        <p class="album-name">Album 1</p>
+      </article>
+    </template>
 
-      <div class="add-card-header">
-        <h1 class="screen-title">Aggiungi carta</h1>
-      </div>
+    <script>
+      (() => {
+        const $ = (selector, root = document) => root.querySelector(selector);
+        const $$ = (selector, root = document) => [
+          ...root.querySelectorAll(selector),
+        ];
+        const on = (target, events, handler, options) =>
+          events
+            .split(" ")
+            .forEach((event) =>
+              target.addEventListener(event, handler, options),
+            );
 
-      <div class="search-box add-card-search-box">
-        <input
-          id="cardSearchInput"
-          type="search"
-          placeholder="Cerca carta"
-          autocomplete="off"
-        />
-      </div>
-    </div>
-  </section>
+        const els = {
+          content: $(".content"),
+          homeView: $("#homeView"),
+          addAlbumView: $("#addAlbumView"),
+          bottomNav: $("#bottomNav"),
+          emptyState: $("#emptyState"),
+          albumsView: $("#albumsView"),
+          albumsGrid: $("#albumsGrid"),
+          addAlbumBtn: $("#addAlbumBtn"),
+          createFirstAlbumBtn: $("#createFirstAlbumBtn"),
+          albumTemplate: $("#albumTemplate"),
+          closeAddAlbumBtn: $("#closeAddAlbumBtn"),
+          addAlbumTitle: $("#addAlbumTitle"),
+          saveAlbumBtn: $("#saveAlbumBtn"),
+          albumNameInput: $("#albumNameInput"),
+          totalPagesInput: $("#totalPagesInput"),
+          slotsPerPageInput: $("#slotsPerPageInput"),
+          colorPickerRow: $("#colorPickerRow"),
+          paletteColorBtn: $("#paletteColorBtn"),
+          albumColorInput: $("#albumColorInput"),
+          priceToggleBtn: $("#priceToggleBtn"),
+          totalPriceValue: $("#totalPriceValue"),
+          contextMenuBackdrop: $("#contextMenuBackdrop"),
+          contextMenu: $("#contextMenu"),
+          contextEditBtn: $("#contextEditBtn"),
+          contextRenameBtn: $("#contextRenameBtn"),
+          contextDeleteBtn: $("#contextDeleteBtn"),
+        };
 
-  <script src="app.js"></script>
-</body>
+        const DEFAULT_ALBUM = Object.freeze({
+          color: "#4f83ff",
+          totalPages: 12,
+          slotsPerPage: 9,
+        });
+        const LONG_PRESS_MS = 500;
+        const MOVE_TOLERANCE_PX = 12;
+        const visibleTotalPrice = els.totalPriceValue.textContent.trim();
+        const hiddenTotalPrice = "€ *,**";
+
+        const state = {
+          albumCount: 0,
+          selectedColor: DEFAULT_ALBUM.color,
+          isPriceHidden: false,
+          contextAlbum: null,
+          editingAlbum: null,
+          contextOpenedAt: 0,
+          lastContextActionAt: 0,
+          press: null,
+        };
+
+        const stopEvent = (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        };
+
+        const clearTextSelection = () => {
+          try {
+            window.getSelection?.().removeAllRanges();
+          } catch {}
+        };
+
+        function toggleSelectionSuppressed(enabled) {
+          document.documentElement.classList.toggle(
+            "suppress-selection",
+            enabled,
+          );
+          document.body?.classList.toggle("suppress-selection", enabled);
+          if (enabled) clearTextSelection();
+        }
+
+        function clamp(value, min = 0, max = 255) {
+          return Math.max(min, Math.min(max, value));
+        }
+
+        function hexToRgb(hex) {
+          const normalized = hex.replace("#", "");
+          const value =
+            normalized.length === 3
+              ? normalized
+                  .split("")
+                  .map((char) => char + char)
+                  .join("")
+              : normalized;
+          const intValue = parseInt(value, 16);
+          return {
+            r: (intValue >> 16) & 255,
+            g: (intValue >> 8) & 255,
+            b: intValue & 255,
+          };
+        }
+
+        function shadeColor(hex, amount) {
+          const { r, g, b } = hexToRgb(hex);
+          return `rgb(${clamp(r + amount)}, ${clamp(g + amount)}, ${clamp(b + amount)})`;
+        }
+
+        function getAlbumDataFromForm(fallbackName) {
+          return {
+            name: els.albumNameInput.value.trim() || fallbackName,
+            color: state.selectedColor,
+            totalPages: Math.max(1, Number(els.totalPagesInput.value) || 1),
+            slotsPerPage: Math.max(1, Number(els.slotsPerPageInput.value) || 1),
+          };
+        }
+
+        function renderAlbum(albumNode) {
+          const { name, color, totalPages, slotsPerPage } = albumNode.albumData;
+          const totalSlots = totalPages * slotsPerPage;
+          $(".album-name", albumNode).textContent = name;
+          $(".album-title", albumNode).textContent = name;
+          $(".album-meta", albumNode).textContent = `0/${totalSlots}`;
+          $("[data-album-cover]", albumNode).style.cssText =
+            `--album-color-light:${shadeColor(color, 26)};--album-color-dark:${shadeColor(color, -18)}`;
+          albumNode.title = `${totalPages} pagine · ${totalSlots} slot totali`;
+        }
+
+        function createAlbumNode(data) {
+          const node =
+            els.albumTemplate.content.firstElementChild.cloneNode(true);
+          node.albumData = data;
+          renderAlbum(node);
+          return node;
+        }
+
+        function syncEmptyState() {
+          const hasAlbums = els.albumsGrid.children.length > 0;
+          els.emptyState.classList.toggle("is-hidden", hasAlbums);
+          els.albumsView.classList.toggle("is-hidden", !hasAlbums);
+        }
+
+        function setView(view) {
+          const isForm = view === "form";
+          els.homeView.classList.toggle("is-hidden", isForm);
+          els.addAlbumView.classList.toggle("is-hidden", !isForm);
+          els.bottomNav.classList.toggle("is-hidden", isForm);
+          els.content.classList.toggle("is-form-open", isForm);
+        }
+
+        function setSelectedColor(color, triggerButton = null) {
+          state.selectedColor = color;
+          els.albumColorInput.value = color;
+          $$(".color-dot", els.colorPickerRow).forEach((button) =>
+            button.classList.remove("is-selected"),
+          );
+          (
+            triggerButton ||
+            $(`[data-color="${color}"]`, els.colorPickerRow) ||
+            els.paletteColorBtn
+          ).classList.add("is-selected");
+        }
+
+        function resetFormDefaults() {
+          state.editingAlbum = null;
+          els.albumNameInput.value = "";
+          els.totalPagesInput.value = DEFAULT_ALBUM.totalPages;
+          els.slotsPerPageInput.value = DEFAULT_ALBUM.slotsPerPage;
+          setSelectedColor(
+            DEFAULT_ALBUM.color,
+            $(`[data-color="${DEFAULT_ALBUM.color}"]`, els.colorPickerRow),
+          );
+        }
+
+        function fillFormFromAlbum(albumNode) {
+          const { name, color, totalPages, slotsPerPage } = albumNode.albumData;
+          state.editingAlbum = albumNode;
+          els.albumNameInput.value = name;
+          els.totalPagesInput.value = totalPages;
+          els.slotsPerPageInput.value = slotsPerPage;
+          setSelectedColor(color);
+        }
+
+        function openAlbumForm(albumNode = null) {
+          els.addAlbumTitle.textContent = albumNode
+            ? "Modifica album"
+            : "Aggiungi album";
+          albumNode ? fillFormFromAlbum(albumNode) : resetFormDefaults();
+          setView("form");
+        }
+
+        function closeAlbumForm() {
+          resetFormDefaults();
+          setView("home");
+        }
+
+        function saveAlbum() {
+          if (state.editingAlbum) {
+            Object.assign(
+              state.editingAlbum.albumData,
+              getAlbumDataFromForm(state.editingAlbum.albumData.name),
+            );
+            renderAlbum(state.editingAlbum);
+            closeAlbumForm();
+            return;
+          }
+
+          state.albumCount += 1;
+          els.albumsGrid.appendChild(
+            createAlbumNode(getAlbumDataFromForm(`Album ${state.albumCount}`)),
+          );
+          syncEmptyState();
+          closeAlbumForm();
+        }
+
+        function updatePriceVisibility() {
+          const hidden = state.isPriceHidden;
+          els.totalPriceValue.textContent = hidden
+            ? hiddenTotalPrice
+            : visibleTotalPrice;
+          els.priceToggleBtn.classList.toggle("is-hidden", hidden);
+          els.priceToggleBtn.setAttribute("aria-pressed", String(hidden));
+          els.priceToggleBtn.setAttribute(
+            "aria-label",
+            hidden ? "Mostra totale" : "Nascondi totale",
+          );
+          els.priceToggleBtn.setAttribute(
+            "title",
+            hidden ? "Mostra totale" : "Nascondi totale",
+          );
+        }
+
+        function positionContextMenu(albumNode) {
+          const rect = $(".album-wrap", albumNode).getBoundingClientRect();
+          const gap = 10;
+          const margin = 12;
+
+          els.contextMenu.style.left = "0px";
+          els.contextMenu.style.top = "0px";
+          const menuRect = els.contextMenu.getBoundingClientRect();
+
+          const safeLeft = window.innerWidth - menuRect.width - margin;
+          const safeTop = window.innerHeight - menuRect.height - margin;
+          const preferredLeft = rect.left + rect.width / 2 - menuRect.width / 2;
+          const preferredTop = rect.top - menuRect.height - gap;
+
+          els.contextMenu.style.left = `${Math.max(margin, Math.min(preferredLeft, safeLeft))}px`;
+          els.contextMenu.style.top = `${Math.max(margin, Math.min(preferredTop < margin ? rect.bottom + gap : preferredTop, safeTop))}px`;
+        }
+
+        function openContextMenu(albumNode) {
+          state.contextAlbum = albumNode;
+          state.contextOpenedAt = performance.now();
+          els.contextMenuBackdrop.classList.add("open");
+          positionContextMenu(albumNode);
+        }
+
+        function closeContextMenu() {
+          state.contextAlbum = null;
+          state.contextOpenedAt = 0;
+          els.contextMenuBackdrop.classList.remove("open");
+          toggleSelectionSuppressed(false);
+          clearTextSelection();
+        }
+
+        function runContextAction(action) {
+          return (event) => {
+            stopEvent(event);
+            const now = performance.now();
+            if (!state.contextAlbum || now - state.lastContextActionAt < 250)
+              return;
+            state.lastContextActionAt = now;
+            const albumNode = state.contextAlbum;
+            closeContextMenu();
+            action(albumNode);
+          };
+        }
+
+        const contextActions = {
+          edit: openAlbumForm,
+          rename(albumNode) {
+            const name = window
+              .prompt("Nuovo nome album", albumNode.albumData.name)
+              ?.trim();
+            if (!name) return;
+            albumNode.albumData.name = name;
+            renderAlbum(albumNode);
+          },
+          delete(albumNode) {
+            albumNode.remove();
+            if (state.editingAlbum === albumNode) state.editingAlbum = null;
+            syncEmptyState();
+          },
+        };
+
+        function albumFromEvent(event) {
+          return event.target.closest(".album-card");
+        }
+
+        function resetPressState(forceSelection = false) {
+          const press = state.press;
+          if (!press) return;
+          clearTimeout(press.timer);
+          press.albumNode.classList.remove("is-pressed");
+          if (
+            !forceSelection &&
+            !els.contextMenuBackdrop.classList.contains("open")
+          )
+            toggleSelectionSuppressed(false);
+          state.press = null;
+        }
+
+        on(els.albumsGrid, "pointerdown", (event) => {
+          const cover = event.target.closest(".album-wrap");
+          const albumNode = albumFromEvent(event);
+          if (
+            !cover ||
+            !albumNode ||
+            (event.pointerType === "mouse" && event.button !== 0)
+          )
+            return;
+
+          resetPressState(true);
+          state.press = {
+            albumNode,
+            cover,
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            moved: false,
+            triggered: false,
+            timer: setTimeout(() => {
+              if (!state.press) return;
+              state.press.triggered = true;
+              toggleSelectionSuppressed(true);
+              clearTextSelection();
+              openContextMenu(albumNode);
+            }, LONG_PRESS_MS),
+          };
+
+          albumNode.classList.add("is-pressed");
+          toggleSelectionSuppressed(true);
+          clearTextSelection();
+          try {
+            cover.setPointerCapture?.(event.pointerId);
+          } catch {}
+        });
+
+        on(els.albumsGrid, "pointermove", (event) => {
+          const press = state.press;
+          if (!press || press.pointerId !== event.pointerId || press.triggered)
+            return;
+          if (
+            Math.hypot(
+              event.clientX - press.startX,
+              event.clientY - press.startY,
+            ) <= MOVE_TOLERANCE_PX
+          )
+            return;
+          press.moved = true;
+          clearTimeout(press.timer);
+          press.timer = 0;
+        });
+
+        on(
+          els.albumsGrid,
+          "pointerup pointercancel lostpointercapture",
+          (event) => {
+            const press = state.press;
+            if (
+              !press ||
+              (event.pointerId && press.pointerId !== event.pointerId)
+            )
+              return;
+            try {
+              if (press.cover.hasPointerCapture?.(event.pointerId))
+                press.cover.releasePointerCapture?.(event.pointerId);
+            } catch {}
+            const blockClick = press.triggered || press.moved;
+            resetPressState();
+            if (blockClick) {
+              event.preventDefault();
+              clearTextSelection();
+            }
+          },
+        );
+
+        els.albumsGrid.addEventListener("pointerleave", (event) => {
+          const press = state.press;
+          if (
+            event.pointerType === "mouse" &&
+            press?.pointerId === event.pointerId &&
+            !press.triggered
+          )
+            resetPressState();
+        });
+
+        on(
+          els.albumsGrid,
+          "touchstart",
+          () => {
+            toggleSelectionSuppressed(true);
+            clearTextSelection();
+          },
+          { passive: true },
+        );
+        on(
+          els.albumsGrid,
+          "touchend",
+          () => {
+            if (!els.contextMenuBackdrop.classList.contains("open"))
+              toggleSelectionSuppressed(false);
+            clearTextSelection();
+          },
+          { passive: true },
+        );
+        on(
+          els.albumsGrid,
+          "contextmenu selectstart dragstart",
+          (event) =>
+            event.target.closest(".album-wrap") && event.preventDefault(),
+        );
+
+        els.colorPickerRow.addEventListener("click", (event) => {
+          const button = event.target.closest(".color-dot");
+          if (!button) return;
+          if (button === els.paletteColorBtn)
+            return els.albumColorInput.click();
+          if (button.dataset.color)
+            setSelectedColor(button.dataset.color, button);
+        });
+
+        els.albumColorInput.addEventListener("input", () =>
+          setSelectedColor(els.albumColorInput.value, els.paletteColorBtn),
+        );
+        els.addAlbumBtn.addEventListener("click", () => openAlbumForm());
+        els.createFirstAlbumBtn.addEventListener("click", () =>
+          openAlbumForm(),
+        );
+        els.closeAddAlbumBtn.addEventListener("click", closeAlbumForm);
+        els.saveAlbumBtn.addEventListener("click", saveAlbum);
+        els.priceToggleBtn.addEventListener("click", () => {
+          state.isPriceHidden = !state.isPriceHidden;
+          updatePriceVisibility();
+        });
+
+        els.contextMenu.addEventListener("click", (event) =>
+          event.stopPropagation(),
+        );
+        on(
+          els.contextEditBtn,
+          "pointerup click",
+          runContextAction(contextActions.edit),
+        );
+        on(
+          els.contextRenameBtn,
+          "pointerup click",
+          runContextAction(contextActions.rename),
+        );
+        on(
+          els.contextDeleteBtn,
+          "pointerup click",
+          runContextAction(contextActions.delete),
+        );
+        on(els.contextMenuBackdrop, "pointerup click", (event) => {
+          if (event.target !== els.contextMenuBackdrop) return;
+          if (performance.now() - state.contextOpenedAt < 320)
+            return stopEvent(event);
+          closeContextMenu();
+        });
+
+        updatePriceVisibility();
+        resetFormDefaults();
+        syncEmptyState();
+      })();
+    </script>
+  </body>
 </html>
