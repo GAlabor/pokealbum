@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1, viewport-fit=cover"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
     <title>PokéAlbum Home</title>
     <style>
@@ -28,12 +28,17 @@
       html,
       body {
         margin: 0;
+        width: 100%;
+        max-width: 100%;
         height: 100%;
         font-family:
           -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
           "Helvetica Neue", Arial, sans-serif;
         color: var(--text);
         overflow: hidden;
+        overflow-x: hidden;
+        overscroll-behavior-x: none;
+        touch-action: pan-y;
         background:
           radial-gradient(
             circle at 15% 88%,
@@ -56,19 +61,30 @@
         min-height: 100svh;
         min-height: 100dvh;
         display: block;
+        position: fixed;
+        inset: 0;
+        overflow: hidden;
+        overflow-x: hidden;
       }
       .phone-stage {
         width: 100%;
+        max-width: 100vw;
         height: 100%;
         display: block;
         padding: 0;
+        overflow: hidden;
+        overflow-x: hidden;
       }
       .screen {
-        width: 100vw;
+        width: 100%;
+        max-width: 100vw;
         height: 100dvh;
         min-height: 100svh;
         position: relative;
         overflow: hidden;
+        overflow-x: hidden;
+        overscroll-behavior-x: none;
+        touch-action: pan-y;
         background:
           radial-gradient(
             circle at 18% 90%,
@@ -408,7 +424,10 @@
         min-height: 0;
         margin-top: clamp(14px, 2vh, 22px);
         padding: clamp(24px, 3.2vh, 34px) 8px 0;
-        overflow: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior-x: none;
+        -webkit-overflow-scrolling: touch;
         border-top: 1px solid rgba(108, 131, 190, 0.14);
       }
       .albums-grid {
@@ -1538,6 +1557,18 @@
           event.preventDefault();
           event.stopPropagation();
         };
+
+        // Blocca zoom/pinch e gesti orizzontali della pagina.
+        // Perché evidentemente anche una pagina HTML, lasciata sola, prova a scappare di lato.
+        const preventPageZoom = (event) => {
+          if (event.touches?.length > 1 || event.ctrlKey) event.preventDefault();
+        };
+        document.addEventListener("gesturestart", (event) => event.preventDefault(), { passive: false });
+        document.addEventListener("gesturechange", (event) => event.preventDefault(), { passive: false });
+        document.addEventListener("gestureend", (event) => event.preventDefault(), { passive: false });
+        document.addEventListener("touchmove", preventPageZoom, { passive: false });
+        document.addEventListener("wheel", preventPageZoom, { passive: false });
+
 
         const clearTextSelection = () => {
           try {
