@@ -178,6 +178,23 @@
         flex: 0 0 auto;
         max-width: none;
       }
+      .name-edit-btn {
+        appearance: none;
+        -webkit-appearance: none;
+        border: 0;
+        background: transparent;
+        font: inherit;
+        letter-spacing: inherit;
+        text-transform: inherit;
+        cursor: pointer;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .name-edit-btn:focus-visible {
+        outline: 2px solid rgba(47, 100, 255, 0.28);
+        outline-offset: 4px;
+        border-radius: 8px;
+      }
       .eyebrow .accent::after {
         content: "";
         position: absolute;
@@ -297,17 +314,19 @@
       .album::before {
         content: "";
         position: absolute;
-        left: 16%;
-        top: 14%;
-        width: 50%;
-        height: 22%;
-        border-radius: 18px;
+        left: 12%;
+        top: 12%;
+        width: 64%;
+        height: 30%;
+        border-radius: 20px;
         background: linear-gradient(
           180deg,
-          rgba(255, 255, 255, 0.22),
-          rgba(255, 255, 255, 0.1)
+          rgba(255, 255, 255, 0.30),
+          rgba(255, 255, 255, 0.14)
         );
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.32),
+          0 8px 18px rgba(0, 0, 0, 0.08);
         backdrop-filter: blur(8px);
       }
       .album::after {
@@ -320,10 +339,10 @@
         border-radius: 20px;
         background: linear-gradient(
           180deg,
-          rgba(38, 64, 191, 0.95),
-          rgba(29, 57, 181, 1)
+          rgba(30, 30, 30, 0.75),
+          rgba(10, 10, 10, 0.9)
         );
-        opacity: 0.95;
+        opacity: 0.9;
       }
       .plus-badge {
         position: absolute;
@@ -454,41 +473,36 @@
       }
       .album-info {
         position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
+        inset: 0;
         z-index: 2;
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 16px;
-        background: linear-gradient(
-          to top,
-          rgba(2, 6, 23, 0.66) 0%,
-          rgba(15, 23, 42, 0.26) 42%,
-          rgba(15, 23, 42, 0) 100%
-        );
-        border-radius: 0 0 32px 32px;
         pointer-events: none;
       }
       .album-title {
+        position: absolute;
+        left: 14%;
+        top: 14%;
+        width: 60%;
+        height: 26%;
         margin: 0;
-        max-width: 100%;
-        color: #ffffff;
-        font-size: 16px;
-        font-weight: 650;
-        line-height: 1.12;
-        letter-spacing: -0.02em;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        line-clamp: 2;
+        color: rgba(255, 255, 255, 0.96);
+        font-size: var(--album-title-size, 16px);
+        font-weight: 600;
+        line-height: 1.08;
+        transition: font-size 0.15s ease;
+        letter-spacing: -0.03em;
+        text-align: center;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         overflow: hidden;
         word-break: break-word;
+        padding: 0 8px;
       }
       .album-meta {
+        position: absolute;
+        right: 16px;
+        bottom: 16px;
         margin: 0;
         min-width: 42px;
         height: 32px;
@@ -1130,14 +1144,14 @@
             <header class="top-meta">
               <p class="eyebrow">
                 <span class="label">Pokéalbum di</span>
-                <span class="accent">Il tuo nome</span>
+                <button class="accent name-edit-btn" id="ownerNameBtn" type="button" aria-label="Modifica nome proprietario">Il tuo nome</button>
               </p>
 
               <div class="sub-wrap">
                 <p class="sub">
                   Carte <strong>0</strong> - Totale
                   <strong class="price-value" id="totalPriceValue"
-                    >€ 15,78</strong
+                    >€ 0,00</strong
                   >
                 </p>
                 <button
@@ -1525,6 +1539,7 @@
           albumColorInput: $("#albumColorInput"),
           priceToggleBtn: $("#priceToggleBtn"),
           totalPriceValue: $("#totalPriceValue"),
+          ownerNameBtn: $("#ownerNameBtn"),
           contextMenuBackdrop: $("#contextMenuBackdrop"),
           contextMenu: $("#contextMenu"),
           contextEditBtn: $("#contextEditBtn"),
@@ -1540,7 +1555,9 @@
         const LONG_PRESS_MS = 500;
         const MOVE_TOLERANCE_PX = 12;
         const visibleTotalPrice = els.totalPriceValue.textContent.trim();
-        const hiddenTotalPrice = "€ *,**";
+        const hiddenTotalPrice = "€ ****";
+        const OWNER_NAME_STORAGE_KEY = "pokealbumOwnerName";
+        const defaultOwnerName = els.ownerNameBtn.textContent.trim();
 
         const state = {
           albumCount: 0,
@@ -1620,11 +1637,44 @@
           };
         }
 
+        function getAlbumTitleFontSize(name) {
+          const length = name.trim().length;
+          if (length <= 8) return 18;
+          if (length <= 12) return 16;
+          if (length <= 18) return 14;
+          if (length <= 26) return 12;
+          if (length <= 34) return 10;
+          return 9;
+        }
+
+        function fitAlbumTitle(albumNode) {
+          const title = $(".album-title", albumNode);
+          if (!title) return;
+
+          let fontSize = getAlbumTitleFontSize(title.textContent || "");
+          title.style.setProperty("--album-title-size", `${fontSize}px`);
+
+          requestAnimationFrame(() => {
+            let attempts = 0;
+            while (
+              attempts < 12 &&
+              fontSize > 8 &&
+              (title.scrollWidth > title.clientWidth ||
+                title.scrollHeight > title.clientHeight)
+            ) {
+              fontSize -= 1;
+              title.style.setProperty("--album-title-size", `${fontSize}px`);
+              attempts += 1;
+            }
+          });
+        }
+
         function renderAlbum(albumNode) {
           const { name, color, totalPages, slotsPerPage } = albumNode.albumData;
           const totalSlots = totalPages * slotsPerPage;
           $(".album-name", albumNode).textContent = name;
           $(".album-title", albumNode).textContent = name;
+          fitAlbumTitle(albumNode);
           $(".album-meta", albumNode).textContent = `0/${totalSlots}`;
           $("[data-album-cover]", albumNode).style.cssText =
             `--album-color-light:${shadeColor(color, 26)};--album-color-dark:${shadeColor(color, -18)}`;
@@ -1733,6 +1783,33 @@
             "title",
             hidden ? "Mostra totale" : "Nascondi totale",
           );
+        }
+
+        function setOwnerName(name) {
+          const cleanName = name.trim() || defaultOwnerName;
+          els.ownerNameBtn.textContent = cleanName;
+          els.ownerNameBtn.setAttribute(
+            "aria-label",
+            `Modifica nome proprietario: ${cleanName}`,
+          );
+          try {
+            localStorage.setItem(OWNER_NAME_STORAGE_KEY, cleanName);
+          } catch {}
+        }
+
+        function loadOwnerName() {
+          try {
+            setOwnerName(localStorage.getItem(OWNER_NAME_STORAGE_KEY) || defaultOwnerName);
+          } catch {
+            setOwnerName(defaultOwnerName);
+          }
+        }
+
+        function editOwnerName() {
+          const currentName = els.ownerNameBtn.textContent.trim();
+          const name = window.prompt("Inserisci il tuo nome", currentName)?.trim();
+          if (!name) return;
+          setOwnerName(name);
         }
 
         function positionContextMenu(albumNode) {
@@ -1948,6 +2025,7 @@
           state.isPriceHidden = !state.isPriceHidden;
           updatePriceVisibility();
         });
+        els.ownerNameBtn.addEventListener("click", editOwnerName);
 
         els.contextMenu.addEventListener("click", (event) =>
           event.stopPropagation(),
@@ -1974,6 +2052,7 @@
           closeContextMenu();
         });
 
+        loadOwnerName();
         updatePriceVisibility();
         resetFormDefaults();
         syncEmptyState();
