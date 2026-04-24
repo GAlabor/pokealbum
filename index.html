@@ -602,9 +602,21 @@
       .fab:hover {
         filter: saturate(1.06);
       }
-      .fab:active,
-      .fab.is-pressed {
-        transform: scale(0.9);
+      .fab {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      .fab:focus {
+        outline: none;
+      }
+      .fab:focus-visible {
+        outline: 2px solid rgba(47, 100, 255, 0.28);
+        outline-offset: 4px;
+      }
+      .fab.is-touching {
+        transform: scale(0.92);
         box-shadow:
           0 8px 16px rgba(58, 101, 216, 0.22),
           inset 0 2px 8px rgba(17, 42, 133, 0.22),
@@ -1150,7 +1162,80 @@
           max-width: 144px;
         }
       }
-    </style>
+    
+.quick-actions {
+        width: calc(100% - 8px);
+        margin: 16px 4px 0;
+        padding: 5px;
+        min-height: 46px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.08fr) auto;
+        align-items: center;
+        gap: 4px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.42);
+        border: 1px solid rgba(255, 255, 255, 0.62);
+        box-shadow:
+          0 14px 30px rgba(66, 89, 152, 0.10),
+          inset 0 1px 0 rgba(255, 255, 255, 0.86);
+        backdrop-filter: blur(22px) saturate(145%);
+        -webkit-backdrop-filter: blur(22px) saturate(145%);
+      }
+      .qa-btn {
+        appearance: none;
+        -webkit-appearance: none;
+        min-width: 0;
+        height: 36px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: #6e7d9d;
+        font-family: inherit;
+        font-size: clamp(11px, 2.9vw, 13px);
+        font-weight: 800;
+        letter-spacing: -0.035em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        transition:
+          transform 0.16s ease,
+          background-color 0.16s ease,
+          color 0.16s ease,
+          box-shadow 0.16s ease;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .qa-btn:hover {
+        color: #375fdb;
+        background: rgba(255, 255, 255, 0.42);
+      }
+      .qa-btn:active {
+        transform: scale(0.97);
+      }
+      .qa-btn.active {
+        color: #1f47c5;
+        background: rgba(255, 255, 255, 0.82);
+        box-shadow:
+          0 8px 18px rgba(47, 100, 255, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      }
+      .qa-add {
+        min-width: 72px;
+        padding: 0 14px;
+        color: #ffffff;
+        background:
+          linear-gradient(135deg, rgba(122, 166, 255, 0.98), rgba(47, 100, 255, 1));
+        box-shadow:
+          0 10px 22px rgba(47, 100, 255, 0.25),
+          inset 0 1px 0 rgba(255, 255, 255, 0.30);
+      }
+      .qa-add:hover {
+        color: #ffffff;
+        background:
+          linear-gradient(135deg, rgba(132, 174, 255, 1), rgba(47, 100, 255, 1));
+      }
+      </style>
   </head>
   <body>
     <div class="phone-stage">
@@ -1215,8 +1300,14 @@
                 </button>
               </div>
             </header>
+<div class="quick-actions" role="tablist" aria-label="Filtri raccolta">
+  <button class="qa-btn active" type="button" aria-pressed="true">Personali</button>
+  <button class="qa-btn" type="button" aria-pressed="false">Duplicati</button>
+  <button class="qa-btn" type="button" aria-pressed="false">Collezioni</button>
+  <button class="qa-btn qa-add" id="quickAddAlbumBtn" type="button" aria-label="Aggiungi album">+ Album</button>
+</div>
 
-            <section class="hero" id="emptyState">
+<section class="hero" id="emptyState">
               <div class="album-wrap" aria-hidden="true">
                 <div class="album"></div>
                 <div class="plus-badge" aria-hidden="true"></div>
@@ -1556,6 +1647,7 @@
           priceToggleBtn: $("#priceToggleBtn"),
           totalPriceValue: $("#totalPriceValue"),
           ownerNameBtn: $("#ownerNameBtn"),
+          quickAddAlbumBtn: $("#quickAddAlbumBtn"),
           contextMenuBackdrop: $("#contextMenuBackdrop"),
           contextMenu: $("#contextMenu"),
           contextEditBtn: $("#contextEditBtn"),
@@ -2031,15 +2123,39 @@
         els.albumColorInput.addEventListener("input", () =>
           setSelectedColor(els.albumColorInput.value, els.paletteColorBtn),
         );
-        function pulseFabOnly() {
-          els.addAlbumBtn.classList.add("is-pressed");
-          window.setTimeout(() => els.addAlbumBtn.classList.remove("is-pressed"), 150);
+        function setFabPressed(isPressed) {
+          els.addAlbumBtn.classList.toggle("is-touching", isPressed);
         }
 
-        els.addAlbumBtn.addEventListener("click", pulseFabOnly);
+        els.addAlbumBtn.addEventListener("pointerdown", (event) => {
+          event.preventDefault();
+          setFabPressed(true);
+          try {
+            els.addAlbumBtn.setPointerCapture?.(event.pointerId);
+          } catch {}
+        });
+        on(els.addAlbumBtn, "pointerup pointercancel lostpointercapture pointerleave", () => {
+          setFabPressed(false);
+          els.addAlbumBtn.blur();
+        });
+        els.addAlbumBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          els.addAlbumBtn.blur();
+        });
         els.createFirstAlbumBtn.addEventListener("click", () =>
           openAlbumForm(),
         );
+        els.quickAddAlbumBtn?.addEventListener("click", () => openAlbumForm());
+        $$(".quick-actions .qa-btn").forEach((button) => {
+          if (button.classList.contains("qa-add")) return;
+          button.addEventListener("click", () => {
+            $$(".quick-actions .qa-btn").forEach((item) => {
+              if (item.classList.contains("qa-add")) return;
+              item.classList.toggle("active", item === button);
+              item.setAttribute("aria-pressed", String(item === button));
+            });
+          });
+        });
         els.closeAddAlbumBtn.addEventListener("click", closeAlbumForm);
         els.saveAlbumBtn.addEventListener("click", saveAlbum);
         els.priceToggleBtn.addEventListener("click", () => {
