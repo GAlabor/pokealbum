@@ -67,6 +67,13 @@ button, input{font:inherit;}
 #detailModal .detail-price-currency{font-size:22px;font-weight:500;}
 #detailModal .detail-price-value{font-size:32px;font-weight:800;}
 #detailModal .detail-offer{margin-top:8px;color:#8e97ad;font-weight:400;font-size:12px;}
+#detailModal .offer-controls{margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;color:#7382a2;}
+#detailModal .offer-select,#detailModal .offer-zero-toggle{height:30px;border:1px solid rgba(120,146,207,.22);border-radius:999px;background:rgba(248,251,255,.72);color:#20345f;font:inherit;font-size:12px;font-weight:750;padding:0 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.82);outline:none;}
+#detailModal .offer-select{max-width:142px;}
+#detailModal .offer-zero-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;-webkit-user-select:none;}
+#detailModal .offer-zero-toggle input{width:13px;height:13px;margin:0;accent-color:#2f64ff;}
+#detailModal .offer-select:disabled,#detailModal .offer-zero-toggle.is-disabled{opacity:.52;cursor:not-allowed;}
+#detailModal .offer-sep{font-size:12px;color:#8e97ad;font-weight:800;}
 #detailModal .info-card-title{margin:0;padding:14px 16px 10px;font-size:17px;}
 #detailModal .info-list{padding:12px 16px 16px;display:grid;gap:10px;}
 #detailModal .info-row{display:grid;grid-template-columns:minmax(140px, 190px) 1fr;gap:12px;align-items:start;}
@@ -380,6 +387,11 @@ svg{overflow:visible;}
 .add-card-search-view .card-search-panel-ux .status{margin:8px 4px 0 !important;color:#7382a2;font-size:11px;font-weight:650;}
 .add-card-search-view .progress-wrap{height:5px;margin:8px 4px 0;background:rgba(120,146,207,.14);}
 .add-card-search-view .progress-bar{background:linear-gradient(90deg,#7aa6ff,#2f64ff);}
+.add-card-search-view .progress-bar{position:relative;overflow:hidden;border-radius:999px;transition:width .22s cubic-bezier(.22,.9,.24,1), opacity .22s ease;box-shadow:0 0 0 rgba(47,100,255,0);}
+.add-card-search-view .progress-bar::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);transform:translateX(-115%);opacity:0;}
+.add-card-search-view .progress-bar.is-searching{box-shadow:0 0 18px rgba(47,100,255,.28);}
+.add-card-search-view .progress-bar.is-searching::after{opacity:1;animation:searchProgressShine .72s ease-in-out infinite;}
+@keyframes searchProgressShine{0%{transform:translateX(-115%);}100%{transform:translateX(115%);}}
 .add-card-search-view .autocomplete{background:rgba(255,255,255,.96);color:#20345f;border-color:rgba(120,146,207,.2);box-shadow:0 18px 34px rgba(73,96,157,.16),inset 0 1px 0 rgba(255,255,255,.78);}
 .add-card-search-view .suggestion{border-bottom-color:rgba(111,134,188,.12);}
 .add-card-search-view .suggestion:hover, .add-card-search-view .suggestion.active{background:rgba(47,100,255,.10);}
@@ -494,7 +506,9 @@ h1{max-width:none;}
 .lead{max-width:420px;}
 .cta{width:min(100%, 360px);}
 .bottom-nav-shell{left:24px;right:24px;}
-.albums-grid{grid-template-columns:repeat(4, minmax(0, 210px));gap:28px 22px;}
+.albums-view{padding-left:0;padding-right:0;}
+.albums-grid{width:100%;grid-template-columns:repeat(auto-fill, minmax(210px, 1fr));gap:28px 22px;justify-content:stretch;justify-items:stretch;}
+.album-card{align-items:flex-start;}
 .album-card .album-wrap{max-width:210px;}
 }
 @media (max-height: 760px){
@@ -706,6 +720,140 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 #detailModal .info-value{font-size:14px;font-weight:650;color:#20345f;}
 @media (max-width:420px){#detailModal .card-sheet-container{padding:calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 22px);}#detailModal .detail-top-name{left:58px;right:112px;}#detailModal .info-row{grid-template-columns:1fr;gap:4px;}}
 
+
+
+
+/* === UX lingue/condizioni/CTZero presa da linguev7: solo vista, logica mercato invariata === */
+#detailModal .offer-controls.market-visual-controls{
+  margin-top:10px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:center;
+  gap:22px;
+  color:#7382a2;
+}
+#detailModal .market-native-control{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  overflow:hidden !important;
+}
+#detailModal .market-ui-dropdown{position:relative;display:inline-flex;align-items:center;}
+#detailModal .detail-price{overflow:visible;}
+#detailModal .offer-controls.market-visual-controls{position:relative;z-index:5;overflow:visible;}
+#detailModal .market-ui-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  border:0;
+  background:transparent;
+  padding:0;
+  margin:0;
+  min-width:0;
+  height:24px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  cursor:pointer;
+  line-height:24px;
+  color:#333;
+}
+#detailModal .market-ui-btn:disabled{opacity:.52;cursor:not-allowed;}
+#detailModal .market-arrow{font-size:10px;color:#333;line-height:1;display:inline-block;transition:transform .16s ease;}
+#detailModal .market-ui-btn[aria-expanded="true"] .market-arrow{transform:rotate(180deg);}
+#detailModal .market-flag-img,
+#detailModal .market-flag-fallback{
+  width:33px;
+  height:24px;
+  border-radius:4px;
+  object-fit:cover;
+  display:block;
+  box-shadow:0 4px 10px rgba(40,58,110,.12);
+}
+#detailModal .market-flag-fallback{
+  background:#e9e9e9;
+  border:1px solid #cfcfcf;
+  box-sizing:border-box;
+  color:#333;
+  font-size:11px;
+  font-weight:bold;
+  line-height:22px;
+  text-align:center;
+}
+#detailModal .market-condition-badge{
+  width:24px;
+  height:24px;
+  border-radius:4px;
+  color:#fff;
+  font-size:11px;
+  font-weight:bold;
+  line-height:24px;
+  text-align:center;
+  box-shadow:0 4px 10px rgba(40,58,110,.12);
+}
+#detailModal .market-condition-badge.nm{background:#7ac70c;}
+#detailModal .market-condition-badge.sp{background:#b7d900;}
+#detailModal .market-condition-badge.mp{background:#f2b500;}
+#detailModal .market-condition-badge.pl{background:#f36c00;}
+#detailModal .market-condition-badge.po{background:#c93a00;}
+#detailModal .market-ui-menu{
+  display:none;
+  position:absolute;
+  top:auto;
+  bottom:calc(100% + 8px);
+  left:0;
+  min-width:165px;
+  background:#fff;
+  border:1px solid #ddd;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 -8px 20px rgba(0,0,0,.12);
+  z-index:30;
+  color:#20345f;
+}
+#detailModal .market-ui-menu.open{display:block;}
+#detailModal .market-ui-option{
+  width:100%;
+  border:0;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  cursor:pointer;
+  font:inherit;
+  font-size:14px;
+  color:#20345f;
+  text-align:left;
+}
+#detailModal .market-ui-option:hover,
+#detailModal .market-ui-option.is-selected{background:#f2f2f2;}
+#detailModal .market-ui-option-text{font-size:13px;font-weight:700;color:#20345f;}
+#detailModal .market-ctzero-pill{
+  height:24px;
+  cursor:pointer;
+  transition:background .18s ease,color .18s ease,opacity .18s ease;
+  padding:0px 4px 0px 2px;
+  background:#ff7a00;
+  border:0;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:0px;
+  color:#fff;
+  font-size:9px;
+  font-weight:500;
+  line-height:1;
+  white-space:nowrap;
+}
+#detailModal .market-ctzero-pill.off{background:#bdbdbd;color:#666;}
+#detailModal .market-ctzero-pill.off svg path{fill:#f2f2f2;}
+#detailModal .market-ctzero-pill:disabled{opacity:.52;cursor:not-allowed;}
+#detailModal .market-ctzero-pill svg{width:21px;height:21px;display:block;flex:0 0 auto;}
+#detailModal .market-ctzero-pill-text{display:block;transform:translateY(.2px);}
 
 /* === FIX 01/05/2026: scroll risultati Aggiungi carta ripreso da con-scroll.html ===
    Solo logica di scroll: la barra resta ferma, scorre solo la griglia risultati. */
@@ -1025,6 +1173,22 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   z-index:4;
 }
 
+
+
+/* Modifica scheda carta: rimossi tre pallini, + allineato a destra e blu tema. */
+#detailModal .card-sheet-actions{margin-left:auto;display:inline-flex;align-items:flex-start;gap:0;position:relative;}
+#detailModal .detail-add-card-btn{color:#2f64ff;background:rgba(255,255,255,.68);border-color:rgba(47,100,255,.22);}
+#detailModal .detail-add-card-btn:hover{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);box-shadow:0 16px 28px rgba(47,100,255,.20), inset 0 1px 0 rgba(255,255,255,.40);}
+#detailModal .detail-top-name{right:58px;}
+@media (max-width:420px){#detailModal .detail-top-name{right:58px;}}
+
+*{
+  -webkit-tap-highlight-color: transparent !important;
+}
+button:focus, button:active, select:focus, select:active, a:focus, a:active{
+  outline:none !important;
+  box-shadow:none !important;
+}
 
 </style>
   </head>
@@ -1429,7 +1593,7 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
       </div>
       <div class="card-index-meta search-meta">
         <div id="updatedText">Indice</div>
-        <div id="countsText">0 carte - 0 espansioni - (<span id="timerChip">00:00</span>)</div>
+        <div id="countsText">0 carte - 0 espansioni</div>
       </div>
       <div class="status" id="statusText" style="margin-top:10px;">Caricamento database carte...</div>
       <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
@@ -1669,21 +1833,9 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
             </button>
             <div class="detail-top-name" id="detailTopName">Dettaglio carta</div>
             <div class="card-sheet-actions">
-              <button class="sheet-icon-btn" type="button" aria-label="Aggiungi carta">
+              <button class="sheet-icon-btn detail-add-card-btn" type="button" aria-label="Aggiungi carta">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
               </button>
-              <button class="sheet-icon-btn menu-btn" type="button" aria-label="Apri menu" aria-expanded="false" aria-controls="topbarMenu">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="1.4"></circle><circle cx="12" cy="12" r="1.4"></circle><circle cx="12" cy="19" r="1.4"></circle></svg>
-              </button>
-              <div class="topbar-menu" id="topbarMenu" role="menu">
-                <button type="button" role="menuitem"><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg><span>Modifica dati</span></button>
-                <button type="button" role="menuitem"><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.7 5.1L19 10l-5.3 1.9L12 17l-1.7-5.1L5 10l5.3-1.9Z"></path></svg><span>Ricava dati</span></button>
-                <button id="refreshPriceBtn" type="button" role="menuitem"><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-9a4 4 0 0 0 0 8h2"></path><path d="M17 4l3 3-3 3"></path><path d="M7 20l-3-3 3-3"></path><path d="M4 17h9a4 4 0 0 0 0-8h-2"></path></svg><span>Aggiorna prezzo</span></button>
-                <button type="button" role="menuitem"><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M17 8l-5-5-5 5"></path><path d="M12 3v12"></path></svg><span>Aggiorna immagine</span></button>
-                <button type="button" role="menuitem"><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M8 11l2.5 2.5L14 10l5 6"></path><path d="M8 8h.01"></path></svg><span>Aggiungi immagine</span></button>
-                <button type="button" role="menuitem" class="danger"><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path></svg><span>Ripristina dati</span></button>
-                <button type="button" role="menuitem" class="danger"><svg class="menu-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"></path><path d="M3 4v6h6"></path><path d="M8 16l8-8"></path></svg><span>Ripristina immagine</span></button>
-              </div>
             </div>
           </div>
           <div class="detail-content">
@@ -1721,6 +1873,14 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
       hasSearched: false,
       timerInterval: null,
       timerStartedAt: null,
+      searchProgressTimer: null,
+      searchProgressStepTimers: [],
+      market: {
+        rows: [],
+        selected: { langKey: '', condKey: '', ctZero: false },
+        loading: false,
+        lastCardId: null,
+      },
     };
 
     const el = {
@@ -1772,6 +1932,45 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 
     function setProgress(percent) {
       el.progressBar.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+    }
+
+    function clearSearchProgressAnimation() {
+      if (state.searchProgressTimer) {
+        clearTimeout(state.searchProgressTimer);
+        state.searchProgressTimer = null;
+      }
+      if (Array.isArray(state.searchProgressStepTimers)) {
+        state.searchProgressStepTimers.forEach(timer => clearTimeout(timer));
+        state.searchProgressStepTimers = [];
+      }
+      el.progressBar.classList.remove('is-searching');
+    }
+
+    function playSearchProgressAnimation() {
+      clearSearchProgressAnimation();
+      setProgress(0);
+      // forza il reset visivo, altrimenti il browser fa il furbo e salta l'animazione
+      void el.progressBar.offsetWidth;
+      el.progressBar.classList.add('is-searching');
+
+      const steps = [
+        [20, 18],
+        [150, 54],
+        [340, 82],
+        [560, 96],
+        [720, 100],
+      ];
+
+      state.searchProgressStepTimers = steps.map(([delay, value]) => (
+        setTimeout(() => setProgress(value), delay)
+      ));
+
+      state.searchProgressTimer = setTimeout(() => {
+        el.progressBar.classList.remove('is-searching');
+        state.searchProgressStepTimers = [];
+        setProgress(100);
+        state.searchProgressTimer = null;
+      }, 1050);
     }
 
     function openModal(modal) { modal.classList.add('open'); }
@@ -2090,97 +2289,443 @@ function finishUpdateTimer() {
       return `€ ${(cents / 100).toFixed(2)}`;
     }
 
+    function isCardTraderZero(product) {
+      // CTZero normale: il venditore può vendere tramite hub CardTrader Zero.
+      // Non usa campi "1-Day" o quantità 24h, così evitiamo di confonderlo con Zero 1-Day.
+      return product?.user?.can_sell_via_hub === true
+        || product?.seller?.can_sell_via_hub === true
+        || product?.can_sell_via_hub === true;
+    }
+
+    const CONDITION_ORDER = ['NM', 'SP', 'MP', 'PL', 'PO'];
+    const CONDITION_LABELS = {
+      NM: 'Near Mint',
+      SP: 'Slightly Played',
+      MP: 'Moderately Played',
+      PL: 'Played',
+      PO: 'Poor',
+    };
+
+    function getConditionCode(value) {
+      const raw = String(value || '').trim().toUpperCase();
+      if (CONDITION_ORDER.includes(raw)) return raw;
+      const cond = normalizeCondition(value);
+      if (!cond) return '';
+      if (cond === 'near mint' || cond === 'nm' || cond.startsWith('near mint ')) return 'NM';
+      if (cond === 'slightly played' || cond === 'sp' || cond.startsWith('slightly played ')) return 'SP';
+      if (cond === 'moderately played' || cond === 'mp' || cond.startsWith('moderately played ')) return 'MP';
+      if (cond === 'played' || cond === 'pl') return 'PL';
+      if (cond === 'poor' || cond === 'po') return 'PO';
+      return raw || cond.toUpperCase();
+    }
+
+    function getConditionLabelFromCode(code) {
+      const key = String(code || '').toUpperCase();
+      return CONDITION_LABELS[key] || key || '-';
+    }
+
+    function conditionRank(code) {
+      const idx = CONDITION_ORDER.indexOf(String(code || '').toUpperCase());
+      return idx >= 0 ? idx : 999;
+    }
+
+    const MARKET_LANGUAGE_LABEL_MAP = {
+      it: 'Italiano', ita: 'Italiano', italiano: 'Italiano', italian: 'Italiano',
+      en: 'Inglese', eng: 'Inglese', english: 'Inglese', inglese: 'Inglese', us: 'Inglese', gb: 'Inglese', uk: 'Inglese',
+      fr: 'Francese', fra: 'Francese', fre: 'Francese', french: 'Francese', francese: 'Francese',
+      es: 'Spagnolo', esp: 'Spagnolo', spa: 'Spagnolo', spanish: 'Spagnolo', spagnolo: 'Spagnolo',
+      de: 'Tedesco', deu: 'Tedesco', ger: 'Tedesco', german: 'Tedesco', tedesco: 'Tedesco',
+      nl: 'Olandese', nld: 'Olandese', dut: 'Olandese', nederlands: 'Olandese', dutch: 'Olandese', olandese: 'Olandese',
+      pt: 'Portoghese', por: 'Portoghese', portuguese: 'Portoghese', portoghese: 'Portoghese',
+      jp: 'Giapponese', ja: 'Giapponese', jpn: 'Giapponese', japanese: 'Giapponese', giapponese: 'Giapponese',
+      cn: 'Cinese', zh: 'Cinese', zho: 'Cinese', chi: 'Cinese', chinese: 'Cinese', cinese: 'Cinese',
+      kr: 'Coreano', ko: 'Coreano', kor: 'Coreano', korean: 'Coreano', coreano: 'Coreano',
+      th: 'Tailandese', tha: 'Tailandese', thai: 'Tailandese', tailandese: 'Tailandese',
+      id: 'Indonesiano', ind: 'Indonesiano', indonesian: 'Indonesiano', indonesiano: 'Indonesiano',
+      ru: 'Russo', rus: 'Russo', russian: 'Russo', russo: 'Russo',
+      pl: 'Polacco', pol: 'Polacco', polish: 'Polacco', polacco: 'Polacco',
+    };
+
+    const MARKET_REGION_NAMES = (() => {
+      try {
+        return new Intl.DisplayNames(['it'], { type: 'region' });
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    function getRegionNameFromCode(code) {
+      const clean = String(code || '').trim().toUpperCase();
+      if (!/^[A-Z]{2}$/.test(clean) || !MARKET_REGION_NAMES) return '';
+      try {
+        return MARKET_REGION_NAMES.of(clean) || '';
+      } catch (error) {
+        return '';
+      }
+    }
+
+    function getLanguageDisplayLabel(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '-';
+      const key = normalizeLang(raw);
+      if (MARKET_LANGUAGE_LABEL_MAP[key]) return MARKET_LANGUAGE_LABEL_MAP[key];
+
+      // Fallback libero: se CardTrader/API restituisce una sigla ISO a 2 lettere,
+      // mostro un nome leggibile ricavato dal browser invece di bloccare tutto
+      // sull'elenco "conosciuto". Sì, incredibilmente le sigle non finiscono a 7.
+      const regionName = getRegionNameFromCode(raw);
+      if (regionName) return regionName;
+
+      return raw.charAt(0).toUpperCase() + raw.slice(1);
+    }
+
+    function getLanguageLabel(product) {
+      return getLanguageDisplayLabel(getProductLanguage(product));
+    }
+
+    function getLanguageKeyFromValue(value) {
+      const raw = String(value || '').trim();
+      const normalized = normalizeLang(raw);
+      if (/^[a-z]{2}$/.test(normalized)) return normalized;
+      if (MARKET_LANGUAGE_LABEL_MAP[normalized]) return normalized;
+      return normalized || '__none';
+    }
+
+    function getLanguageKeyFromLabel(label) {
+      return getLanguageKeyFromValue(label);
+    }
+
+    function getLanguageKey(product) {
+      return getLanguageKeyFromValue(getProductLanguage(product));
+    }
+
     function buildOfferLabel(product) {
-      const lang = getProductLanguage(product) || '-';
-      const cond = product?.properties_hash?.condition || '-';
-      return `${lang} · ${cond}`;
+      const lang = getLanguageLabel(product);
+      const condCode = getConditionCode(product?.properties_hash?.condition || '');
+      const cond = condCode || (product?.properties_hash?.condition || '-');
+      const zeroLabel = isCardTraderZero(product) ? ' · CTZero' : '';
+      return `${lang} · ${cond}${zeroLabel}`;
+    }
+
+    function buildMarketRows(products) {
+      return (Array.isArray(products) ? products : [])
+        .map(product => {
+          const priceCents = getProductPriceCents(product);
+          if (!Number.isFinite(priceCents)) return null;
+          const rawLanguage = getProductLanguage(product);
+          const langLabel = getLanguageDisplayLabel(rawLanguage);
+          const langKey = getLanguageKeyFromValue(rawLanguage);
+          const condKey = getConditionCode(product?.properties_hash?.condition || '');
+          if (!langKey || !condKey) return null;
+          return {
+            product,
+            priceCents,
+            langKey,
+            langLabel,
+            condKey,
+            ctZero: isCardTraderZero(product),
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function getLowestRow(rows) {
+      return (rows || []).slice().sort((a, b) => a.priceCents - b.priceCents)[0] || null;
+    }
+
+    function getBestByConditionThenPrice(rows) {
+      return (rows || []).slice().sort((a, b) => {
+        const rankDiff = conditionRank(a.condKey) - conditionRank(b.condKey);
+        if (rankDiff) return rankDiff;
+        return a.priceCents - b.priceCents;
+      })[0] || null;
+    }
+
+    function getRowsForCtZeroState(rows, ctZero) {
+      // Dopo l'apertura CTZero non è più un suggerimento gentile: è un filtro vero.
+      // ON = solo CTZero, OFF = solo non CTZero. Niente fallback nell'altro recinto.
+      return (rows || []).filter(row => Boolean(row.ctZero) === Boolean(ctZero));
+    }
+
+    function getBestRowByPreference(rows, predicate = null, mode = 'condition') {
+      const scoped = (rows || []).filter(row => !predicate || predicate(row));
+      return mode === 'price' ? getLowestRow(scoped) : getBestByConditionThenPrice(scoped);
+    }
+
+    function getAvailableLanguages(rows, requireCtZero = false) {
+      const map = new Map();
+      for (const row of rows || []) {
+        if (requireCtZero && !row.ctZero) continue;
+        if (!map.has(row.langKey)) map.set(row.langKey, row.langLabel);
+      }
+      return Array.from(map, ([key, label]) => ({ key, label }))
+        .sort((a, b) => {
+          const aIt = isItalianLanguage(a.label) ? -1 : 0;
+          const bIt = isItalianLanguage(b.label) ? -1 : 0;
+          if (aIt !== bIt) return aIt - bIt;
+          return String(a.label).localeCompare(String(b.label), 'it');
+        });
+    }
+
+    function getAvailableConditions(rows, langKey, requireCtZero = false) {
+      const set = new Set();
+      for (const row of rows || []) {
+        if (langKey && row.langKey !== langKey) continue;
+        if (requireCtZero && !row.ctZero) continue;
+        set.add(row.condKey);
+      }
+      return Array.from(set)
+        .sort((a, b) => conditionRank(a) - conditionRank(b) || String(a).localeCompare(String(b), 'it'));
+    }
+
+
+    const MARKET_LANGUAGE_FLAG_MAP = {
+      it: ['IT', 'it'], ita: ['IT', 'it'], italiano: ['IT', 'it'], italian: ['IT', 'it'],
+      en: ['EN', 'gb'], eng: ['EN', 'gb'], english: ['EN', 'gb'], inglese: ['EN', 'gb'], us: ['US', 'us'], gb: ['GB', 'gb'], uk: ['GB', 'gb'],
+      fr: ['FR', 'fr'], fra: ['FR', 'fr'], fre: ['FR', 'fr'], french: ['FR', 'fr'], francese: ['FR', 'fr'],
+      es: ['ES', 'es'], esp: ['ES', 'es'], spa: ['ES', 'es'], spanish: ['ES', 'es'], spagnolo: ['ES', 'es'],
+      de: ['DE', 'de'], deu: ['DE', 'de'], ger: ['DE', 'de'], german: ['DE', 'de'], tedesco: ['DE', 'de'],
+      nl: ['NL', 'nl'], nld: ['NL', 'nl'], dut: ['NL', 'nl'], nederlands: ['NL', 'nl'], dutch: ['NL', 'nl'], olandese: ['NL', 'nl'],
+      pt: ['PT', 'pt'], por: ['PT', 'pt'], portuguese: ['PT', 'pt'], portoghese: ['PT', 'pt'],
+      jp: ['JP', 'jp'], ja: ['JP', 'jp'], jpn: ['JP', 'jp'], japanese: ['JP', 'jp'], giapponese: ['JP', 'jp'],
+      cn: ['CN', 'cn'], zh: ['CN', 'cn'], zho: ['CN', 'cn'], chi: ['CN', 'cn'], chinese: ['CN', 'cn'], cinese: ['CN', 'cn'],
+      kr: ['KR', 'kr'], ko: ['KR', 'kr'], kor: ['KR', 'kr'], korean: ['KR', 'kr'], coreano: ['KR', 'kr'],
+      th: ['TH', 'th'], tha: ['TH', 'th'], thai: ['TH', 'th'], tailandese: ['TH', 'th'],
+      id: ['ID', 'id'], ind: ['ID', 'id'], indonesian: ['ID', 'id'], indonesiano: ['ID', 'id'],
+      ru: ['RU', 'ru'], rus: ['RU', 'ru'], russian: ['RU', 'ru'], russo: ['RU', 'ru'],
+      pl: ['PL', 'pl'], pol: ['PL', 'pl'], polish: ['PL', 'pl'], polacco: ['PL', 'pl'],
+    };
+
+    function getMarketLanguageFlagInfo(label, key) {
+      const rawKey = normalizeLang(key || '');
+      const rawLabel = normalizeLang(label || '');
+      const info = MARKET_LANGUAGE_FLAG_MAP[rawKey] || MARKET_LANGUAGE_FLAG_MAP[rawLabel];
+      if (info) return { code: info[0], flag: info[1] };
+
+      // Fallback vero: qualsiasi sigla a 2 lettere diventa direttamente URL FlagCDN.
+      // Esempio: NL -> https://flagcdn.com/w80/nl.png
+      const fromKey = /^[a-z]{2}$/.test(rawKey) ? rawKey : '';
+      const fromLabel = /^[a-z]{2}$/.test(rawLabel) ? rawLabel : '';
+      const flag = fromKey || fromLabel;
+      if (flag) return { code: flag.toUpperCase(), flag };
+
+      const fallback = String(label || key || '--').trim().slice(0, 2).toUpperCase() || '--';
+      return { code: fallback, flag: '' };
+    }
+
+    function marketFlagMarkup(label, key) {
+      const info = getMarketLanguageFlagInfo(label, key);
+      if (info.flag) {
+        return `<img class="market-flag-img" src="https://flagcdn.com/w80/${escapeHtml(info.flag)}.png" alt="${escapeHtml(info.code)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span class="market-flag-fallback" style="display:none">${escapeHtml(info.code)}</span>`;
+      }
+      return `<span class="market-flag-fallback">${escapeHtml(info.code)}</span>`;
+    }
+
+    function conditionBadgeMarkup(code) {
+      const clean = String(code || '---').toUpperCase();
+      const cls = CONDITION_ORDER.includes(clean) ? clean.toLowerCase() : '';
+      return `<span class="market-condition-badge ${escapeHtml(cls)}">${escapeHtml(clean)}</span>`;
+    }
+
+    function setMarketControlsDisabled(disabled) {
+      state.market.loading = Boolean(disabled);
+      if (!el.detailOfferLabel) return;
+
+      // I controlli nativi restano nascosti e continuano a pilotare la logica originale.
+      // I pulsanti UX, però, devono essere riabilitati insieme a loro: altrimenti
+      // lingue, condizioni e CTZero restano belli da vedere e inutili come un semaforo spento.
+      el.detailOfferLabel.querySelectorAll('select,input').forEach(control => {
+        if (!disabled && control.dataset.marketNoMatch === '1') return;
+        control.disabled = Boolean(disabled);
+      });
+
+      el.detailOfferLabel.querySelectorAll('[data-market-menu-button]').forEach(button => {
+        const filter = button.dataset.marketMenuButton;
+        const native = el.detailOfferLabel.querySelector(`[data-market-filter="${filter}"]`);
+        button.disabled = Boolean(disabled || native?.disabled);
+      });
+
+      el.detailOfferLabel.querySelectorAll('[data-market-ctzero-visual]').forEach(button => {
+        const native = el.detailOfferLabel.querySelector('[data-market-filter="ctzero"]');
+        button.disabled = Boolean(disabled || native?.disabled);
+      });
+
+      el.detailOfferLabel.querySelectorAll('.offer-zero-toggle, .market-ctzero-pill').forEach(control => {
+        control.classList.toggle('is-disabled', Boolean(disabled || control.disabled));
+      });
+    }
+
+    function renderMarketControls(selectedRow = null, options = {}) {
+      if (!el.detailOfferLabel) return;
+      const rows = state.market.rows || [];
+      const selected = state.market.selected || { langKey: '', condKey: '', ctZero: false };
+      const disabled = Boolean(options.disabled || state.market.loading);
+      const noMatch = Boolean(options.noMatch);
+      const controlScope = noMatch ? [] : getRowsForCtZeroState(rows, selected.ctZero);
+      const languages = noMatch ? [] : getAvailableLanguages(controlScope, false);
+      const conditions = noMatch ? [] : getAvailableConditions(controlScope, selected.langKey, false);
+      const langValue = noMatch ? '---' : selected.langKey;
+      const condValue = noMatch ? '---' : selected.condKey;
+      const currentLanguage = languages.find(item => item.key === langValue) || { key: langValue, label: langValue === '---' ? '---' : getLanguageDisplayLabel(langValue) };
+      const currentCondition = condValue || '---';
+      const langOptions = noMatch
+        ? '<option value="---">---</option>'
+        : languages.map(item => `<option value="${escapeHtml(item.key)}" ${item.key === langValue ? 'selected' : ''}>${escapeHtml(item.label)}</option>`).join('');
+      const condOptions = noMatch
+        ? '<option value="---">---</option>'
+        : conditions.map(code => `<option value="${escapeHtml(code)}" ${code === condValue ? 'selected' : ''}>${escapeHtml(code)}</option>`).join('');
+      const langMenu = noMatch
+        ? ''
+        : languages.map(item => `
+            <button type="button" class="market-ui-option${item.key === langValue ? ' is-selected' : ''}" data-market-option="language" data-value="${escapeHtml(item.key)}">
+              ${marketFlagMarkup(item.label, item.key)}
+              <span class="market-ui-option-text">${escapeHtml(item.label)}</span>
+            </button>`).join('');
+      const condMenu = noMatch
+        ? ''
+        : conditions.map(code => `
+            <button type="button" class="market-ui-option${code === condValue ? ' is-selected' : ''}" data-market-option="condition" data-value="${escapeHtml(code)}">
+              ${conditionBadgeMarkup(code)}
+              <span class="market-ui-option-text">${escapeHtml(getConditionLabelFromCode(code))}</span>
+            </button>`).join('');
+
+      el.detailOfferLabel.innerHTML = `
+        <div class="offer-controls market-visual-controls" aria-label="Filtri offerta marketplace">
+          <select class="offer-select market-native-control" data-market-filter="language" ${noMatch ? 'data-market-no-match="1"' : ''} ${disabled || noMatch ? 'disabled' : ''} tabindex="-1" aria-hidden="true">${langOptions}</select>
+          <select class="offer-select market-native-control" data-market-filter="condition" ${noMatch ? 'data-market-no-match="1"' : ''} ${disabled || noMatch ? 'disabled' : ''} tabindex="-1" aria-hidden="true">${condOptions}</select>
+          <input class="market-native-control" type="checkbox" data-market-filter="ctzero" ${selected.ctZero ? 'checked' : ''} ${disabled ? 'disabled' : ''} tabindex="-1" aria-hidden="true">
+
+          <div class="market-ui-dropdown" data-market-dropdown="language">
+            <button type="button" class="market-ui-btn" data-market-menu-button="language" aria-label="Lingua" aria-expanded="false" ${disabled || noMatch ? 'disabled' : ''}>
+              ${marketFlagMarkup(currentLanguage.label, currentLanguage.key)}
+              <span class="market-arrow">▼</span>
+            </button>
+            <div class="market-ui-menu" data-market-menu="language">${langMenu}</div>
+          </div>
+
+          <div class="market-ui-dropdown" data-market-dropdown="condition">
+            <button type="button" class="market-ui-btn" data-market-menu-button="condition" aria-label="Condizione" aria-expanded="false" ${disabled || noMatch ? 'disabled' : ''}>
+              ${conditionBadgeMarkup(currentCondition)}
+              <span class="market-arrow">▼</span>
+            </button>
+            <div class="market-ui-menu" data-market-menu="condition">${condMenu}</div>
+          </div>
+
+          <button type="button" class="market-ctzero-pill${selected.ctZero ? '' : ' off'}" data-market-ctzero-visual aria-label="CTZero" aria-pressed="${selected.ctZero ? 'true' : 'false'}" ${disabled ? 'disabled' : ''}>
+            <svg viewBox="0 0 1254 1254" aria-hidden="true">
+    <path fill="#fdfdfd" d="M622.98 211.04c6.3-.93 12.68-.62 19.03-.69 5.67.04 11.38-.13 17.01.74 8.42.67 16.99-.51 25.31 1.34 5.72 1.32 11.63.76 17.37 1.89 9.86 1.96 19.75 3.76 29.62 5.65 27.04 6.58 53.77 15.08 78.77 27.43 7.8 4 16.08 7.09 23.5 11.81 7.15 4.58 14.91 8.16 21.73 13.26 5.24 3.94 11.45 6.62 16.05 11.37 1.43 2.33-.3 4.92-2.07 6.49-10.94 10.4-21.47 21.2-32.14 31.86-12.97 14.34-27.39 27.25-40.59 41.36-9.66 9.34-18.9 19.1-28.54 28.45-6.53 7.35-14.13 13.69-20.12 21.53-8.49-4.64-17.24-8.74-25.95-12.92-10.32-4.15-20.94-7.69-31.91-9.61-6.82-1.23-13.53-3.22-20.48-3.58-19.08-2.4-38.61-3.01-57.57.62-18.06 2.06-35.76 7.12-52.3 14.64-10.06 3.72-19.18 9.41-28.66 14.33-15.22 8.9-28.83 20.33-41.25 32.78-6.07 5.3-10.79 11.87-16.23 17.77-16.45 19.86-28.76 43.07-36.51 67.65-2.94 8.46-5.51 17.06-7.05 25.9-2.45 8.28-2.09 16.98-3.47 25.44-1.62 10.07-1.03 20.34-.86 30.5 1.54 8.6 2.35 17.29 3.18 25.98 1.67 7.36 2.79 14.84 4.9 22.1 2.64 11.23 7.7 21.65 11.79 32.39 1.81 5.6 4.79 10.67 7.58 15.83 1.04 2.12 2.78 5.1.61 7.12-13.44 14.95-28.03 28.81-42.18 43.09-11.92 11.77-23.56 23.8-35.33 35.72-6.82 6.19-12.93 13.08-19.65 19.36-7.79 7.65-14.87 16.03-22.94 23.39-2.73 2.28-5.7-.48-7.02-2.92-5.85-9.44-13.02-18.01-18.25-27.83-5.62-8.69-10.47-17.84-14.99-27.14-7.14-13.21-13.08-27.05-18.07-41.21-5.73-13.75-9.61-28.17-13.39-42.54-2.83-14.1-6.66-28.08-7.64-42.48-.65-4.31-2-8.53-1.86-12.92.11-7.94-1.44-15.77-1.97-23.65-.11-12.47-.32-24.95.15-37.41 1.61-11.62 1.12-23.44 3.41-34.97 1.57-15.34 5.14-30.4 8.62-45.4 3.47-11.17 6.49-22.51 10.93-33.35 3.75-8.15 6-16.91 10.14-24.9 6.26-14.93 14.2-29.04 22.14-43.12 5.46-8.27 10.25-16.98 16.26-24.89 8.45-12.07 17.6-23.66 27.63-34.45 8.69-9.65 17.44-19.32 27.21-27.91 16.3-14.66 33.08-29 51.81-40.49 21.11-14.49 44.07-26.1 67.76-35.73 19.09-7.41 38.46-14.23 58.48-18.65 11.57-2.25 23.14-4.49 34.77-6.43 7.84-.01 15.44-2.42 23.28-2.3 3.32-.08 6.65.13 9.95-.3z"/>
+    <path fill="#fdfdfd" d="M922.38 339.2c1.88-2.08 4.06-3.87 6.23-5.66 6.66 6.68 12.26 14.3 18.41 21.44 4.6 4.84 8.02 10.6 11.94 15.96 3.52 5.03 7.83 9.49 10.89 14.85 4.85 8.04 10.41 15.67 14.83 23.97 18.67 33.61 32.5 69.9 41.16 107.36 2.27 11.26 4.27 22.57 6.31 33.88 1.22 13.65 1.52 27.35 3.16 40.97.34 7 .09 14.02.19 21.04.23 6.37-1.25 12.63-1.13 19.01-1.36 11.09-1.28 22.38-3.95 33.28-1.02 4.37-.79 8.91-1.87 13.27-3.08 13.8-5.94 27.66-9.83 41.27-6.24 19.26-13.15 38.4-22.41 56.45-6.22 15.07-14.84 28.97-23.1 42.97-5.04 8.38-10.82 16.27-16.93 23.89-6 8.89-13.29 16.78-20.01 25.12-6.91 7.74-13.71 15.61-21.28 22.73-18.36 17.14-37.5 33.68-58.84 47.05-8.75 6.44-18.45 11.34-27.9 16.63-10.3 5.1-20.38 10.7-31.12 14.85-7.94 3-15.62 6.73-23.83 8.98-10.53 3.99-21.5 6.47-32.33 9.47-10.55 2.86-21.27 5.05-32.02 7.03-10.44.7-20.62 3.63-31.13 3.55-9.88 1.44-19.84 2.05-29.82 1.81-8.67-.25-17.39.55-26-0.68-4.31-.46-8.68.03-12.97-.7-12.06-1.97-24.26-3.06-36.23-5.54-8.55-1.82-17.24-3.05-25.66-5.41-7.61-2.49-15.47-4.13-23.01-6.83-8.99-3.46-18.3-6.02-27.15-9.83-26.22-10.6-51.01-24.48-74.52-40.12-7.5-5.29-14.71-10.99-22.42-15.97 1.03.11 2.06.24 3.09.37-7.94-4.59-14.34-11.28-21.52-16.89 4.49-6.76 10.86-11.92 16.29-17.87 23.04-22.59 45.56-45.7 68.42-68.47 5.48-6.55 12.22-11.84 18.09-18.02 7.53-7.34 14.7-15.05 22.46-22.15 9.6 8.2 20.5 14.65 31.27 21.18 8.89 5.01 18.43 8.72 27.56 13.24 10.49 3.91 21.31 6.98 32.24 9.43 7.91 2.03 16.14 2.18 24.16 3.66 4.58.96 9.29.59 13.93 1.09 8.12 1.13 16.23-.62 24.36-.58 15.96-2.19 32.13-3.96 47.49-9.11 11.05-3.23 21.51-8.09 31.99-12.8 11.61-5.48 22.19-12.78 32.77-19.98 31.93-24.31 57.28-57.25 72.24-94.53 5.59-14.41 9.41-29.44 12.41-44.57 1.01-6.71 2.31-13.43 2.2-20.24-.15-6.72 1.84-13.37.67-20.09-1.14-5.94-.27-12.02-1.17-17.97-.71-6.67-2.41-13.17-3.17-19.82-.84-7.91-3.69-15.39-6.05-22.92-6.56-22.54-17.43-43.71-31.15-62.7-4.08-5.77-9.54-10.49-13.03-16.67 1.25-3.23 3.98-5.52 6.33-7.96 3.72-3.61 7.08-7.58 10.8-11.21 6.54-6.12 12.32-13 18.93-19.06 22.18-22.51 44.71-44.7 66.83-67.27 4.3-5.05 9.5-9.22 13.9-14.18z"/>
+  </svg>
+            <span class="market-ctzero-pill-text">CT Zero</span>
+          </button>
+        </div>`;
+    }
+
+    function setMarketSelectionFromProduct(product) {
+      state.market.selected = {
+        langKey: getLanguageKey(product),
+        condKey: getConditionCode(product?.properties_hash?.condition || ''),
+        ctZero: isCardTraderZero(product),
+      };
+    }
+
+    function applyMarketSelection(changed = 'auto') {
+      const rows = state.market.rows || [];
+      const selected = state.market.selected || { langKey: '', condKey: '', ctZero: false };
+      if (!rows.length) {
+        setPriceResult('-', 'Offerta non disponibile');
+        return;
+      }
+
+      const scope = getRowsForCtZeroState(rows, selected.ctZero);
+      if (!scope.length) {
+        state.market.selected = selected;
+        setPriceResult('-', '');
+        renderMarketControls(null, { noMatch: true });
+        return;
+      }
+
+      const languages = getAvailableLanguages(scope, false);
+      const languageExists = languages.some(item => item.key === selected.langKey);
+      if (!languageExists) {
+        const bestLanguageRow = getBestByConditionThenPrice(scope) || getLowestRow(scope);
+        if (bestLanguageRow) selected.langKey = bestLanguageRow.langKey;
+      }
+
+      let langScope = scope.filter(row => row.langKey === selected.langKey);
+      if (changed === 'language') {
+        // Cambio lingua = condizione migliore in quella lingua, rispettando CTZero ON/OFF.
+        const bestConditionRow = getBestByConditionThenPrice(langScope) || getLowestRow(langScope);
+        if (bestConditionRow) selected.condKey = bestConditionRow.condKey;
+      }
+
+      const conditions = getAvailableConditions(scope, selected.langKey, false);
+      if (!conditions.includes(selected.condKey)) {
+        const bestConditionRow = getBestByConditionThenPrice(langScope) || getLowestRow(langScope);
+        if (bestConditionRow) selected.condKey = bestConditionRow.condKey;
+      }
+
+      let candidates = scope.filter(row => row.langKey === selected.langKey && row.condKey === selected.condKey);
+
+      if (!candidates.length && changed === 'ctzero') {
+        // Toggle CTZero: prova stessa lingua/condizione; se non esiste, resta nel gruppo scelto
+        // e trova la migliore offerta disponibile, aggiornando lingua e condizione.
+        const fallback = getBestByConditionThenPrice(scope) || getLowestRow(scope);
+        if (fallback) {
+          selected.langKey = fallback.langKey;
+          selected.condKey = fallback.condKey;
+          candidates = scope.filter(row => row.langKey === selected.langKey && row.condKey === selected.condKey);
+        }
+      }
+
+      if (!candidates.length && changed !== 'condition') {
+        const fallback = getBestByConditionThenPrice(scope) || getLowestRow(scope);
+        if (fallback) {
+          selected.langKey = fallback.langKey;
+          selected.condKey = fallback.condKey;
+          candidates = scope.filter(row => row.langKey === selected.langKey && row.condKey === selected.condKey);
+        }
+      }
+
+      state.market.selected = selected;
+      const chosen = getLowestRow(candidates);
+      if (!chosen) {
+        setPriceResult('-', '');
+        renderMarketControls(null, { noMatch: true });
+        return;
+      }
+      setPriceResult(formatEuroFromCents(chosen.priceCents), '');
+      renderMarketControls(chosen);
     }
 
     function pickBestMarketplaceOffer(products) {
-      let thresholdItalianNearMint = null;
-      let lowestItalianNearMint = null;
-      let lowestItalianOtherCondition = null;
-      let lowestOtherLanguageNearMint = null;
-      let lowestOtherLanguageOtherCondition = null;
+      const rows = buildMarketRows(products);
+      if (!rows.length) return null;
 
-      for (const product of products) {
-        const priceCents = getProductPriceCents(product);
-        if (!Number.isFinite(priceCents)) continue;
+      const isItalianRow = row => isItalianLanguage(row.langLabel) || isItalianLanguage(row.langKey);
+      const isNearMintRow = row => row.condKey === 'NM';
+      const isOtherLanguageRow = row => !isItalianRow(row);
 
-        const condition = product?.properties_hash?.condition || '';
-        const language = getProductLanguage(product);
-        const isItalian = isItalianLanguage(language);
-        const isNearMint = isNearMintCondition(condition);
+      const prioritySteps = [
+        { kind: 'ita_near_mint_ctzero', rows: rows.filter(row => isItalianRow(row) && isNearMintRow(row) && row.ctZero), mode: 'price' },
+        { kind: 'ita_near_mint_no_ctzero', rows: rows.filter(row => isItalianRow(row) && isNearMintRow(row) && !row.ctZero), mode: 'price' },
+        { kind: 'ita_best_condition_ctzero', rows: rows.filter(row => isItalianRow(row) && row.ctZero), mode: 'condition' },
+        { kind: 'ita_best_condition_no_ctzero', rows: rows.filter(row => isItalianRow(row) && !row.ctZero), mode: 'condition' },
+        { kind: 'other_language_best_condition_ctzero', rows: rows.filter(row => isOtherLanguageRow(row) && row.ctZero), mode: 'condition' },
+        { kind: 'other_language_best_condition_no_ctzero', rows: rows.filter(row => isOtherLanguageRow(row) && !row.ctZero), mode: 'condition' },
+        { kind: 'lowest_absolute', rows, mode: 'price' },
+      ];
 
-        if (isItalian && isNearMint && priceCents <= 11) {
-          thresholdItalianNearMint = { product, priceCents };
-          break;
+      for (const step of prioritySteps) {
+        const row = step.mode === 'price' ? getLowestRow(step.rows) : getBestByConditionThenPrice(step.rows);
+        if (row) {
+          return {
+            kind: step.kind,
+            note: 'Scaletta apertura: priorità a IT, NM e CTZero; poi fallback ordinato senza mischiare i filtri utente dopo il primo caricamento.',
+            product: row.product,
+            priceCents: row.priceCents,
+          };
         }
-
-        if (isItalian && isNearMint) {
-          if (!lowestItalianNearMint || priceCents < lowestItalianNearMint.priceCents) {
-            lowestItalianNearMint = { product, priceCents };
-          }
-          continue;
-        }
-
-        if (isItalian && !isNearMint) {
-          if (!lowestItalianOtherCondition || priceCents < lowestItalianOtherCondition.priceCents) {
-            lowestItalianOtherCondition = { product, priceCents };
-          }
-          continue;
-        }
-
-        if (!isItalian && isNearMint) {
-          if (!lowestOtherLanguageNearMint || priceCents < lowestOtherLanguageNearMint.priceCents) {
-            lowestOtherLanguageNearMint = { product, priceCents };
-          }
-          continue;
-        }
-
-        if (!lowestOtherLanguageOtherCondition || priceCents < lowestOtherLanguageOtherCondition.priceCents) {
-          lowestOtherLanguageOtherCondition = { product, priceCents };
-        }
-      }
-
-      if (thresholdItalianNearMint) {
-        return {
-          kind: 'threshold_ita_near_mint',
-          note: 'Trovato un Near Mint ITA a € 0,11 o meno. La scansione si ferma e mostra quello.',
-          ...thresholdItalianNearMint,
-        };
-      }
-
-      if (lowestItalianNearMint) {
-        return {
-          kind: 'lowest_ita_near_mint',
-          note: 'Nessun Near Mint ITA a € 0,11 o meno. Mostro il Near Mint ITA più basso.',
-          ...lowestItalianNearMint,
-        };
-      }
-
-      if (lowestItalianOtherCondition) {
-        return {
-          kind: 'lowest_ita_other_condition',
-          note: 'Nessun Near Mint ITA disponibile. Mostro il prezzo ITA più basso tra le altre condizioni.',
-          ...lowestItalianOtherCondition,
-        };
-      }
-
-      if (lowestOtherLanguageNearMint) {
-        return {
-          kind: 'lowest_other_language_near_mint',
-          note: 'Nessuna offerta ITA utile trovata. Mostro il Near Mint più basso tra le altre lingue.',
-          ...lowestOtherLanguageNearMint,
-        };
-      }
-
-      if (lowestOtherLanguageOtherCondition) {
-        return {
-          kind: 'lowest_other_language_other_condition',
-          note: 'Resto del mondo e condizioni varie. Umanità impeccabile come sempre. Mostro il prezzo più basso rimasto.',
-          ...lowestOtherLanguageOtherCondition,
-        };
       }
 
       return null;
@@ -2189,6 +2734,7 @@ function finishUpdateTimer() {
     function setPriceLoadingState(message = 'Carico prezzo...') {
       if (el.detailPriceValue) el.detailPriceValue.textContent = '-';
       if (el.detailOfferLabel) el.detailOfferLabel.textContent = message;
+      setMarketControlsDisabled(true);
       if (el.refreshPriceBtn) {
         el.refreshPriceBtn.disabled = true;
         el.refreshPriceBtn.textContent = 'Aggiorna prezzo...';
@@ -2198,24 +2744,38 @@ function finishUpdateTimer() {
     function setPriceResult(priceText, offerText) {
       const cleanPrice = String(priceText || '-').replace(/^€\s*/i, '').trim() || '-';
       if (el.detailPriceValue) el.detailPriceValue.textContent = cleanPrice;
-      if (el.detailOfferLabel) el.detailOfferLabel.textContent = offerText || 'Offerta non disponibile';
+      if (typeof offerText === 'string' && offerText && el.detailOfferLabel) {
+        el.detailOfferLabel.textContent = offerText;
+      } else if (typeof offerText === 'string' && offerText === '' && el.detailOfferLabel) {
+        // Lascia intatti i controlli live: il testo offerta viene gestito dai selettori.
+      } else if (el.detailOfferLabel) {
+        el.detailOfferLabel.textContent = 'Offerta non disponibile';
+      }
     }
 
     async function loadMarketSummary(card) {
       if (!card) return;
+      state.market.rows = [];
+      state.market.selected = { langKey: '', condKey: '', ctZero: false };
+      state.market.lastCardId = card.id;
       setPriceLoadingState();
       try {
         const data = await api(`/marketplace/products?blueprint_id=${encodeURIComponent(card.id)}`);
+        if (state.selectedCard && Number(state.selectedCard.id) !== Number(card.id)) return;
         const products = extractArray(data, ['products']);
         if (!products.length) { setPriceResult('-', 'Nessuna inserzione marketplace trovata'); return; }
         const pricedProducts = products.map(product => ({ product, priceCents: getProductPriceCents(product) })).filter(row => Number.isFinite(row.priceCents));
         if (!pricedProducts.length) { setPriceResult('-', 'Inserzioni trovate, ma nessun prezzo leggibile'); return; }
+        state.market.rows = buildMarketRows(products);
         const selected = pickBestMarketplaceOffer(products) || pricedProducts.sort((a, b) => a.priceCents - b.priceCents)[0];
         if (!selected) { setPriceResult('-', 'Offerta non disponibile'); return; }
-        setPriceResult(formatEuroFromCents(selected.priceCents), buildOfferLabel(selected.product));
+        setMarketSelectionFromProduct(selected.product);
+        setPriceResult(formatEuroFromCents(selected.priceCents), '');
+        renderMarketControls({ product: selected.product, priceCents: selected.priceCents });
       } catch (error) {
         setPriceResult('-', `Errore prezzo: ${error.message}`);
       } finally {
+        setMarketControlsDisabled(false);
         if (el.refreshPriceBtn) {
           el.refreshPriceBtn.disabled = false;
           el.refreshPriceBtn.textContent = 'Aggiorna prezzo';
@@ -2333,7 +2893,7 @@ function finishUpdateTimer() {
       try {
         startUpdateTimer();
         setStatus(force ? 'Aggiorno indice statico da GitHub...' : 'Carico indice statico da GitHub...');
-        setProgress(8);
+        setProgress(0);
 
         const cacheBust = force ? `?t=${Date.now()}` : '';
         const [cardsRes, metaRes] = await Promise.all([
@@ -2344,7 +2904,6 @@ function finishUpdateTimer() {
         if (!cardsRes.ok) throw new Error(`pokemon-index.json non caricato: HTTP ${cardsRes.status}`);
         if (!metaRes.ok) throw new Error(`pokemon-index-meta.json non caricato: HTTP ${metaRes.status}`);
 
-        setProgress(45);
         const [cards, meta] = await Promise.all([cardsRes.json(), metaRes.json()]);
 
         if (!Array.isArray(cards)) {
@@ -2356,7 +2915,7 @@ function finishUpdateTimer() {
         hydrateStats();
         clearResultsArea();
         setStatus('');
-        setProgress(100);
+        setProgress(0);
       } catch (error) {
         console.error(error);
         state.cards = [];
@@ -2370,18 +2929,23 @@ function finishUpdateTimer() {
       }
     }
 
+    function formatItalianNumber(value) {
+      const number = Number(value);
+      if (!Number.isFinite(number)) return '0';
+      return number.toLocaleString('it-IT');
+    }
+
     function hydrateStats() {
-      const count = state.cards.length;
+      const count = formatItalianNumber(state.cards.length);
       const meta = state.meta;
       const updatedAtValue = meta?.updatedAt || meta?.createdAt || '';
       const updatedAt = updatedAtValue ? formatIndexDate(updatedAtValue) : '-';
-      const expansions = meta?.expansionsCount || 0;
-      const timerValue = escapeHtml(el.timerChip?.textContent || '00:00');
-      el.updatedText.innerHTML = updatedAt && updatedAt !== '-'
-        ? `Indice ${updatedAt} - ${expansions} espansioni ${count} carte - <span id="timerChip">${timerValue}</span>`
-        : `Indice - ${expansions} espansioni ${count} carte - <span id="timerChip">${timerValue}</span>`;
+      const expansions = formatItalianNumber(meta?.expansionsCount || 0);
+      el.updatedText.textContent = updatedAt && updatedAt !== '-'
+        ? `Indice ${updatedAt} - ${expansions} espansioni ${count} carte`
+        : `Indice - ${expansions} espansioni ${count} carte`;
       el.countsText.textContent = '';
-      el.timerChip = document.getElementById('timerChip');
+      el.timerChip = null;
     }
 
     function clearResultsArea() {
@@ -2495,6 +3059,8 @@ function finishUpdateTimer() {
         return;
       }
 
+      playSearchProgressAnimation();
+
       const results = state.cards
         .map(card => ({ card, score: computeScore(card, parsed) }))
         .filter(x => x.score > 0)
@@ -2522,6 +3088,9 @@ function finishUpdateTimer() {
       } else if (el.detailImageWrap) {
         el.detailImageWrap.innerHTML = '<div class="thumb-fallback">Immagine non disponibile</div>';
       }
+      state.market.rows = [];
+      state.market.selected = { langKey: '', condKey: '', ctZero: false };
+      state.market.loading = false;
       setPriceResult('-', 'Prezzo non ancora caricato');
       if (el.cardRarity) el.cardRarity.textContent = f.rarity || '';
       if (el.cardSet) el.cardSet.textContent = setText || '';
@@ -2545,6 +3114,70 @@ function finishUpdateTimer() {
       document.querySelectorAll('[data-close]').forEach(btn => {
         btn.addEventListener('click', () => closeModal(document.getElementById(btn.dataset.close)));
       });
+
+      if (el.detailOfferLabel) {
+        el.detailOfferLabel.addEventListener('change', (event) => {
+          const target = event.target;
+          if (!target || state.market.loading) return;
+          const filter = target.dataset?.marketFilter;
+          if (!filter) return;
+          if (filter === 'language') {
+            state.market.selected.langKey = target.value;
+            applyMarketSelection('language');
+          } else if (filter === 'condition') {
+            state.market.selected.condKey = target.value;
+            applyMarketSelection('condition');
+          } else if (filter === 'ctzero') {
+            state.market.selected.ctZero = Boolean(target.checked);
+            applyMarketSelection('ctzero');
+          }
+        });
+
+        el.detailOfferLabel.addEventListener('click', (event) => {
+          const menuButton = event.target.closest('[data-market-menu-button]');
+          const optionButton = event.target.closest('[data-market-option]');
+          const ctZeroButton = event.target.closest('[data-market-ctzero-visual]');
+
+          if (menuButton) {
+            if (menuButton.disabled || state.market.loading) return;
+            const menuName = menuButton.dataset.marketMenuButton;
+            const menu = el.detailOfferLabel.querySelector(`[data-market-menu="${menuName}"]`);
+            const willOpen = !menu?.classList.contains('open');
+            el.detailOfferLabel.querySelectorAll('.market-ui-menu.open').forEach(item => item.classList.remove('open'));
+            el.detailOfferLabel.querySelectorAll('[data-market-menu-button]').forEach(btn => btn.setAttribute('aria-expanded', 'false'));
+            if (menu && willOpen) {
+              menu.classList.add('open');
+              menuButton.setAttribute('aria-expanded', 'true');
+            }
+            return;
+          }
+
+          if (optionButton) {
+            if (state.market.loading) return;
+            const filter = optionButton.dataset.marketOption;
+            const value = optionButton.dataset.value;
+            const native = el.detailOfferLabel.querySelector(`[data-market-filter="${filter}"]`);
+            if (!native || native.disabled) return;
+            native.value = value;
+            native.dispatchEvent(new Event('change', { bubbles: true }));
+            return;
+          }
+
+          if (ctZeroButton) {
+            if (ctZeroButton.disabled || state.market.loading) return;
+            const native = el.detailOfferLabel.querySelector('[data-market-filter="ctzero"]');
+            if (!native || native.disabled) return;
+            native.checked = !native.checked;
+            native.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        });
+
+        document.addEventListener('click', (event) => {
+          if (!el.detailOfferLabel || el.detailOfferLabel.contains(event.target)) return;
+          el.detailOfferLabel.querySelectorAll('.market-ui-menu.open').forEach(item => item.classList.remove('open'));
+          el.detailOfferLabel.querySelectorAll('[data-market-menu-button]').forEach(btn => btn.setAttribute('aria-expanded', 'false'));
+        });
+      }
 
       [el.tokenModal, el.detailModal].forEach(backdrop => {
         backdrop.addEventListener('click', (e) => {
@@ -3706,6 +4339,15 @@ el.autocomplete.addEventListener('click', (e) => {
   .album-needed-copy strong{font-size:13.5px;}
   .album-needed-copy span{font-size:12.5px;}
 }
+
+*{
+  -webkit-tap-highlight-color: transparent !important;
+}
+button:focus, button:active, select:focus, select:active, a:focus, a:active{
+  outline:none !important;
+  box-shadow:none !important;
+}
+
 </style>
 
 
@@ -3715,4 +4357,13 @@ el.autocomplete.addEventListener('click', (e) => {
 .fab-lock-mark{display:none;}
 .fab.is-locked .fab-plus-mark{display:none !important;}
 .fab.is-locked .fab-lock-mark{display:block !important;}
+
+*{
+  -webkit-tap-highlight-color: transparent !important;
+}
+button:focus, button:active, select:focus, select:active, a:focus, a:active{
+  outline:none !important;
+  box-shadow:none !important;
+}
+
 </style>
