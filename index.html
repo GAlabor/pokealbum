@@ -301,6 +301,41 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
           var(--album-color-dark, rgba(42, 84, 233, 1))
         );}
 .album-card.is-pressed .album-wrap{transform:translateY(1px) scale(0.98);filter:drop-shadow(0 16px 20px rgba(57, 91, 176, 0.18)) saturate(1.04);}
+
+.rename-sheet-backdrop{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34, 48, 86, 0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease, background-color .22s ease, visibility .22s ease;}
+.rename-sheet-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34, 48, 86, 0.22);}
+.rename-sheet{width:min(100%, 430px);border-radius:30px;background:rgba(255, 255, 255, 0.72);border:1px solid rgba(255, 255, 255, 0.70);box-shadow:0 24px 54px rgba(25, 38, 82, 0.20), inset 0 1px 0 rgba(255,255,255,.88);backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);padding:10px 14px 14px;transform:translateY(calc(100% + 28px));transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f;}
+.rename-sheet-backdrop.open .rename-sheet{transform:translateY(0);}
+.rename-sheet-handle{width:42px;height:5px;border-radius:999px;background:rgba(113,129,163,.34);margin:2px auto 14px;}
+.rename-sheet-title{margin:0;color:#1c2e5a;font-size:20px;font-weight:900;line-height:1.08;letter-spacing:-.04em;text-align:center;}
+.rename-sheet-subtitle{margin:5px auto 14px;max-width:300px;color:#7382a2;font-size:13px;font-weight:600;line-height:1.25;text-align:center;}
+.rename-sheet-field{display:grid;gap:8px;margin:0 0 14px;}
+.rename-sheet-label{font-size:12px;font-weight:850;color:#65779f;letter-spacing:.02em;text-transform:uppercase;}
+.rename-sheet-input{width:100%;height:52px;border-radius:18px;border:1px solid rgba(120,146,207,.20);background:rgba(248,251,255,.88);color:#20345f;padding:0 15px;font-family:inherit;font-size:16px;font-weight:750;letter-spacing:-.02em;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.86);}
+.rename-sheet-input:focus{border-color:rgba(47,100,255,.36);box-shadow:0 0 0 4px rgba(47,100,255,.10), inset 0 1px 0 rgba(255,255,255,.9);background:rgba(255,255,255,.96);}
+.rename-sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rename-sheet-btn{appearance:none;-webkit-appearance:none;height:48px;border:0;border-radius:999px;font-family:inherit;font-size:15px;font-weight:850;letter-spacing:-.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease, background-color .16s ease, box-shadow .16s ease;}
+.rename-sheet-btn:active{transform:scale(.98);}
+.rename-sheet-btn.cancel{background:rgba(235,241,255,.68);color:#65779f;border:1px solid rgba(120,146,207,.16);}
+.rename-sheet-btn.save{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);box-shadow:0 10px 22px rgba(47,100,255,.24), inset 0 1px 0 rgba(255,255,255,.28);}
+@media (max-width: 420px){.rename-sheet-backdrop{padding-left:12px;padding-right:12px;}.rename-sheet{border-radius:28px;padding:10px 12px 12px;}.rename-sheet-title{font-size:19px;}}
+
+.delete-sheet-backdrop{position:fixed;inset:0;z-index:72;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease, background-color .22s ease, visibility .22s ease;}
+.delete-sheet-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.26);}
+.delete-sheet{width:min(100%,430px);border-radius:30px;background:rgba(255,255,255,.76);border:1px solid rgba(255,255,255,.72);box-shadow:0 24px 54px rgba(25,38,82,.22), inset 0 1px 0 rgba(255,255,255,.88);backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);padding:10px 14px 14px;transform:translateY(calc(100% + 28px));transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f;}
+.delete-sheet-backdrop.open .delete-sheet{transform:translateY(0);}
+.delete-sheet-handle{width:42px;height:5px;border-radius:999px;background:rgba(113,129,163,.34);margin:2px auto 14px;}
+.delete-sheet-icon{width:54px;height:54px;margin:0 auto 10px;border-radius:20px;display:grid;place-items:center;background:rgba(255,114,114,.12);color:#c62828;border:1px solid rgba(198,40,40,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.64);}
+.delete-sheet-icon svg{width:27px;height:27px;stroke-width:2.1;}
+.delete-sheet-title{margin:0;color:#1c2e5a;font-size:20px;font-weight:900;line-height:1.08;letter-spacing:-.04em;text-align:center;}
+.delete-sheet-subtitle{margin:6px auto 12px;max-width:315px;color:#7382a2;font-size:13px;font-weight:600;line-height:1.28;text-align:center;}
+.delete-sheet-album-name{display:block;margin:0 auto 14px;max-width:315px;padding:9px 12px;border-radius:16px;background:rgba(248,251,255,.68);border:1px solid rgba(120,146,207,.14);color:#20345f;font-size:14px;font-weight:850;letter-spacing:-.02em;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.delete-sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.delete-sheet-btn{appearance:none;-webkit-appearance:none;height:48px;border:0;border-radius:999px;font-family:inherit;font-size:15px;font-weight:850;letter-spacing:-.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease, background-color .16s ease, box-shadow .16s ease;}
+.delete-sheet-btn:active{transform:scale(.98);}
+.delete-sheet-btn.cancel{background:rgba(235,241,255,.68);color:#65779f;border:1px solid rgba(120,146,207,.16);}
+.delete-sheet-btn.confirm{color:#fff;background:linear-gradient(135deg,#ff8a8a 0%,#e34444 100%);box-shadow:0 10px 22px rgba(227,68,68,.22), inset 0 1px 0 rgba(255,255,255,.28);}
+@media (max-width:420px){.delete-sheet-backdrop{padding-left:12px;padding-right:12px;}.delete-sheet{border-radius:28px;padding:10px 12px 12px;}.delete-sheet-title{font-size:19px;}}
 .modal-backdrop{position:fixed;inset:0;background:transparent;display:none;align-items:center;justify-content:center;padding:0;z-index:50;backdrop-filter:none;-webkit-backdrop-filter:none;}
 .modal-backdrop.open{display:block;}
 .context-menu{position:fixed;left:16px;top:16px;width:max-content;min-width:168px;max-width:min(230px, calc(100vw - 32px));padding:6px;border-radius:18px;background:rgba(255, 255, 255, 0.6);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 34px rgba(25, 38, 82, 0.16),
@@ -1190,6 +1225,52 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   box-shadow:none !important;
 }
 
+
+
+/* NOTA: la pagina iniziale resta alla stessa altezza.
+   Le pagine interne vengono alzate tramite --poke-view-y. */
+/* === FIX 06/05/2026: topbar unificata per pagine e scheda carta ===
+   Cambia questi valori una sola volta e si spostano insieme:
+   - --poke-page-x: distanza laterale
+   - --poke-page-top: altezza dall'alto, inclusa safe-area
+   - --poke-view-y: correzione verticale comune delle viste
+   - --poke-topbar-bottom: spazio sotto la topbar */
+:root{
+  --poke-page-x:20px;
+  --poke-page-top:calc(var(--safe-top) + 10px);
+  --poke-view-y:-16px;
+  --poke-topbar-bottom:6px;
+}
+.content{
+  padding-top:var(--poke-page-top) !important;
+  padding-left:var(--poke-page-x) !important;
+  padding-right:var(--poke-page-x) !important;
+}
+.add-album-view,
+.album-detail-view,
+.add-card-search-view{
+  margin-top:var(--poke-view-y) !important;
+}
+.add-album-topbar,
+.album-detail-topbar,
+.card-search-topbar,
+#detailModal .card-sheet-topbar{
+  min-height:var(--topbar-control-size) !important;
+  padding:0 0 var(--poke-topbar-bottom) !important;
+  margin:0 0 6px !important;
+  display:flex !important;
+  align-items:flex-start !important;
+}
+#detailModal .card-sheet-container{
+  max-width:430px !important;
+  padding:calc(var(--poke-page-top) + var(--poke-view-y)) var(--poke-page-x) calc(var(--safe-bottom) + 24px) !important;
+}
+#detailModal .card-sheet-topbar{
+  position:relative !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+}
+
 </style>
   </head>
   <body>
@@ -1786,6 +1867,44 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
             </button>
           </div>
         </div>
+
+        <div class="rename-sheet-backdrop" id="renameSheetBackdrop" aria-hidden="true">
+          <section class="rename-sheet" id="renameSheet" role="dialog" aria-modal="true" aria-labelledby="renameSheetTitle">
+            <div class="rename-sheet-handle" aria-hidden="true"></div>
+            <h2 class="rename-sheet-title" id="renameSheetTitle">Rinomina album</h2>
+            <p class="rename-sheet-subtitle">Modifica il nome dell’album.</p>
+            <label class="rename-sheet-field" for="renameAlbumInput">
+              <span class="rename-sheet-label">Nome album</span>
+              <input class="rename-sheet-input" id="renameAlbumInput" type="text" maxlength="34" autocomplete="off" />
+            </label>
+            <div class="rename-sheet-actions">
+              <button class="rename-sheet-btn cancel" id="renameCancelBtn" type="button">Annulla</button>
+              <button class="rename-sheet-btn save" id="renameSaveBtn" type="button">Salva</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="delete-sheet-backdrop" id="deleteSheetBackdrop" aria-hidden="true">
+          <section class="delete-sheet" id="deleteSheet" role="dialog" aria-modal="true" aria-labelledby="deleteSheetTitle">
+            <div class="delete-sheet-handle" aria-hidden="true"></div>
+            <div class="delete-sheet-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18"></path>
+                <path d="M8 6V4h8v2"></path>
+                <path d="M19 6l-1 14H6L5 6"></path>
+                <path d="M10 11v5"></path>
+                <path d="M14 11v5"></path>
+              </svg>
+            </div>
+            <h2 class="delete-sheet-title" id="deleteSheetTitle">Eliminare questo album?</h2>
+            <p class="delete-sheet-subtitle">L’album e le carte salvate al suo interno verranno rimossi.</p>
+            <strong class="delete-sheet-album-name" id="deleteAlbumName">Album</strong>
+            <div class="delete-sheet-actions">
+              <button class="delete-sheet-btn cancel" id="deleteCancelBtn" type="button">Annulla</button>
+              <button class="delete-sheet-btn confirm" id="deleteConfirmBtn" type="button">Elimina</button>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
 
@@ -2338,7 +2457,8 @@ function finishUpdateTimer() {
       nl: 'Olandese', nld: 'Olandese', dut: 'Olandese', nederlands: 'Olandese', dutch: 'Olandese', olandese: 'Olandese',
       pt: 'Portoghese', por: 'Portoghese', portuguese: 'Portoghese', portoghese: 'Portoghese',
       jp: 'Giapponese', ja: 'Giapponese', jpn: 'Giapponese', japanese: 'Giapponese', giapponese: 'Giapponese',
-      cn: 'Cinese', zh: 'Cinese', zho: 'Cinese', chi: 'Cinese', chinese: 'Cinese', cinese: 'Cinese',
+      cn: 'Cinese Semplificato', zh: 'Cinese Semplificato', zhcn: 'Cinese Semplificato', zhhans: 'Cinese Semplificato', zhsimplified: 'Cinese Semplificato', zho: 'Cinese Semplificato', chi: 'Cinese Semplificato', chinese: 'Cinese Semplificato', cinese: 'Cinese Semplificato', cinesesemplificato: 'Cinese Semplificato', simplifiedchinese: 'Cinese Semplificato', chinesesimplified: 'Cinese Semplificato',
+      tw: 'Cinese Tradizionale', zhtw: 'Cinese Tradizionale', zhhant: 'Cinese Tradizionale', zhtraditional: 'Cinese Tradizionale', cinesetradizionale: 'Cinese Tradizionale', traditionalchinese: 'Cinese Tradizionale', chinesetraditional: 'Cinese Tradizionale',
       kr: 'Coreano', ko: 'Coreano', kor: 'Coreano', korean: 'Coreano', coreano: 'Coreano',
       th: 'Tailandese', tha: 'Tailandese', thai: 'Tailandese', tailandese: 'Tailandese',
       id: 'Indonesiano', ind: 'Indonesiano', indonesian: 'Indonesiano', indonesiano: 'Indonesiano',
@@ -2488,7 +2608,8 @@ function finishUpdateTimer() {
       nl: ['NL', 'nl'], nld: ['NL', 'nl'], dut: ['NL', 'nl'], nederlands: ['NL', 'nl'], dutch: ['NL', 'nl'], olandese: ['NL', 'nl'],
       pt: ['PT', 'pt'], por: ['PT', 'pt'], portuguese: ['PT', 'pt'], portoghese: ['PT', 'pt'],
       jp: ['JP', 'jp'], ja: ['JP', 'jp'], jpn: ['JP', 'jp'], japanese: ['JP', 'jp'], giapponese: ['JP', 'jp'],
-      cn: ['CN', 'cn'], zh: ['CN', 'cn'], zho: ['CN', 'cn'], chi: ['CN', 'cn'], chinese: ['CN', 'cn'], cinese: ['CN', 'cn'],
+      cn: ['CN', 'cn'], zh: ['CN', 'cn'], zhcn: ['CN', 'cn'], zhhans: ['CN', 'cn'], zhsimplified: ['CN', 'cn'], zho: ['CN', 'cn'], chi: ['CN', 'cn'], chinese: ['CN', 'cn'], cinese: ['CN', 'cn'], cinesesemplificato: ['CN', 'cn'], simplifiedchinese: ['CN', 'cn'], chinesesimplified: ['CN', 'cn'],
+      tw: ['TW', 'tw'], zhtw: ['TW', 'tw'], zhhant: ['TW', 'tw'], zhtraditional: ['TW', 'tw'], cinesetradizionale: ['TW', 'tw'], traditionalchinese: ['TW', 'tw'], chinesetraditional: ['TW', 'tw'],
       kr: ['KR', 'kr'], ko: ['KR', 'kr'], kor: ['KR', 'kr'], korean: ['KR', 'kr'], coreano: ['KR', 'kr'],
       th: ['TH', 'th'], tha: ['TH', 'th'], thai: ['TH', 'th'], tailandese: ['TH', 'th'],
       id: ['ID', 'id'], ind: ['ID', 'id'], indonesian: ['ID', 'id'], indonesiano: ['ID', 'id'],
@@ -2788,6 +2909,34 @@ function finishUpdateTimer() {
       return [f.name, f.collectorNumber, f.version, f.setCode, f.setName].filter(Boolean).join(' ');
     }
 
+    function getPrimarySearchToken(parsed) {
+      return (parsed?.rawTokens || []).find(token => token && !/^\d+$/.test(token) && !/^\d+\/\d+$/.test(token))
+        || (parsed?.rawTokens || [])[0]
+        || '';
+    }
+
+    function getNamePriorityGroup(parsed, fields) {
+      const name = normalize(fields.name);
+      const setName = normalize(fields.setName);
+      const setCode = normalize(fields.setCode);
+      const version = normalize(fields.version);
+      const rarity = normalize(fields.rarity);
+      const number = normalize(fields.collectorNumber);
+      const fullQuery = parsed.normalized;
+      const primaryToken = getPrimarySearchToken(parsed);
+
+      // Gruppi rigidi: prima il nome della carta, poi il resto.
+      // Così "mew" mostra prima Mew/Mew V/Mewtwo e solo dopo i set che contengono Mew.
+      if (name === fullQuery || (primaryToken && name === primaryToken)) return 0;
+      if ((fullQuery && name.startsWith(fullQuery)) || (primaryToken && name.startsWith(primaryToken))) return 1;
+      if ((fullQuery && name.includes(fullQuery)) || (primaryToken && name.includes(primaryToken))) return 2;
+      if (setName === fullQuery || setCode === fullQuery || (primaryToken && (setName === primaryToken || setCode === primaryToken))) return 3;
+      if ((fullQuery && setName.includes(fullQuery)) || (primaryToken && (setName.includes(primaryToken) || setCode.includes(primaryToken)))) return 4;
+      if ((fullQuery && (version.includes(fullQuery) || rarity.includes(fullQuery) || number.includes(fullQuery)))
+        || (primaryToken && (version.includes(primaryToken) || rarity.includes(primaryToken) || number.includes(primaryToken)))) return 5;
+      return 6;
+    }
+
     function computeScore(card, query) {
       const parsed = typeof query === 'string' ? parseQuery(query) : query;
       if (!parsed.normalized || !parsed.rawTokens.length) return 0;
@@ -2801,16 +2950,24 @@ function finishUpdateTimer() {
       const setName = normalize(f.setName);
       const setCode = normalize(f.setCode);
       const version = normalize(f.version);
+      const rarity = normalize(f.rarity);
       const number = normalize(f.collectorNumber);
       const numericGroups = Array.isArray(card.searchNumericGroups) ? card.searchNumericGroups : [];
 
-      let score = 0;
+      const group = getNamePriorityGroup(parsed, f);
+      const groupBoosts = [1000000, 900000, 800000, 300000, 200000, 100000, 1];
+      let score = groupBoosts[group] || 1;
 
-      if (name === parsed.normalized) score += 500;
-      else if (name.startsWith(parsed.normalized)) score += 250;
-      else if (name.includes(parsed.normalized)) score += 120;
+      // Bonus frase intera: utile per "mew illustration" quando il nome contiene già tutta la stringa.
+      if (name === parsed.normalized) score += 5000;
+      else if (name.startsWith(parsed.normalized)) score += 3000;
+      else if (name.includes(parsed.normalized)) score += 1800;
+      else if (setName === parsed.normalized || setCode === parsed.normalized) score += 900;
+      else if (setName.includes(parsed.normalized)) score += 450;
 
-      parsed.rawTokens.forEach(token => {
+      parsed.rawTokens.forEach((token, index) => {
+        const isPrimaryToken = token === getPrimarySearchToken(parsed);
+
         if (/^\d+$/.test(token)) {
           const normalizedToken = stripLeadingZeros(token);
           let numericBoost = 0;
@@ -2820,11 +2977,11 @@ function finishUpdateTimer() {
             const norm = String(group.norm || '');
 
             if (raw === token || norm === normalizedToken) {
-              numericBoost = Math.max(numericBoost, 140);
+              numericBoost = Math.max(numericBoost, 850);
             } else if (raw.startsWith(token) || norm.startsWith(normalizedToken)) {
-              numericBoost = Math.max(numericBoost, 90);
+              numericBoost = Math.max(numericBoost, 520);
             } else if (raw.includes(token) || norm.includes(normalizedToken)) {
-              numericBoost = Math.max(numericBoost, 55);
+              numericBoost = Math.max(numericBoost, 260);
             }
           });
 
@@ -2833,25 +2990,39 @@ function finishUpdateTimer() {
         }
 
         if (/^\d+\/\d+$/.test(token)) {
-          if (version === token) score += 150;
-          else if (expandVersionVariants(version).includes(token)) score += 95;
+          if (version === token) score += 900;
+          else if (expandVersionVariants(version).includes(token)) score += 560;
           return;
         }
 
-        if (name === token) score += 150;
-        else if (name.startsWith(token)) score += 90;
-        else if (name.includes(token)) score += 55;
+        // Nome carta: campo dominante. Gli altri campi non devono scavalcare un match nel nome.
+        if (name === token) score += isPrimaryToken ? 2500 : 1800;
+        else if (name.startsWith(token)) score += isPrimaryToken ? 1700 : 1250;
+        else if (name.includes(token)) score += isPrimaryToken ? 1150 : 900;
 
-        if (setCode === token) score += 110;
+        // Campi secondari: raffinano la ricerca, ma restano dietro al nome.
+        if (rarity === token) score += 780;
+        else if (rarity.includes(token)) score += 520;
 
-        if (setName === token) score += 90;
-        else if (setName.includes(token)) score += 40;
+        if (version === token) score += 720;
+        else if (version.includes(token)) score += 430;
 
-        if (version.includes(token) && version !== token) score += 20;
-        if (number.includes(token) && number !== token) score += 15;
+        if (number === token) score += 620;
+        else if (number.includes(token)) score += 280;
+
+        if (setCode === token) score += 360;
+        else if (setCode.includes(token)) score += 180;
+
+        if (setName === token) score += 320;
+        else if (setName.includes(token)) score += 160;
+
+        // Piccolo premio per i token successivi: "mew illustration" premia i Mew che contengono anche illustration.
+        if (index > 0 && (name.includes(token) || rarity.includes(token) || version.includes(token) || number.includes(token))) {
+          score += 420;
+        }
       });
 
-      score += Math.min(parsed.rawTokens.length * 25, 120);
+      score += Math.min(parsed.rawTokens.length * 80, 320);
       score -= name.length * 0.03;
 
       return score;
@@ -3319,9 +3490,10 @@ function finishUpdateTimer() {
           el.searchInput.blur();
           if (state.activeSuggestion >= 0) {
             const card = state.suggestions[state.activeSuggestion];
-            el.searchInput.value = cardSummary(card);
+            if (!card) return;
+            el.searchInput.value = formatSuggestionHeadline(card);
             renderSuggestions([]);
-            runSearch(cardSummary(card));
+            openCardDetails(card.id);
           } else {
             renderSuggestions([]);
             runSearch(el.searchInput.value);
@@ -3346,19 +3518,13 @@ el.autocomplete.addEventListener('click', (e) => {
   const card = state.suggestions[idx];
   if (!card) return;
 
-  const value = cardSummary(card);
-
-  // aggiorna input
-  el.searchInput.value = value;
-
-  // togli focus dalla barra ricerca
+  // Sul click del suggerimento NON rilanciare la ricerca con la label completa:
+  // apri direttamente la carta selezionata. Così evitiamo il magnifico autosabotaggio
+  // in cui l'autocomplete trova una carta e la ricerca successiva la perde.
+  el.searchInput.value = formatSuggestionHeadline(card);
   el.searchInput.blur();
-
-  // chiudi autocomplete
   renderSuggestions([]);
-
-  // lancia ricerca completa
-  runSearch(value);
+  openCardDetails(card.id);
 });
 
       document.addEventListener('click', (e) => {
@@ -3441,6 +3607,16 @@ el.autocomplete.addEventListener('click', (e) => {
           contextEditBtn: $("#contextEditBtn"),
           contextRenameBtn: $("#contextRenameBtn"),
           contextDeleteBtn: $("#contextDeleteBtn"),
+          renameSheetBackdrop: $("#renameSheetBackdrop"),
+          renameSheet: $("#renameSheet"),
+          renameAlbumInput: $("#renameAlbumInput"),
+          renameCancelBtn: $("#renameCancelBtn"),
+          renameSaveBtn: $("#renameSaveBtn"),
+          deleteSheetBackdrop: $("#deleteSheetBackdrop"),
+          deleteSheet: $("#deleteSheet"),
+          deleteAlbumName: $("#deleteAlbumName"),
+          deleteCancelBtn: $("#deleteCancelBtn"),
+          deleteConfirmBtn: $("#deleteConfirmBtn"),
           albumDetailView: $("#albumDetailView"),
           albumDetailTitle: $("#albumDetailTitle"),
           backToAlbumsBtn: $("#backToAlbumsBtn"),
@@ -3476,6 +3652,9 @@ el.autocomplete.addEventListener('click', (e) => {
           lastContextActionAt: 0,
           press: null,
           currentAlbum: null,
+          addCardReturnView: "home",
+          renamingAlbum: null,
+          deletingAlbum: null,
         };
 
         const stopEvent = (event) => {
@@ -3724,7 +3903,8 @@ el.autocomplete.addEventListener('click', (e) => {
           setView("home");
         }
 
-        function openAddCardSearch() {
+        function openAddCardSearch(returnView = null) {
+          state.addCardReturnView = returnView || (state.currentAlbum ? "detail" : "home");
           setView("card-search");
           const searchInput = document.querySelector("#searchInput");
           if (searchInput) {
@@ -3734,7 +3914,12 @@ el.autocomplete.addEventListener('click', (e) => {
         }
 
         function closeAddCardSearch() {
-          setView(state.currentAlbum ? "detail" : "home");
+          const shouldReturnToDetail =
+            state.addCardReturnView === "detail" && Boolean(state.currentAlbum);
+          if (!shouldReturnToDetail) {
+            state.currentAlbum = null;
+          }
+          setView(shouldReturnToDetail ? "detail" : "home");
         }
 
         function openAlbumForm(albumNode = null) {
@@ -3866,22 +4051,69 @@ el.autocomplete.addEventListener('click', (e) => {
           };
         }
 
+        function openRenameSheet(albumNode) {
+          state.renamingAlbum = albumNode;
+          els.renameAlbumInput.value = albumNode.albumData.name || "";
+          els.renameSheetBackdrop.classList.add("open");
+          els.renameSheetBackdrop.setAttribute("aria-hidden", "false");
+          window.setTimeout(() => {
+            els.renameAlbumInput.focus();
+            els.renameAlbumInput.select();
+          }, 80);
+        }
+
+        function closeRenameSheet() {
+          state.renamingAlbum = null;
+          els.renameSheetBackdrop.classList.remove("open");
+          els.renameSheetBackdrop.setAttribute("aria-hidden", "true");
+          els.renameAlbumInput.value = "";
+        }
+
+        function saveRenameSheet() {
+          const albumNode = state.renamingAlbum;
+          if (!albumNode) return;
+          const name = els.renameAlbumInput.value.trim();
+          if (!name) {
+            els.renameAlbumInput.focus();
+            return;
+          }
+          albumNode.albumData.name = name;
+          renderAlbum(albumNode);
+          if (state.currentAlbum === albumNode) {
+            els.albumDetailTitle.textContent = name || "Album";
+          }
+          closeRenameSheet();
+        }
+
+        function openDeleteSheet(albumNode) {
+          if (!albumNode?.albumData) return;
+          state.deletingAlbum = albumNode;
+          els.deleteAlbumName.textContent = albumNode.albumData.name || "Album";
+          els.deleteSheetBackdrop.classList.add("open");
+          els.deleteSheetBackdrop.setAttribute("aria-hidden", "false");
+        }
+
+        function closeDeleteSheet() {
+          state.deletingAlbum = null;
+          els.deleteSheetBackdrop.classList.remove("open");
+          els.deleteSheetBackdrop.setAttribute("aria-hidden", "true");
+          els.deleteAlbumName.textContent = "Album";
+        }
+
+        function confirmDeleteAlbum() {
+          const albumNode = state.deletingAlbum;
+          if (!albumNode) return;
+          albumNode.remove();
+          if (state.editingAlbum === albumNode) state.editingAlbum = null;
+          if (state.currentAlbum === albumNode) closeAlbumDetail();
+          closeDeleteSheet();
+          syncEmptyState();
+        }
+
         const contextActions = {
           edit: openAlbumForm,
-          rename(albumNode) {
-            const name = window
-              .prompt("Nuovo nome album", albumNode.albumData.name)
-              ?.trim();
-            if (!name) return;
-            albumNode.albumData.name = name;
-            renderAlbum(albumNode);
-          },
-          delete(albumNode) {
-            albumNode.remove();
-            if (state.editingAlbum === albumNode) state.editingAlbum = null;
-            if (state.currentAlbum === albumNode) closeAlbumDetail();
-            syncEmptyState();
-          },
+          rename: openRenameSheet,
+          delete: openDeleteSheet,
         };
 
         function albumFromEvent(event) {
@@ -4101,7 +4333,16 @@ el.autocomplete.addEventListener('click', (e) => {
           els.addAlbumBtn.blur();
           if (els.addAlbumBtn.classList.contains("is-locked")) {
             showAlbumNeededToast();
+            return;
           }
+
+          // Se esiste almeno un album, il pulsante della homepage deve portare
+          // direttamente alla ricerca carte. Sì, era davvero tutto qui: niente
+          // giro turistico nel dettaglio album solo per premere un altro +.
+          if (!state.currentAlbum && els.albumsGrid.children.length === 1) {
+            state.currentAlbum = els.albumsGrid.children[0];
+          }
+          openAddCardSearch("home");
         });
         els.createFirstAlbumBtn.addEventListener("click", () =>
           openAlbumForm(),
@@ -4158,7 +4399,10 @@ el.autocomplete.addEventListener('click', (e) => {
         });
 
         document.addEventListener("keydown", (event) => {
-          if (event.key === "Escape") closeCollectionMenu();
+          if (event.key === "Escape") {
+            closeCollectionMenu();
+            closeRenameSheet();
+          }
         });
 
         homeFilterBtn?.addEventListener("click", (event) => {
@@ -4190,6 +4434,25 @@ el.autocomplete.addEventListener('click', (e) => {
           updatePriceVisibility();
         });
         els.ownerNameBtn.addEventListener("click", editOwnerName);
+
+        els.renameCancelBtn.addEventListener("click", closeRenameSheet);
+        els.renameSaveBtn.addEventListener("click", saveRenameSheet);
+        els.renameAlbumInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") saveRenameSheet();
+          if (event.key === "Escape") closeRenameSheet();
+        });
+        els.renameSheetBackdrop.addEventListener("click", (event) => {
+          if (event.target === els.renameSheetBackdrop) closeRenameSheet();
+        });
+
+        els.deleteCancelBtn.addEventListener("click", closeDeleteSheet);
+        els.deleteConfirmBtn.addEventListener("click", confirmDeleteAlbum);
+        els.deleteSheetBackdrop.addEventListener("click", (event) => {
+          if (event.target === els.deleteSheetBackdrop) closeDeleteSheet();
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && state.deletingAlbum) closeDeleteSheet();
+        });
 
         els.contextMenu.addEventListener("click", (event) =>
           event.stopPropagation(),
@@ -4234,7 +4497,7 @@ el.autocomplete.addEventListener('click', (e) => {
 
         els.backToAlbumsBtn.addEventListener("click", closeAlbumDetail);
         [els.albumDetailAddBtn, els.addFirstCardBtn].forEach((button) => {
-          button.addEventListener("click", openAddCardSearch);
+          button.addEventListener("click", () => openAddCardSearch("detail"));
         });
 
         els.backFromCardSearchBtn.addEventListener("click", closeAddCardSearch);
@@ -4348,6 +4611,49 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   box-shadow:none !important;
 }
 
+
+/* === FIX 06/05/2026: topbar unificata per pagine e scheda carta ===
+   Cambia questi valori una sola volta e si spostano insieme:
+   - --poke-page-x: distanza laterale
+   - --poke-page-top: altezza dall'alto, inclusa safe-area
+   - --poke-view-y: correzione verticale comune delle viste
+   - --poke-topbar-bottom: spazio sotto la topbar */
+:root{
+  --poke-page-x:20px;
+  --poke-page-top:calc(var(--safe-top) + 10px);
+  --poke-view-y:-16px;
+  --poke-topbar-bottom:6px;
+}
+.content{
+  padding-top:var(--poke-page-top) !important;
+  padding-left:var(--poke-page-x) !important;
+  padding-right:var(--poke-page-x) !important;
+}
+.add-album-view,
+.album-detail-view,
+.add-card-search-view{
+  margin-top:var(--poke-view-y) !important;
+}
+.add-album-topbar,
+.album-detail-topbar,
+.card-search-topbar,
+#detailModal .card-sheet-topbar{
+  min-height:var(--topbar-control-size) !important;
+  padding:0 0 var(--poke-topbar-bottom) !important;
+  margin:0 0 6px !important;
+  display:flex !important;
+  align-items:flex-start !important;
+}
+#detailModal .card-sheet-container{
+  max-width:430px !important;
+  padding:calc(var(--poke-page-top) + var(--poke-view-y)) var(--poke-page-x) calc(var(--safe-bottom) + 24px) !important;
+}
+#detailModal .card-sheet-topbar{
+  position:relative !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+}
+
 </style>
 
 
@@ -4364,6 +4670,49 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 button:focus, button:active, select:focus, select:active, a:focus, a:active{
   outline:none !important;
   box-shadow:none !important;
+}
+
+
+/* === FIX 06/05/2026: topbar unificata per pagine e scheda carta ===
+   Cambia questi valori una sola volta e si spostano insieme:
+   - --poke-page-x: distanza laterale
+   - --poke-page-top: altezza dall'alto, inclusa safe-area
+   - --poke-view-y: correzione verticale comune delle viste
+   - --poke-topbar-bottom: spazio sotto la topbar */
+:root{
+  --poke-page-x:20px;
+  --poke-page-top:calc(var(--safe-top) + 10px);
+  --poke-view-y:-16px;
+  --poke-topbar-bottom:6px;
+}
+.content{
+  padding-top:var(--poke-page-top) !important;
+  padding-left:var(--poke-page-x) !important;
+  padding-right:var(--poke-page-x) !important;
+}
+.add-album-view,
+.album-detail-view,
+.add-card-search-view{
+  margin-top:var(--poke-view-y) !important;
+}
+.add-album-topbar,
+.album-detail-topbar,
+.card-search-topbar,
+#detailModal .card-sheet-topbar{
+  min-height:var(--topbar-control-size) !important;
+  padding:0 0 var(--poke-topbar-bottom) !important;
+  margin:0 0 6px !important;
+  display:flex !important;
+  align-items:flex-start !important;
+}
+#detailModal .card-sheet-container{
+  max-width:430px !important;
+  padding:calc(var(--poke-page-top) + var(--poke-view-y)) var(--poke-page-x) calc(var(--safe-bottom) + 24px) !important;
+}
+#detailModal .card-sheet-topbar{
+  position:relative !important;
+  justify-content:space-between !important;
+  gap:8px !important;
 }
 
 </style>
