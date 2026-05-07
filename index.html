@@ -520,7 +520,7 @@ body{padding:14px;}
 .add-album-view{gap:14px;}
 .form-card{border-radius:26px;}
 .form-row{padding:12px 14px 10px;}
-.field-line{grid-template-columns:80px minmax(0, 1fr);column-gap:12px;}
+.field-line{grid-template-columns:90px minmax(0, 1fr);column-gap:12px;}
 .page-mode-header{align-items:stretch;}
 .page-mode-toggle{flex:0 0 auto;}
 .slot-preview{gap:7px;}
@@ -1112,9 +1112,9 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   font-weight:600;
   letter-spacing:-.025em;
   white-space:nowrap;
-  box-shadow:0 12px 24px rgba(66,89,152,.105), inset 0 1px 0 rgba(255,255,255,.96);
-  backdrop-filter:blur(22px) saturate(145%);
-  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
   cursor:pointer;
   -webkit-tap-highlight-color:transparent;
   transition:transform .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
@@ -1278,13 +1278,95 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   gap:8px !important;
 }
 
+/* === MOD 08/05/2026: omino login in alto a destra home === */
+#homeView{position:relative;}
+.top-meta{padding-right:68px !important;}
+.home-profile-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  position:absolute;
+  top:4px;
+  right:3px;
+  z-index:8;
+  width:54px;
+  height:54px;
+  min-width:54px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#7f8fac;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+.home-profile-btn:hover{
+  transform:translateY(-1px);
+  background:transparent;
+  color:#7f8fac;
+  box-shadow:none;
+}
+.home-profile-btn:active{transform:scale(.98);}
+.home-profile-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px;}
+.home-profile-icon{width:42px;height:42px;display:block;filter:drop-shadow(0 8px 14px rgba(66,89,152,.16));}
+.home-profile-icon .profile-ring{stroke:#b9d9ff;stroke-width:24;fill:none;}
+.home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
+@media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
+
 </style>
-  </head>
+  
+<style>
+/* === MOD 08/05/2026: omino login più grande e più alto a destra === */
+#homeView{position:relative !important;}
+.top-meta{padding-right:86px !important;}
+.home-profile-btn{
+  top:-6px !important;
+  right:-2px !important;
+  width:66px !important;
+  height:66px !important;
+  min-width:66px !important;
+  color:#7f8fac !important;
+}
+.home-profile-icon{
+  width:58px !important;
+  height:58px !important;
+  filter:drop-shadow(0 9px 15px rgba(66,89,152,.18)) !important;
+}
+.home-profile-icon .profile-ring{stroke-width:20 !important;}
+@media (max-width:420px){
+  .top-meta{padding-right:82px !important;}
+  .home-profile-btn{top:-16px !important;right:-14px !important;width:64px !important;height:64px !important;min-width:64px !important;}
+  .home-profile-icon{width:56px !important;height:56px !important;}
+}
+</style>
+
+<style>
+/* === MOD 08/05/2026: colori login spento === */
+.home-profile-btn{color:#7f8fac !important;}
+.home-profile-btn:hover{color:#7f8fac !important;}
+.home-profile-icon .profile-ring{stroke:#b9d9ff !important;fill:none !important;}
+.home-profile-icon .profile-head,
+.home-profile-icon .profile-body{fill:#7f8fac !important;}
+</style>
+</head>
   <body>
     <div class="phone-stage">
       <main class="screen">
         <section class="content">
           <div class="app-view" id="homeView">
+            <button class="home-profile-btn" id="homeProfileBtn" type="button" aria-label="Profilo utente" title="Profilo">
+              <svg class="home-profile-icon" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle class="profile-ring" cx="256" cy="256" r="206" />
+                <circle class="profile-head" cx="256" cy="184" r="55" />
+                <path class="profile-body" d="M146 365C146 303.7 195.7 254 257 254C318.3 254 368 303.7 368 365C368 377.7 357.7 388 345 388H169C156.3 388 146 377.7 146 365Z" />
+              </svg>
+            </button>
             <header class="top-meta">
               <p class="eyebrow">
                 <span class="label">Pokéalbum di</span>
@@ -1490,13 +1572,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
                       data-color="#ffd60a"
                       aria-label="Giallo"
                       style="background: #ffd60a"
-                    ></button>
-                    <button
-                      class="color-dot"
-                      type="button"
-                      data-color="#63d2ff"
-                      aria-label="Celeste"
-                      style="background: #63d2ff"
                     ></button>
                     <button
                       class="color-dot palette"
@@ -4661,6 +4736,47 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   gap:8px !important;
 }
 
+/* === MOD 08/05/2026: omino login in alto a destra home === */
+#homeView{position:relative;}
+.top-meta{padding-right:68px !important;}
+.home-profile-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  position:absolute;
+  top:16px;
+  right:14px;
+  z-index:8;
+  width:54px;
+  height:54px;
+  min-width:54px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#7f8fac;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+.home-profile-btn:hover{
+  transform:translateY(-1px);
+  background:transparent;
+  color:#7f8fac;
+  box-shadow:none;
+}
+.home-profile-btn:active{transform:scale(.98);}
+.home-profile-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px;}
+.home-profile-icon{width:42px;height:42px;display:block;filter:drop-shadow(0 8px 14px rgba(66,89,152,.16));}
+.home-profile-icon .profile-ring{stroke:#b9d9ff;stroke-width:24;fill:none;}
+.home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
+@media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
+
 </style>
 
 
@@ -4721,5 +4837,46 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   justify-content:space-between !important;
   gap:8px !important;
 }
+
+/* === MOD 08/05/2026: omino login in alto a destra home === */
+#homeView{position:relative;}
+.top-meta{padding-right:68px !important;}
+.home-profile-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  position:absolute;
+  top:4px;
+  right:3px;
+  z-index:8;
+  width:54px;
+  height:54px;
+  min-width:54px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#7f8fac;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+.home-profile-btn:hover{
+  transform:translateY(-1px);
+  background:transparent;
+  color:#7f8fac;
+  box-shadow:none;
+}
+.home-profile-btn:active{transform:scale(.98);}
+.home-profile-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px;}
+.home-profile-icon{width:42px;height:42px;display:block;filter:drop-shadow(0 8px 14px rgba(66,89,152,.16));}
+.home-profile-icon .profile-ring{stroke:#b9d9ff;stroke-width:24;fill:none;}
+.home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
+@media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
 
 </style>
