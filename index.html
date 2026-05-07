@@ -270,12 +270,12 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 
 /* FIX: nella schermata aggiungi/modifica album, evita che "Slot per pagina" vada a capo.
    Sì, abbiamo dovuto domare anche una label. */
-.slots-field-line{grid-template-columns:98px minmax(0, 1fr);column-gap:10px;}
+.slots-field-line{grid-template-columns:90px minmax(0, 1fr);column-gap:10px;}
 .slots-field-line .form-help{white-space:nowrap;}
 @media (max-width:620px){.slots-field-line{grid-template-columns:94px minmax(0, 1fr);column-gap:8px;}}
 @media (max-width:360px){.slots-field-line{grid-template-columns:90px minmax(0, 1fr);}}
 
-.field-line{display:grid;grid-template-columns:86px minmax(0, 1fr);grid-template-areas:"label input"
+.field-line{display:grid;grid-template-columns:70px minmax(0, 1fr);grid-template-areas:"label input"
           "help input";column-gap:14px;row-gap:2px;align-items:center;}
 .field-line .form-label{grid-area:label;align-self:end;}
 .field-line.no-help{grid-template-areas:"label input";}
@@ -520,7 +520,7 @@ body{padding:14px;}
 .add-album-view{gap:14px;}
 .form-card{border-radius:26px;}
 .form-row{padding:12px 14px 10px;}
-.field-line{grid-template-columns:78px minmax(0, 1fr);column-gap:12px;}
+.field-line{grid-template-columns:80px minmax(0, 1fr);column-gap:12px;}
 .page-mode-header{align-items:stretch;}
 .page-mode-toggle{flex:0 0 auto;}
 .slot-preview{gap:7px;}
