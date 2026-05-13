@@ -89,7 +89,7 @@ button, input{font:inherit;}
 #detailModal .collapsible-content.open{display:block;}
 #detailModal .copy-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(20, 40, 25, 0.95);color:#87f5a3;padding:10px 16px;border-radius:12px;font-size:14px;border:1px solid #87f5a3;box-shadow:0 10px 30px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999;}
 #detailModal .copy-toast.show{opacity:1;}
-:root{--bg:#0b1220;--bg2:#dfe9fb;--panel:rgba(255, 255, 255, 0.54);--panel-2:rgba(255,255,255,0.06);--text:#14254f;--muted:#7080a3;--accent:#5aa6ff;--accent-2:#ffd84f;--danger:#ff7272;--ok:#73d78b;--border:rgba(255,255,255,0.1);--shadow:0 20px 50px rgba(64, 96, 170, 0.18);--radius:20px;--bg1:#edf2fb;--bg3:#dff4ff;--blue:#2f64ff;--blue2:#5d90ff;--panel-stroke:rgba(255, 255, 255, 0.7);--safe-top:max(16px, env(safe-area-inset-top));--safe-bottom:max(16px, env(safe-area-inset-bottom));--topbar-control-size:50px;--topbar-control-icon-size:23px;--topbar-control-offset-x:0px;--topbar-control-offset-y:0px;}
+:root{--bg:#0b1220;--bg2:#dfe9fb;--panel:rgba(255, 255, 255, 0.54);--panel-2:rgba(255,255,255,0.06);--text:#14254f;--muted:#7080a3;--accent:#5aa6ff;--accent-2:#ffd84f;--danger:#ff7272;--ok:#73d78b;--border:rgba(255,255,255,0.1);--shadow:0 20px 50px rgba(64, 96, 170, 0.18);--radius:20px;--bg1:#edf2fb;--bg3:#dff4ff;--blue:#2f64ff;--blue2:#5d90ff;--panel-stroke:rgba(255, 255, 255, 0.7);--safe-top:max(16px, env(safe-area-inset-top));--safe-bottom:max(16px, env(safe-area-inset-bottom));--topbar-control-size:50px;--topbar-control-icon-size:23px;--topbar-control-offset-x:0px;--topbar-control-offset-y:0px;--field-title-size:14px;--field-title-weight:850;--field-title-line-height:1.05;--field-title-letter-spacing:-0.02em;--field-title-color:#243865;--field-subtitle-size:12px;--field-subtitle-weight:500;--field-subtitle-line-height:1.2;--field-subtitle-letter-spacing:0;--field-subtitle-color:#65779f;--field-title-subtitle-gap:2px;}
 *{box-sizing:border-box;}
 .phone-stage{width:100%;max-width:100vw;height:100%;display:block;padding:0;overflow:hidden;overflow-x:hidden;}
 .screen{width:100%;max-width:100vw;height:100dvh;min-height:100svh;position:relative;overflow:hidden;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y;background:radial-gradient(
@@ -238,8 +238,8 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
           inset 0 1px 0 rgba(255, 255, 255, 0.9);overflow:hidden;padding:2px 0;}
 .form-row{padding:9px 12px 8px;border-bottom:1px solid rgba(111, 134, 188, 0.14);}
 .form-row:last-child{border-bottom:0;}
-.form-label{display:block;margin:0;font-size:14px;font-weight:850;letter-spacing:-0.02em;line-height:1.05;color:#243865;}
-.form-help{margin:2px 0 0;font-size:12px;line-height:1.2;font-weight:500;color:#65779f;}
+.form-label{display:block;margin:0;font-size:var(--field-title-size);font-weight:var(--field-title-weight);letter-spacing:var(--field-title-letter-spacing);line-height:var(--field-title-line-height);color:var(--field-title-color);}
+.form-help{margin:var(--field-title-subtitle-gap) 0 0;font-size:var(--field-subtitle-size);line-height:var(--field-subtitle-line-height);font-weight:var(--field-subtitle-weight);letter-spacing:var(--field-subtitle-letter-spacing);color:var(--field-subtitle-color);}
 .text-input, .number-input{width:100%;min-height:42px;border-radius:16px;border:1px solid rgba(120, 146, 207, 0.18);background:rgba(248, 251, 255, 0.9);padding:0 16px;font-size:14px;font-weight:650;color:#20345f;box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.85);outline:none;transition:border-color 0.18s ease,
           box-shadow 0.18s ease,
           background-color 0.18s ease;}
@@ -395,7 +395,8 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .color-dot.palette input[type="color"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;cursor:pointer;}
 .aspect-panel{display:grid;gap:6px;}
 .aspect-header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.aspect-title{display:grid;gap:2px;}
+.aspect-title{display:grid;gap:var(--field-title-subtitle-gap);}
+.aspect-title .form-help,.page-mode-title .form-help{margin:0;}
 .aspect-toggle{display:inline-grid;grid-template-columns:repeat(2, auto);gap:4px;padding:4px;border-radius:999px;background:rgba(235, 241, 255, 0.72);border:1px solid rgba(120, 146, 207, 0.16);box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.8);}
 .aspect-option{appearance:none;-webkit-appearance:none;height:30px;min-width:68px;padding:0 10px;border:0;border-radius:999px;background:transparent;color:#7181a3;font-family:inherit;font-size:12px;font-weight:900;letter-spacing:-0.02em;cursor:pointer;transition:background-color .16s ease,color .16s ease,box-shadow .16s ease;}
 .aspect-option.is-selected{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);box-shadow:0 8px 18px rgba(47,100,255,.22),inset 0 1px 0 rgba(255,255,255,.34);}
@@ -456,7 +457,62 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 /* FIX: allinea il rigo Slot agli altri campi.
    Il bottone degli slot ora occupa la stessa area input di Pagine, invece di improvvisare layout creativo. */
 .slots-field-line{grid-template-columns:70px minmax(0, 1fr);column-gap:14px;}
-.slots-field-line .form-help{white-space:nowrap;font-size:11px;letter-spacing:-.04em;}
+.slots-field-line .form-help{white-space:nowrap;font-size:var(--field-subtitle-size);font-weight:var(--field-subtitle-weight);letter-spacing:var(--field-subtitle-letter-spacing);}
+
+/* Riga unica per Pagine<span class="field-subtitle">Totali</span> + Slot<span class="field-subtitle">Per pagina</span>.
+   Sistemata per stare dentro anche sui telefoni piccoli: label più compatte, input più stretti, niente testo che invade il vicino. */
+.form-row-dual{padding-top:9px;padding-bottom:9px;}
+.dual-fields-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);
+  gap:8px;
+  align-items:center;
+}
+.compact-field-line{
+  grid-template-columns:minmax(0,1fr) 58px;
+  column-gap:6px;
+  min-width:0;
+}
+.compact-field-line.slots-field-line{
+  grid-template-columns:minmax(0,1fr) 58px;
+}
+
+.field-subtitle{
+  display:block;
+  margin-top:var(--field-title-subtitle-gap);
+  font-size:var(--field-subtitle-size);
+  font-weight:var(--field-subtitle-weight);
+  line-height:var(--field-subtitle-line-height);
+  letter-spacing:var(--field-subtitle-letter-spacing);
+  color:var(--field-subtitle-color);
+}
+
+.compact-field-line .form-label{
+  min-width:0;
+  font-size:var(--field-title-size);
+  font-weight:var(--field-title-weight);
+  line-height:var(--field-title-line-height);
+  letter-spacing:var(--field-title-letter-spacing);
+  color:var(--field-title-color);
+  white-space:normal;
+}
+.compact-field-line .number-input,
+.compact-field-line .choice-row-btn{
+  min-height:40px;
+  height:38px;
+  border-radius:15px;
+  font-size:14px;
+}
+.compact-field-line .number-input{padding-left:12px;padding-right:10px;}
+.compact-field-line .choice-row-btn{padding-left:10px;padding-right:8px;gap:4px;}
+.compact-field-line .choice-row-btn svg{width:16px;height:16px;}
+@media (max-width:360px){
+  .dual-fields-row{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:6px;}
+  .compact-field-line{grid-template-columns:minmax(0,1fr) 50px;column-gap:5px;}
+  .compact-field-line.slots-field-line{grid-template-columns:minmax(0,1fr) 50px;}
+  .compact-field-line .number-input,
+  .compact-field-line .choice-row-btn{font-size:13px;padding-left:8px;padding-right:7px;}
+}
 
 .field-line{display:grid;grid-template-columns:70px minmax(0, 1fr);grid-template-areas:"label input"
           "help input";column-gap:14px;row-gap:1px;align-items:center;}
@@ -467,7 +523,7 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .field-line .text-input, .field-line .number-input, .field-line .color-picker-row, .field-line .choice-row-btn{grid-area:input;align-self:center;min-width:0;width:100%;}
 .page-mode-panel{display:grid;gap:6px;}
 .page-mode-header{display:flex;align-items:center;justify-content:space-between;gap:14px;}
-.page-mode-title{display:grid;gap:2px;}
+.page-mode-title{display:grid;gap:var(--field-title-subtitle-gap);}
 .page-mode-toggle{display:inline-grid;grid-template-columns:repeat(2, 1fr);gap:6px;padding:5px;border-radius:999px;background:rgba(235, 241, 255, 0.72);border:1px solid rgba(120, 146, 207, 0.16);box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.8);}
 .page-mode-option{appearance:none;-webkit-appearance:none;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:manipulation;outline:none;width:44px;height:34px;border:0;border-radius:999px;background:transparent;color:#7181a3;font-family:inherit;font-size:12px;font-weight:900;letter-spacing:-0.02em;cursor:pointer;transition:transform 0.16s ease,
           background-color 0.16s ease,
@@ -1583,6 +1639,125 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 .home-profile-icon .profile-head,
 .home-profile-icon .profile-body{fill:#7f8fac !important;}
 </style>
+
+<style>
+/* === MOD 14/05/2026: etichette compatte uniformate ad Aspetto/Colore-Immagine ===
+   Stesso font/peso/colore e stessa distanza verticale tra testo nero e testo grigio.
+   Applicato sia alle righe compatte sia al blocco Pagina/Fronte-Retro, mobile incluso. */
+.compact-field-line .form-label,
+.page-mode-title .form-label{
+  color:#243865 !important;
+  font-family:inherit !important;
+  font-size:14px !important;
+  font-weight:850 !important;
+  letter-spacing:-0.02em !important;
+  line-height:1.05 !important;
+}
+
+.compact-field-line .form-label{
+  display:grid !important;
+  gap:2px !important;
+  align-self:center !important;
+  white-space:normal !important;
+}
+
+.compact-field-line .field-subtitle,
+.page-mode-title .form-help{
+  margin:2px 0 0 !important;
+  color:#65779f !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:500 !important;
+  line-height:1.2 !important;
+  letter-spacing:0 !important;
+  text-transform:none !important;
+}
+
+.page-mode-title{
+  gap:2px !important;
+}
+
+@media (max-width:360px){
+  .compact-field-line .form-label,
+  .page-mode-title .form-label{
+    font-size:14px !important;
+    font-weight:850 !important;
+    letter-spacing:-0.02em !important;
+    line-height:1.05 !important;
+  }
+  .compact-field-line .field-subtitle,
+  .page-mode-title .form-help{
+    font-size:12px !important;
+    font-weight:500 !important;
+    line-height:1.2 !important;
+  }
+}
+</style>
+
+<style>
+/* === MOD 14/05/2026-b: spazi mobile davvero uniformati, perché il CSS precedente faceva il furbo === */
+.aspect-title,
+.page-mode-title{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  gap:2px !important;
+}
+
+.aspect-title .form-label,
+.page-mode-title .form-label,
+.compact-field-line .form-label{
+  margin:0 !important;
+  color:#243865 !important;
+  font-family:inherit !important;
+  font-size:14px !important;
+  font-weight:850 !important;
+  line-height:1.05 !important;
+  letter-spacing:-0.02em !important;
+}
+
+.aspect-title .form-help,
+.page-mode-title .form-help,
+.compact-field-line .field-subtitle{
+  display:block !important;
+  margin:0 !important;
+  color:#65779f !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:500 !important;
+  line-height:1.2 !important;
+  letter-spacing:0 !important;
+  text-transform:none !important;
+}
+
+.compact-field-line .form-label{
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  gap:2px !important;
+  align-self:center !important;
+  white-space:normal !important;
+}
+
+@media (max-width:420px){
+  .aspect-title .form-label,
+  .page-mode-title .form-label,
+  .compact-field-line .form-label{
+    font-size:14px !important;
+    font-weight:850 !important;
+    line-height:1.05 !important;
+    letter-spacing:-0.02em !important;
+  }
+
+  .aspect-title .form-help,
+  .page-mode-title .form-help,
+  .compact-field-line .field-subtitle{
+    font-size:12px !important;
+    font-weight:500 !important;
+    line-height:1.2 !important;
+  }
+}
+</style>
 </head>
   <body>
     <div class="phone-stage">
@@ -1838,9 +2013,9 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
                       <button
                         class="color-dot"
                         type="button"
-                        data-color="#00c7be"
+                        data-color="#63d2ff"
                         aria-label="Turchese"
-                        style="background: #00c7be"
+                        style="background: #63d2ff"
                       ></button>
                       <button
                         class="color-dot palette"
@@ -2507,32 +2682,30 @@ paint-order="stroke">
                 </div>
               </div>
 
-              <div class="form-row">
-                <div class="field-line">
-                  <label class="form-label" for="totalPagesInput">Pagine</label>
-                  <input
-                    class="number-input"
-                    id="totalPagesInput"
-                    type="number"
-                    min="1"
-                    max="999"
-                    value="12"
-                  />
-                  <p class="form-help">Pagine totali</p>
-                </div>
-              </div>
+              <div class="form-row form-row-dual">
+                <div class="dual-fields-row">
+                  <div class="field-line no-help compact-field-line">
+                    <label class="form-label" for="totalPagesInput">Pagine<span class="field-subtitle">Totali</span></label>
+                    <input
+                      class="number-input"
+                      id="totalPagesInput"
+                      type="number"
+                      min="1"
+                      max="999"
+                      value="12"
+                    />
+                  </div>
 
-              <div class="form-row">
-                <div class="field-line slots-field-line">
-                  <label class="form-label" for="slotsPerPageInput">Slot</label>
-                  <input id="slotsPerPageInput" type="hidden" value="4" />
-                  <button class="choice-row-btn" id="slotsChoiceBtn" type="button" aria-haspopup="dialog" aria-label="Scegli slot per pagina">
-                    <span id="slotsChoiceValue">4</span>
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M9 6l6 6-6 6" />
-                    </svg>
-                  </button>
-                  <p class="form-help">Slot per pagina</p>
+                  <div class="field-line no-help compact-field-line slots-field-line">
+                    <label class="form-label" for="slotsPerPageInput">Slot<span class="field-subtitle">Per pagina</span></label>
+                    <input id="slotsPerPageInput" type="hidden" value="4" />
+                    <button class="choice-row-btn" id="slotsChoiceBtn" type="button" aria-haspopup="dialog" aria-label="Scegli slot per pagina">
+                      <span id="slotsChoiceValue">4</span>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 6l6 6-6 6" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -2541,7 +2714,7 @@ paint-order="stroke">
                   <div class="page-mode-header">
                     <div class="page-mode-title">
                       <span class="form-label">Pagina</span>
-                      <p class="form-help">Fronte-Retro</p>
+                      <p class="form-help">Fronte · Retro</p>
                     </div>
                     <div class="page-mode-toggle" role="radiogroup" aria-label="Seleziona tipo pagina">
                       <button
@@ -2565,7 +2738,7 @@ paint-order="stroke">
 
                   <div class="slot-preview" aria-live="polite">
                     <div class="slot-preview-card is-active" id="frontBackSlotCard">
-                      <p class="slot-preview-label">Fronte - Retro</p>
+                      <p class="slot-preview-label">Fronte · Retro</p>
                       <p class="slot-preview-value">Slot totali <strong id="frontBackSlotTotal">216</strong></p>
                     </div>
                     <div class="slot-preview-card" id="frontSlotCard">
@@ -2803,7 +2976,7 @@ paint-order="stroke">
       <div class="choice-sheet-backdrop" id="slotsChoiceSheet" aria-hidden="true">
         <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="slotsChoiceTitle">
           <div class="choice-sheet-handle"></div>
-          <h2 class="choice-sheet-title" id="slotsChoiceTitle">Slot per pagina</h2>
+          <h2 class="choice-sheet-title" id="slotsChoiceTitle">Slot<span class="field-subtitle">Per pagina</span></h2>
           <div class="choice-list">
             <button class="choice-option is-selected" type="button" data-slots-value="4">
               <span>4</span>
