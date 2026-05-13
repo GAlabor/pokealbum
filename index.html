@@ -402,8 +402,10 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .aspect-controls{display:grid;gap:6px;}
 .aspect-controls.is-hidden{display:none;}
 .image-picker-row{display:flex;align-items:center;gap:6px;min-height:46px;}
-.image-picker-btn{appearance:none;-webkit-appearance:none;min-height:34px;border:0;border-radius:999px;padding:0 12px;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);color:#fff;font-family:inherit;font-size:14px;font-weight:850;letter-spacing:-.02em;box-shadow:0 10px 22px rgba(47,100,255,.22),inset 0 1px 0 rgba(255,255,255,.28);cursor:pointer;}
-.image-picker-name{min-width:0;color:#7382a2;font-size:12px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.image-picker-btn,.image-picker-remove{appearance:none;-webkit-appearance:none;height:34px;min-height:34px;border:0;border-radius:999px;padding:0 12px;font-family:inherit;font-size:12px;font-weight:850;letter-spacing:-.02em;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;}
+.image-picker-btn{background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);color:#fff;box-shadow:0 10px 22px rgba(47,100,255,.22),inset 0 1px 0 rgba(255,255,255,.28);}
+.image-picker-remove{background:rgba(255,114,114,.12);color:#c62828;box-shadow:inset 0 1px 0 rgba(255,255,255,.62);}
+.image-picker-remove.is-hidden{display:none;}
 .album-form-preview{
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
@@ -451,12 +453,10 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .album.has-cover-image{background-size:cover;background-position:center;background-repeat:no-repeat;}
 .album.has-cover-image::before{background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(255,255,255,.06));}
 
-/* FIX: nella schermata aggiungi/modifica album, evita che "Slot per pagina" vada a capo.
-   Sì, abbiamo dovuto domare anche una label. */
-.slots-field-line{grid-template-columns:90px minmax(0, 1fr);column-gap:6px;}
-.slots-field-line .form-help{white-space:nowrap;}
-@media (max-width:620px){.slots-field-line{grid-template-columns:94px minmax(0, 1fr);column-gap:6px;}}
-@media (max-width:360px){.slots-field-line{grid-template-columns:90px minmax(0, 1fr);}}
+/* FIX: allinea il rigo Slot agli altri campi.
+   Il bottone degli slot ora occupa la stessa area input di Pagine, invece di improvvisare layout creativo. */
+.slots-field-line{grid-template-columns:70px minmax(0, 1fr);column-gap:14px;}
+.slots-field-line .form-help{white-space:nowrap;font-size:11px;letter-spacing:-.04em;}
 
 .field-line{display:grid;grid-template-columns:70px minmax(0, 1fr);grid-template-areas:"label input"
           "help input";column-gap:14px;row-gap:1px;align-items:center;}
@@ -464,7 +464,7 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .field-line.no-help{grid-template-areas:"label input";}
 .field-line.no-help .form-label{align-self:center;}
 .field-line .form-help{grid-area:help;align-self:start;}
-.field-line .text-input, .field-line .number-input, .field-line .color-picker-row{grid-area:input;align-self:center;min-width:0;}
+.field-line .text-input, .field-line .number-input, .field-line .color-picker-row, .field-line .choice-row-btn{grid-area:input;align-self:center;min-width:0;width:100%;}
 .page-mode-panel{display:grid;gap:6px;}
 .page-mode-header{display:flex;align-items:center;justify-content:space-between;gap:14px;}
 .page-mode-title{display:grid;gap:2px;}
@@ -1865,8 +1865,8 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 
                   <div class="aspect-controls is-hidden" id="aspectImageControls">
                     <div class="image-picker-row">
-                      <button class="image-picker-btn" id="chooseAlbumImageBtn" type="button">+ Scegli immagine</button>
-                      <span class="image-picker-name" id="albumImageName">Nessuna immagine</span>
+                      <button class="image-picker-btn" id="chooseAlbumImageBtn" type="button">+ Aggiungi Immagine</button>
+                      <button class="image-picker-remove is-hidden" id="removeAlbumImageBtn" type="button">Rimuovi Immagine</button>
                       <input id="albumImageInput" type="file" accept="image/*" hidden />
                     </div>
                   </div>
@@ -2701,7 +2701,7 @@ paint-order="stroke">
                   stroke="#14326F"
                   stroke-width="1"
                   opacity="0.88"
-                /><text x="20.0" y="12.88" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="800" fill="rgba(255,255,255,.88)">1</text>
+                />
 
                 <!-- Carta principale, più grande e leggibile -->
                 <rect
@@ -2713,7 +2713,7 @@ paint-order="stroke">
                   fill="#FFFFFF"
                   stroke="#14326F"
                   stroke-width="1.15"
-                /><text x="39.0" y="25.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="800" fill="rgba(255,255,255,.88)">1</text>
+                />
 
                 <!-- Dettaglio interno minimo, giusto per non sembrare una carta qualunque -->
                 <rect
@@ -2724,7 +2724,7 @@ paint-order="stroke">
                   rx="6"
                   stroke="#D7E4FF"
                   stroke-width="1.2"
-                /><text x="43.0" y="29.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="800" fill="rgba(255,255,255,.88)">1</text>
+                />
                 <path
                   d="M34 34H51"
                   stroke="#EF4444"
@@ -2778,7 +2778,7 @@ paint-order="stroke">
                     rx="2.25"
                     stroke="currentColor"
                     stroke-width="1.7"
-                  /><text x="17.75" y="22.0" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="800" fill="rgba(255,255,255,.88)">1</text>
+                  />
                 </g>
               </svg>
             </button>
@@ -4631,7 +4631,7 @@ el.autocomplete.addEventListener('click', (e) => {
           aspectImageControls: $("#aspectImageControls"),
           chooseAlbumImageBtn: $("#chooseAlbumImageBtn"),
           albumImageInput: $("#albumImageInput"),
-          albumImageName: $("#albumImageName"),
+          removeAlbumImageBtn: $("#removeAlbumImageBtn"),
           albumPreviewCover: $("#albumPreviewCover"),
           priceToggleBtn: $("#priceToggleBtn"),
           totalPriceValue: $("#totalPriceValue"),
@@ -4890,7 +4890,8 @@ el.autocomplete.addEventListener('click', (e) => {
         function setSelectedImage(dataUrl = "", name = "") {
           state.selectedImageDataUrl = dataUrl;
           state.selectedImageName = name;
-          if (els.albumImageName) els.albumImageName.textContent = name || "Nessuna immagine";
+          const hasImage = Boolean(dataUrl);
+          els.removeAlbumImageBtn?.classList.toggle("is-hidden", !hasImage);
           updateAlbumPreview();
         }
 
@@ -5394,6 +5395,10 @@ el.autocomplete.addEventListener('click', (e) => {
         els.aspectColorBtn?.addEventListener("click", () => setSelectedAppearance("color"));
         els.aspectImageBtn?.addEventListener("click", () => setSelectedAppearance("image"));
         els.chooseAlbumImageBtn?.addEventListener("click", () => els.albumImageInput?.click());
+        els.removeAlbumImageBtn?.addEventListener("click", () => {
+          setSelectedImage("", "");
+          if (els.albumImageInput) els.albumImageInput.value = "";
+        });
         els.albumImageInput?.addEventListener("change", () => {
           const file = els.albumImageInput.files?.[0];
           if (!file) return;
