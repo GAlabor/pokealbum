@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-05-05T12:56:58.664Z",
+  "updatedAt": "2026-05-13T00:06:17.721Z",
   "appName": "Giuseppe Aquilano App 20260427200222",
   "appId": 21034,
   "gameId": 5,
   "gameName": "Pokémon",
   "categoryId": 73,
   "categoryName": "Pokémon Singles",
-  "cardsCount": 65697,
-  "expansionsCount": 833,
+  "cardsCount": 65852,
+  "expansionsCount": 832,
   "indexVersion": 1
 }
