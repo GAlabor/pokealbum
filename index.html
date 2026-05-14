@@ -967,14 +967,63 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   top:calc(100% + 8px);
 }
 .add-card-search-view .card-search-panel-ux .suggestion{
-  display:block;
+  display:grid;
+  grid-template-columns:38px minmax(0, 1fr);
+  align-items:start;
+  column-gap:9px;
   width:100%;
-  padding:12px 16px;
+  padding:6px 10px;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-thumb{
+  width:38px;
+  height:52px;
+  border-radius:4px;
+  object-fit:contain;
+  background:rgba(248,251,255,.78);
+  box-shadow:0 1px 3px rgba(20,35,75,.12);
+}
+.add-card-search-view .card-search-panel-ux .suggestion-thumb-fallback{
+  width:38px;
+  height:52px;
+  border-radius:4px;
+  display:grid;
+  place-items:center;
+  background:rgba(120,146,207,.12);
+  color:#8a98b5;
+  font-size:9px;
+  font-weight:850;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-main{
+  min-width:0;
+  display:block;
+  padding-top:1px;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-title,
 .add-card-search-view .card-search-panel-ux .suggestion-meta{
   display:block;
   width:100%;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-title{
+  color:#1c2e5a;
+  font-size:15px;
+  font-weight:900;
+  line-height:1.08;
+  white-space:normal;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-meta{
+  margin-top:1px;
+  color:#8e8e8e;
+  font-size:13px;
+  font-weight:600;
+  line-height:1.08;
+  white-space:normal;
+}
+.add-card-search-view .card-search-panel-ux .suggestion[data-show-all="1"]{
+  grid-template-columns:1fr;
+  text-align:center;
+  padding:9px 12px;
 }
 
 
@@ -3313,9 +3362,16 @@ paint-order="stroke">
     function formatSuggestionHeadline(card) {
       const f = getDisplayFields(card);
       const name = toTitleCase(f.name || '-');
-      const setCode = String(f.setCode || '-').toUpperCase();
-      const version = f.version || '-';
-      return `${name} - ${setCode} · ${version}`;
+      const number = f.collectorNumber || f.numberNorm || '-';
+      return `${name} - ${number}`;
+    }
+
+    function formatSuggestionMeta(card) {
+      const f = getDisplayFields(card);
+      const mainInfo = [f.setName, f.version].filter(Boolean).join(' ');
+      const extraInfo = [f.setCode ? f.setCode.toUpperCase() : '', f.rarity].filter(Boolean).join(' · ');
+
+      return [mainInfo, extraInfo].filter(Boolean).join(' · ') || '-';
     }
 
 
@@ -3324,10 +3380,25 @@ paint-order="stroke">
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
+        .replace(/&/g, ' and ')
+        .replace(/['’`´]/g, '')
         .replace(/[^a-z0-9/ ]+/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
     }
+
+    function compactSearch(value) {
+      return normalize(value).replace(/[^a-z0-9]+/g, '');
+    }
+
+    const SEARCH_ALIASES = {
+      // Alias italiano -> nomi usati più spesso da CardTrader in inglese.
+      // Qui ne puoi aggiungere altri senza rigenerare tutto il database, finalmente una piccola vittoria contro il caos.
+      'festa dei campioni': ['champions festival', 'champion festival', 'champion s festival', 'championsfestival', 'championfestival'],
+      'festival dei campioni': ['champions festival', 'champion festival', 'champion s festival', 'championsfestival', 'championfestival'],
+      'champions festival': ['festa dei campioni', 'festival dei campioni'],
+      'champion festival': ['festa dei campioni', 'festival dei campioni'],
+    };
 
     function stripLeadingZeros(value) {
       const cleaned = String(value ?? '').replace(/^0+(\d)/, '$1');
@@ -3363,7 +3434,9 @@ paint-order="stroke">
       if (Number.isFinite(card?.number_norm)) return card.number_norm;
       const collectorNumber = getCollectorNumber(card);
       if (!collectorNumber) return null;
-      const normalized = Number(stripLeadingZeros(collectorNumber));
+      const firstNumber = String(collectorNumber).match(/\d+/)?.[0] || '';
+      if (!firstNumber) return null;
+      const normalized = Number(stripLeadingZeros(firstNumber));
       return Number.isFinite(normalized) ? normalized : null;
     }
 
@@ -3422,7 +3495,58 @@ paint-order="stroke">
       return Array.from(out).filter(Boolean);
     }
 
-    function parseQuery(rawQuery) {
+    function extractNumericGroupsFromValue(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return [];
+      return (raw.match(/\d+/g) || []).map(group => ({
+        raw: group,
+        norm: stripLeadingZeros(group),
+      }));
+    }
+
+    function getCardNumericGroups(card) {
+      if (Array.isArray(card?._searchNumbers)) return card._searchNumbers;
+      if (Array.isArray(card?.searchNumericGroups)) return card.searchNumericGroups;
+
+      return [
+        ...extractNumericGroupsFromValue(getCollectorNumber(card)),
+        ...extractNumericGroupsFromValue(getVersion(card)),
+      ];
+    }
+
+    function buildCardSearchText(card) {
+      if (card?._searchText) return card._searchText;
+
+      const f = getDisplayFields(card);
+      const parts = [
+        f.name,
+        f.collectorNumber,
+        ...expandNumberVariants(f.collectorNumber),
+        f.version,
+        ...expandVersionVariants(f.version),
+        f.rarity,
+        f.setCode,
+        f.setName,
+      ];
+
+      const normalizedParts = parts.flatMap(value => {
+        const norm = normalize(value);
+        if (!norm) return [];
+        const compact = compactSearch(norm);
+        return compact && compact !== norm ? [norm, compact] : [norm];
+      });
+
+      return Array.from(new Set(normalizedParts)).join(' ');
+    }
+
+    function hydrateCardForSearch(card) {
+      const hydrated = { ...card };
+      hydrated._searchText = buildCardSearchText(hydrated);
+      hydrated._searchNumbers = getCardNumericGroups(hydrated);
+      return hydrated;
+    }
+
+    function buildParsedQuery(rawQuery, aliasBoost = 0) {
       const normalized = normalize(rawQuery);
       const rawTokens = normalized.split(' ').filter(Boolean);
       const expandedTokens = [];
@@ -3443,15 +3567,33 @@ paint-order="stroke">
         normalized,
         rawTokens,
         expandedTokens: Array.from(new Set(expandedTokens)).filter(Boolean),
+        aliasBoost,
+      };
+    }
+
+    function expandQueryAliases(normalized) {
+      const aliases = SEARCH_ALIASES[normalized] || [];
+      const compact = compactSearch(normalized);
+      const compactAliases = compact && compact !== normalized ? (SEARCH_ALIASES[compact] || []) : [];
+      return Array.from(new Set([...aliases, ...compactAliases])).filter(Boolean);
+    }
+
+    function parseQuery(rawQuery) {
+      const primary = buildParsedQuery(rawQuery, 0);
+      const aliases = expandQueryAliases(primary.normalized)
+        .map(alias => buildParsedQuery(alias, 120000));
+
+      return {
+        ...primary,
+        alternatives: [primary, ...aliases].filter(item => item.normalized && item.rawTokens.length),
       };
     }
 
     function tokenMatchesCard(card, token) {
       if (!token) return true;
 
-      const searchText = card.searchText || '';
-      const searchTokens = Array.isArray(card.searchTokens) ? card.searchTokens : [];
-      const numericGroups = Array.isArray(card.searchNumericGroups) ? card.searchNumericGroups : [];
+      const searchText = buildCardSearchText(card);
+      const numericGroups = getCardNumericGroups(card);
 
       if (/^\d+$/.test(token)) {
         const normalizedToken = stripLeadingZeros(token);
@@ -3465,10 +3607,10 @@ paint-order="stroke">
 
       if (/^\d+\/\d+$/.test(token)) {
         const variants = expandVersionVariants(token);
-        return variants.some(v => searchTokens.includes(v) || searchText.includes(v));
+        return variants.some(v => searchText.includes(v));
       }
 
-      return searchTokens.includes(token) || searchText.includes(token);
+      return searchText.includes(token) || searchText.includes(compactSearch(token));
     }
 
     function formatDate(iso) {
@@ -4139,7 +4281,13 @@ function finishUpdateTimer() {
 
     function computeScore(card, query) {
       const parsed = typeof query === 'string' ? parseQuery(query) : query;
-      if (!parsed.normalized || !parsed.rawTokens.length) return 0;
+      const alternatives = parsed?.alternatives?.length ? parsed.alternatives : [parsed];
+
+      return alternatives.reduce((best, candidate) => Math.max(best, computeScoreSingle(card, candidate)), 0);
+    }
+
+    function computeScoreSingle(card, parsed) {
+      if (!parsed?.normalized || !parsed.rawTokens.length) return 0;
 
       for (const token of parsed.rawTokens) {
         if (!tokenMatchesCard(card, token)) return 0;
@@ -4152,11 +4300,11 @@ function finishUpdateTimer() {
       const version = normalize(f.version);
       const rarity = normalize(f.rarity);
       const number = normalize(f.collectorNumber);
-      const numericGroups = Array.isArray(card.searchNumericGroups) ? card.searchNumericGroups : [];
+      const numericGroups = getCardNumericGroups(card);
 
       const group = getNamePriorityGroup(parsed, f);
       const groupBoosts = [1000000, 900000, 800000, 300000, 200000, 100000, 1];
-      let score = groupBoosts[group] || 1;
+      let score = (groupBoosts[group] || 1) + (parsed.aliasBoost || 0);
 
       // Bonus frase intera: utile per "mew illustration" quando il nome contiene già tutta la stringa.
       if (name === parsed.normalized) score += 5000;
@@ -4281,7 +4429,7 @@ function finishUpdateTimer() {
           throw new Error('pokemon-index.json non è un array di carte valido');
         }
 
-        state.cards = cards;
+        state.cards = cards.map(hydrateCardForSearch);
         state.meta = meta || {};
         hydrateStats();
         clearResultsArea();
@@ -4394,11 +4542,17 @@ function finishUpdateTimer() {
 
       const rows = items.map((card, index) => {
         const f = getDisplayFields(card);
+        const previewUrl = getCardPreviewUrl(card);
 
         return `
           <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
-            <div class="suggestion-title">${escapeHtml(formatSuggestionHeadline(card))}</div>
-            <div class="suggestion-meta">${escapeHtml(f.setName || '-')}</div>
+            ${previewUrl
+              ? `<img class="suggestion-thumb" loading="lazy" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
+              : `<div class="suggestion-thumb-fallback">N/D</div>`}
+            <div class="suggestion-main">
+              <div class="suggestion-title">${escapeHtml(formatSuggestionHeadline(card))}</div>
+              <div class="suggestion-meta">${escapeHtml(formatSuggestionMeta(card))}</div>
+            </div>
           </div>
         `;
       });
