@@ -234,7 +234,6 @@ const card = {
   id: Number(bp.id),
   name: bp.name || '-',
   collector_number: bp.fixed_properties?.collector_number || '',
-  number_norm: getNumberNorm(bp.fixed_properties?.collector_number),
   rarity: bp.fixed_properties?.pokemon_rarity || '',
   version: bp.version || '',
   expansion_id: bp.expansion_id,
@@ -242,12 +241,6 @@ const card = {
   set_code: exp.code || '',
   image_url: bp.image_url || ''
 };
-
-const searchIndex = createSearchIndex(card);
-
-card.searchText = searchIndex.text;
-card.searchTokens = searchIndex.tokens;
-card.searchNumericGroups = searchIndex.numericGroups;
 
 allCards.push(card);
     }
@@ -263,7 +256,7 @@ allCards.push(card);
     categoryName: category?.name || '',
     cardsCount: allCards.length,
     expansionsCount: pokemonExpansions.length,
-    indexVersion: 1
+    indexVersion: 2
   };
 
   await fs.mkdir('./data', { recursive: true });
