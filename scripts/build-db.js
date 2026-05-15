@@ -51,118 +51,6 @@ function getNumberNorm(value) {
   return Number.isFinite(normalized) ? normalized : null;
 }
 
-function normalize(text) {
-  return String(text ?? '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9/ ]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function splitTokens(value) {
-  return normalize(value).split(' ').filter(Boolean);
-}
-
-function expandNumberVariants(value) {
-  const raw = String(value || '').trim();
-  if (!raw) return [];
-
-  const norm = normalize(raw);
-  const out = new Set();
-  out.add(norm);
-
-  if (/^\d+$/.test(norm)) {
-    out.add(stripLeadingZeros(norm));
-  }
-
-  return Array.from(out).filter(Boolean);
-}
-
-function expandVersionVariants(version) {
-  const raw = String(version || '').trim();
-  if (!raw) return [];
-
-  const norm = normalize(raw);
-  const out = new Set();
-  out.add(norm);
-
-  const match = norm.match(/^(\d+)\s*\/\s*(\d+)$/);
-  if (!match) return Array.from(out);
-
-  const [, aRaw, bRaw] = match;
-  const aVars = expandNumberVariants(aRaw);
-  const bVars = expandNumberVariants(bRaw);
-
-  for (const a of aVars) {
-    for (const b of bVars) {
-      out.add(`${a}/${b}`);
-      out.add(`${a} ${b}`);
-    }
-  }
-
-  aVars.forEach(v => out.add(v));
-  bVars.forEach(v => out.add(v));
-
-  return Array.from(out).filter(Boolean);
-}
-
-function extractNumericGroupsFromValue(value) {
-  const raw = String(value || '').trim();
-  if (!raw) return [];
-
-  const matches = raw.match(/\d+/g) || [];
-  return matches.map(group => ({
-    raw: group,
-    norm: stripLeadingZeros(group)
-  }));
-}
-
-function createSearchIndex(card) {
-  const tokenSet = new Set();
-  const numericGroups = [];
-
-  const baseFields = [
-    card.name,
-    card.collector_number,
-    card.version,
-    card.set_code,
-    card.set_name,
-  ];
-
-  baseFields.forEach(value => {
-    if (!value) return;
-
-    splitTokens(value).forEach(t => tokenSet.add(t));
-    tokenSet.add(normalize(value));
-
-    const compact = String(value).toLowerCase().replace(/[^a-z0-9]+/g, '');
-    if (compact) tokenSet.add(compact);
-  });
-
-  expandNumberVariants(card.collector_number).forEach(v => tokenSet.add(v));
-  expandVersionVariants(card.version).forEach(v => tokenSet.add(v));
-  extractNumericGroupsFromValue(card.collector_number).forEach(g => numericGroups.push(g));
-  extractNumericGroupsFromValue(card.version).forEach(g => numericGroups.push(g));
-
-  const textParts = [
-    card.name,
-    card.collector_number,
-    ...expandNumberVariants(card.collector_number),
-    card.version,
-    ...expandVersionVariants(card.version),
-    card.set_code,
-    card.set_name,
-  ];
-
-  return {
-    text: normalize(textParts.join(' | ')),
-    tokens: Array.from(tokenSet).filter(Boolean),
-    numericGroups,
-  };
-}
-
 async function detectPokemonGame() {
   const payload = await api('/games');
   const games = extractArray(payload, ['games']);
@@ -234,6 +122,7 @@ const card = {
   id: Number(bp.id),
   name: bp.name || '-',
   collector_number: bp.fixed_properties?.collector_number || '',
+  number_norm: getNumberNorm(bp.fixed_properties?.collector_number),
   rarity: bp.fixed_properties?.pokemon_rarity || '',
   version: bp.version || '',
   expansion_id: bp.expansion_id,
@@ -242,6 +131,8 @@ const card = {
   image_url: bp.image_url || ''
 };
 
+// Database alleggerito: niente searchText/searchTokens/searchNumericGroups.
+// La normalizzazione e gli indici temporanei vengono costruiti nell'HTML al momento della ricerca.
 allCards.push(card);
     }
   }
@@ -263,12 +154,12 @@ allCards.push(card);
 
   await fs.writeFile(
     './data/pokemon-index.json',
-    JSON.stringify(allCards, null, 2)
+    JSON.stringify(allCards)
   );
 
   await fs.writeFile(
     './data/pokemon-index-meta.json',
-    JSON.stringify(meta, null, 2)
+    JSON.stringify(meta)
   );
 
   console.log(`Database creato: ${allCards.length} carte, ${pokemonExpansions.length} espansioni.`);
