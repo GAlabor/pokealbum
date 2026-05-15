@@ -3380,25 +3380,10 @@ paint-order="stroke">
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
-        .replace(/&/g, ' and ')
-        .replace(/['’`´]/g, '')
         .replace(/[^a-z0-9/ ]+/g, ' ')
         .replace(/\s+/g, ' ')
         .trim();
     }
-
-    function compactSearch(value) {
-      return normalize(value).replace(/[^a-z0-9]+/g, '');
-    }
-
-    const SEARCH_ALIASES = {
-      // Alias italiano -> nomi usati più spesso da CardTrader in inglese.
-      // Qui ne puoi aggiungere altri senza rigenerare tutto il database, finalmente una piccola vittoria contro il caos.
-      'festa dei campioni': ['champions festival', 'champion festival', 'champion s festival', 'championsfestival', 'championfestival'],
-      'festival dei campioni': ['champions festival', 'champion festival', 'champion s festival', 'championsfestival', 'championfestival'],
-      'champions festival': ['festa dei campioni', 'festival dei campioni'],
-      'champion festival': ['festa dei campioni', 'festival dei campioni'],
-    };
 
     function stripLeadingZeros(value) {
       const cleaned = String(value ?? '').replace(/^0+(\d)/, '$1');
@@ -3434,9 +3419,7 @@ paint-order="stroke">
       if (Number.isFinite(card?.number_norm)) return card.number_norm;
       const collectorNumber = getCollectorNumber(card);
       if (!collectorNumber) return null;
-      const firstNumber = String(collectorNumber).match(/\d+/)?.[0] || '';
-      if (!firstNumber) return null;
-      const normalized = Number(stripLeadingZeros(firstNumber));
+      const normalized = Number(stripLeadingZeros(collectorNumber));
       return Number.isFinite(normalized) ? normalized : null;
     }
 
@@ -3495,30 +3478,55 @@ paint-order="stroke">
       return Array.from(out).filter(Boolean);
     }
 
+    function compactValue(value) {
+      return String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+    }
+
+    function splitSearchTokens(value) {
+      return normalize(value).split(' ').filter(Boolean);
+    }
+
     function extractNumericGroupsFromValue(value) {
       const raw = String(value || '').trim();
       if (!raw) return [];
+
       return (raw.match(/\d+/g) || []).map(group => ({
         raw: group,
-        norm: stripLeadingZeros(group),
+        norm: stripLeadingZeros(group)
       }));
     }
 
-    function getCardNumericGroups(card) {
-      if (Array.isArray(card?._searchNumbers)) return card._searchNumbers;
-      if (Array.isArray(card?.searchNumericGroups)) return card.searchNumericGroups;
-
-      return [
-        ...extractNumericGroupsFromValue(getCollectorNumber(card)),
-        ...extractNumericGroupsFromValue(getVersion(card)),
-      ];
-    }
-
-    function buildCardSearchText(card) {
-      if (card?._searchText) return card._searchText;
-
+    function buildCardSearchIndex(card) {
       const f = getDisplayFields(card);
-      const parts = [
+      const tokenSet = new Set();
+      const numericGroups = [];
+
+      const baseFields = [
+        f.name,
+        f.collectorNumber,
+        f.version,
+        f.rarity,
+        f.setCode,
+        f.setName,
+      ];
+
+      baseFields.forEach(value => {
+        if (!value) return;
+        splitSearchTokens(value).forEach(token => tokenSet.add(token));
+
+        const normalized = normalize(value);
+        if (normalized) tokenSet.add(normalized);
+
+        const compact = compactValue(value);
+        if (compact) tokenSet.add(compact);
+      });
+
+      expandNumberVariants(f.collectorNumber).forEach(v => tokenSet.add(v));
+      expandVersionVariants(f.version).forEach(v => tokenSet.add(v));
+      extractNumericGroupsFromValue(f.collectorNumber).forEach(g => numericGroups.push(g));
+      extractNumericGroupsFromValue(f.version).forEach(g => numericGroups.push(g));
+
+      const textParts = [
         f.name,
         f.collectorNumber,
         ...expandNumberVariants(f.collectorNumber),
@@ -3529,24 +3537,39 @@ paint-order="stroke">
         f.setName,
       ];
 
-      const normalizedParts = parts.flatMap(value => {
-        const norm = normalize(value);
-        if (!norm) return [];
-        const compact = compactSearch(norm);
-        return compact && compact !== norm ? [norm, compact] : [norm];
-      });
-
-      return Array.from(new Set(normalizedParts)).join(' ');
+      return {
+        text: normalize(textParts.join(' | ')),
+        tokens: Array.from(tokenSet).filter(Boolean),
+        numericGroups,
+      };
     }
 
-    function hydrateCardForSearch(card) {
-      const hydrated = { ...card };
-      hydrated._searchText = buildCardSearchText(hydrated);
-      hydrated._searchNumbers = getCardNumericGroups(hydrated);
-      return hydrated;
+    function getCardSearchIndex(card) {
+      if (!card || typeof card !== 'object') {
+        return { text: '', tokens: [], numericGroups: [] };
+      }
+
+      if (card.__searchIndex) return card.__searchIndex;
+
+      const hasLegacyIndex = card.searchText || Array.isArray(card.searchTokens) || Array.isArray(card.searchNumericGroups);
+      const index = hasLegacyIndex
+        ? {
+            text: card.searchText || '',
+            tokens: Array.isArray(card.searchTokens) ? card.searchTokens : [],
+            numericGroups: Array.isArray(card.searchNumericGroups) ? card.searchNumericGroups : [],
+          }
+        : buildCardSearchIndex(card);
+
+      try {
+        Object.defineProperty(card, '__searchIndex', { value: index, enumerable: false });
+      } catch (_) {
+        card.__searchIndex = index;
+      }
+
+      return index;
     }
 
-    function buildParsedQuery(rawQuery, aliasBoost = 0) {
+    function parseQuery(rawQuery) {
       const normalized = normalize(rawQuery);
       const rawTokens = normalized.split(' ').filter(Boolean);
       const expandedTokens = [];
@@ -3561,39 +3584,25 @@ paint-order="stroke">
         if (/^\d+\/\d+$/.test(token)) {
           expandVersionVariants(token).forEach(v => expandedTokens.push(v));
         }
+
+        const compact = compactValue(token);
+        if (compact && compact !== token) expandedTokens.push(compact);
       });
 
       return {
         normalized,
         rawTokens,
         expandedTokens: Array.from(new Set(expandedTokens)).filter(Boolean),
-        aliasBoost,
-      };
-    }
-
-    function expandQueryAliases(normalized) {
-      const aliases = SEARCH_ALIASES[normalized] || [];
-      const compact = compactSearch(normalized);
-      const compactAliases = compact && compact !== normalized ? (SEARCH_ALIASES[compact] || []) : [];
-      return Array.from(new Set([...aliases, ...compactAliases])).filter(Boolean);
-    }
-
-    function parseQuery(rawQuery) {
-      const primary = buildParsedQuery(rawQuery, 0);
-      const aliases = expandQueryAliases(primary.normalized)
-        .map(alias => buildParsedQuery(alias, 120000));
-
-      return {
-        ...primary,
-        alternatives: [primary, ...aliases].filter(item => item.normalized && item.rawTokens.length),
       };
     }
 
     function tokenMatchesCard(card, token) {
       if (!token) return true;
 
-      const searchText = buildCardSearchText(card);
-      const numericGroups = getCardNumericGroups(card);
+      const index = getCardSearchIndex(card);
+      const searchText = index.text || '';
+      const searchTokens = Array.isArray(index.tokens) ? index.tokens : [];
+      const numericGroups = Array.isArray(index.numericGroups) ? index.numericGroups : [];
 
       if (/^\d+$/.test(token)) {
         const normalizedToken = stripLeadingZeros(token);
@@ -3607,10 +3616,13 @@ paint-order="stroke">
 
       if (/^\d+\/\d+$/.test(token)) {
         const variants = expandVersionVariants(token);
-        return variants.some(v => searchText.includes(v));
+        return variants.some(v => searchTokens.includes(v) || searchText.includes(v));
       }
 
-      return searchText.includes(token) || searchText.includes(compactSearch(token));
+      const compact = compactValue(token);
+      return searchTokens.includes(token)
+        || searchText.includes(token)
+        || (!!compact && (searchTokens.includes(compact) || searchText.includes(compact)));
     }
 
     function formatDate(iso) {
@@ -4281,13 +4293,7 @@ function finishUpdateTimer() {
 
     function computeScore(card, query) {
       const parsed = typeof query === 'string' ? parseQuery(query) : query;
-      const alternatives = parsed?.alternatives?.length ? parsed.alternatives : [parsed];
-
-      return alternatives.reduce((best, candidate) => Math.max(best, computeScoreSingle(card, candidate)), 0);
-    }
-
-    function computeScoreSingle(card, parsed) {
-      if (!parsed?.normalized || !parsed.rawTokens.length) return 0;
+      if (!parsed.normalized || !parsed.rawTokens.length) return 0;
 
       for (const token of parsed.rawTokens) {
         if (!tokenMatchesCard(card, token)) return 0;
@@ -4300,11 +4306,11 @@ function finishUpdateTimer() {
       const version = normalize(f.version);
       const rarity = normalize(f.rarity);
       const number = normalize(f.collectorNumber);
-      const numericGroups = getCardNumericGroups(card);
+      const numericGroups = getCardSearchIndex(card).numericGroups;
 
       const group = getNamePriorityGroup(parsed, f);
       const groupBoosts = [1000000, 900000, 800000, 300000, 200000, 100000, 1];
-      let score = (groupBoosts[group] || 1) + (parsed.aliasBoost || 0);
+      let score = groupBoosts[group] || 1;
 
       // Bonus frase intera: utile per "mew illustration" quando il nome contiene già tutta la stringa.
       if (name === parsed.normalized) score += 5000;
@@ -4429,7 +4435,7 @@ function finishUpdateTimer() {
           throw new Error('pokemon-index.json non è un array di carte valido');
         }
 
-        state.cards = cards.map(hydrateCardForSearch);
+        state.cards = cards;
         state.meta = meta || {};
         hydrateStats();
         clearResultsArea();
