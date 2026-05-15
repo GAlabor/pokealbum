@@ -4382,10 +4382,17 @@ function finishUpdateTimer() {
       return score;
     }
 
+    function getStoredToken() {
+      const token = String(state.token || localStorage.getItem(LS_TOKEN) || '').trim();
+      state.token = token;
+      return token;
+    }
+
     async function api(path) {
-      if (!state.token) throw new Error('Token mancante');
+      const token = getStoredToken();
+      if (!token) throw new Error('Token mancante: apri Token API e salvalo di nuovo.');
       const res = await fetch(`${API_BASE}${path}`, {
-        headers: { Authorization: `Bearer ${state.token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) {
         let text = '';
@@ -4637,8 +4644,9 @@ function finishUpdateTimer() {
 
     function attachEvents() {
       el.tokenBtn.addEventListener('click', () => {
-        el.tokenInput.value = state.token;
-        el.tokenMessage.textContent = state.token ? 'Token presente nel browser.' : '';
+        const token = getStoredToken();
+        el.tokenInput.value = token;
+        el.tokenMessage.textContent = token ? 'Token presente nel browser.' : '';
         openModal(el.tokenModal);
       });
 
