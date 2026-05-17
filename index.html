@@ -31,8 +31,9 @@ button, input{font:inherit;}
 .suggestion{padding:12px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);}
 .suggestion:last-child{border-bottom:0;}
 .suggestion:hover, .suggestion.active{background:rgba(90,166,255,0.12);}
-.suggestion-title{font-weight:700;}
-.suggestion-meta{color:var(--muted);font-size:0.88rem;margin-top:4px;}
+.suggestion-title{font-weight:400;color:#111827;}
+.suggestion-meta{color:var(--muted);font-size:0.95rem;margin-top:4px;}
+.suggestion-highlight{background:rgba(90,166,255,0.22);color:inherit;border-radius:3px;padding:0 1px;}
 .status{color:var(--muted);font-size:0.95rem;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));gap:14px;margin-top:24px;}
 .card{border:1px solid rgba(255,255,255,0.10);border-radius:16px;background:#171b24;overflow:hidden;cursor:pointer;transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;box-shadow:0 10px 30px rgba(0,0,0,.28);}
@@ -656,7 +657,7 @@ svg{overflow:visible;}
 .add-card-search-view .card-finder-embed .status, .add-card-search-view .card-finder-embed .empty{color:#7382a2;}
 .add-card-search-view .card-finder-embed .empty{margin-top:14px;}
 .add-card-search-view .card-finder-embed .suggestion:hover, .add-card-search-view .card-finder-embed .suggestion.active{background:rgba(47,100,255,0.10);}
-.add-card-search-view .card-finder-embed .suggestion-meta{color:#7382a2;}
+.add-card-search-view .card-finder-embed .suggestion-meta{color:#8f9ab3;}
 #tokenModal.modal-backdrop, #detailModal.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100;}
 #tokenModal.modal-backdrop.open, #detailModal.modal-backdrop.open{display:flex;}
 #tokenModal .modal, #detailModal .modal{color:#eef4ff;}
@@ -677,7 +678,7 @@ svg{overflow:visible;}
 .add-card-search-view .autocomplete{background:rgba(255,255,255,.96);color:#20345f;border-color:rgba(120,146,207,.2);box-shadow:0 18px 34px rgba(73,96,157,.16),inset 0 1px 0 rgba(255,255,255,.78);}
 .add-card-search-view .suggestion{border-bottom-color:rgba(111,134,188,.12);}
 .add-card-search-view .suggestion:hover, .add-card-search-view .suggestion.active{background:rgba(47,100,255,.10);}
-.add-card-search-view .suggestion-meta{color:#7382a2;}
+.add-card-search-view .suggestion-meta{color:#8f9ab3;}
 .add-card-search-view #results .thumb-wrap img{max-width:148px;border-radius:12px;}
 .add-card-search-view .card-search-empty-state{position:static;display:none;margin:16px 4px 0;padding:18px 16px;border-radius:22px;background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.64);color:#7382a2;box-shadow:0 16px 32px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.88);text-align:center;}
 #detailModal.modal-backdrop{background:rgba(220,230,248,.72);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);padding:0;}
@@ -1006,24 +1007,51 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   word-break:normal;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-title{
-  color:#1c2e5a;
-  font-size:15px;
-  font-weight:900;
+  color:#111827;
+  font-size:17px;
+  font-weight:450;
   line-height:1.08;
   white-space:normal;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-meta{
   margin-top:1px;
-  color:#8e8e8e;
+  color:#a6a6a6;
   font-size:13px;
-  font-weight:600;
+  font-weight:500;
   line-height:1.08;
   white-space:normal;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-highlight{
+  background:rgba(47,100,255,.16);
+  color:inherit;
+  border-radius:3px;
+  padding:0 1px;
 }
 .add-card-search-view .card-search-panel-ux .suggestion[data-show-all="1"]{
   grid-template-columns:1fr;
   text-align:center;
   padding:9px 12px;
+}
+.add-card-search-view .card-search-panel-ux .suggestion[data-show-all="1"] .suggestion-title{
+  color:#2f64ff;
+  font-weight:600;
+}
+.add-card-search-view .card-search-panel-ux .autocomplete{
+  overflow:hidden;
+  max-height:420px;
+}
+.add-card-search-view .card-search-panel-ux .autocomplete-results{
+  max-height:382px;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.add-card-search-view .card-search-panel-ux .suggestion[data-show-all="1"]{
+  position:sticky;
+  bottom:0;
+  z-index:3;
+  background:rgba(255,255,255,.98);
+  border-top:1px solid rgba(120,146,207,.18);
+  box-shadow:0 -8px 18px rgba(66,89,152,.08);
 }
 
 
@@ -3353,6 +3381,64 @@ paint-order="stroke">
         .replaceAll("'", '&#039;');
     }
 
+
+    function escapeRegExp(value) {
+      return String(value ?? '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function highlightSuggestionText(value, rawQuery) {
+      const text = String(value ?? '');
+      const query = String(rawQuery ?? '').trim();
+      if (!text || !query) return escapeHtml(text);
+
+      const terms = Array.from(new Set(
+        query
+          .toLowerCase()
+          .split(/\s+/)
+          .map(term => term.trim())
+          .filter(term => term.length >= 2)
+      )).sort((a, b) => b.length - a.length);
+
+      if (!terms.length) return escapeHtml(text);
+
+      const ranges = [];
+      const lowerText = text.toLowerCase();
+
+      terms.forEach(term => {
+        const safeTerm = escapeRegExp(term);
+        if (!safeTerm) return;
+        const regex = new RegExp(safeTerm, 'gi');
+        let match;
+        while ((match = regex.exec(lowerText)) !== null) {
+          ranges.push([match.index, match.index + match[0].length]);
+          if (match.index === regex.lastIndex) regex.lastIndex += 1;
+        }
+      });
+
+      if (!ranges.length) return escapeHtml(text);
+
+      ranges.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+      const merged = [];
+      ranges.forEach(range => {
+        const last = merged[merged.length - 1];
+        if (!last || range[0] > last[1]) {
+          merged.push(range);
+        } else {
+          last[1] = Math.max(last[1], range[1]);
+        }
+      });
+
+      let html = '';
+      let cursor = 0;
+      merged.forEach(([start, end]) => {
+        html += escapeHtml(text.slice(cursor, start));
+        html += `<span class="suggestion-highlight">${escapeHtml(text.slice(start, end))}</span>`;
+        cursor = end;
+      });
+      html += escapeHtml(text.slice(cursor));
+      return html;
+    }
+
     function toTitleCase(value) {
   return String(value || '')
     .toLowerCase()
@@ -3362,16 +3448,15 @@ paint-order="stroke">
     function formatSuggestionHeadline(card) {
       const f = getDisplayFields(card);
       const name = toTitleCase(f.name || '-');
-      const number = f.collectorNumber || f.numberNorm || '-';
-      return `${name} - ${number}`;
+      const version = f.version || '';
+      return [name, version].filter(Boolean).join(' - ') || '-';
     }
 
     function formatSuggestionMeta(card) {
       const f = getDisplayFields(card);
-      const mainInfo = [f.setName, f.version].filter(Boolean).join(' ');
-      const extraInfo = [f.setCode ? f.setCode.toUpperCase() : '', f.rarity].filter(Boolean).join(' · ');
-
-      return [mainInfo, extraInfo].filter(Boolean).join(' · ') || '-';
+      const setCode = f.setCode ? f.setCode.toUpperCase() : '';
+      const setName = f.setName || '';
+      return [setCode, setName].filter(Boolean).join(' - ') || '-';
     }
 
 
@@ -3645,12 +3730,19 @@ paint-order="stroke">
       if (!raw) return '';
       if (!raw.includes('/uploads/blueprints/image/')) return raw;
 
+      const filename = raw.split('/').pop() || '';
+      const cleanFilename = filename.replace(/^(preview_|show_)/i, '');
+
+      if (variant === 'preview') {
+        return raw.replace(/\/[^/]+$/i, `/preview_${cleanFilename}`);
+      }
+
       if (variant === 'show') {
-        return raw.replace(/\/preview_([^/]+)$/i, '/show_$1');
+        return raw.replace(/\/[^/]+$/i, `/show_${cleanFilename}`);
       }
 
       if (variant === 'full') {
-        return raw.replace(/\/preview_([^/]+)$/i, '/$1');
+        return raw.replace(/\/[^/]+$/i, `/${cleanFilename}`);
       }
 
       return raw;
@@ -3658,6 +3750,12 @@ paint-order="stroke">
 
     function getCardPreviewUrl(card) {
       return String(card?.image_preview_url || '').trim()
+        || deriveCardTraderImageUrl(card?.image_url, 'preview')
+        || String(card?.image_url || '').trim();
+    }
+
+    function getCardShowUrl(card) {
+      return String(card?.image_show_url || '').trim()
         || deriveCardTraderImageUrl(card?.image_url, 'show')
         || String(card?.image_url || '').trim();
     }
@@ -4508,21 +4606,23 @@ function finishUpdateTimer() {
       el.results.innerHTML = list.map(card => {
         const f = getDisplayFields(card);
         const displayName = toTitleCase(f.name || '-');
-        const displaySetCode = String(f.setCode || '-').toUpperCase();
+        const displayVersion = f.version || '';
+        const displaySetCode = String(f.setCode || '').toUpperCase();
+        const displaySetName = f.setName || '';
 
-        const previewUrl = getCardPreviewUrl(card);
+        const showUrl = getCardShowUrl(card);
 
         return `
           <article class="card" data-id="${card.id}">
             <div class="thumb-wrap">
-              ${previewUrl
-                ? `<img class="thumb" loading="lazy" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(displayName)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-fallback',textContent:'Immagine non disponibile'}))">`
+              ${showUrl
+                ? `<img class="thumb" loading="lazy" src="${escapeHtml(showUrl)}" alt="${escapeHtml(displayName)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-fallback',textContent:'Immagine non disponibile'}))">`
                 : `<div class="thumb-fallback">Immagine non disponibile</div>`}
             </div>
             <div class="card-body">
-              <div class="card-title">${escapeHtml(displayName)}</div>
+              <div class="card-title">${escapeHtml([displayName, displayVersion].filter(Boolean).join(' - '))}</div>
               <div class="card-meta">
-                <div>${escapeHtml(displaySetCode)}${f.version ? ` - <span style="color:inherit;">${escapeHtml(f.version)}</span>` : ''}</div>
+                <div>${escapeHtml([displaySetCode, displaySetName].filter(Boolean).join(' - ') || '-')}</div>
               </div>
             </div>
           </article>
@@ -4543,7 +4643,7 @@ function finishUpdateTimer() {
         .sort((a, b) => b.score - a.score);
 
       state.lastSuggestionTotal = matches.length;
-      return matches.slice(0, 24).map(x => x.card);
+      return matches.slice(0, 15).map(x => x.card);
     }
 
     function renderSuggestions(items) {
@@ -4563,23 +4663,25 @@ function finishUpdateTimer() {
               ? `<img class="suggestion-thumb" loading="lazy" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
               : `<div class="suggestion-thumb-fallback">N/D</div>`}
             <div class="suggestion-main">
-              <div class="suggestion-title">${escapeHtml(formatSuggestionHeadline(card))}</div>
-              <div class="suggestion-meta">${escapeHtml(formatSuggestionMeta(card))}</div>
+              <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
+              <div class="suggestion-meta">${highlightSuggestionText(formatSuggestionMeta(card), el.searchInput.value)}</div>
             </div>
           </div>
         `;
       });
 
-      if (state.lastSuggestionTotal > items.length) {
-        rows.push(`
+      const showAllRow = state.lastSuggestionTotal > 0
+        ? `
           <div class="suggestion" data-show-all="1">
             <div class="suggestion-title">Mostra tutti i ${state.lastSuggestionTotal.toLocaleString('it-IT')} risultati</div>
-            <div class="suggestion-meta">Apri la ricerca completa con i filtri che hai scritto.</div>
           </div>
-        `);
-      }
+        `
+        : '';
 
-      el.autocomplete.innerHTML = rows.join('');
+      el.autocomplete.innerHTML = `
+        <div class="autocomplete-results">${rows.join('')}</div>
+        ${showAllRow}
+      `;
       el.autocomplete.classList.add('open');
     }
 
