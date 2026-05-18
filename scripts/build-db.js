@@ -51,23 +51,6 @@ function getNumberNorm(value) {
   return Number.isFinite(normalized) ? normalized : null;
 }
 
-function normalizeSearchText(value) {
-  return String(value ?? '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9/ ]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function buildSearchText(...values) {
-  return values
-    .map(value => normalizeSearchText(value))
-    .filter(Boolean)
-    .join(' ');
-}
-
 async function detectPokemonGame() {
   const payload = await api('/games');
   const games = extractArray(payload, ['games']);
@@ -135,7 +118,7 @@ async function main() {
     );
 
     for (const bp of cards) {
-const baseCard = {
+const card = {
   id: Number(bp.id),
   name: bp.name || '-',
   collector_number: bp.fixed_properties?.collector_number || '',
@@ -148,19 +131,8 @@ const baseCard = {
   image_url: bp.image_url || ''
 };
 
-const card = {
-  ...baseCard,
-  q: buildSearchText(
-    baseCard.name,
-    baseCard.collector_number,
-    baseCard.rarity,
-    baseCard.version,
-    baseCard.set_name,
-    baseCard.set_code
-  )
-};
-
-// Database ottimizzato: campo q già pronto per ricerca veloce.
+// Database alleggerito: niente searchText/searchTokens/searchNumericGroups.
+// La normalizzazione e gli indici temporanei vengono costruiti nell'HTML al momento della ricerca.
 allCards.push(card);
     }
   }
@@ -175,7 +147,7 @@ allCards.push(card);
     categoryName: category?.name || '',
     cardsCount: allCards.length,
     expansionsCount: pokemonExpansions.length,
-    indexVersion: 3
+    indexVersion: 2
   };
 
   await fs.mkdir('./data', { recursive: true });
