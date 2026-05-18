@@ -31,9 +31,15 @@ button, input{font:inherit;}
 .suggestion{padding:12px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);}
 .suggestion:last-child{border-bottom:0;}
 .suggestion:hover, .suggestion.active{background:rgba(90,166,255,0.12);}
-.suggestion-title{font-weight:400;color:#111827;}
+.suggestion-title{font-weight:650;color:#111827;}
 .suggestion-meta{color:var(--muted);font-size:0.95rem;margin-top:4px;}
-.suggestion-highlight{background:rgba(90,166,255,0.22);color:inherit;border-radius:3px;padding:0 1px;}
+.suggestion-highlight{
+  background:rgba(90,166,255,0.10);
+  color:#163a7a;
+  font-weight:800;
+  border-radius:6px;
+  padding:0 1px;
+}
 .status{color:var(--muted);font-size:0.95rem;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));gap:14px;margin-top:24px;}
 .card{border:1px solid rgba(255,255,255,0.10);border-radius:16px;background:#171b24;overflow:hidden;cursor:pointer;transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;box-shadow:0 10px 30px rgba(0,0,0,.28);}
@@ -613,8 +619,25 @@ svg{overflow:visible;}
 .card-search-action-icon svg{width:21px;height:21px;stroke-width:2.15;}
 .card-search-action-label{font-size:11px;font-weight:800;letter-spacing:-0.02em;line-height:1;color:currentColor;}
 .card-search-shell{width:100%;padding:0;}
-.card-search-bar{width:100%;min-height:50px;border-radius:999px;display:grid;grid-template-columns:minmax(0, 1fr) 76px;overflow:hidden;background:rgba(255, 255, 255, 0.46);border:1px solid rgba(255, 255, 255, 0.64);box-shadow:0 16px 32px rgba(66, 89, 152, 0.12),
-          inset 0 1px 0 rgba(255, 255, 255, 0.88);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);}
+.card-search-bar{
+  width:100%;
+  min-height:50px;
+  border-radius:999px;
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) 76px;
+  overflow:hidden;
+
+  background:rgba(255,255,255,0.50);
+
+  border:1px solid rgba(90,166,255,0.22);
+
+  box-shadow:
+    0 10px 24px rgba(66,89,152,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.88);
+
+  backdrop-filter:blur(22px) saturate(145%);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+}
 .card-search-input{width:100%;min-width:0;height:50px;border:0;outline:none;background:rgba(255, 255, 255, 0.12);padding:0 20px;color:#20345f;font-family:inherit;font-size:17px;font-weight:650;letter-spacing:-0.02em;}
 .card-search-input::placeholder{color:#8491ad;font-weight:600;}
 .card-search-button{appearance:none;-webkit-appearance:none;width:76px;height:50px;border:0;border-left:1px solid rgba(90, 112, 168, 0.14);border-radius:0;background:rgba(255, 255, 255, 0.32);color:#2f64ff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background-color 0.18s ease,
@@ -937,10 +960,13 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease;
 }
 .add-card-search-view .card-search-panel-ux .card-search-bar:focus-within{
-  border-color:#2f64ff;
-  box-shadow:0 0 0 2px rgba(47,100,255,.16),
-             0 16px 32px rgba(66,89,152,.12),
-             inset 0 1px 0 rgba(255,255,255,.88);
+
+  border-color:rgba(90,166,255,0.42);
+
+  box-shadow:
+    0 0 0 3px rgba(90,166,255,0.10),
+    0 10px 24px rgba(66,89,152,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.90);
 }
 .add-card-search-view .card-search-panel-ux .card-search-input,
 .add-card-search-view .card-search-panel-ux .card-search-input:focus{
@@ -1007,18 +1033,22 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   word-break:normal;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-title{
-  color:#111827;
-  font-size:17px;
-  font-weight:450;
-  line-height:1.08;
+  color:#1c2e5a;
+  font-size:16px;
+  font-weight:650;
+  line-height:1.12;
+  letter-spacing:-0.02em;
   white-space:normal;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-meta{
-  margin-top:1px;
-  color:#a6a6a6;
-  font-size:13px;
-  font-weight:500;
-  line-height:1.08;
+  margin-top:2px;
+  color:#7f8fac;
+  font-size:12px;
+  font-weight:550;
+  line-height:1.15;
+  letter-spacing:-0.01em;
   white-space:normal;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-highlight{
