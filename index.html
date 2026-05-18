@@ -3301,9 +3301,6 @@ paint-order="stroke">
       timerStartedAt: null,
       searchProgressTimer: null,
       searchProgressStepTimers: [],
-      suggestionDebounceTimer: null,
-      suggestionRequestId: 0,
-      lastParsedQuery: null,
       market: {
         rows: [],
         selected: { langKey: '', condKey: '', ctZero: false },
@@ -3669,22 +3666,14 @@ paint-order="stroke">
 
       if (card.__searchIndex) return card.__searchIndex;
 
-      const hasPreparedIndex = typeof card.q === 'string' || Array.isArray(card.qnums);
       const hasLegacyIndex = card.searchText || Array.isArray(card.searchTokens) || Array.isArray(card.searchNumericGroups);
-
-      const index = hasPreparedIndex
+      const index = hasLegacyIndex
         ? {
-            text: String(card.q || ''),
-            tokens: [],
-            numericGroups: Array.isArray(card.qnums) ? card.qnums : [],
+            text: card.searchText || '',
+            tokens: Array.isArray(card.searchTokens) ? card.searchTokens : [],
+            numericGroups: Array.isArray(card.searchNumericGroups) ? card.searchNumericGroups : [],
           }
-        : hasLegacyIndex
-          ? {
-              text: card.searchText || '',
-              tokens: Array.isArray(card.searchTokens) ? card.searchTokens : [],
-              numericGroups: Array.isArray(card.searchNumericGroups) ? card.searchNumericGroups : [],
-            }
-          : buildCardSearchIndex(card);
+        : buildCardSearchIndex(card);
 
       try {
         Object.defineProperty(card, '__searchIndex', { value: index, enumerable: false });
@@ -4634,31 +4623,6 @@ function finishUpdateTimer() {
       el.emptyState.style.display = 'block';
     }
 
-    function buildResultCardHtml(card) {
-      const f = getDisplayFields(card);
-      const displayName = toTitleCase(f.name || '-');
-      const displayVersion = f.version || '';
-      const displaySetCode = String(f.setCode || '').toUpperCase();
-      const displaySetName = f.setName || '';
-      const showUrl = getCardShowUrl(card);
-
-      return `
-        <article class="card" data-id="${card.id}">
-          <div class="thumb-wrap">
-            ${showUrl
-              ? `<img class="thumb" loading="lazy" decoding="async" src="${escapeHtml(showUrl)}" alt="${escapeHtml(displayName)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-fallback',textContent:'Immagine non disponibile'}))">`
-              : `<div class="thumb-fallback">Immagine non disponibile</div>`}
-          </div>
-          <div class="card-body">
-            <div class="card-title">${escapeHtml([displayName, displayVersion].filter(Boolean).join(' - '))}</div>
-            <div class="card-meta">
-              <div>${escapeHtml([displaySetCode, displaySetName].filter(Boolean).join(' - ') || '-')}</div>
-            </div>
-          </div>
-        </article>
-      `;
-    }
-
     function renderResults(cards) {
       const list = cards || [];
       if (!list.length) {
@@ -4668,181 +4632,32 @@ function finishUpdateTimer() {
 
       state.hasSearched = true;
       el.emptyState.style.display = 'none';
-      el.results.innerHTML = list.map(card => buildResultCardHtml(card)).join('');
-    }
 
+      el.results.innerHTML = list.map(card => {
+        const f = getDisplayFields(card);
+        const displayName = toTitleCase(f.name || '-');
+        const displayVersion = f.version || '';
+        const displaySetCode = String(f.setCode || '').toUpperCase();
+        const displaySetName = f.setName || '';
 
-    function getPreparedField(card, key, fallback) {
-      const value = card?.[key];
-      if (typeof value === 'string') return value;
-      return normalize(fallback || '');
-    }
+        const showUrl = getCardShowUrl(card);
 
-    function fastTokenMatches(card, parsed) {
-      const index = getCardSearchIndex(card);
-      const searchText = index.text || '';
-      const numericGroups = Array.isArray(index.numericGroups) ? index.numericGroups : [];
-
-      for (const token of parsed.rawTokens) {
-        if (/^\d+$/.test(token)) {
-          const normalizedToken = stripLeadingZeros(token);
-          const numericMatch = numericGroups.some(group => {
-            const raw = String(group.raw || '');
-            const norm = String(group.norm || '');
-            return raw.includes(token) || norm.includes(normalizedToken);
-          });
-
-          if (!numericMatch && !searchText.includes(token) && !searchText.includes(normalizedToken)) return false;
-          continue;
-        }
-
-        if (!searchText.includes(token)) return false;
-      }
-
-      return true;
-    }
-
-    function computeFastScore(card, parsed) {
-      if (!fastTokenMatches(card, parsed)) return 0;
-
-      const f = getDisplayFields(card);
-      const name = getPreparedField(card, 'qn', f.name);
-      const setName = getPreparedField(card, 'qs', f.setName);
-      const setCode = getPreparedField(card, 'qsc', f.setCode);
-      const version = getPreparedField(card, 'qv', f.version);
-      const rarity = getPreparedField(card, 'qr', f.rarity);
-      const number = getPreparedField(card, 'qcn', f.collectorNumber);
-      const full = parsed.normalized;
-      const primary = getPrimarySearchToken(parsed);
-
-      let score = 1;
-
-      if (name === full) score += 1000000;
-      else if (primary && name === primary) score += 900000;
-      else if (name.startsWith(full)) score += 800000;
-      else if (primary && name.startsWith(primary)) score += 700000;
-      else if (name.includes(full)) score += 500000;
-      else if (primary && name.includes(primary)) score += 450000;
-      else if (setCode === full || setName === full) score += 250000;
-      else if (setCode.includes(full) || setName.includes(full)) score += 150000;
-
-      parsed.rawTokens.forEach((token, index) => {
-        const primaryBonus = index === 0 ? 1.25 : 1;
-
-        if (name === token) score += 2500 * primaryBonus;
-        else if (name.startsWith(token)) score += 1700 * primaryBonus;
-        else if (name.includes(token)) score += 1150 * primaryBonus;
-
-        if (number === token) score += 650;
-        else if (number.includes(token)) score += 300;
-
-        if (version === token) score += 720;
-        else if (version.includes(token)) score += 430;
-
-        if (rarity === token) score += 520;
-        else if (rarity.includes(token)) score += 260;
-
-        if (setCode === token) score += 360;
-        else if (setCode.includes(token)) score += 180;
-
-        if (setName === token) score += 320;
-        else if (setName.includes(token)) score += 160;
-      });
-
-      const numberNorm = Number(card?.number_norm);
-      if (Number.isFinite(numberNorm)) score += Math.max(0, 120 - Math.min(numberNorm, 120));
-
-      return score;
-    }
-
-    function collectSearchMatches(parsed, options = {}) {
-      const limit = Number.isFinite(options.limit) ? options.limit : Infinity;
-      const collectAll = !!options.collectAll;
-      const best = [];
-      const all = collectAll ? [] : null;
-      let total = 0;
-      let minBestScore = 0;
-
-      for (const card of state.cards) {
-        const score = computeFastScore(card, parsed);
-        if (score <= 0) continue;
-
-        total++;
-
-        if (collectAll) {
-          all.push({ card, score });
-          continue;
-        }
-
-        if (best.length < limit) {
-          best.push({ card, score });
-          if (best.length === limit) minBestScore = Math.min(...best.map(item => item.score));
-        } else if (score > minBestScore) {
-          let minIndex = 0;
-          for (let i = 1; i < best.length; i++) {
-            if (best[i].score < best[minIndex].score) minIndex = i;
-          }
-          best[minIndex] = { card, score };
-          minBestScore = Math.min(...best.map(item => item.score));
-        }
-      }
-
-      const source = collectAll ? all : best;
-      source.sort((a, b) => b.score - a.score);
-
-      return {
-        total,
-        cards: source.map(item => item.card),
-      };
-    }
-
-    function preloadSuggestionImages(cards) {
-      (cards || []).slice(0, 6).forEach(card => {
-        const url = getCardPreviewUrl(card);
-        if (!url) return;
-        const img = new Image();
-        img.decoding = 'async';
-        img.src = url;
-      });
-    }
-
-    function scheduleSuggestions() {
-      const requestId = ++state.suggestionRequestId;
-      const query = el.searchInput.value;
-      const parsed = parseQuery(query);
-      state.lastParsedQuery = parsed;
-      state.activeSuggestion = -1;
-
-      if (state.suggestionDebounceTimer) clearTimeout(state.suggestionDebounceTimer);
-
-      if (!parsed.normalized) {
-        state.suggestions = [];
-        state.lastSuggestionTotal = 0;
-        renderSuggestions([]);
-        clearResultsArea();
-        setStatus('');
-        return;
-      }
-
-      if (parsed.normalized.length <= 2) {
-        state.suggestions = [];
-        state.lastSuggestionTotal = 0;
-        renderSuggestions([]);
-        clearResultsArea();
-        return;
-      }
-
-      state.suggestionDebounceTimer = setTimeout(() => {
-        requestAnimationFrame(() => {
-          if (requestId !== state.suggestionRequestId) return;
-          const result = collectSearchMatches(parsed, { limit: 15 });
-          if (requestId !== state.suggestionRequestId) return;
-          state.lastSuggestionTotal = result.total;
-          state.suggestions = result.cards;
-          preloadSuggestionImages(state.suggestions);
-          renderSuggestions(state.suggestions);
-        });
-      }, 110);
+        return `
+          <article class="card" data-id="${card.id}">
+            <div class="thumb-wrap">
+              ${showUrl
+                ? `<img class="thumb" loading="lazy" src="${escapeHtml(showUrl)}" alt="${escapeHtml(displayName)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-fallback',textContent:'Immagine non disponibile'}))">`
+                : `<div class="thumb-fallback">Immagine non disponibile</div>`}
+            </div>
+            <div class="card-body">
+              <div class="card-title">${escapeHtml([displayName, displayVersion].filter(Boolean).join(' - '))}</div>
+              <div class="card-meta">
+                <div>${escapeHtml([displaySetCode, displaySetName].filter(Boolean).join(' - ') || '-')}</div>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
     }
 
     function buildSuggestions(query) {
@@ -4852,10 +4667,13 @@ function finishUpdateTimer() {
         return [];
       }
 
-      const result = collectSearchMatches(parsed, { limit: 15 });
-      state.lastSuggestionTotal = result.total;
-      preloadSuggestionImages(result.cards);
-      return result.cards;
+      const matches = state.cards
+        .map(card => ({ card, score: computeScore(card, parsed) }))
+        .filter(x => x.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+      state.lastSuggestionTotal = matches.length;
+      return matches.slice(0, 15).map(x => x.card);
     }
 
     function renderSuggestions(items) {
@@ -4872,7 +4690,7 @@ function finishUpdateTimer() {
         return `
           <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
             ${previewUrl
-              ? `<img class="suggestion-thumb" loading="${index === 0 ? 'eager' : 'lazy'}" decoding="async" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
+              ? `<img class="suggestion-thumb" loading="lazy" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
               : `<div class="suggestion-thumb-fallback">N/D</div>`}
             <div class="suggestion-main">
               <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
@@ -4912,40 +4730,16 @@ function finishUpdateTimer() {
       }
 
       playSearchProgressAnimation();
-      renderSuggestions([]);
 
-      const result = collectSearchMatches(parsed, { collectAll: true });
-      state.filtered = result.cards;
-      renderResultsProgressively(result.cards);
-      setStatus(`${result.total.toLocaleString('it-IT')} risultati per “${rawQuery}”. Le immagini vengono caricate progressivamente.`, result.total ? 'success' : '');
-    }
+      const results = state.cards
+        .map(card => ({ card, score: computeScore(card, parsed) }))
+        .filter(x => x.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(x => x.card);
 
-    function renderResultsProgressively(cards) {
-      const list = cards || [];
-      if (!list.length) {
-        renderEmptySearchState('Nessun risultato trovato con questa ricerca.');
-        return;
-      }
-
-      state.hasSearched = true;
-      el.emptyState.style.display = 'none';
-      el.results.innerHTML = '';
-
-      const batchSize = 40;
-      let index = 0;
-
-      function appendBatch() {
-        const chunk = list.slice(index, index + batchSize);
-        const html = chunk.map(card => buildResultCardHtml(card)).join('');
-        el.results.insertAdjacentHTML('beforeend', html);
-        index += batchSize;
-
-        if (index < list.length) {
-          requestAnimationFrame(appendBatch);
-        }
-      }
-
-      appendBatch();
+      state.filtered = results;
+      renderResults(results);
+      setStatus(`${results.length.toLocaleString('it-IT')} risultati per “${rawQuery}”.`, results.length ? 'success' : '');
     }
 
     async function openCardDetails(cardId) {
@@ -5138,14 +4932,30 @@ function finishUpdateTimer() {
       });
 
       el.searchInput.addEventListener('input', () => {
-        scheduleSuggestions();
+        const query = el.searchInput.value;
+        const parsed = parseQuery(query);
+        state.activeSuggestion = -1;
+        state.suggestions = buildSuggestions(query);
+        renderSuggestions(state.suggestions);
+
+        if (!parsed.normalized) {
+          clearResultsArea();
+          setStatus('');
+          return;
+        }
+
+        if (parsed.normalized.length <= 2) {
+          clearResultsArea();
+        }
       });
 
       el.searchInput.addEventListener('focus', () => {
-        if (el.searchInput.value) {
+        const query = el.searchInput.value;
+        if (query) {
           requestAnimationFrame(() => el.searchInput.select());
         }
-        scheduleSuggestions();
+        state.suggestions = buildSuggestions(query);
+        renderSuggestions(state.suggestions);
       });
 
       el.searchInput.addEventListener('click', () => {
