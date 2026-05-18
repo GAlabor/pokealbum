@@ -2949,7 +2949,7 @@ paint-order="stroke">
         <div id="updatedText">Indice</div>
         <div id="countsText">0 carte - 0 espansioni</div>
       </div>
-      <div class="status" id="statusText" style="margin-top:10px;">Caricamento database carte...</div>
+      <div class="status" id="statusText" style="margin-top:10px;"></div>
       <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
     </div>
 
@@ -3297,6 +3297,10 @@ paint-order="stroke">
       selectedCard: null,
       lastSuggestionTotal: 0,
       hasSearched: false,
+      indexLoadingPromise: null,
+      searchWarmupStarted: false,
+      searchWarmupDone: false,
+      searchWarmupTimer: null,
       timerInterval: null,
       timerStartedAt: null,
       searchProgressTimer: null,
@@ -3667,13 +3671,23 @@ paint-order="stroke">
       if (card.__searchIndex) return card.__searchIndex;
 
       const hasLegacyIndex = card.searchText || Array.isArray(card.searchTokens) || Array.isArray(card.searchNumericGroups);
+      const hasPreparedText = typeof card.q === 'string' && card.q.trim();
       const index = hasLegacyIndex
         ? {
             text: card.searchText || '',
             tokens: Array.isArray(card.searchTokens) ? card.searchTokens : [],
             numericGroups: Array.isArray(card.searchNumericGroups) ? card.searchNumericGroups : [],
           }
-        : buildCardSearchIndex(card);
+        : (hasPreparedText
+          ? {
+              text: card.q,
+              tokens: card.q.split(' ').filter(Boolean),
+              numericGroups: [
+                ...extractNumericGroupsFromValue(getCollectorNumber(card)),
+                ...extractNumericGroupsFromValue(getVersion(card)),
+              ],
+            }
+          : buildCardSearchIndex(card));
 
       try {
         Object.defineProperty(card, '__searchIndex', { value: index, enumerable: false });
@@ -4549,44 +4563,141 @@ function finishUpdateTimer() {
       return [];
     }
 
-    async function fetchPokemonIndex(force = false) {
-      try {
-        startUpdateTimer();
-        setStatus(force ? 'Aggiorno indice statico da GitHub...' : 'Carico indice statico da GitHub...');
-        setProgress(0);
+    async function fetchPokemonIndex(force = false, options = {}) {
+      const silent = options?.silent === true;
 
-        const cacheBust = force ? `?t=${Date.now()}` : '';
-        const [cardsRes, metaRes] = await Promise.all([
-          fetch(`${INDEX_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' }),
-          fetch(`${META_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' }),
-        ]);
+      if (!force && state.indexLoadingPromise) {
+        return state.indexLoadingPromise;
+      }
 
-        if (!cardsRes.ok) throw new Error(`pokemon-index.json non caricato: HTTP ${cardsRes.status}`);
-        if (!metaRes.ok) throw new Error(`pokemon-index-meta.json non caricato: HTTP ${metaRes.status}`);
+      const loadTask = (async () => {
+        try {
+          if (!silent) {
+            startUpdateTimer();
+            setStatus(force ? 'Aggiorno indice statico da GitHub...' : 'Carico indice statico da GitHub...');
+            setProgress(0);
+          }
 
-        const [cards, meta] = await Promise.all([cardsRes.json(), metaRes.json()]);
+          const cacheBust = force ? `?t=${Date.now()}` : '';
+          const [cardsRes, metaRes] = await Promise.all([
+            fetch(`${INDEX_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' }),
+            fetch(`${META_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' }),
+          ]);
 
-        if (!Array.isArray(cards)) {
-          throw new Error('pokemon-index.json non è un array di carte valido');
+          if (!cardsRes.ok) throw new Error(`pokemon-index.json non caricato: HTTP ${cardsRes.status}`);
+          if (!metaRes.ok) throw new Error(`pokemon-index-meta.json non caricato: HTTP ${metaRes.status}`);
+
+          const [cards, meta] = await Promise.all([cardsRes.json(), metaRes.json()]);
+
+          if (!Array.isArray(cards)) {
+            throw new Error('pokemon-index.json non è un array di carte valido');
+          }
+
+          state.cards = cards;
+          state.meta = meta || {};
+          state.searchWarmupStarted = false;
+          state.searchWarmupDone = false;
+          hydrateStats();
+          clearResultsArea();
+          scheduleSearchWarmup();
+
+          if (!silent) {
+            setStatus('');
+            setProgress(0);
+          }
+
+          return cards;
+        } catch (error) {
+          console.error(error);
+          state.cards = [];
+          state.meta = null;
+          state.searchWarmupStarted = false;
+          state.searchWarmupDone = false;
+          hydrateStats();
+          clearResultsArea();
+          if (!silent) {
+            setStatus(`Errore caricamento indice statico: ${error.message}`, 'error');
+            setProgress(0);
+          }
+          throw error;
+        } finally {
+          if (!silent) finishUpdateTimer();
+          if (!force) state.indexLoadingPromise = null;
+        }
+      })();
+
+      if (!force) state.indexLoadingPromise = loadTask;
+      return loadTask;
+    }
+
+    function requestIdleWork(callback, timeout = 700) {
+      if ('requestIdleCallback' in window) {
+        return window.requestIdleCallback(callback, { timeout });
+      }
+
+      return window.setTimeout(() => {
+        callback({ timeRemaining: () => 8, didTimeout: true });
+      }, 16);
+    }
+
+    function cancelIdleWork(handle) {
+      if (!handle) return;
+      if ('cancelIdleCallback' in window) window.cancelIdleCallback(handle);
+      else window.clearTimeout(handle);
+    }
+
+    function scheduleInitialIndexPreload() {
+      const startPreload = () => {
+        fetchPokemonIndex(false, { silent: true }).catch(error => {
+          console.error('Preload indice non riuscito:', error);
+        });
+      };
+
+      // Lascia prima dipingere la home e completare gli handler: il database parte subito dopo,
+      // ma senza rubare il volante alla UI come un pirata del JavaScript.
+      requestAnimationFrame(() => requestAnimationFrame(startPreload));
+    }
+
+    function scheduleSearchWarmup() {
+      if (!state.cards.length || state.searchWarmupStarted) return;
+
+      state.searchWarmupStarted = true;
+      state.searchWarmupDone = false;
+      cancelIdleWork(state.searchWarmupTimer);
+
+      let index = 0;
+      const batchSize = 650;
+      const sampleQueries = [parseQuery('pik'), parseQuery('char'), parseQuery('001')];
+
+      const step = (deadline) => {
+        const start = performance.now();
+
+        while (index < state.cards.length) {
+          const card = state.cards[index];
+          getCardSearchIndex(card);
+
+          // Piccolo riscaldamento del ranking: evita che il primo vero input paghi tutto lui.
+          if (index < 1200) {
+            for (const query of sampleQueries) computeScore(card, query);
+          }
+
+          index += 1;
+
+          const timeLeft = typeof deadline?.timeRemaining === 'function' ? deadline.timeRemaining() : 0;
+          if ((index % batchSize === 0) || timeLeft <= 2 || performance.now() - start > 12) {
+            break;
+          }
         }
 
-        state.cards = cards;
-        state.meta = meta || {};
-        hydrateStats();
-        clearResultsArea();
-        setStatus('');
-        setProgress(0);
-      } catch (error) {
-        console.error(error);
-        state.cards = [];
-        state.meta = null;
-        hydrateStats();
-        clearResultsArea();
-        setStatus(`Errore caricamento indice statico: ${error.message}`, 'error');
-        setProgress(0);
-      } finally {
-        finishUpdateTimer();
-      }
+        if (index < state.cards.length) {
+          state.searchWarmupTimer = requestIdleWork(step, 900);
+        } else {
+          state.searchWarmupDone = true;
+          state.searchWarmupTimer = null;
+        }
+      };
+
+      state.searchWarmupTimer = requestIdleWork(step, 1200);
     }
 
     function formatItalianNumber(value) {
@@ -4925,7 +5036,8 @@ function finishUpdateTimer() {
 
       el.searchBtn.addEventListener('click', () => {
         if (!state.cards.length) {
-          setStatus('Database non ancora caricato. La ricerca senza dati resta un esercizio spirituale.', 'warning');
+          setStatus('Database in caricamento. Riprova tra un attimo: il JSON sta facendo stretching.', 'warning');
+          fetchPokemonIndex(false, { silent: true }).catch(() => {});
           return;
         }
         runSearch(el.searchInput.value);
@@ -4933,6 +5045,12 @@ function finishUpdateTimer() {
 
       el.searchInput.addEventListener('input', () => {
         const query = el.searchInput.value;
+        if (!state.cards.length) {
+          fetchPokemonIndex(false, { silent: true }).catch(() => {});
+          renderSuggestions([]);
+          setStatus('Database in caricamento...', 'warning');
+          return;
+        }
         const parsed = parseQuery(query);
         state.activeSuggestion = -1;
         state.suggestions = buildSuggestions(query);
@@ -4954,6 +5072,10 @@ function finishUpdateTimer() {
         if (query) {
           requestAnimationFrame(() => el.searchInput.select());
         }
+        if (!state.cards.length) {
+          fetchPokemonIndex(false, { silent: true }).catch(() => {});
+          return;
+        }
         state.suggestions = buildSuggestions(query);
         renderSuggestions(state.suggestions);
       });
@@ -4968,7 +5090,8 @@ function finishUpdateTimer() {
         if (!state.suggestions.length) {
           if (e.key === 'Enter') {
             if (!state.cards.length) {
-              setStatus('Database non ancora caricato. La barra di ricerca non legge nel vuoto cosmico.', 'warning');
+              setStatus('Database in caricamento. La barra di ricerca non legge nel vuoto cosmico, per quanto ci provi.', 'warning');
+              fetchPokemonIndex(false, { silent: true }).catch(() => {});
               return;
             }
             el.searchInput.blur();
@@ -5048,7 +5171,7 @@ el.autocomplete.addEventListener('click', (e) => {
     async function init() {
       attachEvents();
       setTimerChip('00:00');
-      await fetchPokemonIndex(false);
+      scheduleInitialIndexPreload();
     }
 
     init().catch(err => {
