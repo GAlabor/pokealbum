@@ -51,6 +51,23 @@ function getNumberNorm(value) {
   return Number.isFinite(normalized) ? normalized : null;
 }
 
+function normalizeSearchText(value) {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9/ ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function buildSearchText(...values) {
+  return values
+    .map(value => normalizeSearchText(value))
+    .filter(Boolean)
+    .join(' ');
+}
+
 async function detectPokemonGame() {
   const payload = await api('/games');
   const games = extractArray(payload, ['games']);
@@ -104,12 +121,31 @@ async function main() {
   }
 
   const allCards = [];
+  const skippedExpansions = [];
 
   for (let i = 0; i < pokemonExpansions.length; i++) {
     const exp = pokemonExpansions[i];
     console.log(`${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
 
-    const blueprintsPayload = await api(`/blueprints/export?expansion_id=${encodeURIComponent(exp.id)}`);
+    let blueprintsPayload;
+
+    try {
+      blueprintsPayload = await api(`/blueprints/export?expansion_id=${encodeURIComponent(exp.id)}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+
+      console.warn(`SKIP espansione ${exp.id} - ${exp.name}: ${message}`);
+
+      skippedExpansions.push({
+        id: exp.id,
+        name: exp.name || '',
+        code: exp.code || '',
+        error: message
+      });
+
+      continue;
+    }
+
     const blueprints = extractArray(blueprintsPayload, ['blueprints']);
 
     const cards = blueprints.filter(bp =>
@@ -118,7 +154,7 @@ async function main() {
     );
 
     for (const bp of cards) {
-const card = {
+const baseCard = {
   id: Number(bp.id),
   name: bp.name || '-',
   collector_number: bp.fixed_properties?.collector_number || '',
@@ -131,8 +167,19 @@ const card = {
   image_url: bp.image_url || ''
 };
 
-// Database alleggerito: niente searchText/searchTokens/searchNumericGroups.
-// La normalizzazione e gli indici temporanei vengono costruiti nell'HTML al momento della ricerca.
+const card = {
+  ...baseCard,
+  q: buildSearchText(
+    baseCard.name,
+    baseCard.collector_number,
+    baseCard.rarity,
+    baseCard.version,
+    baseCard.set_name,
+    baseCard.set_code
+  )
+};
+
+// Database ottimizzato: campo q già pronto per ricerca veloce.
 allCards.push(card);
     }
   }
@@ -147,7 +194,9 @@ allCards.push(card);
     categoryName: category?.name || '',
     cardsCount: allCards.length,
     expansionsCount: pokemonExpansions.length,
-    indexVersion: 2
+    skippedExpansionsCount: skippedExpansions.length,
+    skippedExpansions,
+    indexVersion: 3
   };
 
   await fs.mkdir('./data', { recursive: true });
@@ -163,6 +212,10 @@ allCards.push(card);
   );
 
   console.log(`Database creato: ${allCards.length} carte, ${pokemonExpansions.length} espansioni.`);
+
+  if (skippedExpansions.length) {
+    console.warn(`Espansioni saltate perché non pronte: ${skippedExpansions.length}`);
+  }
 }
 
 main().catch(error => {
