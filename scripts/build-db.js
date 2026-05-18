@@ -51,6 +51,80 @@ function getNumberNorm(value) {
   return Number.isFinite(normalized) ? normalized : null;
 }
 
+function normalizeSearchText(value) {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9/ ]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function compactSearchText(value) {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+
+function splitSearchTokens(value) {
+  return normalizeSearchText(value).split(' ').filter(Boolean);
+}
+
+function extractNumericGroups(...values) {
+  const seen = new Set();
+  const groups = [];
+
+  values.forEach(value => {
+    const matches = String(value ?? '').match(/\d+/g) || [];
+    matches.forEach(raw => {
+      const norm = stripLeadingZeros(raw);
+      const key = `${raw}:${norm}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      groups.push({ raw, norm });
+    });
+  });
+
+  return groups;
+}
+
+function buildSearchFields({ name, collectorNumber, rarity, version, setName, setCode }) {
+  const searchParts = [
+    name,
+    collectorNumber,
+    rarity,
+    version,
+    setName,
+    setCode,
+  ];
+
+  const tokens = new Set();
+
+  searchParts.forEach(value => {
+    splitSearchTokens(value).forEach(token => tokens.add(token));
+
+    const normalized = normalizeSearchText(value);
+    if (normalized) tokens.add(normalized);
+
+    const compact = compactSearchText(value);
+    if (compact) tokens.add(compact);
+  });
+
+  return {
+    q: Array.from(tokens).join(' '),
+    qn: normalizeSearchText(name),
+    qcn: normalizeSearchText(collectorNumber),
+    qv: normalizeSearchText(version),
+    qr: normalizeSearchText(rarity),
+    qs: normalizeSearchText(setName),
+    qsc: normalizeSearchText(setCode),
+    qnums: extractNumericGroups(collectorNumber, version),
+  };
+}
+
 async function detectPokemonGame() {
   const payload = await api('/games');
   const games = extractArray(payload, ['games']);
@@ -118,7 +192,7 @@ async function main() {
     );
 
     for (const bp of cards) {
-const card = {
+const baseCard = {
   id: Number(bp.id),
   name: bp.name || '-',
   collector_number: bp.fixed_properties?.collector_number || '',
@@ -131,8 +205,19 @@ const card = {
   image_url: bp.image_url || ''
 };
 
-// Database alleggerito: niente searchText/searchTokens/searchNumericGroups.
-// La normalizzazione e gli indici temporanei vengono costruiti nell'HTML al momento della ricerca.
+const card = {
+  ...baseCard,
+  ...buildSearchFields({
+    name: baseCard.name,
+    collectorNumber: baseCard.collector_number,
+    rarity: baseCard.rarity,
+    version: baseCard.version,
+    setName: baseCard.set_name,
+    setCode: baseCard.set_code,
+  }),
+};
+
+// Database pronto per la ricerca: l'HTML non deve più normalizzare e indicizzare 65k carte durante la digitazione.
 allCards.push(card);
     }
   }
@@ -147,7 +232,7 @@ allCards.push(card);
     categoryName: category?.name || '',
     cardsCount: allCards.length,
     expansionsCount: pokemonExpansions.length,
-    indexVersion: 2
+    indexVersion: 3
   };
 
   await fs.mkdir('./data', { recursive: true });
