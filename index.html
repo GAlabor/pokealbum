@@ -40,8 +40,8 @@ button, input{font:inherit;}
   border-radius:6px;
   padding:0 1px;
 }
-.status{color:var(--muted);font-size:0.95rem;}
-.grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));gap:14px;margin-top:24px;}
+.status{color:rgba(112,128,163,.78);font-size:0.84rem;font-weight:600;letter-spacing:-0.01em;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(190px, 1fr));gap:14px;margin-top:14px;}
 .card{border:1px solid rgba(255,255,255,0.10);border-radius:16px;background:#171b24;overflow:hidden;cursor:pointer;transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;box-shadow:0 10px 30px rgba(0,0,0,.28);}
 .card:hover{transform:translateY(-2px);border-color:rgba(255,216,77,.45);box-shadow:0 8px 24px rgba(0,0,0,.22);}
 .thumb-wrap{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));padding:12px;display:flex;justify-content:center;align-items:center;min-height:250px;aspect-ratio:auto;}
@@ -52,8 +52,8 @@ button, input{font:inherit;}
 .card-meta{margin-top:0;color:var(--muted);font-size:13px;line-height:1.35;display:grid;gap:0;}
 .card-meta > div{min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:break-word;}
 .empty{padding:28px;text-align:center;color:var(--muted);}
-.progress-wrap{height:10px;background:rgba(255,255,255,0.06);border-radius:999px;overflow:hidden;margin-top:12px;}
-.progress-bar{height:100%;width:0%;background:linear-gradient(90deg, var(--accent), var(--accent-2));}
+.progress-wrap{height:5px;background:rgba(255,255,255,0.035);border-radius:999px;overflow:hidden;margin-top:10px;backdrop-filter:blur(6px);}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg, rgba(90,166,255,.88), rgba(122,103,255,.78));border-radius:999px;transition:width .12s linear;}
 .modal{width:min(980px, 100%);max-height:min(92vh, 980px);overflow:auto;padding:18px;border-radius:24px;background:#0f182a;border:1px solid var(--border);box-shadow:var(--shadow);}
 .modal.small{width:min(560px, 100%);}
 .modal-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:16px;}
@@ -614,7 +614,7 @@ svg{overflow:visible;}
 .card-search-action:hover{color:#2f64ff;transform:translateY(-1px);}
 .card-search-action:active{transform:scale(0.96);}
 .card-search-action:focus-visible{outline:2px solid rgba(47, 100, 255, 0.24);outline-offset:4px;border-radius:16px;}
-.card-search-action-icon{width:42px;height:42px;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255, 255, 255, 0.52);border:1px solid rgba(255, 255, 255, 0.64);box-shadow:0 12px 24px rgba(66, 89, 152, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);transition:background-color 0.18s ease, box-shadow 0.18s ease;}
+.card-search-action-icon{width:42px;height:42px;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255, 255, 255, 0.52);border:1px solid rgba(255, 255, 255, 0.64);box-shadow:0 12px 24px rgba(66, 89, 152, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);backdrop-filter:blur(26px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);transition:background-color 0.18s ease, box-shadow 0.18s ease;}
 .card-search-action:hover .card-search-action-icon{background:rgba(255, 255, 255, 0.68);box-shadow:0 16px 28px rgba(47, 100, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.95);}
 .card-search-action-icon svg{width:21px;height:21px;stroke-width:2.15;}
 .card-search-action-label{font-size:11px;font-weight:800;letter-spacing:-0.02em;line-height:1;color:currentColor;}
@@ -1708,6 +1708,105 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   }
   .album-form-preview .album::before{
     border-radius:16px !important;
+  }
+}
+
+
+
+/* === MOD 19/05/2026: pulsante torna su nei risultati ricerca === */
+.add-card-search-view{position:relative;}
+.card-search-scroll-top{
+  position:absolute;
+  right:10px;
+  bottom:calc(var(--safe-bottom) + 14px);
+  z-index:42;
+  width:48px;
+  height:48px;
+  border:1px solid rgba(255,255,255,.64);
+  border-radius:50%;
+  background:rgba(255,255,255,.62);
+  color:#2f64ff;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  cursor:pointer;
+  box-shadow:0 14px 28px rgba(66,89,152,.16), inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(22px) saturate(145%);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(10px) scale(.92);
+  transition:opacity .18s ease, visibility .18s ease, transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.card-search-scroll-top.is-visible{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0) scale(1);
+}
+.card-search-scroll-top:hover{
+  background:rgba(255,255,255,.78);
+  box-shadow:0 18px 34px rgba(47,100,255,.18), inset 0 1px 0 rgba(255,255,255,.96);
+}
+.card-search-scroll-top:active{transform:translateY(1px) scale(.96);}
+.card-search-scroll-top svg{
+  width:23px;
+  height:23px;
+  stroke:currentColor;
+  stroke-width:2.45;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+@media (max-width:420px){
+  .card-search-scroll-top{right:8px;bottom:calc(var(--safe-bottom) + 10px);width:46px;height:46px;}
+}
+
+
+/* === FIX dettaglio carta: nome grande + set/versione sotto === */
+#detailModal .detail-top-title-wrap{
+  position:absolute;
+  left:58px;
+  right:58px;
+  top:50%;
+  transform:translateY(-50%);
+  display:grid;
+  gap:2px;
+  text-align:center;
+  pointer-events:none;
+  min-width:0;
+}
+#detailModal .detail-top-card-name{
+  color:#1c2e5a;
+  font-size:clamp(19px, 2.25vh, 24px);
+  line-height:1.04;
+  letter-spacing:-.045em;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#detailModal .detail-top-card-meta{
+  min-height:14px;
+  color:rgba(92,111,153,.78);
+  font-size:clamp(11px, 1.35vh, 13px);
+  line-height:1.05;
+  letter-spacing:-.015em;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+@media (max-width:420px){
+  #detailModal .detail-top-title-wrap{
+    left:58px;
+    right:58px;
+  }
+  #detailModal .detail-top-card-name{
+    font-size:19px;
   }
 }
 
@@ -2954,7 +3053,10 @@ paint-order="stroke">
     </div>
 
     <div id="results" class="grid"></div>
-    <div id="cardSearchEmptyState" class="panel empty card-search-empty-state">Nessun risultato ancora.</div>
+    <div id="cardSearchEmptyState" class="panel empty card-search-empty-state" style="display:none;"></div>
+              <button class="card-search-scroll-top" id="cardSearchScrollTopBtn" type="button" aria-label="Torna in alto" title="Torna in alto">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"></path><path d="M6 11l6-6 6 6"></path></svg>
+              </button>
 </div>
             </div>
           </section>
@@ -3191,6 +3293,22 @@ paint-order="stroke">
           </section>
         </div>
 
+        <div class="rename-sheet-backdrop" id="ownerNameSheetBackdrop" aria-hidden="true">
+          <section class="rename-sheet" id="ownerNameSheet" role="dialog" aria-modal="true" aria-labelledby="ownerNameSheetTitle">
+            <div class="rename-sheet-handle" aria-hidden="true"></div>
+            <h2 class="rename-sheet-title" id="ownerNameSheetTitle">Modifica nome</h2>
+            <p class="rename-sheet-subtitle">Scegli il nome da mostrare nella home.</p>
+            <label class="rename-sheet-field" for="ownerNameInput">
+              <span class="rename-sheet-label">Nome proprietario</span>
+              <input class="rename-sheet-input" id="ownerNameInput" type="text" maxlength="34" autocomplete="off" />
+            </label>
+            <div class="rename-sheet-actions">
+              <button class="rename-sheet-btn cancel" id="ownerNameCancelBtn" type="button">Annulla</button>
+              <button class="rename-sheet-btn save" id="ownerNameSaveBtn" type="button">Salva</button>
+            </div>
+          </section>
+        </div>
+
         <div class="delete-sheet-backdrop" id="deleteSheetBackdrop" aria-hidden="true">
           <section class="delete-sheet" id="deleteSheet" role="dialog" aria-modal="true" aria-labelledby="deleteSheetTitle">
             <div class="delete-sheet-handle" aria-hidden="true"></div>
@@ -3257,7 +3375,10 @@ paint-order="stroke">
             <button class="sheet-icon-btn" type="button" aria-label="Torna indietro" data-close="detailModal">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
             </button>
-            <div class="detail-top-name" id="detailTopName">Dettaglio carta</div>
+            <div class="detail-top-title-wrap">
+              <div class="detail-top-card-name" id="detailTopName">Dettaglio carta</div>
+              <div class="detail-top-card-meta" id="detailTopMeta"></div>
+            </div>
             <div class="card-sheet-actions">
               <button class="sheet-icon-btn detail-add-card-btn" type="button" aria-label="Aggiungi carta">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
@@ -3301,10 +3422,15 @@ paint-order="stroke">
       searchWarmupStarted: false,
       searchWarmupDone: false,
       searchWarmupTimer: null,
+      resultsRenderHandle: null,
+      resultsRenderGeneration: 0,
+      resultsRenderLoaded: 0,
       timerInterval: null,
       timerStartedAt: null,
       searchProgressTimer: null,
       searchProgressStepTimers: [],
+      searchProgressStartedAt: 0,
+      searchProgressMinDuration: 360,
       market: {
         rows: [],
         selected: { langKey: '', condKey: '', ctZero: false },
@@ -3321,6 +3447,7 @@ paint-order="stroke">
       autocomplete: document.getElementById('autocomplete'),
       results: document.getElementById('results'),
       emptyState: document.getElementById('cardSearchEmptyState'),
+      scrollTopBtn: document.getElementById('cardSearchScrollTopBtn'),
       statusText: document.getElementById('statusText'),
       updatedText: document.getElementById('updatedText'),
       countsText: document.getElementById('countsText'),
@@ -3333,6 +3460,7 @@ paint-order="stroke">
       clearTokenBtn: document.getElementById('clearTokenBtn'),
       detailModal: document.getElementById('detailModal'),
       detailTopName: document.getElementById('detailTopName'),
+      detailTopMeta: document.getElementById('detailTopMeta'),
       detailImageWrap: document.getElementById('detailImageWrap'),
       detailCardImage: document.getElementById('detailCardImage'),
       detailPriceValue: document.getElementById('detailPriceValue'),
@@ -3373,34 +3501,59 @@ paint-order="stroke">
         state.searchProgressStepTimers.forEach(timer => clearTimeout(timer));
         state.searchProgressStepTimers = [];
       }
+      state.searchProgressStartedAt = 0;
       el.progressBar.classList.remove('is-searching');
     }
 
     function playSearchProgressAnimation() {
       clearSearchProgressAnimation();
+      state.searchProgressStartedAt = performance.now();
       setProgress(0);
       // forza il reset visivo, altrimenti il browser fa il furbo e salta l'animazione
       void el.progressBar.offsetWidth;
       el.progressBar.classList.add('is-searching');
 
-      const steps = [
-        [20, 18],
-        [150, 54],
-        [340, 82],
-        [560, 96],
-        [720, 100],
+      // Piccolo avvio visivo: se i risultati sono pochi si vede comunque un movimento,
+      // se sono tanti da qui in poi comanda il caricamento reale dei blocchi.
+      state.searchProgressStepTimers = [
+        setTimeout(() => setProgress(10), 20),
+        setTimeout(() => setProgress(24), 120),
       ];
+    }
 
-      state.searchProgressStepTimers = steps.map(([delay, value]) => (
-        setTimeout(() => setProgress(value), delay)
-      ));
+    function updateSearchProgressFromResults(loaded, total, done = false) {
+      if (!total || total <= 0) {
+        if (done) finishSearchProgress();
+        return;
+      }
 
-      state.searchProgressTimer = setTimeout(() => {
-        el.progressBar.classList.remove('is-searching');
-        state.searchProgressStepTimers = [];
-        setProgress(100);
+      const ratio = Math.max(0, Math.min(1, loaded / total));
+      const target = done ? 100 : Math.max(8, Math.min(96, Math.round(ratio * 96)));
+
+      if (done) {
+        finishSearchProgress();
+      } else {
+        setProgress(target);
+      }
+    }
+
+    function finishSearchProgress() {
+      const elapsed = state.searchProgressStartedAt ? performance.now() - state.searchProgressStartedAt : state.searchProgressMinDuration;
+      const remaining = Math.max(0, state.searchProgressMinDuration - elapsed);
+
+      if (state.searchProgressTimer) {
+        clearTimeout(state.searchProgressTimer);
         state.searchProgressTimer = null;
-      }, 1050);
+      }
+
+      setProgress(96);
+      state.searchProgressTimer = setTimeout(() => {
+        setProgress(100);
+        el.progressBar.classList.remove('is-searching');
+        state.searchProgressTimer = null;
+        state.searchProgressStepTimers = [];
+        state.searchProgressStartedAt = 0;
+      }, remaining);
     }
 
     function openModal(modal) { modal.classList.add('open'); }
@@ -4719,56 +4872,161 @@ function finishUpdateTimer() {
       el.timerChip = null;
     }
 
+
+    function setCardSearchScrollTopVisible(force = null) {
+      if (!el.scrollTopBtn || !el.results) return;
+      const shouldShow = force === null ? el.results.scrollTop > 260 : Boolean(force);
+      el.scrollTopBtn.classList.toggle('is-visible', shouldShow);
+    }
+
+    function bindCardSearchScrollTopButton() {
+      if (!el.scrollTopBtn || !el.results || state.cardSearchScrollTopBound) return;
+      state.cardSearchScrollTopBound = true;
+      el.results.addEventListener('scroll', () => setCardSearchScrollTopVisible(), { passive: true });
+      el.scrollTopBtn.addEventListener('click', () => {
+        el.results.scrollTo({ top: 0, behavior: 'smooth' });
+        setCardSearchScrollTopVisible(false);
+      });
+    }
+
+    function cancelResultsRender() {
+      state.resultsRenderGeneration += 1;
+      state.resultsRenderLoaded = 0;
+      cancelIdleWork(state.resultsRenderHandle);
+      state.resultsRenderHandle = null;
+    }
+
     function clearResultsArea() {
+      cancelResultsRender();
       state.filtered = [];
       state.hasSearched = false;
       el.results.innerHTML = '';
       el.emptyState.style.display = 'none';
+      setCardSearchScrollTopVisible(false);
+    }
+
+    function resetCardSearchViewForOpen() {
+      cancelResultsRender();
+      clearSearchProgressAnimation();
+      state.filtered = [];
+      state.suggestions = [];
+      state.activeSuggestion = -1;
+      state.lastSuggestionTotal = 0;
+      state.hasSearched = false;
+      if (el.searchInput) el.searchInput.value = '';
+      renderSuggestions([]);
+      el.results.innerHTML = '';
+      el.results.scrollTop = 0;
+      setCardSearchScrollTopVisible(false);
+      el.emptyState.textContent = '';
+      el.emptyState.style.display = 'none';
+      setStatus('');
+      setProgress(0);
     }
 
     function renderEmptySearchState(message) {
+      cancelResultsRender();
       state.filtered = [];
       state.hasSearched = true;
       el.results.innerHTML = '';
+      el.results.scrollTop = 0;
+      setCardSearchScrollTopVisible(false);
       el.emptyState.textContent = message;
       el.emptyState.style.display = 'block';
     }
 
-    function renderResults(cards) {
+    function getResultCardHtml(card) {
+      const f = getDisplayFields(card);
+      const displayName = toTitleCase(f.name || '-');
+      const displayVersion = f.version || '';
+      const displaySetCode = String(f.setCode || '').toUpperCase();
+      const displaySetName = f.setName || '';
+      const showUrl = getCardShowUrl(card);
+
+      return `
+        <article class="card" data-id="${card.id}">
+          <div class="thumb-wrap">
+            ${showUrl
+              ? `<img class="thumb" loading="lazy" src="${escapeHtml(showUrl)}" alt="${escapeHtml(displayName)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-fallback',textContent:'Immagine non disponibile'}))">`
+              : `<div class="thumb-fallback">Immagine non disponibile</div>`}
+          </div>
+          <div class="card-body">
+            <div class="card-title">${escapeHtml([displayName, displayVersion].filter(Boolean).join(' - '))}</div>
+            <div class="card-meta">
+              <div>${escapeHtml([displaySetCode, displaySetName].filter(Boolean).join(' - ') || '-')}</div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderResults(cards, options = {}) {
+      cancelResultsRender();
       const list = cards || [];
       if (!list.length) {
         renderEmptySearchState('Nessun risultato trovato con questa ricerca.');
+        updateSearchProgressFromResults(0, 1, true);
         return;
       }
 
       state.hasSearched = true;
+      state.resultsRenderLoaded = 0;
       el.emptyState.style.display = 'none';
+      el.results.innerHTML = '';
+      el.results.scrollTop = 0;
+      setCardSearchScrollTopVisible(false);
 
-      el.results.innerHTML = list.map(card => {
-        const f = getDisplayFields(card);
-        const displayName = toTitleCase(f.name || '-');
-        const displayVersion = f.version || '';
-        const displaySetCode = String(f.setCode || '').toUpperCase();
-        const displaySetName = f.setName || '';
+      const total = list.length;
+      const queryLabel = String(options.query || '').trim();
+      const initialBatchSize = Number(options.initialBatchSize || 30);
+      const batchSize = Number(options.batchSize || 30);
+      const generation = state.resultsRenderGeneration;
+      let index = 0;
 
-        const showUrl = getCardShowUrl(card);
+      const updateRenderStatus = () => {
+        if (!queryLabel) return;
+        const loaded = Math.min(index, total).toLocaleString('it-IT');
+        const totalText = total.toLocaleString('it-IT');
+        if (index < total) {
+          setStatus(`${loaded}/${totalText} risultati caricati per “${queryLabel}”.`, 'success');
+        } else {
+          setStatus(`${totalText} risultati per “${queryLabel}”.`, 'success');
+        }
+      };
 
-        return `
-          <article class="card" data-id="${card.id}">
-            <div class="thumb-wrap">
-              ${showUrl
-                ? `<img class="thumb" loading="lazy" src="${escapeHtml(showUrl)}" alt="${escapeHtml(displayName)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-fallback',textContent:'Immagine non disponibile'}))">`
-                : `<div class="thumb-fallback">Immagine non disponibile</div>`}
-            </div>
-            <div class="card-body">
-              <div class="card-title">${escapeHtml([displayName, displayVersion].filter(Boolean).join(' - '))}</div>
-              <div class="card-meta">
-                <div>${escapeHtml([displaySetCode, displaySetName].filter(Boolean).join(' - ') || '-')}</div>
-              </div>
-            </div>
-          </article>
-        `;
-      }).join('');
+      const appendBatch = () => {
+        if (generation !== state.resultsRenderGeneration) return;
+
+        const limit = index === 0 ? initialBatchSize : batchSize;
+        const html = [];
+        const start = performance.now();
+        let added = 0;
+
+        while (index < total && added < limit) {
+          html.push(getResultCardHtml(list[index]));
+          index += 1;
+          added += 1;
+
+          // Se il telefono è lento, non forziamo il browser a fare ginnastica olimpica.
+          if (index > initialBatchSize && performance.now() - start > 12) break;
+        }
+
+        if (html.length) {
+          el.results.insertAdjacentHTML('beforeend', html.join(''));
+          state.resultsRenderLoaded = index;
+          updateRenderStatus();
+          updateSearchProgressFromResults(index, total, index >= total);
+        }
+
+        if (index < total) {
+          state.resultsRenderHandle = requestIdleWork(appendBatch, 850);
+        } else {
+          state.resultsRenderHandle = null;
+          updateSearchProgressFromResults(total, total, true);
+        }
+      };
+
+      appendBatch();
     }
 
     function buildSuggestions(query) {
@@ -4830,7 +5088,7 @@ function finishUpdateTimer() {
       const parsed = parseQuery(rawQuery);
       if (!parsed.normalized) {
         clearResultsArea();
-        setStatus('Ricerca vuota: nessuna carta mostrata sotto.');
+        setStatus('');
         return;
       }
 
@@ -4849,8 +5107,11 @@ function finishUpdateTimer() {
         .map(x => x.card);
 
       state.filtered = results;
-      renderResults(results);
-      setStatus(`${results.length.toLocaleString('it-IT')} risultati per “${rawQuery}”.`, results.length ? 'success' : '');
+      renderResults(results, {
+        query: rawQuery,
+        initialBatchSize: 30,
+        batchSize: 30,
+      });
     }
 
     async function openCardDetails(cardId) {
@@ -4862,6 +5123,8 @@ function finishUpdateTimer() {
       const detailImageUrl = getCardFullUrl(card);
       const setText = [f.setCode, f.setName ? `(${f.setName})` : ''].filter(Boolean).join(' ');
       if (el.detailTopName) el.detailTopName.textContent = displayName;
+      const detailTopMeta = [f.setCode ? f.setCode.toUpperCase() : '', f.version].filter(Boolean).join(' - ');
+      if (el.detailTopMeta) el.detailTopMeta.textContent = detailTopMeta ? `(${detailTopMeta})` : '';
       if (detailImageUrl && el.detailCardImage) {
         el.detailCardImage.src = detailImageUrl;
         el.detailCardImage.alt = displayName;
@@ -5232,6 +5495,10 @@ el.autocomplete.addEventListener('click', (e) => {
           priceToggleBtn: $("#priceToggleBtn"),
           totalPriceValue: $("#totalPriceValue"),
           ownerNameBtn: $("#ownerNameBtn"),
+          ownerNameSheetBackdrop: $("#ownerNameSheetBackdrop"),
+          ownerNameInput: $("#ownerNameInput"),
+          ownerNameCancelBtn: $("#ownerNameCancelBtn"),
+          ownerNameSaveBtn: $("#ownerNameSaveBtn"),
           quickAddAlbumBtn: $("#quickAddAlbumBtn"),
           contextMenuBackdrop: $("#contextMenuBackdrop"),
           contextMenu: $("#contextMenu"),
@@ -5595,6 +5862,12 @@ el.autocomplete.addEventListener('click', (e) => {
 
         function openAddCardSearch(returnView = null) {
           state.addCardReturnView = returnView || (state.currentAlbum ? "detail" : "home");
+          if (typeof resetCardSearchViewForOpen === "function") {
+            resetCardSearchViewForOpen();
+          }
+          if (typeof bindCardSearchScrollTopButton === "function") {
+            bindCardSearchScrollTopButton();
+          }
           setView("card-search");
           const searchInput = document.querySelector("#searchInput");
           if (searchInput) {
@@ -5684,11 +5957,35 @@ el.autocomplete.addEventListener('click', (e) => {
           }
         }
 
-        function editOwnerName() {
+        function openOwnerNameSheet() {
           const currentName = els.ownerNameBtn.textContent.trim();
-          const name = window.prompt("Inserisci il tuo nome", currentName)?.trim();
-          if (!name) return;
+          els.ownerNameInput.value = currentName;
+          els.ownerNameSheetBackdrop.classList.add("open");
+          els.ownerNameSheetBackdrop.setAttribute("aria-hidden", "false");
+          window.setTimeout(() => {
+            els.ownerNameInput.focus();
+            els.ownerNameInput.select();
+          }, 80);
+        }
+
+        function closeOwnerNameSheet() {
+          els.ownerNameSheetBackdrop.classList.remove("open");
+          els.ownerNameSheetBackdrop.setAttribute("aria-hidden", "true");
+          els.ownerNameInput.value = "";
+        }
+
+        function saveOwnerNameSheet() {
+          const name = els.ownerNameInput.value.trim();
+          if (!name) {
+            closeOwnerNameSheet();
+            return;
+          }
           setOwnerName(name);
+          closeOwnerNameSheet();
+        }
+
+        function editOwnerName() {
+          openOwnerNameSheet();
         }
 
         function positionContextMenu(albumNode) {
@@ -6105,6 +6402,7 @@ el.autocomplete.addEventListener('click', (e) => {
         document.addEventListener("keydown", (event) => {
           if (event.key === "Escape") {
             closeCollectionMenu();
+            closeOwnerNameSheet();
             closeRenameSheet();
           }
         });
@@ -6180,6 +6478,15 @@ el.autocomplete.addEventListener('click', (e) => {
           updatePriceVisibility();
         });
         els.ownerNameBtn.addEventListener("click", editOwnerName);
+        els.ownerNameCancelBtn.addEventListener("click", closeOwnerNameSheet);
+        els.ownerNameSaveBtn.addEventListener("click", saveOwnerNameSheet);
+        els.ownerNameInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") saveOwnerNameSheet();
+          if (event.key === "Escape") closeOwnerNameSheet();
+        });
+        els.ownerNameSheetBackdrop.addEventListener("click", (event) => {
+          if (event.target === els.ownerNameSheetBackdrop) closeOwnerNameSheet();
+        });
 
         els.renameCancelBtn.addEventListener("click", closeRenameSheet);
         els.renameSaveBtn.addEventListener("click", saveRenameSheet);
