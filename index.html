@@ -8,10 +8,7 @@
     />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://www.cardtrader.com" crossorigin>
-    <link rel="dns-prefetch" href="//www.cardtrader.com">
-    <style>/* CSS ripulito: duplicati uniti, selettori inutilizzati rimossi. */
-/* FIX: evita il flash del messaggio "crea prima un album" durante il caricamento.
-   La regola è in alto nel CSS così il toast nasce già invisibile, invece di fare il fenomeno per mezzo secondo. */
+    <link rel="dns-prefetch" href="//www.cardtrader.com"><style>
 .album-needed-toast{opacity:0;visibility:hidden;pointer-events:none;}
 .album-needed-toast.is-visible{visibility:visible;}
 .app{max-width:1400px;margin:0 auto;}
@@ -501,13 +498,9 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .album.has-cover-image{background-size:cover;background-position:center;background-repeat:no-repeat;}
 .album.has-cover-image::before{background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(255,255,255,.06));}
 
-/* FIX: allinea il rigo Slot agli altri campi.
-   Il bottone degli slot ora occupa la stessa area input di Pagine, invece di improvvisare layout creativo. */
 .slots-field-line{grid-template-columns:70px minmax(0, 1fr);column-gap:14px;}
 .slots-field-line .form-help{white-space:nowrap;font-size:var(--field-subtitle-size);font-weight:var(--field-subtitle-weight);letter-spacing:var(--field-subtitle-letter-spacing);}
 
-/* Riga unica per Pagine<span class="field-subtitle">Totali</span> + Slot<span class="field-subtitle">Per pagina</span>.
-   Sistemata per stare dentro anche sui telefoni piccoli: label più compatte, input più stretti, niente testo che invade il vicino. */
 .form-row-dual{padding-top:9px;padding-bottom:9px;}
 .dual-fields-row{
   display:grid;
@@ -900,7 +893,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 .add-card-search-view #results .card-meta{font-size:10.5px !important;}
 }
 
-/* === Menu raccolta compatto: sostituisce la vecchia barra a pillole === */
 .collection-menu-wrap{position:relative;z-index:6;margin:16px 4px 0;width:max-content;max-width:calc(100% - 8px);}
 .collection-pill{appearance:none;-webkit-appearance:none;height:48px;padding:0 14px;border:1px solid rgba(255,255,255,.64);border-radius:999px;background:rgba(255,255,255,.58);color:#2f64ff;display:inline-flex;align-items:center;gap:6px;font-family:inherit;font-size:14px;font-weight:850;letter-spacing:-.02em;box-shadow:0 14px 28px rgba(66,89,152,.12),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,background-color .16s ease,box-shadow .16s ease;}
 .collection-pill:hover{transform:translateY(-1px);background:rgba(255,255,255,.72);box-shadow:0 18px 32px rgba(66,89,152,.15),inset 0 1px 0 rgba(255,255,255,.95);}
@@ -923,7 +915,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 .collection-add-item{grid-template-columns:minmax(0,1fr);color:#2f64ff;}
 @media (max-width: 420px){.collection-menu-wrap{margin-top:14px;}.collection-pill{height:46px;font-size:13px;}.collection-dropdown{width:214px;}}
 
-/* === RIPRISTINO MINIMO 30/04/2026: stili CardTrader rimossi per errore === */
 .topbar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
 .topbar-main { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
 .toolbar-icon { display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 14px; }
@@ -969,8 +960,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   .topbar-meta { font-size: 0.8rem; }
 }
 
-
-/* === FIX 30/04/2026: barra ricerca ferma quando compaiono i risultati === */
 .add-card-search-view {
   align-items: stretch;
 }
@@ -992,8 +981,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   flex: 0 0 auto !important;
 }
 
-
-/* === MOD 01/05/2026: ricerca aggiungi carte più pulita === */
 .add-card-search-view .card-search-panel-ux .card-search-bar{
   grid-template-columns:minmax(0,1fr) 58px !important;
   border:1.5px solid rgba(255,255,255,.64);
@@ -1124,8 +1111,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   box-shadow:0 -8px 18px rgba(66,89,152,.08);
 }
 
-
-/* === MOD 01/05/2026: scheda carta normalizzata allo stile PokéAlbum === */
 #detailModal .card-sheet-container{max-width:430px;padding:calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 24px);}
 #detailModal .card-sheet-topbar{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;padding:0 0 12px;margin:0 0 4px;min-height:var(--topbar-control-size);}
 #detailModal .sheet-icon-btn{width:var(--topbar-control-size);height:var(--topbar-control-size);min-width:var(--topbar-control-size);min-height:var(--topbar-control-size);border:1px solid rgba(255,255,255,.56);border-radius:50%;background:rgba(255,255,255,.58);color:#5c6f99;box-shadow:0 12px 24px rgba(73,96,157,.14), inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .18s ease, background-color .18s ease, color .18s ease, box-shadow .18s ease;}
@@ -1161,10 +1146,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 #detailModal .editable-info-row{align-items:center;}
 @media (max-width:420px){#detailModal .card-sheet-container{padding:calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 22px);}#detailModal .detail-top-name{left:58px;right:112px;}#detailModal .info-row{grid-template-columns:1fr;gap:4px;}}
 
-
-
-
-/* === UX lingue/condizioni/CTZero presa da linguev7: solo vista, logica mercato invariata === */
 #detailModal .offer-controls.market-visual-controls{
   margin-top:7px;
   display:flex;
@@ -1296,8 +1277,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 #detailModal .market-ctzero-pill svg{width:21px;height:21px;display:block;flex:0 0 auto;}
 #detailModal .market-ctzero-pill-text{display:block;transform:translateY(.2px);}
 
-/* === FIX 01/05/2026: scroll risultati Aggiungi carta ripreso da con-scroll.html ===
-   Solo logica di scroll: la barra resta ferma, scorre solo la griglia risultati. */
 .add-card-search-view {
   align-items: stretch;
 }
@@ -1330,7 +1309,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   overscroll-behavior: contain !important;
 }
 
-/* === MODIFICA 02/05/2026: tabbar rimossa, pulsante + flottante a destra === */
 .bottom-nav-shell{
   left:auto !important;
   right:20px !important;
@@ -1365,7 +1343,7 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 @media (max-height:680px){
   .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10px) !important;}
 }
-/* === Barra ricerca home: solo UI, per ora senza logica === */
+
 .home-top-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 4px 0;position:relative;z-index:6;}
 .home-top-controls .collection-menu-wrap{margin:0;}
 .collection-actions{display:flex;align-items:center;gap:9px;min-width:0;}
@@ -1384,8 +1362,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 .home-search-input::placeholder{color:#8491ad;font-weight:650;}
 @media (max-width:420px){.home-top-controls{margin-top:14px;}.home-search-shell{height:48px;margin-top:12px;padding:0 14px;}.home-filter-btn{width:46px;height:46px;min-width:46px;}}
 
-
-/* === MOD 02/05/2026: rifinitura home, icone menu e filtro === */
 .top-meta{padding:7px 4px 0 !important;}
 .eyebrow{font-size:clamp(11px,3.15vw,15px) !important;font-weight:850 !important;letter-spacing:.145em !important;color:#7b89a5 !important;line-height:1.12 !important;text-shadow:0 1px 0 rgba(255,255,255,.55) !important;}
 .eyebrow .accent{font-weight:900 !important;color:#2f64ff !important;}
@@ -1423,16 +1399,10 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 .home-search-input::placeholder{color:#8896b1 !important;font-weight:560 !important;}
 @media (max-width:420px){.home-top-controls{margin-top:13px !important;}.collection-actions{gap:8px !important;}.collection-pill{height:42px !important;font-size:12.5px !important;}.quick-add-album-pill{width:42px !important;height:42px !important;min-width:42px !important;}.home-filter-btn{width:42px !important;height:42px !important;min-width:42px !important;}.home-filter-btn.is-active{height:42px !important;padding:0 14px !important;}.home-search-shell{height:46px !important;margin-top:12px !important;padding:0 14px !important;}}
 
-
-
-/* === Ritocco 02/05/2026: dopo la scelta, il pulsante sezione mostra solo testo + chevron === */
 .collection-pill{padding-left:15px !important;padding-right:13px !important;gap:7px !important;}
 .collection-pill .collection-pill-icon{display:none !important;}
 .collection-pill #collectionMenuLabel{display:inline-block;line-height:1;letter-spacing:-.025em;}
 
-
-
-/* === MODIFICA 02/05/2026: FAB principale più forte e leggibile === */
 .fab-wrap{
   padding:5px !important;
   background:rgba(255,255,255,0.76) !important;
@@ -1489,8 +1459,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   .fab-card-plus-icon{width:68px;height:68px;}
 }
 
-
-/* === MOD 02/05/2026: pulsante testuale Aggiungi Album in home === */
 .collection-actions{flex:1 1 auto;}
 .home-add-album-btn{
   appearance:none;
@@ -1528,8 +1496,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 .home-add-album-btn span:first-child{font-size:18px;font-weight:850;line-height:1;margin-top:-1px;}
 @media (max-width:420px){.home-add-album-btn{height:42px;padding:0 14px;font-size:12.5px;}}
 
-
-/* === FIX 03/05/2026: empty state più arioso e CTA leggermente più bassa === */
 #emptyState.hero{
   justify-content:flex-start;
   padding-top:clamp(34px, 6vh, 66px);
@@ -1563,9 +1529,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   #emptyState .cta{margin-top:clamp(6px, 1vh, 10px);}
 }
 
-
-
-/* === Abbellimento blu intorno agli album === */
 #emptyState .album-wrap{
   overflow:visible !important;
   isolation:isolate;
@@ -1614,9 +1577,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   z-index:4;
 }
 
-
-
-/* Modifica scheda carta: rimossi tre pallini, + allineato a destra e blu tema. */
 #detailModal .card-sheet-actions{margin-left:auto;display:inline-flex;align-items:flex-start;gap:0;position:relative;}
 #detailModal .detail-add-card-btn{color:#2f64ff;background:rgba(255,255,255,.68);border-color:rgba(47,100,255,.22);}
 #detailModal .detail-add-card-btn:hover{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);box-shadow:0 16px 28px rgba(47,100,255,.20), inset 0 1px 0 rgba(255,255,255,.40);}
@@ -1631,16 +1591,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   box-shadow:none !important;
 }
 
-
-
-/* NOTA: la pagina iniziale resta alla stessa altezza.
-   Le pagine interne vengono alzate tramite --poke-view-y. */
-/* === FIX 06/05/2026: topbar unificata per pagine e scheda carta ===
-   Cambia questi valori una sola volta e si spostano insieme:
-   - --poke-page-x: distanza laterale
-   - --poke-page-top: altezza dall'alto, inclusa safe-area
-   - --poke-view-y: correzione verticale comune delle viste
-   - --poke-topbar-bottom: spazio sotto la topbar */
 :root{
   --poke-page-x:20px;
   --poke-page-top:calc(var(--safe-top) + 10px);
@@ -1677,7 +1627,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   gap:8px !important;
 }
 
-/* === MOD 08/05/2026: omino login in alto a destra home === */
 #homeView{position:relative;}
 .top-meta{padding-right:68px !important;}
 .home-profile-btn{
@@ -1718,11 +1667,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 .home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
 @media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
 
-
-
-/* === MOD 10/05/2026: anteprima album più coerente + altezza Aspetto stabile ===
-   Ripristina una proporzione meno "palla da bowling" sugli angoli dell'album e impedisce
-   al blocco anteprima di scendere quando si passa da Colore a Immagine. */
 .album-form-preview .album-wrap{
   width:108px !important;
   max-width:108px !important;
@@ -1759,9 +1703,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   }
 }
 
-
-
-/* === MOD 19/05/2026: pulsante torna su nei risultati ricerca === */
 .add-card-search-view{position:relative;}
 .card-search-scroll-top{
   position:absolute;
@@ -1813,8 +1754,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   .card-search-scroll-top{right:8px;bottom:calc(var(--safe-bottom) + 10px);width:46px;height:46px;}
 }
 
-
-/* === FIX dettaglio carta: nome grande + set/versione sotto === */
 #detailModal .detail-top-title-wrap{
   position:absolute;
   left:58px;
@@ -1858,9 +1797,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   }
 }
 
-
-/* FIX loader scheda carta: il retro usa esattamente gli stessi max-width della carta finale.
-   Prima faceva il gigante educato, ma sempre gigante era. */
 #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{
   width:100%;
   max-width:320px;
@@ -1881,11 +1817,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 @media (max-width:420px){
   #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{max-width:285px;}
 }
-
-</style>
-  
-<style>
-/* === MOD 08/05/2026: omino login più grande e più alto a destra === */
 #homeView{position:relative !important;}
 .top-meta{padding-right:86px !important;}
 .home-profile-btn{
@@ -1907,21 +1838,11 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   .home-profile-btn{top:-16px !important;right:-14px !important;width:64px !important;height:64px !important;min-width:64px !important;}
   .home-profile-icon{width:56px !important;height:56px !important;}
 }
-</style>
-
-<style>
-/* === MOD 08/05/2026: colori login spento === */
 .home-profile-btn{color:#7f8fac !important;}
 .home-profile-btn:hover{color:#7f8fac !important;}
 .home-profile-icon .profile-ring{stroke:#b9d9ff !important;fill:none !important;}
 .home-profile-icon .profile-head,
 .home-profile-icon .profile-body{fill:#7f8fac !important;}
-</style>
-
-<style>
-/* === MOD 14/05/2026: etichette compatte uniformate ad Aspetto/Colore-Immagine ===
-   Stesso font/peso/colore e stessa distanza verticale tra testo nero e testo grigio.
-   Applicato sia alle righe compatte sia al blocco Pagina/Fronte-Retro, mobile incluso. */
 .compact-field-line .form-label,
 .page-mode-title .form-label{
   color:#243865 !important;
@@ -1970,10 +1891,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
     line-height:1.2 !important;
   }
 }
-</style>
-
-<style>
-/* === MOD 14/05/2026-b: spazi mobile davvero uniformati, perché il CSS precedente faceva il furbo === */
 .aspect-title,
 .page-mode-title{
   display:flex !important;
@@ -2035,10 +1952,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
     line-height:1.2 !important;
   }
 }
-</style>
-
-<style>
-/* === FIX loader scheda carta: retro leggermente più piccolo, testo sotto visibile, layout stabile === */
 #detailModal .detail-image-wrap{
   align-items:center;
   min-height:430px;
@@ -2078,20 +1991,457 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{max-width:266px;}
   #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader > div{font-size:13px;}
 }
-</style>
-
-
-<style>
-/* === MOD 20/05/2026: ricerca a pagine da 30, niente caricamento progressivo automatico === */
 .add-card-search-view .progress-wrap{display:none !important;}
 .add-card-search-view .card-search-panel-ux .status{min-height:16px;}
 .card-search-load-more-wrap{grid-column:1 / -1;display:flex;justify-content:center;padding:8px 2px calc(var(--safe-bottom) + 16px);}
 .card-search-load-more-btn{appearance:none;-webkit-appearance:none;min-height:46px;width:min(100%, 320px);padding:0 24px;border:1px solid rgba(255,255,255,.72);border-radius:999px;background:rgba(255,255,255,.68);color:#2f64ff;font-family:inherit;font-size:13px;font-weight:850;letter-spacing:-.02em;box-shadow:0 14px 28px rgba(66,89,152,.12), inset 0 1px 0 rgba(255,255,255,.94);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);cursor:pointer;}
 .card-search-load-more-btn:hover{background:rgba(255,255,255,.82);box-shadow:0 18px 34px rgba(47,100,255,.16), inset 0 1px 0 rgba(255,255,255,.96);}
 .card-search-load-more-btn:active{transform:scale(.98);}
-</style>
+.fab{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.fab-card-plus-icon{
+  flex:0 0 auto !important;
+  transform:translate(-4px, -2px) !important;
+  transform-origin:center center !important;
+}
+@media (max-height:760px){
+  .fab-card-plus-icon{transform:translate(-4px, -2px) !important;}
+}
+@media (max-height:680px){
+  .fab-card-plus-icon{transform:translate(-3px, -2px) !important;}
+}
 
-</head>
+.album-needed-toast{
+  position:fixed;
+  left:50%;
+  bottom:calc(var(--safe-bottom) + 112px);
+  width:min(calc(100vw - 32px), 520px);
+  min-height:72px;
+  padding:12px 18px 12px 13px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  background:rgba(255,255,255,.58);
+  border:1px solid rgba(255,255,255,.62);
+  color:#20345f;
+  box-shadow:0 18px 36px rgba(66,89,152,.14), inset 0 1px 0 rgba(255,255,255,.9);
+  backdrop-filter:blur(24px) saturate(145%);
+  -webkit-backdrop-filter:blur(24px) saturate(145%);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateX(-50%) translateY(12px) scale(.98);
+  transition:opacity .22s ease, transform .22s ease;
+  z-index:40;
+}
+.album-needed-toast.is-visible{
+  opacity:1;
+  visibility:visible;
+  transform:translateX(-50%) translateY(0) scale(1);
+}
+.album-needed-icon{
+  width:48px;
+  height:48px;
+  min-width:48px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#3157c9;
+  background:rgba(47,100,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
+}
+.album-needed-icon svg{width:26px;height:26px;display:block;}
+.album-needed-copy{display:grid;gap:3px;min-width:0;}
+.album-needed-copy strong{
+  font-size:14px;
+  line-height:1.1;
+  font-weight:850;
+  letter-spacing:-.02em;
+  color:#1c2e5a;
+}
+.album-needed-copy span{
+  font-size:13px;
+  line-height:1.25;
+  font-weight:600;
+  letter-spacing:-.015em;
+  color:#637492;
+}
+@media (max-width:420px){
+  .album-needed-toast{
+    width:calc(100vw - 24px);
+    min-height:66px;
+    padding:10px 14px 10px 11px;
+    gap:11px;
+    bottom:calc(var(--safe-bottom) + 104px);
+  }
+  .album-needed-icon{width:44px;height:44px;min-width:44px;}
+  .album-needed-icon svg{width:24px;height:24px;}
+  .album-needed-copy strong{font-size:13.5px;}
+  .album-needed-copy span{font-size:12.5px;}
+}
+
+*{
+  -webkit-tap-highlight-color: transparent !important;
+}
+button:focus, button:active, select:focus, select:active, a:focus, a:active{
+  outline:none !important;
+  box-shadow:none !important;
+}
+
+:root{
+  --poke-page-x:20px;
+  --poke-page-top:calc(var(--safe-top) + 10px);
+  --poke-view-y:-16px;
+  --poke-topbar-bottom:6px;
+}
+.content{
+  padding-top:var(--poke-page-top) !important;
+  padding-left:var(--poke-page-x) !important;
+  padding-right:var(--poke-page-x) !important;
+}
+.add-album-view,
+.album-detail-view,
+.add-card-search-view{
+  margin-top:var(--poke-view-y) !important;
+}
+.add-album-topbar,
+.album-detail-topbar,
+.card-search-topbar,
+#detailModal .card-sheet-topbar{
+  min-height:var(--topbar-control-size) !important;
+  padding:0 0 var(--poke-topbar-bottom) !important;
+  margin:0 0 6px !important;
+  display:flex !important;
+  align-items:flex-start !important;
+}
+#detailModal .card-sheet-container{
+  max-width:430px !important;
+  padding:calc(var(--poke-page-top) + var(--poke-view-y)) var(--poke-page-x) calc(var(--safe-bottom) + 24px) !important;
+}
+#detailModal .card-sheet-topbar{
+  position:relative !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+}
+
+#homeView{position:relative;}
+.top-meta{padding-right:68px !important;}
+.home-profile-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  position:absolute;
+  top:16px;
+  right:14px;
+  z-index:8;
+  width:54px;
+  height:54px;
+  min-width:54px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#7f8fac;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+.home-profile-btn:hover{
+  transform:translateY(-1px);
+  background:transparent;
+  color:#7f8fac;
+  box-shadow:none;
+}
+.home-profile-btn:active{transform:scale(.98);}
+.home-profile-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px;}
+.home-profile-icon{width:42px;height:42px;display:block;filter:drop-shadow(0 8px 14px rgba(66,89,152,.16));}
+.home-profile-icon .profile-ring{stroke:#b9d9ff;stroke-width:24;fill:none;}
+.home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
+@media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
+.fab-plus-mark{display:block;}
+.fab-lock-mark{display:none;}
+.fab.is-locked .fab-plus-mark{display:none !important;}
+.fab.is-locked .fab-lock-mark{display:block !important;}
+
+*{
+  -webkit-tap-highlight-color: transparent !important;
+}
+button:focus, button:active, select:focus, select:active, a:focus, a:active{
+  outline:none !important;
+  box-shadow:none !important;
+}
+
+:root{
+  --poke-page-x:20px;
+  --poke-page-top:calc(var(--safe-top) + 10px);
+  --poke-view-y:-16px;
+  --poke-topbar-bottom:6px;
+}
+.content{
+  padding-top:var(--poke-page-top) !important;
+  padding-left:var(--poke-page-x) !important;
+  padding-right:var(--poke-page-x) !important;
+}
+.add-album-view,
+.album-detail-view,
+.add-card-search-view{
+  margin-top:var(--poke-view-y) !important;
+}
+.add-album-topbar,
+.album-detail-topbar,
+.card-search-topbar,
+#detailModal .card-sheet-topbar{
+  min-height:var(--topbar-control-size) !important;
+  padding:0 0 var(--poke-topbar-bottom) !important;
+  margin:0 0 6px !important;
+  display:flex !important;
+  align-items:flex-start !important;
+}
+#detailModal .card-sheet-container{
+  max-width:430px !important;
+  padding:calc(var(--poke-page-top) + var(--poke-view-y)) var(--poke-page-x) calc(var(--safe-bottom) + 24px) !important;
+}
+#detailModal .card-sheet-topbar{
+  position:relative !important;
+  justify-content:space-between !important;
+  gap:8px !important;
+}
+
+#homeView{position:relative;}
+.top-meta{padding-right:68px !important;}
+.home-profile-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  position:absolute;
+  top:4px;
+  right:3px;
+  z-index:8;
+  width:54px;
+  height:54px;
+  min-width:54px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#7f8fac;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  box-shadow:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
+}
+.home-profile-btn:hover{
+  transform:translateY(-1px);
+  background:transparent;
+  color:#7f8fac;
+  box-shadow:none;
+}
+.home-profile-btn:active{transform:scale(.98);}
+.home-profile-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px;}
+.home-profile-icon{width:42px;height:42px;display:block;filter:drop-shadow(0 8px 14px rgba(66,89,152,.16));}
+.home-profile-icon .profile-ring{stroke:#b9d9ff;stroke-width:24;fill:none;}
+.home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
+@media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
+
+/* === FIX 20/05/2026: card prezzo stabile durante il caricamento === */
+#detailModal .detail-price{
+  min-height:96px;
+}
+#detailModal .detail-price-label{
+  display:inline-block;
+  line-height:16px;
+}
+#detailModal .detail-price-currency,
+#detailModal .detail-price-value{
+  line-height:35px;
+}
+#detailModal .detail-offer{
+  min-height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#detailModal .detail-offer .offer-controls{
+  width:100%;
+}
+
+
+/* === FIX 20/05/2026: elimina micro-movimenti su immagine e prezzo === */
+#detailModal .detail-image-wrap{
+  height:430px !important;
+  min-height:430px !important;
+  max-height:430px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:hidden !important;
+}
+#detailModal .detail-img{
+  width:285px !important;
+  height:398px !important;
+  max-width:285px !important;
+  max-height:398px !important;
+  object-fit:contain !important;
+  flex:0 0 auto !important;
+}
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+  width:285px !important;
+  height:398px !important;
+  max-width:285px !important;
+  max-height:398px !important;
+  min-height:398px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  flex:0 0 auto !important;
+}
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader img{
+  width:266px !important;
+  height:371px !important;
+  max-width:266px !important;
+  max-height:371px !important;
+  object-fit:contain !important;
+  flex:0 0 auto !important;
+}
+#detailModal .detail-price{
+  height:108px !important;
+  min-height:108px !important;
+  max-height:108px !important;
+  display:grid !important;
+  grid-template-rows:16px 38px 40px !important;
+  align-items:center !important;
+  justify-items:center !important;
+  row-gap:0 !important;
+  overflow:visible !important;
+}
+#detailModal .detail-price br{display:none !important;}
+#detailModal .detail-price-label{
+  line-height:16px !important;
+}
+#detailModal .detail-price-line{
+  height:38px !important;
+  min-width:148px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+  font-variant-numeric:tabular-nums !important;
+  font-feature-settings:"tnum" 1, "lnum" 1 !important;
+}
+#detailModal .detail-price-currency,
+#detailModal .detail-price-value{
+  line-height:38px !important;
+  font-variant-numeric:tabular-nums !important;
+  font-feature-settings:"tnum" 1, "lnum" 1 !important;
+}
+#detailModal .detail-price-value{
+  display:inline-block !important;
+  min-width:100px !important;
+  text-align:left !important;
+}
+#detailModal .detail-offer{
+  height:40px !important;
+  min-height:40px !important;
+  max-height:40px !important;
+  margin-top:0 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  overflow:visible !important;
+}
+#detailModal .detail-offer .offer-controls,
+#detailModal .detail-offer .market-visual-controls{
+  min-height:28px !important;
+}
+@media (max-width:760px){
+  #detailModal .detail-image-wrap{
+    height:430px !important;
+    min-height:430px !important;
+    max-height:430px !important;
+  }
+}
+@media (max-width:420px){
+  #detailModal .detail-image-wrap{
+    height:426px !important;
+    min-height:426px !important;
+    max-height:426px !important;
+  }
+  #detailModal .detail-img{
+    width:285px !important;
+    height:398px !important;
+    max-width:285px !important;
+    max-height:398px !important;
+  }
+  #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+    width:285px !important;
+    height:398px !important;
+    max-width:285px !important;
+    max-height:398px !important;
+    min-height:398px !important;
+  }
+}
+
+
+/* === FIX 20/05/2026: prezzo centrato come vi152, senza micro-movimenti === */
+#detailModal .detail-price{
+  height:108px !important;
+  min-height:108px !important;
+  max-height:108px !important;
+  display:grid !important;
+  grid-template-rows:16px 38px 40px !important;
+  align-items:center !important;
+  justify-items:center !important;
+  row-gap:0 !important;
+  overflow:visible !important;
+}
+#detailModal .detail-price-line{
+  width:148px !important;
+  min-width:148px !important;
+  max-width:148px !important;
+  height:38px !important;
+  display:inline-flex !important;
+  align-items:baseline !important;
+  justify-content:center !important;
+  gap:4px !important;
+  white-space:nowrap !important;
+  font-variant-numeric:tabular-nums !important;
+  font-feature-settings:"tnum" 1, "lnum" 1 !important;
+}
+#detailModal .detail-price-currency{
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:0 !important;
+  margin:0 !important;
+  line-height:35px !important;
+}
+#detailModal .detail-price-value{
+  flex:0 0 auto !important;
+  display:inline-block !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  text-align:center !important;
+  line-height:35px !important;
+  letter-spacing:-0.025em !important;
+  font-variant-numeric:tabular-nums !important;
+  font-feature-settings:"tnum" 1, "lnum" 1 !important;
+}
+
+</style></head>
   <body>
     <div class="phone-stage">
       <main class="screen">
@@ -2386,7 +2736,7 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
                     </div>
                   </div>
                   <div class="slots-layout-side">
-                    
+
                     <div class="slots-layout-preview" id="slotsLayoutPreview">
                       <svg class="slots-layout-svg is-active" data-slots-svg="4" aria-hidden="true" width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -2411,7 +2761,6 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
     <rect x="16" y="100" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
     <rect x="99" y="100" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
   </g>
-
 
 <text x="53.5" y="53.0"
 text-anchor="middle"
@@ -2490,7 +2839,6 @@ paint-order="stroke">
     <rect x="71" y="124" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
     <rect x="126" y="124" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
   </g>
-
 
 <text x="40.0" y="40.0"
 text-anchor="middle"
@@ -2632,7 +2980,6 @@ paint-order="stroke">
     <rect x="98" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
     <rect x="141" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
   </g>
-
 
 <text x="31.0" y="36.0"
 text-anchor="middle"
@@ -2815,7 +3162,6 @@ paint-order="stroke">
     <rect x="97"  y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
     <rect x="139" y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
   </g>
-
 
 <text x="32.0" y="28.5"
 text-anchor="middle"
@@ -3155,7 +3501,7 @@ paint-order="stroke">
               </button>
               <h2 class="card-search-title">Aggiungi carte</h2>
               <div class="card-search-actions" aria-label="Azioni ricerca carte">
-                
+
                 <button class="card-search-action" id="tokenBtn" type="button" aria-label="Gestisci token" title="Token API"><span class="card-search-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.2" cy="15.8" r="3.2"></circle><path d="M10.6 13.4 19 5"></path><path d="M15.4 8.6 17.8 11"></path><path d="M13.2 10.8 15.1 12.7"></path></svg></span></button>
               </div>
             </div>
@@ -3198,7 +3544,7 @@ paint-order="stroke">
               aria-label="Aggiungi carta"
             >
               <svg class="fab-card-plus-icon" width="76" height="76" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <!-- Carta dietro: accenna al concetto di più carte, senza fare casino grafico -->
+
                 <rect
                   x="21"
                   y="18"
@@ -3212,7 +3558,6 @@ paint-order="stroke">
                   opacity="0.88"
                 />
 
-                <!-- Carta principale, più grande e leggibile -->
                 <rect
                   x="27"
                   y="13"
@@ -3224,7 +3569,6 @@ paint-order="stroke">
                   stroke-width="1.15"
                 />
 
-                <!-- Dettaglio interno minimo, giusto per non sembrare una carta qualunque -->
                 <rect
                   x="31"
                   y="17"
@@ -3255,7 +3599,6 @@ paint-order="stroke">
                   fill="#14326F"
                 />
 
-                <!-- Badge: + quando esiste almeno un album, lucchetto quando non ci sono album -->
                 <circle
                   cx="55"
                   cy="54"
@@ -3308,7 +3651,6 @@ paint-order="stroke">
           </span>
         </div>
 
-        
       <div class="choice-sheet-backdrop" id="slotsChoiceSheet" aria-hidden="true">
         <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="slotsChoiceTitle">
           <div class="choice-sheet-handle"></div>
@@ -3514,7 +3856,7 @@ paint-order="stroke">
           </div>
           <div class="detail-content">
             <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Caricamento immagine"><div>Caricamento immagine in corso</div></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""></div>
-            <div class="detail-price"><span class="detail-price-label">Prezzo</span><br><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
+            <div class="detail-price"><span class="detail-price-label">Prezzo</span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-cards">
               <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Serie</div><input class="info-edit-input" id="cardSeriesInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Data</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Provenienza</div><input class="info-edit-input" id="cardOriginInput" type="text" autocomplete="off" placeholder="Non specificato"></div></div></section>
               <section class="info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="info-divider"></div><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
@@ -3527,8 +3869,7 @@ paint-order="stroke">
   </div>
 
     <script>
-
-    const API_BASE = 'https://api.cardtrader.com/api/v2';
+const API_BASE = 'https://api.cardtrader.com/api/v2';
     const INDEX_URL = 'data/pokemon-index.json';
     const META_URL = 'data/pokemon-index-meta.json';
     const LS_TOKEN = 'ct_pokemon_token';
@@ -3635,38 +3976,6 @@ paint-order="stroke">
       el.progressBar.classList.remove('is-searching');
     }
 
-    function playSearchProgressAnimation() {
-      clearSearchProgressAnimation();
-      state.searchProgressStartedAt = performance.now();
-      setProgress(0);
-      // forza il reset visivo, altrimenti il browser fa il furbo e salta l'animazione
-      void el.progressBar.offsetWidth;
-      el.progressBar.classList.add('is-searching');
-
-      // Piccolo avvio visivo: se i risultati sono pochi si vede comunque un movimento,
-      // se sono tanti da qui in poi comanda il caricamento reale dei blocchi.
-      state.searchProgressStepTimers = [
-        setTimeout(() => setProgress(10), 20),
-        setTimeout(() => setProgress(24), 120),
-      ];
-    }
-
-    function updateSearchProgressFromResults(loaded, total, done = false) {
-      if (!total || total <= 0) {
-        if (done) finishSearchProgress();
-        return;
-      }
-
-      const ratio = Math.max(0, Math.min(1, loaded / total));
-      const target = done ? 100 : Math.max(8, Math.min(96, Math.round(ratio * 96)));
-
-      if (done) {
-        finishSearchProgress();
-      } else {
-        setProgress(target);
-      }
-    }
-
     function finishSearchProgress() {
       const elapsed = state.searchProgressStartedAt ? performance.now() - state.searchProgressStartedAt : state.searchProgressMinDuration;
       const remaining = Math.max(0, state.searchProgressMinDuration - elapsed);
@@ -3697,7 +4006,6 @@ paint-order="stroke">
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
     }
-
 
     function escapeRegExp(value) {
       return String(value ?? '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -3775,7 +4083,6 @@ paint-order="stroke">
       const setName = f.setName || '';
       return [setCode, setName].filter(Boolean).join(' - ') || '-';
     }
-
 
     function normalize(text) {
       return String(text ?? '')
@@ -4037,13 +4344,6 @@ paint-order="stroke">
         || (!!compact && (searchTokens.includes(compact) || searchText.includes(compact)));
     }
 
-    function formatDate(iso) {
-      if (!iso) return '-';
-      const d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return iso;
-      return new Intl.DateTimeFormat('it-IT', { dateStyle: 'medium', timeStyle: 'short' }).format(d);
-    }
-
     function formatIndexDate(iso) {
       if (!iso) return '-';
       const d = new Date(iso);
@@ -4081,18 +4381,12 @@ paint-order="stroke">
         || String(card?.image_url || '').trim();
     }
 
-    function getCardShowUrl(card) {
-      return String(card?.image_show_url || '').trim()
-        || deriveCardTraderImageUrl(card?.image_url, 'show')
-        || String(card?.image_url || '').trim();
-    }
-
     function getCardFullUrl(card) {
       return String(card?.image_full_url || '').trim()
         || deriveCardTraderImageUrl(card?.image_url, 'full')
         || String(card?.image_url || '').trim();
     }
-	
+
 	function formatDuration(ms) {
   if (!Number.isFinite(ms) || ms < 0) return '00:00';
 
@@ -4136,10 +4430,6 @@ function finishUpdateTimer() {
   setTimerChip(formatDuration(elapsed));
 }
 
-    function bestCardNumber(card) {
-      return getCollectorNumber(card) || '-';
-    }
-
     function getProductLanguage(product) {
       return product?.properties_hash?.language
         || product?.properties_hash?.pokemon_language
@@ -4160,11 +4450,6 @@ function finishUpdateTimer() {
 
     function normalizeCondition(value) {
       return normalize(value).replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
-    }
-
-    function isNearMintCondition(value) {
-      const cond = normalizeCondition(value);
-      return cond === 'near mint' || cond === 'nm' || cond.startsWith('near mint ');
     }
 
     function getProductPriceCents(product) {
@@ -4188,8 +4473,7 @@ function finishUpdateTimer() {
     }
 
     function isCardTraderZero(product) {
-      // CTZero normale: il venditore può vendere tramite hub CardTrader Zero.
-      // Non usa campi "1-Day" o quantità 24h, così evitiamo di confonderlo con Zero 1-Day.
+
       return product?.user?.can_sell_via_hub === true
         || product?.seller?.can_sell_via_hub === true
         || product?.can_sell_via_hub === true;
@@ -4269,9 +4553,6 @@ function finishUpdateTimer() {
       const key = normalizeLang(raw);
       if (MARKET_LANGUAGE_LABEL_MAP[key]) return MARKET_LANGUAGE_LABEL_MAP[key];
 
-      // Fallback libero: se CardTrader/API restituisce una sigla ISO a 2 lettere,
-      // mostro un nome leggibile ricavato dal browser invece di bloccare tutto
-      // sull'elenco "conosciuto". Sì, incredibilmente le sigle non finiscono a 7.
       const regionName = getRegionNameFromCode(raw);
       if (regionName) return regionName;
 
@@ -4290,20 +4571,8 @@ function finishUpdateTimer() {
       return normalized || '__none';
     }
 
-    function getLanguageKeyFromLabel(label) {
-      return getLanguageKeyFromValue(label);
-    }
-
     function getLanguageKey(product) {
       return getLanguageKeyFromValue(getProductLanguage(product));
-    }
-
-    function buildOfferLabel(product) {
-      const lang = getLanguageLabel(product);
-      const condCode = getConditionCode(product?.properties_hash?.condition || '');
-      const cond = condCode || (product?.properties_hash?.condition || '-');
-      const zeroLabel = isCardTraderZero(product) ? ' · CTZero' : '';
-      return `${lang} · ${cond}${zeroLabel}`;
     }
 
     function buildMarketRows(products) {
@@ -4341,14 +4610,8 @@ function finishUpdateTimer() {
     }
 
     function getRowsForCtZeroState(rows, ctZero) {
-      // Dopo l'apertura CTZero non è più un suggerimento gentile: è un filtro vero.
-      // ON = solo CTZero, OFF = solo non CTZero. Niente fallback nell'altro recinto.
-      return (rows || []).filter(row => Boolean(row.ctZero) === Boolean(ctZero));
-    }
 
-    function getBestRowByPreference(rows, predicate = null, mode = 'condition') {
-      const scoped = (rows || []).filter(row => !predicate || predicate(row));
-      return mode === 'price' ? getLowestRow(scoped) : getBestByConditionThenPrice(scoped);
+      return (rows || []).filter(row => Boolean(row.ctZero) === Boolean(ctZero));
     }
 
     function getAvailableLanguages(rows, requireCtZero = false) {
@@ -4377,7 +4640,6 @@ function finishUpdateTimer() {
         .sort((a, b) => conditionRank(a) - conditionRank(b) || String(a).localeCompare(String(b), 'it'));
     }
 
-
     const MARKET_LANGUAGE_FLAG_MAP = {
       it: ['IT', 'it'], ita: ['IT', 'it'], italiano: ['IT', 'it'], italian: ['IT', 'it'],
       en: ['EN', 'gb'], eng: ['EN', 'gb'], english: ['EN', 'gb'], inglese: ['EN', 'gb'], us: ['US', 'us'], gb: ['GB', 'gb'], uk: ['GB', 'gb'],
@@ -4402,8 +4664,6 @@ function finishUpdateTimer() {
       const info = MARKET_LANGUAGE_FLAG_MAP[rawKey] || MARKET_LANGUAGE_FLAG_MAP[rawLabel];
       if (info) return { code: info[0], flag: info[1] };
 
-      // Fallback vero: qualsiasi sigla a 2 lettere diventa direttamente URL FlagCDN.
-      // Esempio: NL -> https://flagcdn.com/w80/nl.png
       const fromKey = /^[a-z]{2}$/.test(rawKey) ? rawKey : '';
       const fromLabel = /^[a-z]{2}$/.test(rawLabel) ? rawLabel : '';
       const flag = fromKey || fromLabel;
@@ -4413,12 +4673,73 @@ function finishUpdateTimer() {
       return { code: fallback, flag: '' };
     }
 
+    const MARKET_FLAG_SVG_CACHE = new Map();
+
+    function encodeMarketFlagSvg(svg) {
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function marketFlagSvgTemplate(flag) {
+      const key = String(flag || '').toLowerCase();
+      const tricolorV = (a, b, c) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="11" height="24" fill="${a}"/><rect x="11" width="11" height="24" fill="${b}"/><rect x="22" width="11" height="24" fill="${c}"/></svg>`;
+      const tricolorH = (a, b, c) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="8" fill="${a}"/><rect y="8" width="33" height="8" fill="${b}"/><rect y="16" width="33" height="8" fill="${c}"/></svg>`;
+      const simple = {
+        it: tricolorV('#009246', '#fff', '#ce2b37'),
+        fr: tricolorV('#0055a4', '#fff', '#ef4135'),
+        es: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="24" fill="#c60b1e"/><rect y="6" width="33" height="12" fill="#ffc400"/></svg>`,
+        de: tricolorH('#000', '#dd0000', '#ffce00'),
+        nl: tricolorH('#ae1c28', '#fff', '#21468b'),
+        pt: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="13" height="24" fill="#006600"/><rect x="13" width="20" height="24" fill="#ff0000"/><circle cx="13" cy="12" r="4" fill="#ffcc00"/></svg>`,
+        jp: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="24" fill="#fff"/><circle cx="16.5" cy="12" r="6" fill="#bc002d"/></svg>`,
+        cn: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="24" fill="#de2910"/><polygon points="7,4 8,7 11,7 8.5,9 9.5,12 7,10 4.5,12 5.5,9 3,7 6,7" fill="#ffde00"/></svg>`,
+        tw: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="24" fill="#fe0000"/><rect width="16" height="12" fill="#000095"/><circle cx="8" cy="6" r="3.2" fill="#fff"/></svg>`,
+        kr: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="24" fill="#fff"/><circle cx="16.5" cy="12" r="5" fill="#cd2e3a"/><path d="M16.5 7a5 5 0 0 1 0 10 2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 0 0-5z" fill="#0047a0"/></svg>`,
+        th: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="24" fill="#a51931"/><rect y="4" width="33" height="16" fill="#fff"/><rect y="8" width="33" height="8" fill="#2d2a4a"/></svg>`,
+        id: tricolorH('#ce1126', '#ce1126', '#fff'),
+        ru: tricolorH('#fff', '#0039a6', '#d52b1e'),
+        pl: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="12" fill="#fff"/><rect y="12" width="33" height="12" fill="#dc143c"/></svg>`,
+        us: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="24" fill="#b22234"/><path d="M0 2h33v2H0zm0 4h33v2H0zm0 4h33v2H0zm0 4h33v2H0zm0 4h33v2H0zm0 4h33v2H0z" fill="#fff"/><rect width="15" height="13" fill="#3c3b6e"/></svg>`,
+        gb: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 24"><rect width="33" height="24" fill="#012169"/><path d="M0 0l33 24M33 0L0 24" stroke="#fff" stroke-width="5"/><path d="M0 0l33 24M33 0L0 24" stroke="#c8102e" stroke-width="2.8"/><path d="M16.5 0v24M0 12h33" stroke="#fff" stroke-width="8"/><path d="M16.5 0v24M0 12h33" stroke="#c8102e" stroke-width="4.6"/></svg>`,
+      };
+      return simple[key] || '';
+    }
+
+    function getMarketFlagSrc(flag) {
+      const key = String(flag || '').toLowerCase();
+      if (!key) return '';
+      if (MARKET_FLAG_SVG_CACHE.has(key)) return MARKET_FLAG_SVG_CACHE.get(key);
+      const svg = marketFlagSvgTemplate(key);
+      const src = svg ? encodeMarketFlagSvg(svg) : `https://flagcdn.com/w80/${encodeURIComponent(key)}.png`;
+      MARKET_FLAG_SVG_CACHE.set(key, src);
+      return src;
+    }
+
+    function preloadMarketLanguageFlags() {
+      const seen = new Set();
+      Object.values(MARKET_LANGUAGE_FLAG_MAP).forEach(info => {
+        const flag = info && info[1];
+        if (!flag || seen.has(flag)) return;
+        seen.add(flag);
+        const src = getMarketFlagSrc(flag);
+        if (!src) return;
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = src;
+      });
+    }
+
     function marketFlagMarkup(label, key) {
       const info = getMarketLanguageFlagInfo(label, key);
       if (info.flag) {
-        return `<img class="market-flag-img" src="https://flagcdn.com/w80/${escapeHtml(info.flag)}.png" alt="${escapeHtml(info.code)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span class="market-flag-fallback" style="display:none">${escapeHtml(info.code)}</span>`;
+        return `<img class="market-flag-img" src="${escapeHtml(getMarketFlagSrc(info.flag))}" alt="${escapeHtml(info.code)}" decoding="async" loading="eager" onerror="this.style.display='none';this.nextElementSibling.style.display='block';"><span class="market-flag-fallback" style="display:none">${escapeHtml(info.code)}</span>`;
       }
       return `<span class="market-flag-fallback">${escapeHtml(info.code)}</span>`;
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', preloadMarketLanguageFlags, { once: true });
+    } else {
+      preloadMarketLanguageFlags();
     }
 
     function conditionBadgeMarkup(code) {
@@ -4431,9 +4752,6 @@ function finishUpdateTimer() {
       state.market.loading = Boolean(disabled);
       if (!el.detailOfferLabel) return;
 
-      // I controlli nativi restano nascosti e continuano a pilotare la logica originale.
-      // I pulsanti UX, però, devono essere riabilitati insieme a loro: altrimenti
-      // lingue, condizioni e CTZero restano belli da vedere e inutili come un semaforo spento.
       el.detailOfferLabel.querySelectorAll('select,input').forEach(control => {
         if (!disabled && control.dataset.marketNoMatch === '1') return;
         control.disabled = Boolean(disabled);
@@ -4554,7 +4872,7 @@ function finishUpdateTimer() {
 
       let langScope = scope.filter(row => row.langKey === selected.langKey);
       if (changed === 'language') {
-        // Cambio lingua = condizione migliore in quella lingua, rispettando CTZero ON/OFF.
+
         const bestConditionRow = getBestByConditionThenPrice(langScope) || getLowestRow(langScope);
         if (bestConditionRow) selected.condKey = bestConditionRow.condKey;
       }
@@ -4568,8 +4886,7 @@ function finishUpdateTimer() {
       let candidates = scope.filter(row => row.langKey === selected.langKey && row.condKey === selected.condKey);
 
       if (!candidates.length && changed === 'ctzero') {
-        // Toggle CTZero: prova stessa lingua/condizione; se non esiste, resta nel gruppo scelto
-        // e trova la migliore offerta disponibile, aggiornando lingua e condizione.
+
         const fallback = getBestByConditionThenPrice(scope) || getLowestRow(scope);
         if (fallback) {
           selected.langKey = fallback.langKey;
@@ -4647,7 +4964,7 @@ function finishUpdateTimer() {
       if (typeof offerText === 'string' && offerText && el.detailOfferLabel) {
         el.detailOfferLabel.textContent = offerText;
       } else if (typeof offerText === 'string' && offerText === '' && el.detailOfferLabel) {
-        // Lascia intatti i controlli live: il testo offerta viene gestito dai selettori.
+
       } else if (el.detailOfferLabel) {
         el.detailOfferLabel.textContent = 'Offerta non disponibile';
       }
@@ -4683,11 +5000,6 @@ function finishUpdateTimer() {
       }
     }
 
-    function cardSummary(card) {
-      const f = getDisplayFields(card);
-      return [f.name, f.collectorNumber, f.version, f.setCode, f.setName].filter(Boolean).join(' ');
-    }
-
     function getPrimarySearchToken(parsed) {
       return (parsed?.rawTokens || []).find(token => token && !/^\d+$/.test(token) && !/^\d+\/\d+$/.test(token))
         || (parsed?.rawTokens || [])[0]
@@ -4704,8 +5016,6 @@ function finishUpdateTimer() {
       const fullQuery = parsed.normalized;
       const primaryToken = getPrimarySearchToken(parsed);
 
-      // Gruppi rigidi: prima il nome della carta, poi il resto.
-      // Così "mew" mostra prima Mew/Mew V/Mewtwo e solo dopo i set che contengono Mew.
       if (name === fullQuery || (primaryToken && name === primaryToken)) return 0;
       if ((fullQuery && name.startsWith(fullQuery)) || (primaryToken && name.startsWith(primaryToken))) return 1;
       if ((fullQuery && name.includes(fullQuery)) || (primaryToken && name.includes(primaryToken))) return 2;
@@ -4737,7 +5047,6 @@ function finishUpdateTimer() {
       const groupBoosts = [1000000, 900000, 800000, 300000, 200000, 100000, 1];
       let score = groupBoosts[group] || 1;
 
-      // Bonus frase intera: utile per "mew illustration" quando il nome contiene già tutta la stringa.
       if (name === parsed.normalized) score += 5000;
       else if (name.startsWith(parsed.normalized)) score += 3000;
       else if (name.includes(parsed.normalized)) score += 1800;
@@ -4774,12 +5083,10 @@ function finishUpdateTimer() {
           return;
         }
 
-        // Nome carta: campo dominante. Gli altri campi non devono scavalcare un match nel nome.
         if (name === token) score += isPrimaryToken ? 2500 : 1800;
         else if (name.startsWith(token)) score += isPrimaryToken ? 1700 : 1250;
         else if (name.includes(token)) score += isPrimaryToken ? 1150 : 900;
 
-        // Campi secondari: raffinano la ricerca, ma restano dietro al nome.
         if (rarity === token) score += 780;
         else if (rarity.includes(token)) score += 520;
 
@@ -4795,7 +5102,6 @@ function finishUpdateTimer() {
         if (setName === token) score += 320;
         else if (setName.includes(token)) score += 160;
 
-        // Piccolo premio per i token successivi: "mew illustration" premia i Mew che contengono anche illustration.
         if (index > 0 && (name.includes(token) || rarity.includes(token) || version.includes(token) || number.includes(token))) {
           score += 420;
         }
@@ -4936,8 +5242,6 @@ function finishUpdateTimer() {
         });
       };
 
-      // Lascia prima dipingere la home e completare gli handler: il database parte subito dopo,
-      // ma senza rubare il volante alla UI come un pirata del JavaScript.
       requestAnimationFrame(() => requestAnimationFrame(startPreload));
     }
 
@@ -4959,7 +5263,6 @@ function finishUpdateTimer() {
           const card = state.cards[index];
           getCardSearchIndex(card);
 
-          // Piccolo riscaldamento del ranking: evita che il primo vero input paghi tutto lui.
           if (index < 1200) {
             for (const query of sampleQueries) computeScore(card, query);
           }
@@ -5001,7 +5304,6 @@ function finishUpdateTimer() {
       el.countsText.textContent = '';
       el.timerChip = null;
     }
-
 
     function setCardSearchScrollTopVisible(force = null) {
       if (!el.scrollTopBtn || !el.results) return;
@@ -5074,9 +5376,7 @@ function finishUpdateTimer() {
       const displayVersion = f.version || '';
       const displaySetCode = String(f.setCode || '').toUpperCase();
       const displaySetName = f.setName || '';
-      // Nei risultati usiamo solo la preview già pronta.
-      // Se manca l'immagine NON carichiamo il retro carta e NON tentiamo la full/show:
-      // nei risultati deve restare leggero. Il retro resta solo nella scheda carta.
+
       const imageUrl = getCardPreviewUrl(card);
       const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
       const imagePriority = resultIndex < 4 ? 'high' : 'auto';
@@ -5225,11 +5525,6 @@ function finishUpdateTimer() {
       el.autocomplete.classList.add('open');
     }
 
-    function preloadResultImages(cards, limit = 15) {
-      // Funzione lasciata per compatibilità, ma volutamente inattiva.
-      // Il preload dei risultati rallentava la ricerca e poteva caricare immagini non necessarie.
-    }
-
     function runSearch(rawQuery) {
       const parsed = parseQuery(rawQuery);
       if (!parsed.normalized) {
@@ -5254,7 +5549,7 @@ function finishUpdateTimer() {
         .map(x => x.card);
 
       state.filtered = results;
-      // Mostriamo 30 risultati alla volta. Gli altri restano fermi finché l'utente non chiede esplicitamente il prossimo blocco.
+
       renderResults(results, {
         query: rawQuery,
         batchSize: 30,
@@ -5384,7 +5679,6 @@ function finishUpdateTimer() {
           if (e.target === backdrop) closeModal(backdrop);
         });
       });
-
 
       if (el.menuBtn && el.topbarMenu) {
         el.menuBtn.addEventListener('click', (event) => {
@@ -5559,9 +5853,6 @@ el.autocomplete.addEventListener('click', (e) => {
   const card = state.suggestions[idx];
   if (!card) return;
 
-  // Sul click del suggerimento NON rilanciare la ricerca con la label completa:
-  // apri direttamente la carta selezionata. Così evitiamo il magnifico autosabotaggio
-  // in cui l'autocomplete trova una carta e la ricerca successiva la perde.
   el.searchInput.value = formatSuggestionHeadline(card);
   el.searchInput.blur();
   renderSuggestions([]);
@@ -5608,8 +5899,7 @@ el.autocomplete.addEventListener('click', (e) => {
       console.error(err);
       setStatus(`Errore inizializzazione: ${err.message}`, 'error');
     });
-  
-    
+
 const CARD_BACK_PLACEHOLDER = 'https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg';
 
 function getCardBackLoaderHtml(){
@@ -5637,12 +5927,10 @@ document.addEventListener('error', (event) => {
     }
   }
 }, true);
-
-
 </script>
 
     <script>
-      (() => {
+(() => {
         const $ = (selector, root = document) => root.querySelector(selector);
         const $$ = (selector, root = document) => [
           ...root.querySelectorAll(selector),
@@ -5763,8 +6051,6 @@ document.addEventListener('error', (event) => {
           event.stopPropagation();
         };
 
-        // Blocca zoom/pinch e gesti orizzontali della pagina.
-        // Perché evidentemente anche una pagina HTML, lasciata sola, prova a scappare di lato.
         const preventPageZoom = (event) => {
           if (event.touches?.length > 1 || event.ctrlKey) event.preventDefault();
         };
@@ -5773,7 +6059,6 @@ document.addEventListener('error', (event) => {
         document.addEventListener("gestureend", (event) => event.preventDefault(), { passive: false });
         document.addEventListener("touchmove", preventPageZoom, { passive: false });
         document.addEventListener("wheel", preventPageZoom, { passive: false });
-
 
         const clearTextSelection = () => {
           try {
@@ -5815,7 +6100,6 @@ document.addEventListener('error', (event) => {
           const { r, g, b } = hexToRgb(hex);
           return `rgb(${clamp(r + amount)}, ${clamp(g + amount)}, ${clamp(b + amount)})`;
         }
-
 
         function getTotalPagesValue() {
           return Math.max(1, Number(els.totalPagesInput.value) || 1);
@@ -6534,9 +6818,6 @@ document.addEventListener('error', (event) => {
             return;
           }
 
-          // Se esiste almeno un album, il pulsante della homepage deve portare
-          // direttamente alla ricerca carte. Sì, era davvero tutto qui: niente
-          // giro turistico nel dettaglio album solo per premere un altro +.
           if (!state.currentAlbum && els.albumsGrid.children.length === 1) {
             state.currentAlbum = els.albumsGrid.children[0];
           }
@@ -6613,7 +6894,7 @@ document.addEventListener('error', (event) => {
         });
 
         on(els.totalPagesInput, "input change", updateSlotPreview);
-        
+
         const slotsChoiceBtn = $("#slotsChoiceBtn");
         const slotsChoiceValue = $("#slotsChoiceValue");
         const slotsChoiceSheet = $("#slotsChoiceSheet");
@@ -6725,9 +7006,6 @@ document.addEventListener('error', (event) => {
         on(els.contextMenuBackdrop, "pointerup click", (event) => {
           if (event.target !== els.contextMenuBackdrop) return;
 
-          // FIX: dopo il long press, il rilascio del dito può arrivare al backdrop
-          // appena creato e chiudere subito il menu. Geniale, come inciampare
-          // nel tappeto appena steso. Ignoriamo SOLO quel rilascio iniziale.
           if (state.contextIgnoreOpeningRelease) {
             const samePointer =
               event.type === "click" ||
@@ -6757,294 +7035,6 @@ document.addEventListener('error', (event) => {
         resetFormDefaults();
         syncEmptyState();
       })();
-    </script>
+</script>
   </body>
 </html>
-
-<!-- === FIX 03/05/2026: centratura icona "Aggiungi carta" nel FAB === -->
-<style>
-.fab{
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-}
-.fab-card-plus-icon{
-  flex:0 0 auto !important;
-  transform:translate(-4px, -2px) !important;
-  transform-origin:center center !important;
-}
-@media (max-height:760px){
-  .fab-card-plus-icon{transform:translate(-4px, -2px) !important;}
-}
-@media (max-height:680px){
-  .fab-card-plus-icon{transform:translate(-3px, -2px) !important;}
-}
-
-
-/* === Toast: avviso FAB bloccato quando non esistono album === */
-.album-needed-toast{
-  position:fixed;
-  left:50%;
-  bottom:calc(var(--safe-bottom) + 112px);
-  width:min(calc(100vw - 32px), 520px);
-  min-height:72px;
-  padding:12px 18px 12px 13px;
-  border-radius:999px;
-  display:flex;
-  align-items:center;
-  gap:14px;
-  background:rgba(255,255,255,.58);
-  border:1px solid rgba(255,255,255,.62);
-  color:#20345f;
-  box-shadow:0 18px 36px rgba(66,89,152,.14), inset 0 1px 0 rgba(255,255,255,.9);
-  backdrop-filter:blur(24px) saturate(145%);
-  -webkit-backdrop-filter:blur(24px) saturate(145%);
-  opacity:0;
-  visibility:hidden;
-  pointer-events:none;
-  transform:translateX(-50%) translateY(12px) scale(.98);
-  transition:opacity .22s ease, transform .22s ease;
-  z-index:40;
-}
-.album-needed-toast.is-visible{
-  opacity:1;
-  visibility:visible;
-  transform:translateX(-50%) translateY(0) scale(1);
-}
-.album-needed-icon{
-  width:48px;
-  height:48px;
-  min-width:48px;
-  border-radius:50%;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  color:#3157c9;
-  background:rgba(47,100,255,.08);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
-}
-.album-needed-icon svg{width:26px;height:26px;display:block;}
-.album-needed-copy{display:grid;gap:3px;min-width:0;}
-.album-needed-copy strong{
-  font-size:14px;
-  line-height:1.1;
-  font-weight:850;
-  letter-spacing:-.02em;
-  color:#1c2e5a;
-}
-.album-needed-copy span{
-  font-size:13px;
-  line-height:1.25;
-  font-weight:600;
-  letter-spacing:-.015em;
-  color:#637492;
-}
-@media (max-width:420px){
-  .album-needed-toast{
-    width:calc(100vw - 24px);
-    min-height:66px;
-    padding:10px 14px 10px 11px;
-    gap:11px;
-    bottom:calc(var(--safe-bottom) + 104px);
-  }
-  .album-needed-icon{width:44px;height:44px;min-width:44px;}
-  .album-needed-icon svg{width:24px;height:24px;}
-  .album-needed-copy strong{font-size:13.5px;}
-  .album-needed-copy span{font-size:12.5px;}
-}
-
-*{
-  -webkit-tap-highlight-color: transparent !important;
-}
-button:focus, button:active, select:focus, select:active, a:focus, a:active{
-  outline:none !important;
-  box-shadow:none !important;
-}
-
-
-/* === FIX 06/05/2026: topbar unificata per pagine e scheda carta ===
-   Cambia questi valori una sola volta e si spostano insieme:
-   - --poke-page-x: distanza laterale
-   - --poke-page-top: altezza dall'alto, inclusa safe-area
-   - --poke-view-y: correzione verticale comune delle viste
-   - --poke-topbar-bottom: spazio sotto la topbar */
-:root{
-  --poke-page-x:20px;
-  --poke-page-top:calc(var(--safe-top) + 10px);
-  --poke-view-y:-16px;
-  --poke-topbar-bottom:6px;
-}
-.content{
-  padding-top:var(--poke-page-top) !important;
-  padding-left:var(--poke-page-x) !important;
-  padding-right:var(--poke-page-x) !important;
-}
-.add-album-view,
-.album-detail-view,
-.add-card-search-view{
-  margin-top:var(--poke-view-y) !important;
-}
-.add-album-topbar,
-.album-detail-topbar,
-.card-search-topbar,
-#detailModal .card-sheet-topbar{
-  min-height:var(--topbar-control-size) !important;
-  padding:0 0 var(--poke-topbar-bottom) !important;
-  margin:0 0 6px !important;
-  display:flex !important;
-  align-items:flex-start !important;
-}
-#detailModal .card-sheet-container{
-  max-width:430px !important;
-  padding:calc(var(--poke-page-top) + var(--poke-view-y)) var(--poke-page-x) calc(var(--safe-bottom) + 24px) !important;
-}
-#detailModal .card-sheet-topbar{
-  position:relative !important;
-  justify-content:space-between !important;
-  gap:8px !important;
-}
-
-/* === MOD 08/05/2026: omino login in alto a destra home === */
-#homeView{position:relative;}
-.top-meta{padding-right:68px !important;}
-.home-profile-btn{
-  appearance:none;
-  -webkit-appearance:none;
-  position:absolute;
-  top:16px;
-  right:14px;
-  z-index:8;
-  width:54px;
-  height:54px;
-  min-width:54px;
-  border:0;
-  border-radius:999px;
-  background:transparent;
-  color:#7f8fac;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:0;
-  box-shadow:none;
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
-}
-.home-profile-btn:hover{
-  transform:translateY(-1px);
-  background:transparent;
-  color:#7f8fac;
-  box-shadow:none;
-}
-.home-profile-btn:active{transform:scale(.98);}
-.home-profile-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px;}
-.home-profile-icon{width:42px;height:42px;display:block;filter:drop-shadow(0 8px 14px rgba(66,89,152,.16));}
-.home-profile-icon .profile-ring{stroke:#b9d9ff;stroke-width:24;fill:none;}
-.home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
-@media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
-
-</style>
-
-
-<!-- === FIX 03/05/2026: lucchetto nel FAB quando non esistono album === -->
-<style>
-.fab-plus-mark{display:block;}
-.fab-lock-mark{display:none;}
-.fab.is-locked .fab-plus-mark{display:none !important;}
-.fab.is-locked .fab-lock-mark{display:block !important;}
-
-*{
-  -webkit-tap-highlight-color: transparent !important;
-}
-button:focus, button:active, select:focus, select:active, a:focus, a:active{
-  outline:none !important;
-  box-shadow:none !important;
-}
-
-
-/* === FIX 06/05/2026: topbar unificata per pagine e scheda carta ===
-   Cambia questi valori una sola volta e si spostano insieme:
-   - --poke-page-x: distanza laterale
-   - --poke-page-top: altezza dall'alto, inclusa safe-area
-   - --poke-view-y: correzione verticale comune delle viste
-   - --poke-topbar-bottom: spazio sotto la topbar */
-:root{
-  --poke-page-x:20px;
-  --poke-page-top:calc(var(--safe-top) + 10px);
-  --poke-view-y:-16px;
-  --poke-topbar-bottom:6px;
-}
-.content{
-  padding-top:var(--poke-page-top) !important;
-  padding-left:var(--poke-page-x) !important;
-  padding-right:var(--poke-page-x) !important;
-}
-.add-album-view,
-.album-detail-view,
-.add-card-search-view{
-  margin-top:var(--poke-view-y) !important;
-}
-.add-album-topbar,
-.album-detail-topbar,
-.card-search-topbar,
-#detailModal .card-sheet-topbar{
-  min-height:var(--topbar-control-size) !important;
-  padding:0 0 var(--poke-topbar-bottom) !important;
-  margin:0 0 6px !important;
-  display:flex !important;
-  align-items:flex-start !important;
-}
-#detailModal .card-sheet-container{
-  max-width:430px !important;
-  padding:calc(var(--poke-page-top) + var(--poke-view-y)) var(--poke-page-x) calc(var(--safe-bottom) + 24px) !important;
-}
-#detailModal .card-sheet-topbar{
-  position:relative !important;
-  justify-content:space-between !important;
-  gap:8px !important;
-}
-
-/* === MOD 08/05/2026: omino login in alto a destra home === */
-#homeView{position:relative;}
-.top-meta{padding-right:68px !important;}
-.home-profile-btn{
-  appearance:none;
-  -webkit-appearance:none;
-  position:absolute;
-  top:4px;
-  right:3px;
-  z-index:8;
-  width:54px;
-  height:54px;
-  min-width:54px;
-  border:0;
-  border-radius:999px;
-  background:transparent;
-  color:#7f8fac;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:0;
-  box-shadow:none;
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
-}
-.home-profile-btn:hover{
-  transform:translateY(-1px);
-  background:transparent;
-  color:#7f8fac;
-  box-shadow:none;
-}
-.home-profile-btn:active{transform:scale(.98);}
-.home-profile-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px;}
-.home-profile-icon{width:42px;height:42px;display:block;filter:drop-shadow(0 8px 14px rgba(66,89,152,.16));}
-.home-profile-icon .profile-ring{stroke:#b9d9ff;stroke-width:24;fill:none;}
-.home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
-@media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
-
-</style>
