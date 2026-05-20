@@ -2080,6 +2080,17 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 }
 </style>
 
+
+<style>
+/* === MOD 20/05/2026: ricerca a pagine da 30, niente caricamento progressivo automatico === */
+.add-card-search-view .progress-wrap{display:none !important;}
+.add-card-search-view .card-search-panel-ux .status{min-height:16px;}
+.card-search-load-more-wrap{grid-column:1 / -1;display:flex;justify-content:center;padding:8px 2px calc(var(--safe-bottom) + 16px);}
+.card-search-load-more-btn{appearance:none;-webkit-appearance:none;min-height:46px;width:min(100%, 320px);padding:0 24px;border:1px solid rgba(255,255,255,.72);border-radius:999px;background:rgba(255,255,255,.68);color:#2f64ff;font-family:inherit;font-size:13px;font-weight:850;letter-spacing:-.02em;box-shadow:0 14px 28px rgba(66,89,152,.12), inset 0 1px 0 rgba(255,255,255,.94);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);cursor:pointer;}
+.card-search-load-more-btn:hover{background:rgba(255,255,255,.82);box-shadow:0 18px 34px rgba(47,100,255,.16), inset 0 1px 0 rgba(255,255,255,.96);}
+.card-search-load-more-btn:active{transform:scale(.98);}
+</style>
+
 </head>
   <body>
     <div class="phone-stage">
@@ -5018,6 +5029,7 @@ function finishUpdateTimer() {
     function clearResultsArea() {
       cancelResultsRender();
       state.filtered = [];
+      state.resultsPager = null;
       state.hasSearched = false;
       el.results.innerHTML = '';
       el.emptyState.style.display = 'none';
@@ -5028,6 +5040,7 @@ function finishUpdateTimer() {
       cancelResultsRender();
       clearSearchProgressAnimation();
       state.filtered = [];
+      state.resultsPager = null;
       state.suggestions = [];
       state.activeSuggestion = -1;
       state.lastSuggestionTotal = 0;
@@ -5046,6 +5059,7 @@ function finishUpdateTimer() {
     function renderEmptySearchState(message) {
       cancelResultsRender();
       state.filtered = [];
+      state.resultsPager = null;
       state.hasSearched = true;
       el.results.innerHTML = '';
       el.results.scrollTop = 0;
@@ -5060,9 +5074,10 @@ function finishUpdateTimer() {
       const displayVersion = f.version || '';
       const displaySetCode = String(f.setCode || '').toUpperCase();
       const displaySetName = f.setName || '';
-      // In elenco usiamo la preview: pesa meno della versione 'show/full'.
-      // Sono 15 risultati, non un documentario in 8K, quindi carichiamo subito le prime immagini visibili.
-      const imageUrl = getCardPreviewUrl(card) || getCardShowUrl(card);
+      // Nei risultati usiamo solo la preview già pronta.
+      // Se manca l'immagine NON carichiamo il retro carta e NON tentiamo la full/show:
+      // nei risultati deve restare leggero. Il retro resta solo nella scheda carta.
+      const imageUrl = getCardPreviewUrl(card);
       const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
       const imagePriority = resultIndex < 4 ? 'high' : 'auto';
 
@@ -5088,68 +5103,71 @@ function finishUpdateTimer() {
       const list = cards || [];
       if (!list.length) {
         renderEmptySearchState('Nessun risultato trovato con questa ricerca.');
-        updateSearchProgressFromResults(0, 1, true);
+        setProgress(0);
         return;
       }
 
       state.hasSearched = true;
       state.resultsRenderLoaded = 0;
+      state.resultsPager = {
+        list,
+        total: list.length,
+        index: 0,
+        batchSize: Number(options.batchSize || 30),
+        queryLabel: String(options.query || '').trim(),
+        generation: state.resultsRenderGeneration,
+      };
+
       el.emptyState.style.display = 'none';
       el.results.innerHTML = '';
       el.results.scrollTop = 0;
       setCardSearchScrollTopVisible(false);
+      setProgress(0);
 
-      const total = list.length;
-      const queryLabel = String(options.query || '').trim();
-      const initialBatchSize = Number(options.initialBatchSize || 30);
-      const batchSize = Number(options.batchSize || 30);
-      const generation = state.resultsRenderGeneration;
-      let index = 0;
+      const totalText = state.resultsPager.total.toLocaleString('it-IT');
+      if (state.resultsPager.queryLabel) {
+        setStatus(`${totalText} risultati totali per “${state.resultsPager.queryLabel}”.`, 'success');
+      } else {
+        setStatus(`${totalText} risultati totali.`, 'success');
+      }
 
-      const updateRenderStatus = () => {
-        if (!queryLabel) return;
-        const loaded = Math.min(index, total).toLocaleString('it-IT');
-        const totalText = total.toLocaleString('it-IT');
-        if (index < total) {
-          setStatus(`${loaded}/${totalText} risultati caricati per “${queryLabel}”.`, 'success');
-        } else {
-          setStatus(`${totalText} risultati per “${queryLabel}”.`, 'success');
-        }
-      };
+      appendNextResultsBatch();
+    }
 
-      const appendBatch = () => {
-        if (generation !== state.resultsRenderGeneration) return;
+    function removeLoadMoreResultsButton() {
+      el.results.querySelector('[data-load-more-results]')?.closest('.card-search-load-more-wrap')?.remove();
+    }
 
-        const limit = index === 0 ? initialBatchSize : batchSize;
-        const html = [];
-        const start = performance.now();
-        let added = 0;
+    function appendNextResultsBatch() {
+      const pager = state.resultsPager;
+      if (!pager || pager.generation !== state.resultsRenderGeneration) return;
 
-        while (index < total && added < limit) {
-          html.push(getResultCardHtml(list[index], index));
-          index += 1;
-          added += 1;
+      removeLoadMoreResultsButton();
 
-          // Se il telefono è lento, non forziamo il browser a fare ginnastica olimpica.
-          if (index > initialBatchSize && performance.now() - start > 12) break;
-        }
+      const html = [];
+      let added = 0;
+      while (pager.index < pager.total && added < pager.batchSize) {
+        html.push(getResultCardHtml(pager.list[pager.index], pager.index));
+        pager.index += 1;
+        added += 1;
+      }
 
-        if (html.length) {
-          el.results.insertAdjacentHTML('beforeend', html.join(''));
-          state.resultsRenderLoaded = index;
-          updateRenderStatus();
-          updateSearchProgressFromResults(index, total, index >= total);
-        }
+      if (html.length) {
+        el.results.insertAdjacentHTML('beforeend', html.join(''));
+        state.resultsRenderLoaded = pager.index;
+      }
 
-        if (index < total) {
-          state.resultsRenderHandle = requestIdleWork(appendBatch, 850);
-        } else {
-          state.resultsRenderHandle = null;
-          updateSearchProgressFromResults(total, total, true);
-        }
-      };
-
-      appendBatch();
+      if (pager.index < pager.total) {
+        const remaining = pager.total - pager.index;
+        const nextCount = Math.min(pager.batchSize, remaining);
+        el.results.insertAdjacentHTML('beforeend', `
+          <div class="card-search-load-more-wrap">
+            <button class="card-search-load-more-btn" type="button" data-load-more-results="1">
+              Mostra altri risultati
+            </button>
+          </div>
+        `);
+      }
     }
 
     function buildSuggestions(query) {
@@ -5208,13 +5226,8 @@ function finishUpdateTimer() {
     }
 
     function preloadResultImages(cards, limit = 15) {
-      (cards || []).slice(0, limit).forEach(card => {
-        const src = getCardPreviewUrl(card) || getCardShowUrl(card);
-        if (!src) return;
-        const img = new Image();
-        img.decoding = 'async';
-        img.src = src;
-      });
+      // Funzione lasciata per compatibilità, ma volutamente inattiva.
+      // Il preload dei risultati rallentava la ricerca e poteva caricare immagini non necessarie.
     }
 
     function runSearch(rawQuery) {
@@ -5231,7 +5244,8 @@ function finishUpdateTimer() {
         return;
       }
 
-      playSearchProgressAnimation();
+      clearSearchProgressAnimation();
+      setProgress(0);
 
       const results = state.cards
         .map(card => ({ card, score: computeScore(card, parsed) }))
@@ -5240,11 +5254,10 @@ function finishUpdateTimer() {
         .map(x => x.card);
 
       state.filtered = results;
-      preloadResultImages(results, 15);
+      // Mostriamo 30 risultati alla volta. Gli altri restano fermi finché l'utente non chiede esplicitamente il prossimo blocco.
       renderResults(results, {
         query: rawQuery,
-        initialBatchSize: 15,
-        batchSize: 15,
+        batchSize: 30,
       });
     }
 
@@ -5560,6 +5573,18 @@ el.autocomplete.addEventListener('click', (e) => {
       });
 
       el.results.addEventListener('click', (e) => {
+        const loadMore = e.target.closest('[data-load-more-results]');
+        if (loadMore) {
+          const alreadyLoaded = state.resultsRenderLoaded || 0;
+          appendNextResultsBatch();
+          requestAnimationFrame(() => {
+            const cards = el.results.querySelectorAll('.card');
+            const firstNewCard = cards[alreadyLoaded];
+            if (firstNewCard) firstNewCard.scrollIntoView({ block: 'nearest' });
+          });
+          return;
+        }
+
         const card = e.target.closest('.card');
         if (!card) return;
         openCardDetails(card.dataset.id);
