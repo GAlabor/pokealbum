@@ -7,6 +7,8 @@
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
     <title>PokéAlbum Home</title>
+    <link rel="preconnect" href="https://www.cardtrader.com" crossorigin>
+    <link rel="dns-prefetch" href="//www.cardtrader.com">
     <style>/* CSS ripulito: duplicati uniti, selettori inutilizzati rimossi. */
 /* FIX: evita il flash del messaggio "crea prima un album" durante il caricamento.
    La regola è in alto nel CSS così il toast nasce già invisibile, invece di fare il fenomeno per mezzo secondo. */
@@ -47,6 +49,44 @@ button, input{font:inherit;}
 .thumb-wrap{background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));padding:12px;display:flex;justify-content:center;align-items:center;min-height:250px;aspect-ratio:auto;}
 .thumb-wrap img{width:100%;max-width:200px;height:auto;display:block;border-radius:12px;object-fit:contain;}
 .thumb-fallback{color:var(--muted);font-size:0.9rem;text-align:center;padding:14px;min-height:220px;display:flex;align-items:center;justify-content:center;}
+
+.image-loading-placeholder{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:8px;
+text-align:center;
+color:#7382a2;
+font-size:12px;
+font-weight:750;
+line-height:1.25;
+}
+.image-loading-placeholder.card-back-loader{
+width:100%;
+max-width:200px;
+min-height:auto;
+padding:0;
+margin:0 auto;
+}
+.image-loading-placeholder.card-back-loader img{
+width:100%;
+max-width:inherit;
+height:auto;
+display:block;
+border-radius:12px;
+object-fit:contain;
+opacity:.94;
+filter:drop-shadow(0 10px 18px rgba(0,0,0,.18));
+}
+#detailModal .image-loading-placeholder.card-back-loader{
+max-width:320px;
+}
+#detailModal .image-loading-placeholder.card-back-loader img{
+border-radius:16px;
+box-shadow:0 12px 28px rgba(57,91,176,.16);
+}
+
 .card-body{padding:12px;display:grid;gap:6px;}
 .card-title{font-weight:800;font-size:17px;line-height:1.18;margin:0;}
 .card-meta{margin-top:0;color:var(--muted);font-size:13px;line-height:1.35;display:grid;gap:0;}
@@ -1818,6 +1858,30 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   }
 }
 
+
+/* FIX loader scheda carta: il retro usa esattamente gli stessi max-width della carta finale.
+   Prima faceva il gigante educato, ma sempre gigante era. */
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+  width:100%;
+  max-width:320px;
+  padding:0;
+  margin:0 auto;
+}
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader img{
+  width:100%;
+  max-width:100%;
+  height:auto;
+  display:block;
+  border-radius:16px;
+  object-fit:contain;
+}
+@media (max-width:760px){
+  #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{max-width:300px;}
+}
+@media (max-width:420px){
+  #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{max-width:285px;}
+}
+
 </style>
   
 <style>
@@ -1972,6 +2036,50 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   }
 }
 </style>
+
+<style>
+/* === FIX loader scheda carta: retro leggermente più piccolo, testo sotto visibile, layout stabile === */
+#detailModal .detail-image-wrap{
+  align-items:center;
+  min-height:430px;
+}
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+  width:100%;
+  max-width:270px;
+  padding:0;
+  margin:0 auto;
+  gap:10px;
+}
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader img{
+  width:100%;
+  max-width:100%;
+  height:auto;
+  display:block;
+  border-radius:16px;
+  object-fit:contain;
+  opacity:.96;
+  filter:drop-shadow(0 10px 22px rgba(57,91,176,.22));
+  box-shadow:0 12px 28px rgba(57,91,176,.16);
+}
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader > div{
+  color:#2f64ff;
+  font-size:13px;
+  font-weight:900;
+  line-height:1.15;
+  letter-spacing:-.01em;
+  text-shadow:0 1px 0 rgba(255,255,255,.72);
+}
+@media (max-width:760px){
+  #detailModal .detail-image-wrap{min-height:430px;}
+  #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{max-width:268px;}
+}
+@media (max-width:420px){
+  #detailModal .detail-image-wrap{min-height:426px;}
+  #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{max-width:266px;}
+  #detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader > div{font-size:13px;}
+}
+</style>
+
 </head>
   <body>
     <div class="phone-stage">
@@ -3394,7 +3502,7 @@ paint-order="stroke">
             </div>
           </div>
           <div class="detail-content">
-            <div class="detail-image-wrap" id="detailImageWrap"><img class="detail-img" id="detailCardImage" src="" alt=""></div>
+            <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Caricamento immagine"><div>Caricamento immagine in corso</div></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""></div>
             <div class="detail-price"><span class="detail-price-label">Prezzo</span><br><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-cards">
               <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Serie</div><input class="info-edit-input" id="cardSeriesInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Data</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Provenienza</div><input class="info-edit-input" id="cardOriginInput" type="text" autocomplete="off" placeholder="Non specificato"></div></div></section>
@@ -4946,19 +5054,23 @@ function finishUpdateTimer() {
       el.emptyState.style.display = 'block';
     }
 
-    function getResultCardHtml(card) {
+    function getResultCardHtml(card, resultIndex = 0) {
       const f = getDisplayFields(card);
       const displayName = toTitleCase(f.name || '-');
       const displayVersion = f.version || '';
       const displaySetCode = String(f.setCode || '').toUpperCase();
       const displaySetName = f.setName || '';
-      const showUrl = getCardShowUrl(card);
+      // In elenco usiamo la preview: pesa meno della versione 'show/full'.
+      // Sono 15 risultati, non un documentario in 8K, quindi carichiamo subito le prime immagini visibili.
+      const imageUrl = getCardPreviewUrl(card) || getCardShowUrl(card);
+      const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
+      const imagePriority = resultIndex < 4 ? 'high' : 'auto';
 
       return `
         <article class="card" data-id="${card.id}">
           <div class="thumb-wrap">
-            ${showUrl
-              ? `<img class="thumb" loading="lazy" src="${escapeHtml(showUrl)}" alt="${escapeHtml(displayName)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-fallback',textContent:'Immagine non disponibile'}))">`
+            ${imageUrl
+              ? `<img class="thumb" loading="${imageLoading}" decoding="async" fetchpriority="${imagePriority}" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(displayName)}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'thumb-fallback',textContent:'Immagine non disponibile'}))">`
               : `<div class="thumb-fallback">Immagine non disponibile</div>`}
           </div>
           <div class="card-body">
@@ -5014,7 +5126,7 @@ function finishUpdateTimer() {
         let added = 0;
 
         while (index < total && added < limit) {
-          html.push(getResultCardHtml(list[index]));
+          html.push(getResultCardHtml(list[index], index));
           index += 1;
           added += 1;
 
@@ -5070,7 +5182,7 @@ function finishUpdateTimer() {
         return `
           <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
             ${previewUrl
-              ? `<img class="suggestion-thumb" loading="lazy" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
+              ? `<img class="suggestion-thumb" loading="lazy" decoding="async" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
               : `<div class="suggestion-thumb-fallback">N/D</div>`}
             <div class="suggestion-main">
               <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
@@ -5093,6 +5205,16 @@ function finishUpdateTimer() {
         ${showAllRow}
       `;
       el.autocomplete.classList.add('open');
+    }
+
+    function preloadResultImages(cards, limit = 15) {
+      (cards || []).slice(0, limit).forEach(card => {
+        const src = getCardPreviewUrl(card) || getCardShowUrl(card);
+        if (!src) return;
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = src;
+      });
     }
 
     function runSearch(rawQuery) {
@@ -5118,10 +5240,11 @@ function finishUpdateTimer() {
         .map(x => x.card);
 
       state.filtered = results;
+      preloadResultImages(results, 15);
       renderResults(results, {
         query: rawQuery,
-        initialBatchSize: 30,
-        batchSize: 30,
+        initialBatchSize: 15,
+        batchSize: 15,
       });
     }
 
@@ -5137,9 +5260,14 @@ function finishUpdateTimer() {
       const detailTopMeta = [f.setCode ? f.setCode.toUpperCase() : '', f.version].filter(Boolean).join(' - ');
       if (el.detailTopMeta) el.detailTopMeta.textContent = detailTopMeta ? `(${detailTopMeta})` : '';
       if (detailImageUrl && el.detailCardImage) {
-        el.detailCardImage.src = detailImageUrl;
+        if (el.detailImageWrap) {
+          el.detailImageWrap.querySelectorAll('.image-loading-placeholder').forEach(node => node.remove());
+          el.detailImageWrap.insertAdjacentHTML('afterbegin', getCardBackLoaderHtml());
+        }
+        el.detailCardImage.style.display = 'none';
+        el.detailCardImage.dataset.loadingPlaceholder = 'true';
         el.detailCardImage.alt = displayName;
-        el.detailCardImage.style.display = 'block';
+        el.detailCardImage.src = detailImageUrl;
       } else if (el.detailImageWrap) {
         el.detailImageWrap.innerHTML = '<div class="thumb-fallback">Immagine non disponibile</div>';
       }
@@ -5456,7 +5584,37 @@ el.autocomplete.addEventListener('click', (e) => {
       setStatus(`Errore inizializzazione: ${err.message}`, 'error');
     });
   
-    </script>
+    
+const CARD_BACK_PLACEHOLDER = 'https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg';
+
+function getCardBackLoaderHtml(){
+  return `<div class="image-loading-placeholder card-back-loader"><img src="${CARD_BACK_PLACEHOLDER}" alt="Caricamento immagine"><div>Caricamento immagine in corso</div></div>`;
+}
+
+document.addEventListener('load', (event) => {
+  const target = event.target;
+  if(target && target.tagName === 'IMG' && target.dataset.loadingPlaceholder === 'true'){
+    const placeholder = target.parentElement?.querySelector('.image-loading-placeholder.card-back-loader');
+    if(placeholder){
+      placeholder.remove();
+    }
+    target.style.display = '';
+  }
+}, true);
+
+document.addEventListener('error', (event) => {
+  const target = event.target;
+  if(target && target.tagName === 'IMG' && target.dataset.loadingPlaceholder === 'true'){
+    const placeholder = target.parentElement?.querySelector('.image-loading-placeholder.card-back-loader');
+    if(placeholder){
+      const label = placeholder.querySelector('div');
+      if(label) label.textContent = 'Immagine non disponibile';
+    }
+  }
+}, true);
+
+
+</script>
 
     <script>
       (() => {
