@@ -72,9 +72,9 @@ button, input{font:inherit;}
 #detailModal .topbar-menu button:last-child{border-bottom:0;}
 #detailModal .detail-price-label{color:#a8b0c7;font-weight:400;font-size:14px;}
 #detailModal .detail-price-currency{font-size:22px;font-weight:500;}
-#detailModal .detail-price-value{font-size:32px;font-weight:800;}
-#detailModal .detail-offer{margin-top:8px;color:#8e97ad;font-weight:400;font-size:12px;}
-#detailModal .offer-controls{margin-top:10px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;color:#7382a2;}
+#detailModal .detail-price-value{font-size:31px;font-weight:800;}
+#detailModal .detail-offer{margin-top:6px;color:#8e97ad;font-weight:400;font-size:12px;}
+#detailModal .offer-controls{margin-top:8px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;color:#7382a2;}
 #detailModal .offer-select,#detailModal .offer-zero-toggle{height:30px;border:1px solid rgba(120,146,207,.22);border-radius:999px;background:rgba(248,251,255,.72);color:#20345f;font:inherit;font-size:12px;font-weight:750;padding:0 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.82);outline:none;}
 #detailModal .offer-select{max-width:142px;}
 #detailModal .offer-zero-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;user-select:none;-webkit-user-select:none;}
@@ -718,7 +718,7 @@ svg{overflow:visible;}
 #detailModal .detail-content{padding:0;display:grid;gap:14px;}
 #detailModal .detail-image-wrap{display:flex;justify-content:center;padding:14px;border-radius:30px;background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.64);box-shadow:0 20px 42px rgba(66,89,152,.14),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);}
 #detailModal .detail-img{width:100%;max-width:320px;border-radius:16px;display:block;background:transparent;border:0;box-shadow:0 12px 28px rgba(57,91,176,.16);}
-#detailModal .detail-price{text-align:center;margin-top:10px;margin:0;padding:16px;border-radius:24px;background:rgba(255,255,255,.50);border:1px solid rgba(255,255,255,.62);box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.86);}
+#detailModal .detail-price{text-align:center;margin-top:10px;margin:0;padding:12px 16px;border-radius:24px;background:rgba(255,255,255,.50);border:1px solid rgba(255,255,255,.62);box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.86);}
 #detailModal .detail-price-label, #detailModal .detail-offer{color:#7382a2;}
 #detailModal .detail-price-currency, #detailModal .detail-price-value{color:#1c2e5a;}
 #detailModal .detail-cards{display:grid;gap:12px;max-width:none;margin:0 auto;width:100%;}
@@ -1111,6 +1111,14 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 #detailModal .info-row{grid-template-columns:minmax(100px,130px) minmax(0,1fr);gap:6px;}
 #detailModal .info-label{font-size:13px;font-weight:750;color:#7382a2;}
 #detailModal .info-value{font-size:14px;font-weight:650;color:#20345f;}
+#detailModal .collection-separator{display:flex;align-items:center;gap:10px;margin:6px 0 2px;}
+#detailModal .collection-separator::before,#detailModal .collection-separator::after{content:"";height:1px;background:rgba(111,134,188,.16);flex:1 1 auto;}
+#detailModal .collection-separator span{flex:0 0 auto;color:#7d8cab;font-size:11px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;line-height:1;}
+#detailModal .info-edit-input{width:100%;height:36px;min-height:36px;border-radius:12px;border:1px solid rgba(120,146,207,.12);background:rgba(255,255,255,.28);color:#20345f;padding:0 12px;font-family:inherit;font-size:inherit;font-weight:600;line-height:1.2;letter-spacing:normal;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.52);transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease,transform .18s ease;}
+#detailModal .info-edit-input::placeholder{color:#95a2bf;font-weight:600;}
+#detailModal .info-edit-input:hover{background:rgba(255,255,255,.36);border-color:rgba(120,146,207,.18);}
+#detailModal .info-edit-input:focus{border-color:rgba(47,100,255,.34);box-shadow:0 0 0 3px rgba(47,100,255,.09),inset 0 1px 0 rgba(255,255,255,.74);background:rgba(255,255,255,.58);}
+#detailModal .editable-info-row{align-items:center;}
 @media (max-width:420px){#detailModal .card-sheet-container{padding:calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 22px);}#detailModal .detail-top-name{left:58px;right:112px;}#detailModal .info-row{grid-template-columns:1fr;gap:4px;}}
 
 
@@ -3389,9 +3397,7 @@ paint-order="stroke">
             <div class="detail-image-wrap" id="detailImageWrap"><img class="detail-img" id="detailCardImage" src="" alt=""></div>
             <div class="detail-price"><span class="detail-price-label">Prezzo</span><br><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-cards">
-              <section class="info-card"><h3 class="info-card-title">Dettagli Pokemon</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">PS</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">Tipo</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">Natura</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">N. Pokédex</div><div class="info-value"></div></div></div></section>
-              <section class="info-card"><h3 class="info-card-title">Evoluzioni</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Base</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">Fase 1</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">Fase 2</div><div class="info-value"></div></div></div></section>
-              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row"><div class="info-label">Totale Set</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">Artista</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">Serie</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">Data</div><div class="info-value"></div></div><div class="info-row"><div class="info-label">Provenienza</div><div class="info-value"></div></div></div></section>
+              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Serie</div><input class="info-edit-input" id="cardSeriesInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Data</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Provenienza</div><input class="info-edit-input" id="cardOriginInput" type="text" autocomplete="off" placeholder="Non specificato"></div></div></section>
               <section class="info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="info-divider"></div><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
             </div>
           </div>
@@ -3468,6 +3474,11 @@ paint-order="stroke">
       cardRarity: document.getElementById('cardRarity'),
       cardSet: document.getElementById('cardSet'),
       cardVersion: document.getElementById('cardVersion'),
+      cardTotalSetInput: document.getElementById('cardTotalSetInput'),
+      cardArtistInput: document.getElementById('cardArtistInput'),
+      cardSeriesInput: document.getElementById('cardSeriesInput'),
+      cardDateInput: document.getElementById('cardDateInput'),
+      cardOriginInput: document.getElementById('cardOriginInput'),
       detailRaw: document.getElementById('detailRaw'),
       refreshPriceBtn: document.getElementById('refreshPriceBtn'),
       menuBtn: document.querySelector('#detailModal .menu-btn'),
@@ -5139,6 +5150,9 @@ function finishUpdateTimer() {
       if (el.cardRarity) el.cardRarity.textContent = f.rarity || '';
       if (el.cardSet) el.cardSet.textContent = setText || '';
       if (el.cardVersion) el.cardVersion.textContent = f.version || '';
+      [el.cardTotalSetInput, el.cardArtistInput, el.cardSeriesInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
+        if (input) input.value = '';
+      });
       if (el.detailRaw) el.detailRaw.textContent = JSON.stringify(card, null, 2);
       if (el.collapsibleContent && el.collapsibleTrigger) {
         el.collapsibleContent.classList.remove('open');
