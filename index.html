@@ -2441,6 +2441,257 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   font-feature-settings:"tnum" 1, "lnum" 1 !important;
 }
 
+
+
+/* === MOD 21/05/2026: card varianti sotto prezzo === */
+#detailModal .detail-variant-card{
+  margin-top:10px;
+  padding:8px 78px;
+  border-radius:28px;
+  background:rgba(245,248,255,.76);
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 14px 30px rgba(66,89,152,.10), inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(22px) saturate(145%);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  overflow:hidden;
+}
+#detailModal .detail-variant-row{
+  min-height:42px;
+  padding:0 14px 0 10px;
+  border-radius:999px;
+  border:1px solid rgba(155,176,221,.26);
+  background:rgba(255,255,255,.46);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-tap-highlight-color:transparent;
+  transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+#detailModal .detail-variant-row:active{
+  transform:scale(.98);
+}
+#detailModal .detail-variant-row:has(input:checked){
+  background:rgba(255,255,255,.70);
+  border-color:rgba(47,100,255,.30);
+  box-shadow:0 8px 18px rgba(47,100,255,.10), inset 0 1px 0 rgba(255,255,255,.86);
+}
+#detailModal .detail-variant-radio{
+  width:23px;
+  height:23px;
+  position:relative;
+  display:inline-block;
+  flex:0 0 23px;
+}
+#detailModal .detail-variant-radio input{
+  display:none;
+}
+#detailModal .detail-variant-circle{
+  width:23px;
+  height:23px;
+  border-radius:50%;
+  border:1.5px solid rgba(94,120,170,.68);
+  box-sizing:border-box;
+  display:block;
+  position:relative;
+  background:rgba(255,255,255,.28);
+}
+#detailModal .detail-variant-radio input:checked + .detail-variant-circle{
+  border-color:#2d8cff;
+}
+#detailModal .detail-variant-radio input:checked + .detail-variant-circle::before{
+  content:"";
+  position:absolute;
+  top:3px;
+  left:3px;
+  right:3px;
+  bottom:3px;
+  border-radius:50%;
+  background:#2d8cff;
+}
+#detailModal .detail-variant-text{
+  color:#60729f;
+  font-size:15px;
+  font-weight:850;
+  line-height:1;
+  letter-spacing:-.02em;
+  white-space:nowrap;
+}
+@media (max-width:420px){
+  .detail-variant-card{
+    padding:8px 10px;
+    gap:8px;
+  }
+  #detailModal .detail-variant-row{
+    min-height:40px;
+    padding:0 10px 0 9px;
+    gap:6px;
+  }
+  #detailModal .detail-variant-text{
+    font-size:14px;
+  }
+}
+
+
+/* === FIX 21/05/2026: Scheda carta - card varianti e spazi uniformi === */
+#detailModal .detail-content{
+  gap:12px !important;
+}
+#detailModal .detail-cards{
+  gap:12px !important;
+  margin:0 auto !important;
+}
+#detailModal .detail-image-wrap,
+#detailModal .detail-price,
+#detailModal .detail-variant-card,
+#detailModal .info-card{
+  border-radius:24px !important;
+  background:rgba(255,255,255,.52) !important;
+  border:1px solid rgba(255,255,255,.64) !important;
+  box-shadow:0 14px 30px rgba(66,89,152,.10), inset 0 1px 0 rgba(255,255,255,.88) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+}
+#detailModal .detail-variant-card{
+  width:100% !important;
+  margin:0 !important;
+  padding:10px 12px !important;
+  display:grid !important;
+  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+  align-items:center !important;
+  justify-content:initial !important;
+  gap:8px !important;
+  overflow:visible !important;
+}
+#detailModal .detail-variant-row{
+  width:100% !important;
+  min-width:0 !important;
+  min-height:42px !important;
+  padding:0 10px !important;
+  justify-content:center !important;
+  gap:6px !important;
+}
+#detailModal .detail-variant-text{
+  min-width:0 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+@media (max-width:360px){
+  #detailModal .detail-variant-card{
+    padding:9px 10px !important;
+    gap:6px !important;
+  }
+  #detailModal .detail-variant-row{
+    min-height:40px !important;
+    padding:0 7px !important;
+    gap:5px !important;
+  }
+  #detailModal .detail-variant-radio,
+  #detailModal .detail-variant-circle{
+    width:20px !important;
+    height:20px !important;
+    flex-basis:20px !important;
+  }
+  #detailModal .detail-variant-radio input:checked + .detail-variant-circle::before{
+    inset:3px !important;
+  }
+  #detailModal .detail-variant-text{
+    font-size:13px !important;
+  }
+}
+
+
+
+/* === FIX 21/05/2026: varianti scheda carta - testo pulito senza pill === */
+#detailModal .detail-variant-row{
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  border-radius:0 !important;
+  padding:0 6px !important;
+}
+#detailModal .detail-variant-row:has(input:checked){
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+#detailModal .detail-variant-text{
+  font-size:13px !important;
+  font-weight:820 !important;
+  color:#60729f !important;
+  transition:color .16s ease;
+}
+#detailModal .detail-variant-row:has(input:checked) .detail-variant-text{
+  color:#2d8cff !important;
+}
+@media (max-width:360px){
+  #detailModal .detail-variant-text{
+    font-size:12px !important;
+  }
+}
+
+
+/* === FIX 21/05/2026: varianti più compatte in Scheda carta === */
+#detailModal .detail-variant-card{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:2px !important;
+  padding:8px 10px !important;
+}
+#detailModal .detail-variant-row{
+  width:auto !important;
+  min-height:30px !important;
+  padding:0 5px !important;
+  gap:3px !important;
+  flex:0 0 auto !important;
+}
+#detailModal .detail-variant-radio,
+#detailModal .detail-variant-circle{
+  width:16px !important;
+  height:16px !important;
+  flex:0 0 16px !important;
+}
+#detailModal .detail-variant-circle{
+  border-width:1.35px !important;
+}
+#detailModal .detail-variant-radio input:checked + .detail-variant-circle::before{
+  inset:3px !important;
+}
+#detailModal .detail-variant-text{
+  font-size:11.5px !important;
+  font-weight:800 !important;
+  letter-spacing:-.025em !important;
+}
+@media (max-width:360px){
+  #detailModal .detail-variant-card{
+    gap:1px !important;
+    padding:7px 8px !important;
+  }
+  #detailModal .detail-variant-row{
+    min-height:28px !important;
+    padding:0 4px !important;
+    gap:3px !important;
+  }
+  #detailModal .detail-variant-radio,
+  #detailModal .detail-variant-circle{
+    width:15px !important;
+    height:15px !important;
+    flex-basis:15px !important;
+  }
+  #detailModal .detail-variant-text{
+    font-size:11px !important;
+  }
+}
+
 </style></head>
   <body>
     <div class="phone-stage">
@@ -3857,8 +4108,31 @@ paint-order="stroke">
           <div class="detail-content">
             <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Caricamento immagine"><div>Caricamento immagine in corso</div></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""></div>
             <div class="detail-price"><span class="detail-price-label">Prezzo</span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
+            <div class="detail-variant-card" aria-label="Varianti carta">
+              <label class="detail-variant-row">
+                <span class="detail-variant-radio">
+                  <input type="checkbox" id="variantHolo" autocomplete="off">
+                  <span class="detail-variant-circle"></span>
+                </span>
+                <span class="detail-variant-text">Holo</span>
+              </label>
+              <label class="detail-variant-row">
+                <span class="detail-variant-radio">
+                  <input type="checkbox" id="variantReverse" autocomplete="off">
+                  <span class="detail-variant-circle"></span>
+                </span>
+                <span class="detail-variant-text">Reverse</span>
+              </label>
+              <label class="detail-variant-row">
+                <span class="detail-variant-radio">
+                  <input type="checkbox" id="variantIllustration" autocomplete="off">
+                  <span class="detail-variant-circle"></span>
+                </span>
+                <span class="detail-variant-text">Illustration</span>
+              </label>
+            </div>
             <div class="detail-cards">
-              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Serie</div><input class="info-edit-input" id="cardSeriesInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Data</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Provenienza</div><input class="info-edit-input" id="cardOriginInput" type="text" autocomplete="off" placeholder="Non specificato"></div></div></section>
+              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Data</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Provenienza</div><input class="info-edit-input" id="cardOriginInput" type="text" autocomplete="off" placeholder="Non specificato"></div></div></section>
               <section class="info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="info-divider"></div><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
             </div>
           </div>
@@ -5378,8 +5652,8 @@ function finishUpdateTimer() {
       const displaySetName = f.setName || '';
 
       const imageUrl = getCardPreviewUrl(card);
-      const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
-      const imagePriority = resultIndex < 4 ? 'high' : 'auto';
+      const imageLoading = resultIndex < 15 ? 'eager' : 'lazy';
+      const imagePriority = resultIndex < 15 ? 'high' : 'auto';
 
       return `
         <article class="card" data-id="${card.id}">
@@ -5486,12 +5760,29 @@ function finishUpdateTimer() {
       return matches.slice(0, 15).map(x => x.card);
     }
 
+    const suggestionImagePreloadCache = new Set();
+
+    function preloadSuggestionPreviewImages(items) {
+      (items || []).slice(0, 15).forEach(card => {
+        const previewUrl = getCardPreviewUrl(card);
+        if (!previewUrl || suggestionImagePreloadCache.has(previewUrl)) return;
+        suggestionImagePreloadCache.add(previewUrl);
+
+        const img = new Image();
+        img.decoding = 'async';
+        img.loading = 'eager';
+        img.src = previewUrl;
+      });
+    }
+
     function renderSuggestions(items) {
       if (!items.length) {
         el.autocomplete.classList.remove('open');
         el.autocomplete.innerHTML = '';
         return;
       }
+
+      preloadSuggestionPreviewImages(items);
 
       const rows = items.map((card, index) => {
         const f = getDisplayFields(card);
@@ -5500,7 +5791,7 @@ function finishUpdateTimer() {
         return `
           <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
             ${previewUrl
-              ? `<img class="suggestion-thumb" loading="lazy" decoding="async" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
+              ? `<img class="suggestion-thumb" loading="eager" decoding="async" fetchpriority="high" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
               : `<div class="suggestion-thumb-fallback">N/D</div>`}
             <div class="suggestion-main">
               <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
@@ -5563,7 +5854,7 @@ function finishUpdateTimer() {
       const f = getDisplayFields(card);
       const displayName = toTitleCase(f.name || 'Dettaglio carta');
       const detailImageUrl = getCardFullUrl(card);
-      const setText = [f.setCode, f.setName ? `(${f.setName})` : ''].filter(Boolean).join(' ');
+      const setText = [f.setCode ? f.setCode.toUpperCase() : '', f.setName ? `(${f.setName})` : ''].filter(Boolean).join(' ');
       if (el.detailTopName) el.detailTopName.textContent = displayName;
       const detailTopMeta = [f.setCode ? f.setCode.toUpperCase() : '', f.version].filter(Boolean).join(' - ');
       if (el.detailTopMeta) el.detailTopMeta.textContent = detailTopMeta ? `(${detailTopMeta})` : '';
