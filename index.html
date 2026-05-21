@@ -1047,45 +1047,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   font-size:9px;
   font-weight:850;
 }
-
-.add-card-search-view .card-search-panel-ux .suggestion-thumb-shell{
-  position:relative;
-  width:38px;
-  height:52px;
-  border-radius:4px;
-  overflow:hidden;
-  display:block;
-  background:rgba(248,251,255,.78);
-  box-shadow:0 1px 3px rgba(20,35,75,.12);
-}
-.add-card-search-view .card-search-panel-ux .suggestion-thumb-shell .suggestion-thumb{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  opacity:0;
-  transform:translateZ(0);
-  transition:opacity .12s ease;
-}
-.add-card-search-view .card-search-panel-ux .suggestion-thumb-shell .suggestion-thumb.is-loaded,
-.add-card-search-view .card-search-panel-ux .suggestion-thumb-shell.is-ready .suggestion-thumb{
-  opacity:1;
-}
-.add-card-search-view .card-search-panel-ux .suggestion-thumb-skeleton{
-  position:absolute;
-  inset:0;
-  opacity:.9;
-  background:linear-gradient(110deg, rgba(120,146,207,.12), rgba(255,255,255,.74), rgba(120,146,207,.12));
-  background-size:200% 100%;
-  animation:suggestionThumbPulse .72s linear infinite;
-}
-.add-card-search-view .card-search-panel-ux .suggestion-thumb-shell.is-ready .suggestion-thumb-skeleton{
-  display:none;
-}
-@keyframes suggestionThumbPulse{
-  0%{background-position:200% 0;}
-  100%{background-position:-200% 0;}
-}
 .add-card-search-view .card-search-panel-ux .suggestion-main{
   min-width:0;
   display:block;
@@ -4201,10 +4162,6 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
       searchWarmupStarted: false,
       searchWarmupDone: false,
       searchWarmupTimer: null,
-      previewPreloadCache: new Set(),
-      suggestionPreviewCache: new Map(),
-      suggestionRenderToken: 0,
-      suggestionImageLoadLimit: 8,
       resultsRenderHandle: null,
       resultsRenderGeneration: 0,
       resultsRenderLoaded: 0,
@@ -4692,88 +4649,22 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
       return raw;
     }
 
+    function getCardPreviewUrls(card) {
+      const rawImageUrl = String(card?.image_url || '').trim();
+      const candidates = [
+        String(card?.image_preview_url || '').trim(),
+        deriveCardTraderImageUrl(rawImageUrl, 'preview'),
+        deriveCardTraderImageUrl(rawImageUrl, 'show'),
+        rawImageUrl,
+        String(card?.image_full_url || '').trim(),
+        deriveCardTraderImageUrl(rawImageUrl, 'full'),
+      ].filter(Boolean);
+
+      return [...new Set(candidates)];
+    }
+
     function getCardPreviewUrl(card) {
-      return String(card?.image_preview_url || '').trim()
-        || deriveCardTraderImageUrl(card?.image_url, 'preview')
-        || String(card?.image_url || '').trim();
-    }
-
-    function preloadCardPreviewImages(cards, limit = 15) {
-      const list = Array.isArray(cards) ? cards.slice(0, limit) : [];
-      list.forEach(card => {
-        const url = getCardPreviewUrl(card);
-        if (!url || state.previewPreloadCache.has(url)) return;
-        state.previewPreloadCache.add(url);
-
-        const img = new Image();
-        img.decoding = 'async';
-        img.loading = 'eager';
-        img.fetchPriority = 'high';
-        img.src = url;
-
-        if (typeof img.decode === 'function') {
-          img.decode().catch(() => {});
-        }
-      });
-    }
-
-    function getSuggestionPreviewEntry(url) {
-      if (!url) return null;
-
-      let entry = state.suggestionPreviewCache.get(url);
-      if (entry) return entry;
-
-      entry = {
-        status: 'idle',
-        url,
-        promise: null,
-      };
-      state.suggestionPreviewCache.set(url, entry);
-      return entry;
-    }
-
-    function loadSuggestionPreviewImage(url, priority = 'auto') {
-      const entry = getSuggestionPreviewEntry(url);
-      if (!entry || entry.status === 'loaded' || entry.status === 'error') return entry;
-      if (entry.status === 'loading') return entry;
-
-      entry.status = 'loading';
-      entry.promise = new Promise(resolve => {
-        const img = new Image();
-        img.decoding = 'async';
-        img.loading = 'eager';
-        img.fetchPriority = priority;
-        img.onload = () => {
-          entry.status = 'loaded';
-          resolve(entry);
-        };
-        img.onerror = () => {
-          entry.status = 'error';
-          resolve(entry);
-        };
-        img.src = url;
-
-        if (typeof img.decode === 'function') {
-          img.decode()
-            .then(() => {
-              entry.status = 'loaded';
-              resolve(entry);
-            })
-            .catch(() => {});
-        }
-      });
-
-      return entry;
-    }
-
-    function warmSuggestionPreviewImages(items, limit = state.suggestionImageLoadLimit) {
-      const list = Array.isArray(items) ? items.slice(0, limit) : [];
-      list.forEach((card, index) => {
-        const url = getCardPreviewUrl(card);
-        if (!url) return;
-        const priority = index < 4 ? 'high' : 'auto';
-        loadSuggestionPreviewImage(url, priority);
-      });
+      return getCardPreviewUrls(card)[0] || '';
     }
 
     function getCardFullUrl(card) {
@@ -5881,33 +5772,63 @@ function finishUpdateTimer() {
       return matches.slice(0, 15).map(x => x.card);
     }
 
-    function renderSuggestions(items) {
-      state.suggestionRenderToken += 1;
-      const renderToken = state.suggestionRenderToken;
+    const suggestionImagePreloadCache = new Set();
 
+    function preloadSuggestionPreviewImages(items) {
+      (items || []).slice(0, 15).forEach(card => {
+        const previewUrl = getCardPreviewUrl(card);
+        if (!previewUrl || suggestionImagePreloadCache.has(previewUrl)) return;
+        suggestionImagePreloadCache.add(previewUrl);
+
+        const img = new Image();
+        img.decoding = 'async';
+        img.loading = 'eager';
+        img.src = previewUrl;
+      });
+    }
+
+    function trySuggestionThumbFallback(img) {
+      if (!img) return;
+
+      let fallbacks = [];
+      try {
+        fallbacks = JSON.parse(decodeURIComponent(img.dataset.fallbacks || '[]'));
+      } catch (_) {
+        fallbacks = [];
+      }
+
+      const nextUrl = fallbacks.shift();
+      if (nextUrl) {
+        img.dataset.fallbacks = encodeURIComponent(JSON.stringify(fallbacks));
+        img.src = nextUrl;
+        return;
+      }
+
+      const fallback = document.createElement('div');
+      fallback.className = 'suggestion-thumb-fallback';
+      fallback.textContent = 'N/D';
+      img.replaceWith(fallback);
+    }
+
+    function renderSuggestions(items) {
       if (!items.length) {
         el.autocomplete.classList.remove('open');
         el.autocomplete.innerHTML = '';
         return;
       }
 
-      warmSuggestionPreviewImages(items, state.suggestionImageLoadLimit);
+      preloadSuggestionPreviewImages(items);
 
       const rows = items.map((card, index) => {
         const f = getDisplayFields(card);
-        const previewUrl = getCardPreviewUrl(card);
-        const previewEntry = getSuggestionPreviewEntry(previewUrl);
-        const isReady = previewEntry?.status === 'loaded';
-        const isError = previewEntry?.status === 'error';
-        const priority = index < 4 ? 'high' : 'auto';
+        const previewUrls = getCardPreviewUrls(card);
+        const previewUrl = previewUrls[0] || '';
+        const fallbackData = encodeURIComponent(JSON.stringify(previewUrls.slice(1)));
 
         return `
           <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
-            ${previewUrl && !isError
-              ? `<span class="suggestion-thumb-shell ${isReady ? 'is-ready' : 'is-loading'}">
-                  <span class="suggestion-thumb-skeleton" aria-hidden="true"></span>
-                  <img class="suggestion-thumb ${isReady ? 'is-loaded' : ''}" loading="eager" decoding="async" fetchpriority="${priority}" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" data-suggestion-preview="1" onload="this.classList.add('is-loaded'); this.parentElement && this.parentElement.classList.add('is-ready'); this.parentElement && this.parentElement.classList.remove('is-loading');" onerror="this.parentElement && this.parentElement.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">
-                </span>`
+            ${previewUrl
+              ? `<img class="suggestion-thumb" loading="eager" decoding="async" fetchpriority="high" src="${escapeHtml(previewUrl)}" data-fallbacks="${escapeHtml(fallbackData)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="trySuggestionThumbFallback(this)">`
               : `<div class="suggestion-thumb-fallback">N/D</div>`}
             <div class="suggestion-main">
               <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
@@ -5930,19 +5851,6 @@ function finishUpdateTimer() {
         ${showAllRow}
       `;
       el.autocomplete.classList.add('open');
-
-      requestAnimationFrame(() => {
-        if (renderToken !== state.suggestionRenderToken) return;
-        el.autocomplete.querySelectorAll('img[data-suggestion-preview="1"]').forEach(img => {
-          if (img.complete && img.naturalWidth > 0) {
-            img.classList.add('is-loaded');
-            if (img.parentElement) {
-              img.parentElement.classList.add('is-ready');
-              img.parentElement.classList.remove('is-loading');
-            }
-          }
-        });
-      });
     }
 
     function runSearch(rawQuery) {
