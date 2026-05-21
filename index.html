@@ -1047,6 +1047,21 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   font-size:9px;
   font-weight:850;
 }
+.add-card-search-view .card-search-panel-ux .suggestion-thumb-loading{
+  color:transparent;
+  position:relative;
+  overflow:hidden;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-thumb-loading::after{
+  content:"";
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  border:2px solid rgba(138,152,181,.22);
+  border-top-color:rgba(47,100,255,.52);
+  animation:suggestionThumbSpin .75s linear infinite;
+}
+@keyframes suggestionThumbSpin{to{transform:rotate(360deg);}}
 .add-card-search-view .card-search-panel-ux .suggestion-main{
   min-width:0;
   display:block;
@@ -4376,6 +4391,7 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
       filtered: [],
       suggestions: [],
       activeSuggestion: -1,
+      suggestionThumbGeneration: 0,
       meta: null,
       selectedCard: null,
       lastSuggestionTotal: 0,
@@ -5981,29 +5997,103 @@ function finishUpdateTimer() {
       return matches.slice(0, 15).map(x => x.card);
     }
 
+    function getSuggestionThumbAlt(card) {
+      const f = getDisplayFields(card);
+      return f.name || 'Carta';
+    }
+
+    function getSuggestionThumbPlaceholderHtml(card, index) {
+      const previewUrl = getCardPreviewUrl(card);
+      if (!previewUrl) {
+        return '<div class="suggestion-thumb-fallback">N/D</div>';
+      }
+
+      return `
+        <div
+          class="suggestion-thumb-fallback suggestion-thumb-loading"
+          data-suggestion-thumb="${index}"
+          data-thumb-url="${escapeHtml(previewUrl)}"
+          data-thumb-alt="${escapeHtml(getSuggestionThumbAlt(card))}"
+          aria-label="Caricamento anteprima"
+        >...</div>
+      `;
+    }
+
+    function loadSuggestionThumbs(items, generation) {
+      const jobs = items.slice(0, 15)
+        .map((card, index) => ({
+          index,
+          url: getCardPreviewUrl(card),
+          alt: getSuggestionThumbAlt(card),
+        }))
+        .filter(job => job.url);
+
+      const maxParallelLoads = 4;
+      let cursor = 0;
+
+      const loadNext = () => {
+        if (generation !== state.suggestionThumbGeneration) return;
+        const job = jobs[cursor++];
+        if (!job) return;
+
+        const selector = `[data-suggestion-thumb="${job.index}"]`;
+        const currentNode = el.autocomplete.querySelector(selector);
+        if (!currentNode || currentNode.dataset.thumbUrl !== job.url) {
+          loadNext();
+          return;
+        }
+
+        const img = new Image();
+        img.className = 'suggestion-thumb';
+        img.alt = job.alt;
+        img.decoding = 'async';
+        img.loading = 'eager';
+        img.onload = () => {
+          if (generation !== state.suggestionThumbGeneration) return;
+          const node = el.autocomplete.querySelector(selector);
+          if (node && node.dataset.thumbUrl === job.url) {
+            node.replaceWith(img);
+          }
+          loadNext();
+        };
+        img.onerror = () => {
+          if (generation !== state.suggestionThumbGeneration) return;
+          const node = el.autocomplete.querySelector(selector);
+          if (node && node.dataset.thumbUrl === job.url) {
+            node.classList.remove('suggestion-thumb-loading');
+            node.textContent = 'N/D';
+            node.removeAttribute('aria-label');
+          }
+          loadNext();
+        };
+        img.src = job.url;
+      };
+
+      const parallelCount = Math.min(maxParallelLoads, jobs.length);
+      for (let i = 0; i < parallelCount; i += 1) {
+        loadNext();
+      }
+    }
+
     function renderSuggestions(items) {
+      state.suggestionThumbGeneration += 1;
+      const thumbGeneration = state.suggestionThumbGeneration;
+
       if (!items.length) {
         el.autocomplete.classList.remove('open');
         el.autocomplete.innerHTML = '';
         return;
       }
 
-      const rows = items.map((card, index) => {
-        const f = getDisplayFields(card);
-        const previewUrl = getCardPreviewUrl(card);
-
-        return `
-          <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
-            ${previewUrl
-              ? `<img class="suggestion-thumb" loading="lazy" decoding="async" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
-              : `<div class="suggestion-thumb-fallback">N/D</div>`}
-            <div class="suggestion-main">
-              <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
-              <div class="suggestion-meta">${highlightSuggestionText(formatSuggestionMeta(card), el.searchInput.value)}</div>
-            </div>
+      const rows = items.slice(0, 15).map((card, index) => `
+        <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
+          ${getSuggestionThumbPlaceholderHtml(card, index)}
+          <div class="suggestion-main">
+            <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
+            <div class="suggestion-meta">${highlightSuggestionText(formatSuggestionMeta(card), el.searchInput.value)}</div>
           </div>
-        `;
-      });
+        </div>
+      `);
 
       const showAllRow = state.lastSuggestionTotal > 0
         ? `
@@ -6018,6 +6108,8 @@ function finishUpdateTimer() {
         ${showAllRow}
       `;
       el.autocomplete.classList.add('open');
+
+      requestAnimationFrame(() => loadSuggestionThumbs(items, thumbGeneration));
     }
 
     function runSearch(rawQuery) {
