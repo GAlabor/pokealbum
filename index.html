@@ -2563,36 +2563,37 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 #detailModal .detail-variant-card{
   width:100% !important;
   margin:0 !important;
-  padding:10px 12px !important;
+  padding:10px 8px !important;
   display:grid !important;
-  grid-template-columns:repeat(3, minmax(0, 1fr)) !important;
+  grid-template-columns:.82fr .98fr 1.20fr !important;
   align-items:center !important;
   justify-content:initial !important;
-  gap:8px !important;
+  gap:4px !important;
   overflow:visible !important;
 }
 #detailModal .detail-variant-row{
   width:100% !important;
   min-width:0 !important;
   min-height:42px !important;
-  padding:0 10px !important;
-  justify-content:center !important;
-  gap:6px !important;
+  padding:0 3px !important;
+  justify-content:flex-start !important;
+  gap:5px !important;
 }
 #detailModal .detail-variant-text{
   min-width:0 !important;
-  overflow:hidden !important;
-  text-overflow:ellipsis !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
 }
 @media (max-width:360px){
   #detailModal .detail-variant-card{
-    padding:9px 10px !important;
-    gap:6px !important;
+    padding:9px 7px !important;
+    grid-template-columns:.80fr .98fr 1.22fr !important;
+    gap:3px !important;
   }
   #detailModal .detail-variant-row{
     min-height:40px !important;
-    padding:0 7px !important;
-    gap:5px !important;
+    padding:0 2px !important;
+    gap:4px !important;
   }
   #detailModal .detail-variant-radio,
   #detailModal .detail-variant-circle{
@@ -2616,7 +2617,7 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   background:transparent !important;
   box-shadow:none !important;
   border-radius:0 !important;
-  padding:0 6px !important;
+  padding:0 3px !important;
 }
 #detailModal .detail-variant-row:has(input:checked){
   background:transparent !important;
@@ -2639,57 +2640,264 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 }
 
 
-/* === FIX 21/05/2026: varianti più compatte in Scheda carta === */
+
+/* === FIX 21/05/2026: Scheda carta - centratura varianti Holo/Reverse/Illustration === */
 #detailModal .detail-variant-card{
-  display:flex !important;
-  align-items:center !important;
+  display:grid !important;
+  grid-template-columns:max-content max-content max-content !important;
   justify-content:center !important;
-  gap:2px !important;
-  padding:8px 10px !important;
+  align-items:center !important;
+  column-gap:18px !important;
+  row-gap:0 !important;
+  padding-left:8px !important;
+  padding-right:8px !important;
 }
 #detailModal .detail-variant-row{
   width:auto !important;
-  min-height:30px !important;
-  padding:0 5px !important;
-  gap:3px !important;
-  flex:0 0 auto !important;
-}
-#detailModal .detail-variant-radio,
-#detailModal .detail-variant-circle{
-  width:16px !important;
-  height:16px !important;
-  flex:0 0 16px !important;
-}
-#detailModal .detail-variant-circle{
-  border-width:1.35px !important;
-}
-#detailModal .detail-variant-radio input:checked + .detail-variant-circle::before{
-  inset:3px !important;
+  min-width:0 !important;
+  padding:0 !important;
+  justify-content:flex-start !important;
+  gap:5px !important;
 }
 #detailModal .detail-variant-text{
-  font-size:11.5px !important;
-  font-weight:800 !important;
-  letter-spacing:-.025em !important;
+  display:inline-block !important;
+  width:auto !important;
+  min-width:0 !important;
+  padding:0 !important;
 }
 @media (max-width:360px){
   #detailModal .detail-variant-card{
-    gap:1px !important;
-    padding:7px 8px !important;
+    grid-template-columns:max-content max-content max-content !important;
+    column-gap:14px !important;
+    padding-left:6px !important;
+    padding-right:6px !important;
   }
   #detailModal .detail-variant-row{
-    min-height:28px !important;
-    padding:0 4px !important;
-    gap:3px !important;
+    gap:4px !important;
   }
-  #detailModal .detail-variant-radio,
-  #detailModal .detail-variant-circle{
-    width:15px !important;
-    height:15px !important;
-    flex-basis:15px !important;
-  }
-  #detailModal .detail-variant-text{
-    font-size:11px !important;
-  }
+}
+
+
+
+/* === ADD 21/05/2026: zoom carta in Scheda carta === */
+#detailModal .detail-image-wrap{
+  position:relative !important;
+  cursor:zoom-in;
+}
+#detailModal .detail-image-wrap .detail-img{
+  cursor:zoom-in;
+}
+#detailModal .card-zoom-btn{
+  position:absolute;
+  right:18px;
+  bottom:18px;
+  width:42px;
+  height:42px;
+  border:1px solid rgba(255,255,255,.56);
+  border-radius:50%;
+  background:rgba(255,255,255,.58);
+  color:#5c6f99;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  box-shadow:0 12px 24px rgba(73,96,157,.14), inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(20px) saturate(145%);
+  -webkit-backdrop-filter:blur(20px) saturate(145%);
+  cursor:zoom-in;
+  z-index:4;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .18s ease, background-color .18s ease, color .18s ease, box-shadow .18s ease, opacity .18s ease;
+}
+#detailModal .detail-image-wrap.is-card-loaded .card-zoom-btn{
+  display:inline-flex;
+}
+#detailModal .card-zoom-btn:hover{
+  transform:translateY(-1px);
+  color:#3157c9;
+  background:rgba(255,255,255,.68);
+  box-shadow:0 16px 28px rgba(47,100,255,.16), inset 0 1px 0 rgba(255,255,255,.95);
+}
+#detailModal .card-zoom-btn:active{
+  transform:scale(.97);
+}
+#detailModal .card-zoom-btn svg{
+  width:20px;
+  height:20px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2.25;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.card-zoom-overlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:none;
+  overflow:hidden;
+  touch-action:none;
+  background:radial-gradient(
+      circle at 18% 90%,
+      rgba(154,170,255,.22),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 85% 10%,
+      rgba(126,221,255,.34),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(255,255,255,.66),
+      transparent 28%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(241,246,255,.96),
+      rgba(225,234,249,.95)
+    );
+}
+.card-zoom-overlay::before{
+  content:"";
+  position:absolute;
+  inset:-14% -20%;
+  background:radial-gradient(
+      circle at 24% 22%,
+      rgba(255,255,255,.82),
+      transparent 16%
+    ),
+    radial-gradient(
+      circle at 73% 71%,
+      rgba(255,255,255,.4),
+      transparent 19%
+    );
+  filter:blur(22px);
+  pointer-events:none;
+}
+.card-zoom-overlay.open{
+  display:block;
+}
+.card-zoom-stage{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:calc(var(--safe-top) + 64px) 18px calc(var(--safe-bottom) + 94px);
+  cursor:grab;
+}
+.card-zoom-stage.is-dragging{
+  cursor:grabbing;
+}
+.card-zoom-img{
+  max-width:min(92vw,520px);
+  max-height:calc(100dvh - 176px);
+  width:auto;
+  height:auto;
+  border-radius:20px;
+  box-shadow:0 24px 48px rgba(66,89,152,.18), 0 10px 22px rgba(25,38,82,.12);
+  transform:translate3d(var(--zoom-x,0px), var(--zoom-y,0px), 0) scale(var(--zoom-scale,1));
+  transform-origin:center center;
+  will-change:transform;
+  user-select:none;
+  -webkit-user-drag:none;
+  touch-action:none;
+}
+.card-zoom-close,
+.card-zoom-control{
+  border:1px solid rgba(255,255,255,.56);
+  background:rgba(255,255,255,.58);
+  color:#5c6f99;
+  backdrop-filter:blur(20px) saturate(145%);
+  -webkit-backdrop-filter:blur(20px) saturate(145%);
+  box-shadow:0 12px 24px rgba(73,96,157,.14), inset 0 1px 0 rgba(255,255,255,.92);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .18s ease, background-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.card-zoom-close:hover,
+.card-zoom-control:hover{
+  transform:translateY(-1px);
+  color:#3157c9;
+  background:rgba(255,255,255,.68);
+  box-shadow:0 16px 28px rgba(47,100,255,.16), inset 0 1px 0 rgba(255,255,255,.95);
+}
+.card-zoom-close:active,
+.card-zoom-control:active{
+  transform:scale(.97);
+}
+.card-zoom-close{
+  position:absolute;
+  left:20px;
+  top:calc(var(--safe-top) + 10px);
+  z-index:2;
+  width:var(--topbar-control-size);
+  height:var(--topbar-control-size);
+  min-width:var(--topbar-control-size);
+  min-height:var(--topbar-control-size);
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+}
+.card-zoom-close svg{
+  width:var(--topbar-control-icon-size);
+  height:var(--topbar-control-icon-size);
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2.4;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.card-zoom-toolbar{
+  position:absolute;
+  left:50%;
+  bottom:calc(var(--safe-bottom) + 14px);
+  transform:translateX(-50%);
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:6px;
+  min-height:54px;
+  border-radius:999px;
+  background:rgba(255,255,255,.42);
+  border:1px solid rgba(255,255,255,.62);
+  box-shadow:0 14px 30px rgba(66,89,152,.10), inset 0 1px 0 rgba(255,255,255,.86);
+  backdrop-filter:blur(22px) saturate(145%);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+}
+.card-zoom-control{
+  min-width:42px;
+  height:42px;
+  border-radius:999px;
+  font-size:20px;
+  font-weight:850;
+  padding:0 14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.card-zoom-control.reset{
+  min-width:58px;
+  color:#ffffff;
+  background:linear-gradient(135deg, rgba(122,166,255,.98), rgba(47,100,255,1));
+  border:0;
+  font-size:13px;
+  box-shadow:0 10px 22px rgba(47,100,255,.25), inset 0 1px 0 rgba(255,255,255,.30);
+}
+.card-zoom-control.reset:hover{
+  color:#ffffff;
+  background:linear-gradient(135deg, rgba(132,174,255,1), rgba(47,100,255,1));
+}
+@media (max-width:420px){
+  #detailModal .card-zoom-btn{right:14px;bottom:14px;width:40px;height:40px;}
+  .card-zoom-close{left:20px;top:calc(var(--safe-top) + 8px);}
+  .card-zoom-stage{padding-top:calc(var(--safe-top) + 60px);padding-bottom:calc(var(--safe-bottom) + 88px);}
+  .card-zoom-img{max-width:94vw;max-height:calc(100dvh - 156px);}
 }
 
 </style></head>
@@ -4106,7 +4314,7 @@ paint-order="stroke">
             </div>
           </div>
           <div class="detail-content">
-            <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Caricamento immagine"><div>Caricamento immagine in corso</div></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""></div>
+            <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Caricamento immagine"><div>Caricamento immagine in corso</div></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""><button type="button" class="card-zoom-btn" id="cardZoomBtn" aria-label="Ingrandisci carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"></path><path d="M3 3l7 7"></path><path d="M16 3h5v5"></path><path d="M21 3l-7 7"></path><path d="M8 21H3v-5"></path><path d="M3 21l7-7"></path><path d="M16 21h5v-5"></path><path d="M21 21l-7-7"></path></svg></button></div>
             <div class="detail-price"><span class="detail-price-label">Prezzo</span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-variant-card" aria-label="Varianti carta">
               <label class="detail-variant-row">
@@ -4139,6 +4347,20 @@ paint-order="stroke">
         </div></div>
       </section>
       <div id="copyToast" class="copy-toast">Copiato negli appunti</div>
+    </div>
+  </div>
+
+
+
+  <div id="cardZoomOverlay" class="card-zoom-overlay" aria-hidden="true">
+    <button type="button" class="card-zoom-close" id="cardZoomClose" aria-label="Chiudi zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
+    <div class="card-zoom-stage" id="cardZoomStage">
+      <img class="card-zoom-img" id="cardZoomImage" src="" alt="Carta ingrandita" draggable="false">
+    </div>
+    <div class="card-zoom-toolbar" aria-label="Controlli zoom carta">
+      <button type="button" class="card-zoom-control" id="cardZoomOut" aria-label="Riduci zoom">−</button>
+      <button type="button" class="card-zoom-control reset" id="cardZoomReset" aria-label="Reimposta zoom">Reset</button>
+      <button type="button" class="card-zoom-control" id="cardZoomIn" aria-label="Aumenta zoom">+</button>
     </div>
   </div>
 
@@ -4210,7 +4432,6 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
       cardVersion: document.getElementById('cardVersion'),
       cardTotalSetInput: document.getElementById('cardTotalSetInput'),
       cardArtistInput: document.getElementById('cardArtistInput'),
-      cardSeriesInput: document.getElementById('cardSeriesInput'),
       cardDateInput: document.getElementById('cardDateInput'),
       cardOriginInput: document.getElementById('cardOriginInput'),
       detailRaw: document.getElementById('detailRaw'),
@@ -4378,7 +4599,7 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
     }
 
     function getSetCode(card) {
-      return card?.set_code || card?.expansion_code || card?.raw?.expansion?.code || '';
+      return String(card?.set_code || card?.expansion_code || card?.raw?.expansion?.code || '').toUpperCase();
     }
 
     function getCollectorNumber(card) {
@@ -4649,22 +4870,10 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
       return raw;
     }
 
-    function getCardPreviewUrls(card) {
-      const rawImageUrl = String(card?.image_url || '').trim();
-      const candidates = [
-        String(card?.image_preview_url || '').trim(),
-        deriveCardTraderImageUrl(rawImageUrl, 'preview'),
-        deriveCardTraderImageUrl(rawImageUrl, 'show'),
-        rawImageUrl,
-        String(card?.image_full_url || '').trim(),
-        deriveCardTraderImageUrl(rawImageUrl, 'full'),
-      ].filter(Boolean);
-
-      return [...new Set(candidates)];
-    }
-
     function getCardPreviewUrl(card) {
-      return getCardPreviewUrls(card)[0] || '';
+      return String(card?.image_preview_url || '').trim()
+        || deriveCardTraderImageUrl(card?.image_url, 'preview')
+        || String(card?.image_url || '').trim();
     }
 
     function getCardFullUrl(card) {
@@ -5664,8 +5873,8 @@ function finishUpdateTimer() {
       const displaySetName = f.setName || '';
 
       const imageUrl = getCardPreviewUrl(card);
-      const imageLoading = resultIndex < 15 ? 'eager' : 'lazy';
-      const imagePriority = resultIndex < 15 ? 'high' : 'auto';
+      const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
+      const imagePriority = resultIndex < 4 ? 'high' : 'auto';
 
       return `
         <article class="card" data-id="${card.id}">
@@ -5772,44 +5981,6 @@ function finishUpdateTimer() {
       return matches.slice(0, 15).map(x => x.card);
     }
 
-    const suggestionImagePreloadCache = new Set();
-
-    function preloadSuggestionPreviewImages(items) {
-      (items || []).slice(0, 15).forEach(card => {
-        const previewUrl = getCardPreviewUrl(card);
-        if (!previewUrl || suggestionImagePreloadCache.has(previewUrl)) return;
-        suggestionImagePreloadCache.add(previewUrl);
-
-        const img = new Image();
-        img.decoding = 'async';
-        img.loading = 'eager';
-        img.src = previewUrl;
-      });
-    }
-
-    function trySuggestionThumbFallback(img) {
-      if (!img) return;
-
-      let fallbacks = [];
-      try {
-        fallbacks = JSON.parse(decodeURIComponent(img.dataset.fallbacks || '[]'));
-      } catch (_) {
-        fallbacks = [];
-      }
-
-      const nextUrl = fallbacks.shift();
-      if (nextUrl) {
-        img.dataset.fallbacks = encodeURIComponent(JSON.stringify(fallbacks));
-        img.src = nextUrl;
-        return;
-      }
-
-      const fallback = document.createElement('div');
-      fallback.className = 'suggestion-thumb-fallback';
-      fallback.textContent = 'N/D';
-      img.replaceWith(fallback);
-    }
-
     function renderSuggestions(items) {
       if (!items.length) {
         el.autocomplete.classList.remove('open');
@@ -5817,18 +5988,14 @@ function finishUpdateTimer() {
         return;
       }
 
-      preloadSuggestionPreviewImages(items);
-
       const rows = items.map((card, index) => {
         const f = getDisplayFields(card);
-        const previewUrls = getCardPreviewUrls(card);
-        const previewUrl = previewUrls[0] || '';
-        const fallbackData = encodeURIComponent(JSON.stringify(previewUrls.slice(1)));
+        const previewUrl = getCardPreviewUrl(card);
 
         return `
           <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
             ${previewUrl
-              ? `<img class="suggestion-thumb" loading="eager" decoding="async" fetchpriority="high" src="${escapeHtml(previewUrl)}" data-fallbacks="${escapeHtml(fallbackData)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="trySuggestionThumbFallback(this)">`
+              ? `<img class="suggestion-thumb" loading="lazy" decoding="async" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
               : `<div class="suggestion-thumb-fallback">N/D</div>`}
             <div class="suggestion-main">
               <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
@@ -5891,12 +6058,13 @@ function finishUpdateTimer() {
       const f = getDisplayFields(card);
       const displayName = toTitleCase(f.name || 'Dettaglio carta');
       const detailImageUrl = getCardFullUrl(card);
-      const setText = [f.setCode ? f.setCode.toUpperCase() : '', f.setName ? `(${f.setName})` : ''].filter(Boolean).join(' ');
+      const setText = [f.setCode, f.setName ? `(${f.setName})` : ''].filter(Boolean).join(' ');
       if (el.detailTopName) el.detailTopName.textContent = displayName;
       const detailTopMeta = [f.setCode ? f.setCode.toUpperCase() : '', f.version].filter(Boolean).join(' - ');
       if (el.detailTopMeta) el.detailTopMeta.textContent = detailTopMeta ? `(${detailTopMeta})` : '';
       if (detailImageUrl && el.detailCardImage) {
         if (el.detailImageWrap) {
+          el.detailImageWrap.classList.remove('is-card-loaded');
           el.detailImageWrap.querySelectorAll('.image-loading-placeholder').forEach(node => node.remove());
           el.detailImageWrap.insertAdjacentHTML('afterbegin', getCardBackLoaderHtml());
         }
@@ -5905,6 +6073,7 @@ function finishUpdateTimer() {
         el.detailCardImage.alt = displayName;
         el.detailCardImage.src = detailImageUrl;
       } else if (el.detailImageWrap) {
+        el.detailImageWrap.classList.remove('is-card-loaded');
         el.detailImageWrap.innerHTML = '<div class="thumb-fallback">Immagine non disponibile</div>';
       }
       state.market.rows = [];
@@ -5914,7 +6083,7 @@ function finishUpdateTimer() {
       if (el.cardRarity) el.cardRarity.textContent = f.rarity || '';
       if (el.cardSet) el.cardSet.textContent = setText || '';
       if (el.cardVersion) el.cardVersion.textContent = f.version || '';
-      [el.cardTotalSetInput, el.cardArtistInput, el.cardSeriesInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
+      [el.cardTotalSetInput, el.cardArtistInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
         if (input) input.value = '';
       });
       if (el.detailRaw) el.detailRaw.textContent = JSON.stringify(card, null, 2);
@@ -6237,17 +6406,221 @@ function getCardBackLoaderHtml(){
 document.addEventListener('load', (event) => {
   const target = event.target;
   if(target && target.tagName === 'IMG' && target.dataset.loadingPlaceholder === 'true'){
+    if (target.id === 'detailCardImage') {
+      target.parentElement?.classList.remove('is-card-loaded');
+    }
     const placeholder = target.parentElement?.querySelector('.image-loading-placeholder.card-back-loader');
     if(placeholder){
       placeholder.remove();
     }
     target.style.display = '';
+    if (target.id === 'detailCardImage') {
+      target.parentElement?.classList.add('is-card-loaded');
+    }
   }
 }, true);
+
+
+
+/* === ADD 21/05/2026: viewer zoom carta === */
+(function initCardZoomViewer(){
+  const overlay = document.getElementById('cardZoomOverlay');
+  const stage = document.getElementById('cardZoomStage');
+  const zoomImg = document.getElementById('cardZoomImage');
+  const closeBtn = document.getElementById('cardZoomClose');
+  const zoomInBtn = document.getElementById('cardZoomIn');
+  const zoomOutBtn = document.getElementById('cardZoomOut');
+  const resetBtn = document.getElementById('cardZoomReset');
+  const detailWrap = document.getElementById('detailImageWrap');
+  const detailImg = document.getElementById('detailCardImage');
+  const zoomBtn = document.getElementById('cardZoomBtn');
+  if (!overlay || !stage || !zoomImg || !detailWrap || !detailImg) return;
+
+  const zoomState = {
+    scale: 1,
+    x: 0,
+    y: 0,
+    dragging: false,
+    startX: 0,
+    startY: 0,
+    originX: 0,
+    originY: 0,
+    lastTap: 0,
+    pointers: new Map(),
+    pinchStartDistance: 0,
+    pinchStartScale: 1,
+  };
+
+  function clamp(value, min, max){
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function applyZoom(){
+    zoomState.scale = clamp(zoomState.scale, 1, 4);
+    if (zoomState.scale <= 1) {
+      zoomState.x = 0;
+      zoomState.y = 0;
+    } else {
+      const limit = 220 * zoomState.scale;
+      zoomState.x = clamp(zoomState.x, -limit, limit);
+      zoomState.y = clamp(zoomState.y, -limit, limit);
+    }
+    zoomImg.style.setProperty('--zoom-scale', zoomState.scale.toFixed(3));
+    zoomImg.style.setProperty('--zoom-x', `${zoomState.x}px`);
+    zoomImg.style.setProperty('--zoom-y', `${zoomState.y}px`);
+  }
+
+  function resetZoom(){
+    zoomState.scale = 1;
+    zoomState.x = 0;
+    zoomState.y = 0;
+    applyZoom();
+  }
+
+  function openZoom(){
+    if (!detailImg.src || detailImg.style.display === 'none') return;
+    zoomImg.src = detailImg.src;
+    zoomImg.alt = detailImg.alt || 'Carta ingrandita';
+    resetZoom();
+    overlay.classList.add('open');
+    overlay.setAttribute('aria-hidden', 'false');
+    document.documentElement.classList.add('suppress-selection');
+  }
+
+  function closeZoom(){
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('suppress-selection');
+    zoomState.pointers.clear();
+    stage.classList.remove('is-dragging');
+  }
+
+  function zoomBy(delta){
+    const previous = zoomState.scale;
+    zoomState.scale = clamp(zoomState.scale + delta, 1, 4);
+    if (previous !== zoomState.scale) applyZoom();
+  }
+
+  detailWrap.addEventListener('click', (event) => {
+    if (!detailWrap.classList.contains('is-card-loaded')) return;
+    if (event.target.closest('.image-loading-placeholder')) return;
+    openZoom();
+  });
+  if (zoomBtn) zoomBtn.addEventListener('click', (event) => { event.stopPropagation(); openZoom(); });
+  closeBtn?.addEventListener('click', closeZoom);
+  zoomInBtn?.addEventListener('click', () => zoomBy(.35));
+  zoomOutBtn?.addEventListener('click', () => zoomBy(-.35));
+  resetBtn?.addEventListener('click', resetZoom);
+
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) closeZoom();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (!overlay.classList.contains('open')) return;
+    if (event.key === 'Escape') closeZoom();
+    if (event.key === '+' || event.key === '=') zoomBy(.35);
+    if (event.key === '-') zoomBy(-.35);
+    if (event.key === '0') resetZoom();
+  });
+
+  stage.addEventListener('wheel', (event) => {
+    if (!overlay.classList.contains('open')) return;
+    event.preventDefault();
+    zoomBy(event.deltaY < 0 ? .18 : -.18);
+  }, { passive:false });
+
+  stage.addEventListener('dblclick', (event) => {
+    event.preventDefault();
+    if (zoomState.scale <= 1.05) {
+      zoomState.scale = 2.2;
+    } else {
+      resetZoom();
+      return;
+    }
+    applyZoom();
+  });
+
+  function pointerDistance(){
+    const pts = [...zoomState.pointers.values()];
+    if (pts.length < 2) return 0;
+    const dx = pts[0].clientX - pts[1].clientX;
+    const dy = pts[0].clientY - pts[1].clientY;
+    return Math.hypot(dx, dy);
+  }
+
+  stage.addEventListener('pointerdown', (event) => {
+    if (!overlay.classList.contains('open')) return;
+    zoomState.pointers.set(event.pointerId, { clientX:event.clientX, clientY:event.clientY });
+    stage.setPointerCapture?.(event.pointerId);
+
+    if (zoomState.pointers.size === 2) {
+      zoomState.pinchStartDistance = pointerDistance();
+      zoomState.pinchStartScale = zoomState.scale;
+      return;
+    }
+
+    const now = Date.now();
+    if (now - zoomState.lastTap < 280) {
+      zoomState.lastTap = 0;
+      if (zoomState.scale <= 1.05) zoomState.scale = 2.2;
+      else resetZoom();
+      applyZoom();
+      return;
+    }
+    zoomState.lastTap = now;
+
+    if (zoomState.scale <= 1) return;
+    zoomState.dragging = true;
+    zoomState.startX = event.clientX;
+    zoomState.startY = event.clientY;
+    zoomState.originX = zoomState.x;
+    zoomState.originY = zoomState.y;
+    stage.classList.add('is-dragging');
+  });
+
+  stage.addEventListener('pointermove', (event) => {
+    if (!zoomState.pointers.has(event.pointerId)) return;
+    zoomState.pointers.set(event.pointerId, { clientX:event.clientX, clientY:event.clientY });
+
+    if (zoomState.pointers.size === 2 && zoomState.pinchStartDistance > 0) {
+      const distance = pointerDistance();
+      if (distance > 0) {
+        zoomState.scale = clamp(zoomState.pinchStartScale * (distance / zoomState.pinchStartDistance), 1, 4);
+        applyZoom();
+      }
+      return;
+    }
+
+    if (!zoomState.dragging || zoomState.scale <= 1) return;
+    zoomState.x = zoomState.originX + (event.clientX - zoomState.startX);
+    zoomState.y = zoomState.originY + (event.clientY - zoomState.startY);
+    applyZoom();
+  });
+
+  function endPointer(event){
+    zoomState.pointers.delete(event.pointerId);
+    if (zoomState.pointers.size < 2) {
+      zoomState.pinchStartDistance = 0;
+      zoomState.pinchStartScale = zoomState.scale;
+    }
+    if (zoomState.pointers.size === 0) {
+      zoomState.dragging = false;
+      stage.classList.remove('is-dragging');
+    }
+  }
+
+  stage.addEventListener('pointerup', endPointer);
+  stage.addEventListener('pointercancel', endPointer);
+})();
+
 
 document.addEventListener('error', (event) => {
   const target = event.target;
   if(target && target.tagName === 'IMG' && target.dataset.loadingPlaceholder === 'true'){
+    if (target.id === 'detailCardImage') {
+      target.parentElement?.classList.remove('is-card-loaded');
+    }
     const placeholder = target.parentElement?.querySelector('.image-loading-placeholder.card-back-loader');
     if(placeholder){
       const label = placeholder.querySelector('div');
