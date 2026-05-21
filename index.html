@@ -2931,6 +2931,71 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   display:none !important;
 }
 
+
+/* === FIX HOME: pulsante aggiungi carta libero, senza tabbar inferiore === */
+body .content:not(.is-form-open){
+  padding-bottom:calc(var(--safe-bottom) + 26px) !important;
+}
+body .albums-view{
+  padding-bottom:calc(var(--safe-bottom) + 92px) !important;
+}
+body .bottom-nav-shell{
+  position:absolute !important;
+  left:auto !important;
+  right:20px !important;
+  bottom:calc(var(--safe-bottom) + 14px) !important;
+  width:auto !important;
+  height:auto !important;
+  min-height:0 !important;
+  max-width:none !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  grid-template-columns:none !important;
+  z-index:90 !important;
+  pointer-events:none !important;
+}
+body .bottom-nav-shell .nav-item{
+  display:none !important;
+}
+body .bottom-nav-shell .fab-wrap{
+  margin:0 !important;
+  padding:5px !important;
+  align-self:auto !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.76) !important;
+  border:1px solid rgba(255,255,255,0.78) !important;
+  box-shadow:0 18px 34px rgba(47,100,255,0.20),
+             0 7px 14px rgba(66,89,152,0.08),
+             inset 0 1px 0 rgba(255,255,255,0.98) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+  pointer-events:auto !important;
+}
+body .bottom-nav-shell .fab{
+  position:relative !important;
+  z-index:1 !important;
+  pointer-events:auto !important;
+}
+@media (max-height:760px){
+  body .content:not(.is-form-open){padding-bottom:calc(var(--safe-bottom) + 22px) !important;}
+  body .albums-view{padding-bottom:calc(var(--safe-bottom) + 86px) !important;}
+  body .bottom-nav-shell{right:18px !important;bottom:calc(var(--safe-bottom) + 12px) !important;}
+}
+@media (max-height:680px){
+  body .content:not(.is-form-open){padding-bottom:calc(var(--safe-bottom) + 18px) !important;}
+  body .albums-view{padding-bottom:calc(var(--safe-bottom) + 80px) !important;}
+  body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10px) !important;}
+}
+
 </style></head>
   <body>
     <div class="phone-stage">
