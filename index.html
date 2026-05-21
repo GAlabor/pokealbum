@@ -1047,21 +1047,6 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   font-size:9px;
   font-weight:850;
 }
-.add-card-search-view .card-search-panel-ux .suggestion-thumb-loading{
-  color:transparent;
-  position:relative;
-  overflow:hidden;
-}
-.add-card-search-view .card-search-panel-ux .suggestion-thumb-loading::after{
-  content:"";
-  width:16px;
-  height:16px;
-  border-radius:50%;
-  border:2px solid rgba(138,152,181,.22);
-  border-top-color:rgba(47,100,255,.52);
-  animation:suggestionThumbSpin .75s linear infinite;
-}
-@keyframes suggestionThumbSpin{to{transform:rotate(360deg);}}
 .add-card-search-view .card-search-panel-ux .suggestion-main{
   min-width:0;
   display:block;
@@ -2915,6 +2900,37 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   .card-zoom-img{max-width:94vw;max-height:calc(100dvh - 156px);}
 }
 
+
+
+/* === FIX 21/05/2026: retro carta in caricamento senza scritta, stessa dimensione carta === */
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+  width:285px !important;
+  height:398px !important;
+  max-width:285px !important;
+  max-height:398px !important;
+  min-height:398px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:0 !important;
+  padding:0 !important;
+  margin:0 auto !important;
+  flex:0 0 auto !important;
+}
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader img{
+  width:285px !important;
+  height:398px !important;
+  max-width:285px !important;
+  max-height:398px !important;
+  border-radius:16px !important;
+  object-fit:contain !important;
+  display:block !important;
+  flex:0 0 auto !important;
+}
+#detailModal .detail-image-wrap > .image-loading-placeholder.card-back-loader > div{
+  display:none !important;
+}
+
 </style></head>
   <body>
     <div class="phone-stage">
@@ -4329,7 +4345,7 @@ paint-order="stroke">
             </div>
           </div>
           <div class="detail-content">
-            <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Caricamento immagine"><div>Caricamento immagine in corso</div></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""><button type="button" class="card-zoom-btn" id="cardZoomBtn" aria-label="Ingrandisci carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"></path><path d="M3 3l7 7"></path><path d="M16 3h5v5"></path><path d="M21 3l-7 7"></path><path d="M8 21H3v-5"></path><path d="M3 21l7-7"></path><path d="M16 21h5v-5"></path><path d="M21 21l-7-7"></path></svg></button></div>
+            <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Retro carta Pokémon"></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""><button type="button" class="card-zoom-btn" id="cardZoomBtn" aria-label="Ingrandisci carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"></path><path d="M3 3l7 7"></path><path d="M16 3h5v5"></path><path d="M21 3l-7 7"></path><path d="M8 21H3v-5"></path><path d="M3 21l7-7"></path><path d="M16 21h5v-5"></path><path d="M21 21l-7-7"></path></svg></button></div>
             <div class="detail-price"><span class="detail-price-label">Prezzo</span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-variant-card" aria-label="Varianti carta">
               <label class="detail-variant-row">
@@ -4391,7 +4407,6 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
       filtered: [],
       suggestions: [],
       activeSuggestion: -1,
-      suggestionThumbGeneration: 0,
       meta: null,
       selectedCard: null,
       lastSuggestionTotal: 0,
@@ -5997,103 +6012,29 @@ function finishUpdateTimer() {
       return matches.slice(0, 15).map(x => x.card);
     }
 
-    function getSuggestionThumbAlt(card) {
-      const f = getDisplayFields(card);
-      return f.name || 'Carta';
-    }
-
-    function getSuggestionThumbPlaceholderHtml(card, index) {
-      const previewUrl = getCardPreviewUrl(card);
-      if (!previewUrl) {
-        return '<div class="suggestion-thumb-fallback">N/D</div>';
-      }
-
-      return `
-        <div
-          class="suggestion-thumb-fallback suggestion-thumb-loading"
-          data-suggestion-thumb="${index}"
-          data-thumb-url="${escapeHtml(previewUrl)}"
-          data-thumb-alt="${escapeHtml(getSuggestionThumbAlt(card))}"
-          aria-label="Caricamento anteprima"
-        >...</div>
-      `;
-    }
-
-    function loadSuggestionThumbs(items, generation) {
-      const jobs = items.slice(0, 15)
-        .map((card, index) => ({
-          index,
-          url: getCardPreviewUrl(card),
-          alt: getSuggestionThumbAlt(card),
-        }))
-        .filter(job => job.url);
-
-      const maxParallelLoads = 4;
-      let cursor = 0;
-
-      const loadNext = () => {
-        if (generation !== state.suggestionThumbGeneration) return;
-        const job = jobs[cursor++];
-        if (!job) return;
-
-        const selector = `[data-suggestion-thumb="${job.index}"]`;
-        const currentNode = el.autocomplete.querySelector(selector);
-        if (!currentNode || currentNode.dataset.thumbUrl !== job.url) {
-          loadNext();
-          return;
-        }
-
-        const img = new Image();
-        img.className = 'suggestion-thumb';
-        img.alt = job.alt;
-        img.decoding = 'async';
-        img.loading = 'eager';
-        img.onload = () => {
-          if (generation !== state.suggestionThumbGeneration) return;
-          const node = el.autocomplete.querySelector(selector);
-          if (node && node.dataset.thumbUrl === job.url) {
-            node.replaceWith(img);
-          }
-          loadNext();
-        };
-        img.onerror = () => {
-          if (generation !== state.suggestionThumbGeneration) return;
-          const node = el.autocomplete.querySelector(selector);
-          if (node && node.dataset.thumbUrl === job.url) {
-            node.classList.remove('suggestion-thumb-loading');
-            node.textContent = 'N/D';
-            node.removeAttribute('aria-label');
-          }
-          loadNext();
-        };
-        img.src = job.url;
-      };
-
-      const parallelCount = Math.min(maxParallelLoads, jobs.length);
-      for (let i = 0; i < parallelCount; i += 1) {
-        loadNext();
-      }
-    }
-
     function renderSuggestions(items) {
-      state.suggestionThumbGeneration += 1;
-      const thumbGeneration = state.suggestionThumbGeneration;
-
       if (!items.length) {
         el.autocomplete.classList.remove('open');
         el.autocomplete.innerHTML = '';
         return;
       }
 
-      const rows = items.slice(0, 15).map((card, index) => `
-        <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
-          ${getSuggestionThumbPlaceholderHtml(card, index)}
-          <div class="suggestion-main">
-            <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
-            <div class="suggestion-meta">${highlightSuggestionText(formatSuggestionMeta(card), el.searchInput.value)}</div>
+      const rows = items.map((card, index) => {
+        const f = getDisplayFields(card);
+        const previewUrl = getCardPreviewUrl(card);
+
+        return `
+          <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
+            ${previewUrl
+              ? `<img class="suggestion-thumb" loading="lazy" decoding="async" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
+              : `<div class="suggestion-thumb-fallback">N/D</div>`}
+            <div class="suggestion-main">
+              <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
+              <div class="suggestion-meta">${highlightSuggestionText(formatSuggestionMeta(card), el.searchInput.value)}</div>
+            </div>
           </div>
-        </div>
-      `);
+        `;
+      });
 
       const showAllRow = state.lastSuggestionTotal > 0
         ? `
@@ -6108,8 +6049,6 @@ function finishUpdateTimer() {
         ${showAllRow}
       `;
       el.autocomplete.classList.add('open');
-
-      requestAnimationFrame(() => loadSuggestionThumbs(items, thumbGeneration));
     }
 
     function runSearch(rawQuery) {
@@ -7143,11 +7082,29 @@ document.addEventListener('error', (event) => {
             bindCardSearchScrollTopButton();
           }
           setView("card-search");
+          focusCardSearchInputOnOpen();
+        }
+
+        function focusCardSearchInputOnOpen() {
           const searchInput = document.querySelector("#searchInput");
-          if (searchInput) {
-            searchInput.value = "";
-            requestAnimationFrame(() => searchInput.focus());
-          }
+          if (!searchInput) return;
+
+          searchInput.value = "";
+
+          const focusSearchInput = () => {
+            if (!document.body.contains(searchInput)) return;
+            searchInput.focus({ preventScroll: true });
+            searchInput.click();
+          };
+
+          // Primo focus subito: sui telefoni è quello che più facilmente apre la tastiera
+          // perché resta agganciato al tap dell'utente. Sì, i browser mobili sono creature delicate.
+          focusSearchInput();
+
+          // Piccoli richiami dopo il cambio vista, utili se il layout finisce di assestarsi un attimo dopo.
+          requestAnimationFrame(focusSearchInput);
+          setTimeout(focusSearchInput, 80);
+          setTimeout(focusSearchInput, 220);
         }
 
         function closeAddCardSearch() {
