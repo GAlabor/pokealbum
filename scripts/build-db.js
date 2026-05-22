@@ -3,33 +3,66 @@ import fs from 'fs/promises';
 const token = process.env.CARDTRADER_TOKEN;
 const API_BASE = 'https://api.cardtrader.com/api/v2';
 
-const INCLUDE_PRICES = process.env.INCLUDE_PRICES !== '0';
-const PRICE_CONCURRENCY = Math.max(1, Number(process.env.PRICE_CONCURRENCY || 4));
-const PRICE_DELAY_MS = Math.max(0, Number(process.env.PRICE_DELAY_MS || 120));
-const PRICE_CACHE_PATH = process.env.PRICE_CACHE_PATH || './data/pokemon-price-cache.json';
+const OUT_DIR = process.env.OUT_DIR || './data';
+const PRICES_FILE = `${OUT_DIR}/pokemon-prices.json`;
+const META_FILE = `${OUT_DIR}/pokemon-prices-meta.json`;
+
+// Limiti regolabili da GitHub Actions / terminale.
+// Per provare solo poche espansioni: MAX_EXPANSIONS=20 node build-prices.js
+const PAUSE_MS = Number(process.env.PRICE_PAUSE_MS || 250);
+const MAX_EXPANSIONS = Number(process.env.MAX_EXPANSIONS || 0); // 0 = tutte
+const START_FROM = Number(process.env.START_FROM || 0); // indice espansione, 0-based
+const API_TIMEOUT_MS = Number(process.env.API_TIMEOUT_MS || 180000);
+const RETRIES = Number(process.env.PRICE_RETRIES || 2);
 
 if (!token) {
   throw new Error('CARDTRADER_TOKEN mancante');
 }
 
-async function sleep(ms) {
-  if (!ms) return;
-  await new Promise(resolve => setTimeout(resolve, ms));
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function api(path) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
+async function api(path, options = {}) {
+  const { timeoutMs = API_TIMEOUT_MS, retries = RETRIES } = options;
+  let lastError;
 
-  if (!response.ok) {
-    const text = await response.text().catch(() => '');
-    throw new Error(`Errore API ${response.status}: ${text || response.statusText}`);
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(`${API_BASE}${path}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        signal: controller.signal
+      });
+
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        const text = await response.text().catch(() => '');
+        throw new Error(`Errore API ${response.status}: ${text || response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      clearTimeout(timeout);
+      lastError = error;
+
+      const message = error instanceof Error ? error.message : String(error);
+      const wait = Math.min(15000, 1200 * (attempt + 1));
+
+      if (attempt < retries) {
+        console.warn(`Retry ${attempt + 1}/${retries} per ${path}: ${message}. Pausa ${wait}ms.`);
+        await sleep(wait);
+        continue;
+      }
+    }
   }
 
-  return response.json();
+  throw lastError;
 }
 
 function extractArray(payload, preferredKeys = []) {
@@ -47,43 +80,16 @@ function extractArray(payload, preferredKeys = []) {
   return [];
 }
 
-function stripLeadingZeros(value) {
-  const cleaned = String(value ?? '').replace(/^0+(\d)/, '$1');
-  return cleaned === '' ? '0' : cleaned;
-}
+function extractObject(payload, preferredKeys = []) {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return null;
 
-function getNumberNorm(value) {
-  const text = String(value ?? '').trim();
+  for (const key of preferredKeys) {
+    if (payload[key] && typeof payload[key] === 'object' && !Array.isArray(payload[key])) {
+      return payload[key];
+    }
+  }
 
-  if (!/^\d+$/.test(text)) return null;
-
-  const normalized = Number(stripLeadingZeros(text));
-  return Number.isFinite(normalized) ? normalized : null;
-}
-
-function normalizeSearchText(value) {
-  return String(value ?? '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9/ ]+/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function normalize(value) {
-  return String(value ?? '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim();
-}
-
-function buildSearchText(...values) {
-  return values
-    .map(value => normalizeSearchText(value))
-    .filter(Boolean)
-    .join(' ');
+  return payload;
 }
 
 async function detectPokemonGame() {
@@ -104,385 +110,139 @@ async function detectPokemonGame() {
   return pokemon;
 }
 
-async function detectSingleCardCategory(gameId) {
-  const payload = await api(`/categories?game_id=${encodeURIComponent(gameId)}`);
-  const categories = extractArray(payload, ['categories']);
-
-  const direct = categories.find(c =>
-    (/single/i.test(String(c.name || '')) && /card/i.test(String(c.name || ''))) ||
-    /pokemon singles/i.test(String(c.name || '')) ||
-    /singles/i.test(String(c.name || ''))
-  );
-
-  return direct || categories[0] || null;
-}
-
-function getProductLanguage(product) {
-  return product?.properties_hash?.language
-    || product?.properties_hash?.pokemon_language
-    || product?.properties_hash?.pkm_language
-    || product?.properties_hash?.mtg_language
-    || product?.language
-    || '';
-}
-
-function normalizeLang(value) {
-  return normalize(value).replace(/[^a-z]/g, '');
-}
-
-function isItalianLanguage(value) {
-  const lang = normalizeLang(value);
-  return ['it', 'ita', 'italian', 'italiano'].includes(lang);
-}
-
-function normalizeCondition(value) {
-  return normalize(value).replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
-}
-
-function getProductPriceCents(product) {
-  const direct = Number(product?.price_cents);
-  if (Number.isFinite(direct)) return direct;
-
-  const nested = Number(product?.price?.cents);
-  if (Number.isFinite(nested)) return nested;
-
-  const rawPrice = Number(product?.price);
-  if (Number.isFinite(rawPrice)) {
-    return rawPrice > 1000 ? rawPrice : Math.round(rawPrice * 100);
-  }
-
-  return null;
-}
-
-function formatEuroFromCents(cents) {
-  if (!Number.isFinite(cents)) return '-';
-  return `€ ${(cents / 100).toFixed(2)}`;
-}
-
-function isCardTraderZero(product) {
-  return product?.user?.can_sell_via_hub === true
-    || product?.seller?.can_sell_via_hub === true
-    || product?.can_sell_via_hub === true;
-}
-
-const CONDITION_ORDER = ['NM', 'SP', 'MP', 'PL', 'PO'];
-const CONDITION_LABELS = {
-  NM: 'Near Mint',
-  SP: 'Slightly Played',
-  MP: 'Moderately Played',
-  PL: 'Played',
-  PO: 'Poor'
-};
-
-function getConditionCode(value) {
-  const raw = String(value || '').trim().toUpperCase();
-  if (CONDITION_ORDER.includes(raw)) return raw;
-
-  const cond = normalizeCondition(value);
-  if (!cond) return '';
-
-  if (cond === 'near mint' || cond === 'nm' || cond.startsWith('near mint ')) return 'NM';
-  if (cond === 'slightly played' || cond === 'sp' || cond.startsWith('slightly played ')) return 'SP';
-  if (cond === 'moderately played' || cond === 'mp' || cond.startsWith('moderately played ')) return 'MP';
-  if (cond === 'played' || cond === 'pl') return 'PL';
-  if (cond === 'poor' || cond === 'po') return 'PO';
-
-  return raw || cond.toUpperCase();
-}
-
-function getConditionLabelFromCode(code) {
-  const key = String(code || '').toUpperCase();
-  return CONDITION_LABELS[key] || key || '-';
-}
-
-function conditionRank(code) {
-  const idx = CONDITION_ORDER.indexOf(String(code || '').toUpperCase());
-  return idx >= 0 ? idx : 999;
-}
-
-const MARKET_LANGUAGE_LABEL_MAP = {
-  it: 'Italiano', ita: 'Italiano', italiano: 'Italiano', italian: 'Italiano',
-  en: 'Inglese', eng: 'Inglese', english: 'Inglese', inglese: 'Inglese', us: 'Inglese', gb: 'Inglese', uk: 'Inglese',
-  fr: 'Francese', fra: 'Francese', fre: 'Francese', french: 'Francese', francese: 'Francese',
-  es: 'Spagnolo', esp: 'Spagnolo', spa: 'Spagnolo', spanish: 'Spagnolo', spagnolo: 'Spagnolo',
-  de: 'Tedesco', deu: 'Tedesco', ger: 'Tedesco', german: 'Tedesco', tedesco: 'Tedesco',
-  nl: 'Olandese', nld: 'Olandese', dut: 'Olandese', nederlands: 'Olandese', dutch: 'Olandese', olandese: 'Olandese',
-  pt: 'Portoghese', por: 'Portoghese', portuguese: 'Portoghese', portoghese: 'Portoghese',
-  jp: 'Giapponese', ja: 'Giapponese', jpn: 'Giapponese', japanese: 'Giapponese', giapponese: 'Giapponese',
-  cn: 'Cinese Semplificato', zh: 'Cinese Semplificato', zhcn: 'Cinese Semplificato', zhhans: 'Cinese Semplificato',
-  ko: 'Coreano', kor: 'Coreano', korean: 'Coreano', coreano: 'Coreano'
-};
-
-function getLanguageKeyFromValue(value) {
-  const key = normalizeLang(value);
-  return key || '';
-}
-
-function getLanguageDisplayLabel(value) {
-  const key = getLanguageKeyFromValue(value);
-  return MARKET_LANGUAGE_LABEL_MAP[key] || String(value || '').trim() || '-';
-}
-
-function buildMarketRows(products) {
-  return (Array.isArray(products) ? products : [])
-    .map(product => {
-      const priceCents = getProductPriceCents(product);
-      if (!Number.isFinite(priceCents)) return null;
-
-      const rawLanguage = getProductLanguage(product);
-      const langLabel = getLanguageDisplayLabel(rawLanguage);
-      const langKey = getLanguageKeyFromValue(rawLanguage);
-      const condKey = getConditionCode(product?.properties_hash?.condition || '');
-
-      if (!langKey || !condKey) return null;
-
-      return {
-        product,
-        priceCents,
-        langKey,
-        langLabel,
-        condKey,
-        ctZero: isCardTraderZero(product)
-      };
-    })
-    .filter(Boolean);
-}
-
-function getLowestRow(rows) {
-  return (rows || []).slice().sort((a, b) => a.priceCents - b.priceCents)[0] || null;
-}
-
-function getBestByConditionThenPrice(rows) {
-  return (rows || []).slice().sort((a, b) => {
-    const rankDiff = conditionRank(a.condKey) - conditionRank(b.condKey);
-    if (rankDiff) return rankDiff;
-    return a.priceCents - b.priceCents;
-  })[0] || null;
-}
-
-function pickBestMarketplaceOffer(products) {
-  const rows = buildMarketRows(products);
-  if (!rows.length) return null;
-
-  const isItalianRow = row => isItalianLanguage(row.langLabel) || isItalianLanguage(row.langKey);
-  const isNearMintRow = row => row.condKey === 'NM';
-  const isOtherLanguageRow = row => !isItalianRow(row);
-
-  const prioritySteps = [
-    { kind: 'ita_near_mint_ctzero', rows: rows.filter(row => isItalianRow(row) && isNearMintRow(row) && row.ctZero), mode: 'price' },
-    { kind: 'ita_near_mint_no_ctzero', rows: rows.filter(row => isItalianRow(row) && isNearMintRow(row) && !row.ctZero), mode: 'price' },
-    { kind: 'ita_best_condition_ctzero', rows: rows.filter(row => isItalianRow(row) && row.ctZero), mode: 'condition' },
-    { kind: 'ita_best_condition_no_ctzero', rows: rows.filter(row => isItalianRow(row) && !row.ctZero), mode: 'condition' },
-    { kind: 'other_language_best_condition_ctzero', rows: rows.filter(row => isOtherLanguageRow(row) && row.ctZero), mode: 'condition' },
-    { kind: 'other_language_best_condition_no_ctzero', rows: rows.filter(row => isOtherLanguageRow(row) && !row.ctZero), mode: 'condition' },
-    { kind: 'lowest_absolute', rows, mode: 'price' }
+function getBlueprintId(product, fallbackId = null) {
+  const candidates = [
+    product?.blueprint_id,
+    product?.blueprintId,
+    product?.blueprint?.id,
+    product?.card_id,
+    product?.cardId,
+    product?.properties?.blueprint_id,
+    fallbackId
   ];
 
-  for (const step of prioritySteps) {
-    const row = step.mode === 'price' ? getLowestRow(step.rows) : getBestByConditionThenPrice(step.rows);
-    if (row) {
-      return {
-        kind: step.kind,
-        product: row.product,
-        priceCents: row.priceCents,
-        row
-      };
-    }
+  for (const value of candidates) {
+    const n = Number(value);
+    if (Number.isFinite(n) && n > 0) return String(n);
   }
 
   return null;
 }
 
-function compactPriceSummary(products) {
-  const rows = buildMarketRows(products);
-  const selected = pickBestMarketplaceOffer(products);
+function normalizeProduct(product, fallbackBlueprintId = null) {
+  const blueprintId = getBlueprintId(product, fallbackBlueprintId);
 
-  if (!selected) {
-    return {
-      updatedAt: new Date().toISOString(),
-      source: 'cardtrader_marketplace_products',
-      hasPrice: false,
-      priceCents: null,
-      priceLabel: '-',
-      priorityKind: '',
-      offersCount: Array.isArray(products) ? products.length : 0,
-      pricedOffersCount: rows.length,
-      note: rows.length ? 'Offerte presenti, ma nessuna compatibile con la scaletta prezzo.' : 'Nessuna offerta con prezzo leggibile.'
-    };
-  }
-
-  const row = selected.row;
-  const product = selected.product;
-
+  // Manteniamo tutto il prodotto originale, ma aggiungiamo campi normalizzati comodi
+  // per l'HTML. Sì, un minimo di civiltà in mezzo al JSON selvaggio.
   return {
-    updatedAt: new Date().toISOString(),
-    source: 'cardtrader_marketplace_products',
-    hasPrice: true,
-    priceCents: selected.priceCents,
-    priceValue: Number((selected.priceCents / 100).toFixed(2)),
-    priceLabel: formatEuroFromCents(selected.priceCents),
-    currency: 'EUR',
-    priorityKind: selected.kind,
-    language: row.langLabel,
-    languageKey: row.langKey,
-    condition: row.condKey,
-    conditionLabel: getConditionLabelFromCode(row.condKey),
-    ctZero: Boolean(row.ctZero),
-    productId: product?.id ?? null,
-    sellerId: product?.user_id ?? product?.seller_id ?? product?.user?.id ?? product?.seller?.id ?? null,
-    offersCount: Array.isArray(products) ? products.length : 0,
-    pricedOffersCount: rows.length,
-    note: 'Prezzo scelto con la stessa scaletta usata nell’HTML: IT/NM/CTZero, poi fallback ordinati.'
+    blueprint_id: blueprintId ? Number(blueprintId) : null,
+    id: product?.id ?? null,
+    price_cents: product?.price_cents ?? product?.priceCents ?? product?.price?.cents ?? null,
+    price: product?.price ?? product?.price_float ?? product?.priceFloat ?? null,
+    currency: product?.currency ?? product?.price_currency ?? product?.price?.currency ?? null,
+    language: product?.language ?? product?.properties?.language ?? product?.properties?.pokemon_language ?? null,
+    condition: product?.condition ?? product?.properties?.condition ?? product?.properties?.pokemon_condition ?? null,
+    ct_zero: product?.ct_zero ?? product?.ctZero ?? product?.properties?.ct_zero ?? product?.properties?.ctZero ?? null,
+    raw: product
   };
 }
 
-async function readPriceCache() {
-  try {
-    const raw = await fs.readFile(PRICE_CACHE_PATH, 'utf8');
-    const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
-}
+function addProductsToPrices(pricesByBlueprint, payload) {
+  let added = 0;
 
-async function writePriceCache(cache) {
-  await fs.mkdir('./data', { recursive: true });
-  await fs.writeFile(PRICE_CACHE_PATH, JSON.stringify(cache));
-}
+  // Caso 1: CardTrader spesso restituisce oggetto raggruppato per blueprint_id:
+  // { "123": [prodotti...], "456": [prodotti...] }
+  const objectPayload = extractObject(payload, ['products']);
 
-async function fetchPriceSummaryForCard(card, cache) {
-  const key = String(card.id);
+  if (objectPayload && !Array.isArray(objectPayload)) {
+    for (const [key, value] of Object.entries(objectPayload)) {
+      if (Array.isArray(value)) {
+        for (const product of value) {
+          const normalized = normalizeProduct(product, key);
+          const blueprintId = getBlueprintId(normalized, key);
+          if (!blueprintId) continue;
 
-  try {
-    await sleep(PRICE_DELAY_MS);
-    const data = await api(`/marketplace/products?blueprint_id=${encodeURIComponent(card.id)}`);
-    const products = extractArray(data, ['products']);
-    const summary = compactPriceSummary(products);
+          if (!pricesByBlueprint[blueprintId]) pricesByBlueprint[blueprintId] = [];
+          pricesByBlueprint[blueprintId].push(normalized);
+          added++;
+        }
+      } else if (value && typeof value === 'object') {
+        const normalized = normalizeProduct(value, key);
+        const blueprintId = getBlueprintId(normalized, key);
+        if (!blueprintId) continue;
 
-    cache[key] = summary;
-    return summary;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-
-    if (cache[key]) {
-      return {
-        ...cache[key],
-        stale: true,
-        staleReason: message,
-        note: 'Prezzo recuperato dalla cache locale perché CardTrader non ha risposto durante la build.'
-      };
-    }
-
-    return {
-      updatedAt: new Date().toISOString(),
-      source: 'cardtrader_marketplace_products',
-      hasPrice: false,
-      priceCents: null,
-      priceLabel: '-',
-      priorityKind: '',
-      offersCount: 0,
-      pricedOffersCount: 0,
-      error: message,
-      note: 'Prezzo non disponibile durante la build.'
-    };
-  }
-}
-
-async function attachPrices(cards) {
-  if (!INCLUDE_PRICES) {
-    console.log('Prezzi saltati: INCLUDE_PRICES=0');
-    return {
-      pricedCards: 0,
-      cardsWithPrice: 0,
-      cardsWithoutPrice: cards.length,
-      cardsWithStalePrice: 0,
-      priceErrors: 0
-    };
-  }
-
-  console.log(`Avvio download prezzi marketplace: ${cards.length} carte, concorrenza ${PRICE_CONCURRENCY}, pausa ${PRICE_DELAY_MS}ms.`);
-
-  const cache = await readPriceCache();
-
-  let index = 0;
-  let completed = 0;
-  let cardsWithPrice = 0;
-  let cardsWithStalePrice = 0;
-  let priceErrors = 0;
-
-  async function worker(workerId) {
-    while (index < cards.length) {
-      const cardIndex = index++;
-      const card = cards[cardIndex];
-
-      const summary = await fetchPriceSummaryForCard(card, cache);
-      card.price = summary;
-
-      if (summary?.hasPrice) cardsWithPrice++;
-      if (summary?.stale) cardsWithStalePrice++;
-      if (summary?.error) priceErrors++;
-
-      completed++;
-
-      if (completed % 100 === 0 || completed === cards.length) {
-        console.log(`Prezzi: ${completed}/${cards.length} completati - con prezzo ${cardsWithPrice} - stale ${cardsWithStalePrice} - errori ${priceErrors}`);
-        await writePriceCache(cache);
+        if (!pricesByBlueprint[blueprintId]) pricesByBlueprint[blueprintId] = [];
+        pricesByBlueprint[blueprintId].push(normalized);
+        added++;
       }
     }
+
+    if (added > 0) return added;
   }
 
-  await Promise.all(
-    Array.from({ length: PRICE_CONCURRENCY }, (_, i) => worker(i + 1))
-  );
+  // Caso 2: risposta piatta: [prodotti...]
+  const products = extractArray(payload, ['products', 'marketplace_products', 'data']);
 
-  await writePriceCache(cache);
+  for (const product of products) {
+    const normalized = normalizeProduct(product);
+    const blueprintId = getBlueprintId(normalized);
+    if (!blueprintId) continue;
 
-  return {
-    pricedCards: completed,
-    cardsWithPrice,
-    cardsWithoutPrice: cards.length - cardsWithPrice,
-    cardsWithStalePrice,
-    priceErrors
-  };
+    if (!pricesByBlueprint[blueprintId]) pricesByBlueprint[blueprintId] = [];
+    pricesByBlueprint[blueprintId].push(normalized);
+    added++;
+  }
+
+  return added;
 }
 
 async function main() {
-  console.log('Avvio costruzione database Pokémon...');
+  console.log('Avvio creazione DB SOLO PREZZI CardTrader per Pokémon...');
 
-  const info = await api('/info');
   const pokemonGame = await detectPokemonGame();
-  const category = await detectSingleCardCategory(pokemonGame.id);
-
   console.log(`Game trovato: ${pokemonGame.name || pokemonGame.display_name || pokemonGame.id}`);
-  console.log(`Categoria: ${category?.name || category?.id || 'non trovata'}`);
 
   const expansionsPayload = await api('/expansions');
   const expansions = extractArray(expansionsPayload, ['expansions']);
 
-  const pokemonExpansions = expansions.filter(x =>
-    Number(x?.game_id) === Number(pokemonGame.id)
-  );
+  const pokemonExpansions = expansions.filter(x => Number(x?.game_id) === Number(pokemonGame.id));
 
   if (!pokemonExpansions.length) {
     throw new Error('Nessuna espansione Pokémon trovata');
   }
 
-  const allCards = [];
+  const selectedExpansions = pokemonExpansions.slice(
+    START_FROM,
+    MAX_EXPANSIONS > 0 ? START_FROM + MAX_EXPANSIONS : undefined
+  );
+
+  console.log(`Espansioni Pokémon totali: ${pokemonExpansions.length}`);
+  console.log(`Espansioni da processare ora: ${selectedExpansions.length}`);
+  console.log(`Pausa tra richieste: ${PAUSE_MS}ms`);
+
+  const pricesByBlueprint = {};
   const skippedExpansions = [];
+  let totalProducts = 0;
+  let expansionsWithProducts = 0;
 
-  for (let i = 0; i < pokemonExpansions.length; i++) {
-    const exp = pokemonExpansions[i];
-    console.log(`${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
+  await fs.mkdir(OUT_DIR, { recursive: true });
 
-    let blueprintsPayload;
+  for (let i = 0; i < selectedExpansions.length; i++) {
+    const globalIndex = START_FROM + i;
+    const exp = selectedExpansions[i];
+    console.log(`${globalIndex + 1}/${pokemonExpansions.length} - ${exp.code || exp.id}: ${exp.name}`);
 
     try {
-      blueprintsPayload = await api(`/blueprints/export?expansion_id=${encodeURIComponent(exp.id)}`);
+      const payload = await api(`/marketplace/products?expansion_id=${encodeURIComponent(exp.id)}`);
+      const added = addProductsToPrices(pricesByBlueprint, payload);
+      totalProducts += added;
+
+      if (added > 0) expansionsWithProducts++;
+
+      console.log(`  offerte aggiunte: ${added} - carte con offerte finora: ${Object.keys(pricesByBlueprint).length}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-
-      console.warn(`SKIP espansione ${exp.id} - ${exp.name}: ${message}`);
+      console.warn(`  SKIP prezzi espansione ${exp.id} - ${exp.name}: ${message}`);
 
       skippedExpansions.push({
         id: exp.id,
@@ -490,84 +250,41 @@ async function main() {
         code: exp.code || '',
         error: message
       });
-
-      continue;
     }
 
-    const blueprints = extractArray(blueprintsPayload, ['blueprints']);
-
-    const cards = blueprints.filter(bp =>
-      Number(bp?.game_id) === Number(pokemonGame.id) &&
-      (!category || Number(bp?.category_id) === Number(category.id))
-    );
-
-    for (const bp of cards) {
-      const baseCard = {
-        id: Number(bp.id),
-        name: bp.name || '-',
-        collector_number: bp.fixed_properties?.collector_number || '',
-        number_norm: getNumberNorm(bp.fixed_properties?.collector_number),
-        rarity: bp.fixed_properties?.pokemon_rarity || '',
-        version: bp.version || '',
-        expansion_id: bp.expansion_id,
-        set_name: exp.name || '',
-        set_code: exp.code || '',
-        image_url: bp.image_url || ''
-      };
-
-      const card = {
-        ...baseCard,
-        q: buildSearchText(
-          baseCard.name,
-          baseCard.collector_number,
-          baseCard.rarity,
-          baseCard.version,
-          baseCard.set_name,
-          baseCard.set_code
-        )
-      };
-
-      allCards.push(card);
+    // Salvataggio progressivo ogni 25 espansioni, così se cade non perdi tutto.
+    if ((i + 1) % 25 === 0) {
+      await fs.writeFile(PRICES_FILE, JSON.stringify(pricesByBlueprint));
+      console.log(`  salvataggio progressivo: ${Object.keys(pricesByBlueprint).length} carte con offerte`);
     }
+
+    if (PAUSE_MS > 0) await sleep(PAUSE_MS);
   }
-
-  const priceMeta = await attachPrices(allCards);
 
   const meta = {
     updatedAt: new Date().toISOString(),
-    appName: info.name || '',
-    appId: info.id || null,
     gameId: pokemonGame.id,
     gameName: pokemonGame.name || pokemonGame.display_name || 'Pokemon',
-    categoryId: category?.id || null,
-    categoryName: category?.name || '',
-    cardsCount: allCards.length,
-    expansionsCount: pokemonExpansions.length,
+    source: 'CardTrader /marketplace/products?expansion_id=',
+    expansionsTotal: pokemonExpansions.length,
+    startFrom: START_FROM,
+    maxExpansions: MAX_EXPANSIONS,
+    expansionsProcessed: selectedExpansions.length,
+    expansionsWithProducts,
+    blueprintWithOffersCount: Object.keys(pricesByBlueprint).length,
+    productsCount: totalProducts,
     skippedExpansionsCount: skippedExpansions.length,
     skippedExpansions,
-    pricesIncluded: INCLUDE_PRICES,
-    priceMeta,
-    indexVersion: 4
+    indexVersion: 1
   };
 
-  await fs.mkdir('./data', { recursive: true });
+  await fs.writeFile(PRICES_FILE, JSON.stringify(pricesByBlueprint));
+  await fs.writeFile(META_FILE, JSON.stringify(meta, null, 2));
 
-  await fs.writeFile(
-    './data/pokemon-index.json',
-    JSON.stringify(allCards)
-  );
-
-  await fs.writeFile(
-    './data/pokemon-index-meta.json',
-    JSON.stringify(meta)
-  );
-
-  console.log(`Database creato: ${allCards.length} carte, ${pokemonExpansions.length} espansioni.`);
-  console.log(`Prezzi: ${priceMeta.cardsWithPrice}/${allCards.length} carte con prezzo.`);
-
-  if (skippedExpansions.length) {
-    console.warn(`Espansioni saltate perché non pronte: ${skippedExpansions.length}`);
-  }
+  console.log('DB prezzi creato.');
+  console.log(`Carte con offerte: ${meta.blueprintWithOffersCount}`);
+  console.log(`Offerte totali salvate: ${meta.productsCount}`);
+  console.log(`Espansioni saltate: ${meta.skippedExpansionsCount}`);
 }
 
 main().catch(error => {
