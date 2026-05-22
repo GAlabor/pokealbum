@@ -326,7 +326,7 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .choice-sheet-backdrop{
   position:fixed;
   inset:0;
-  z-index:74;
+  z-index:160;
   display:flex;
   align-items:flex-end;
   justify-content:center;
@@ -413,6 +413,50 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
   .choice-sheet-backdrop{padding-left:12px;padding-right:12px;}
   .choice-sheet{border-radius:28px;}
 }
+
+#detailModal .info-choice-btn{
+  width:100%;
+  min-height:38px;
+  border-radius:14px;
+  border:1px solid rgba(120,146,207,.18);
+  background:rgba(248,251,255,.9);
+  padding:0 11px 0 13px;
+  color:#20345f;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:750;
+  letter-spacing:-.02em;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+#detailModal .info-choice-btn:active{transform:scale(.99);}
+#detailModal .info-choice-value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;}
+#detailModal .info-choice-value.is-placeholder{color:#9aa6bf;}
+#detailModal .info-choice-arrow{font-size:19px;line-height:1;color:#7181a3;font-weight:850;flex:0 0 auto;}
+.origin-sheet-input{
+  width:100%;
+  height:52px;
+  border-radius:16px;
+  border:1px solid rgba(120,146,207,.20);
+  background:rgba(248,251,255,.9);
+  color:#20345f;
+  padding:0 15px;
+  font-family:inherit;
+  font-size:16px;
+  font-weight:750;
+  letter-spacing:-.02em;
+  outline:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.86);
+}
+.origin-sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px;}
+.origin-sheet-btn{height:48px;border:0;border-radius:999px;font-family:inherit;font-size:14px;font-weight:850;letter-spacing:-.02em;cursor:pointer;}
+.origin-sheet-btn.cancel{background:rgba(235,241,255,.68);color:#65779f;border:1px solid rgba(120,146,207,.16);}
+.origin-sheet-btn.save{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);box-shadow:0 10px 22px rgba(47,100,255,.24),inset 0 1px 0 rgba(255,255,255,.28);}
 
 .text-input:focus, .number-input:focus{border-color:rgba(47, 100, 255, 0.34);box-shadow:0 0 0 4px rgba(47, 100, 255, 0.1),
           inset 0 1px 0 rgba(255, 255, 255, 0.9);background:rgba(255, 255, 255, 0.96);}
@@ -714,9 +758,9 @@ svg{overflow:visible;}
 .add-card-search-view .card-finder-embed .empty{margin-top:14px;}
 .add-card-search-view .card-finder-embed .suggestion:hover, .add-card-search-view .card-finder-embed .suggestion.active{background:rgba(47,100,255,0.10);}
 .add-card-search-view .card-finder-embed .suggestion-meta{color:#8f9ab3;}
-#tokenModal.modal-backdrop, #detailModal.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100;}
-#tokenModal.modal-backdrop.open, #detailModal.modal-backdrop.open{display:flex;}
-#tokenModal .modal, #detailModal .modal{color:#eef4ff;}
+#detailModal.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:100;}
+#detailModal.modal-backdrop.open{display:flex;}
+#detailModal .modal{color:#eef4ff;}
 .add-card-search-view .card-finder-embed{max-width:none;width:100%;margin:0;padding:0;height:100%;display:flex;flex-direction:column;min-height:0;}
 .add-card-search-view .card-search-panel-ux{padding:0;margin:0;background:transparent;border:0;box-shadow:none;color:#20345f;}
 .add-card-search-view .card-search-panel-ux .card-search-bar{grid-template-columns:minmax(0,1fr) 76px;gap:0;}
@@ -2328,6 +2372,22 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   row-gap:0 !important;
   overflow:visible !important;
 }
+#detailModal .detail-price{
+  position:relative !important;
+}
+#detailModal .detail-price-source{
+  position:absolute;
+  top:4px;
+  right:12px;
+  min-height:16px;
+  color:#3f6fe9;
+  font-size:11px;
+  font-weight:900;
+  line-height:16px;
+  letter-spacing:-0.01em;
+  white-space:nowrap;
+  pointer-events:none;
+}
 #detailModal .detail-price br{display:none !important;}
 #detailModal .detail-price-label{
   line-height:16px !important;
@@ -2996,6 +3056,72 @@ body .bottom-nav-shell .fab{
   body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10px) !important;}
 }
 
+
+/* === FIX DEFINITIVO HOME: niente tabbar / niente spazio morto sotto gli album === */
+body .content:not(.is-form-open){
+  padding-bottom:0 !important;
+}
+body .albums-view{
+  padding-bottom:calc(var(--safe-bottom) + 6px) !important;
+  margin-bottom:0 !important;
+}
+body .albums-grid{
+  padding-bottom:0 !important;
+}
+body .bottom-nav-shell{
+  position:fixed !important;
+  left:auto !important;
+  right:20px !important;
+  bottom:calc(var(--safe-bottom) + 14px) !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  display:block !important;
+  z-index:90 !important;
+  pointer-events:none !important;
+}
+body .bottom-nav-shell .nav-item{
+  display:none !important;
+}
+body .bottom-nav-shell .fab-wrap{
+  display:block !important;
+  margin:0 !important;
+  padding:5px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.76) !important;
+  border:1px solid rgba(255,255,255,0.78) !important;
+  box-shadow:0 18px 34px rgba(47,100,255,0.20),
+             0 7px 14px rgba(66,89,152,0.08),
+             inset 0 1px 0 rgba(255,255,255,0.98) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+  pointer-events:auto !important;
+}
+body .bottom-nav-shell .fab{
+  position:relative !important;
+  z-index:1 !important;
+  pointer-events:auto !important;
+}
+@media (max-height:760px){
+  body .content:not(.is-form-open){padding-bottom:0 !important;}
+  body .albums-view{padding-bottom:calc(var(--safe-bottom) + 4px) !important;}
+  body .bottom-nav-shell{right:18px !important;bottom:calc(var(--safe-bottom) + 12px) !important;}
+}
+@media (max-height:680px){
+  body .content:not(.is-form-open){padding-bottom:0 !important;}
+  body .albums-view{padding-bottom:calc(var(--safe-bottom) + 2px) !important;}
+  body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10px) !important;}
+}
+
 </style></head>
   <body>
     <div class="phone-stage">
@@ -3080,6 +3206,7 @@ body .bottom-nav-shell .fab{
 
   <div class="collection-dropdown" id="collectionDropdown" role="menu" aria-label="Sezioni raccolta">
     <button class="collection-menu-item active" type="button" role="menuitem" data-section="Album"><span>Album</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
+    <button class="collection-menu-item" type="button" role="menuitem" data-section="Non in Album"><span>Non in Album</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
     <button class="collection-menu-item" type="button" role="menuitem" data-section="Set"><span>Set</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
     <button class="collection-menu-item" type="button" role="menuitem" data-section="Duplicati"><span>Duplicati</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
     <button class="collection-menu-item" type="button" role="menuitem" data-section="In arrivo"><span>In arrivo</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
@@ -4056,8 +4183,6 @@ paint-order="stroke">
               </button>
               <h2 class="card-search-title">Aggiungi carte</h2>
               <div class="card-search-actions" aria-label="Azioni ricerca carte">
-
-                <button class="card-search-action" id="tokenBtn" type="button" aria-label="Gestisci token" title="Token API"><span class="card-search-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="8.2" cy="15.8" r="3.2"></circle><path d="M10.6 13.4 19 5"></path><path d="M15.4 8.6 17.8 11"></path><path d="M13.2 10.8 15.1 12.7"></path></svg></span></button>
               </div>
             </div>
             <div class="card-search-shell">
@@ -4370,28 +4495,7 @@ paint-order="stroke">
       </article>
     </template>
 
-    <div id="tokenModal" class="modal-backdrop">
-    <div class="modal small">
-      <div class="modal-head">
-        <div>
-          <div class="modal-title">Token API CardTrader</div>
-          <div class="helper">Il token viene salvato solo nel browser con <strong>localStorage</strong> e non è scritto dentro l'HTML.</div>
-        </div>
-        <button class="close-btn" data-close="tokenModal">×</button>
-      </div>
-      <div class="row-gap">
-        <input id="tokenInput" class="token-input" type="password" placeholder="Incolla qui il Bearer token" />
-        <div class="helper warning">Nota importante: se hai messo il token in file JSON o raccolte Postman, revocalo e rigenerane uno nuovo. È una di quelle genialate umane che poi presentano il conto.</div>
-        <div id="tokenMessage" class="helper"></div>
-        <div style="display:flex; gap:6px; justify-content:flex-end; flex-wrap:wrap;">
-          <button id="clearTokenBtn" class="ghost-btn">Rimuovi token</button>
-          <button id="saveTokenBtn" class="primary-btn">Salva token</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="detailModal" class="modal-backdrop">
+    <div id="detailModal" class="modal-backdrop">
     <div class="modal card-sheet-modal">
       <section id="detailPage" class="card-sheet-page">
         <div class="card-sheet-container"><div class="card-sheet-panel">
@@ -4411,7 +4515,7 @@ paint-order="stroke">
           </div>
           <div class="detail-content">
             <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Retro carta Pokémon"></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""><button type="button" class="card-zoom-btn" id="cardZoomBtn" aria-label="Ingrandisci carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"></path><path d="M3 3l7 7"></path><path d="M16 3h5v5"></path><path d="M21 3l-7 7"></path><path d="M8 21H3v-5"></path><path d="M3 21l7-7"></path><path d="M16 21h5v-5"></path><path d="M21 21l-7-7"></path></svg></button></div>
-            <div class="detail-price"><span class="detail-price-label">Prezzo</span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
+            <div class="detail-price"><span class="detail-price-label">Prezzo</span><span class="detail-price-source" id="detailPriceSource" aria-live="polite"></span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-variant-card" aria-label="Varianti carta">
               <label class="detail-variant-row">
                 <span class="detail-variant-radio">
@@ -4436,7 +4540,7 @@ paint-order="stroke">
               </label>
             </div>
             <div class="detail-cards">
-              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Data</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Provenienza</div><input class="info-edit-input" id="cardOriginInput" type="text" autocomplete="off" placeholder="Non specificato"></div></div></section>
+              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue">Non specificato</span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div></div></section>
               <section class="info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="info-divider"></div><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
             </div>
           </div>
@@ -4446,6 +4550,40 @@ paint-order="stroke">
     </div>
   </div>
 
+
+
+  <div class="choice-sheet-backdrop" id="originChoiceSheet" aria-hidden="true">
+    <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="originChoiceTitle">
+      <div class="choice-sheet-handle"></div>
+      <h2 class="choice-sheet-title" id="originChoiceTitle">Provenienza<span class="field-subtitle">Scegli come hai ottenuto la carta</span></h2>
+      <div class="choice-list">
+        <button class="choice-option" type="button" data-origin-type="Bustina">
+          <span>Bustina</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="choice-option" type="button" data-origin-type="Acquisto Singolo">
+          <span>Acquisto Singolo</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="choice-option" type="button" data-origin-type="Regalo">
+          <span>Regalo</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="choice-sheet-backdrop" id="originInputSheet" aria-hidden="true">
+    <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="originInputTitle">
+      <div class="choice-sheet-handle"></div>
+      <h2 class="choice-sheet-title" id="originInputTitle">Dettaglio</h2>
+      <input class="origin-sheet-input" id="originDetailInput" type="text" autocomplete="off">
+      <div class="origin-sheet-actions">
+        <button class="origin-sheet-btn cancel" id="originInputCancel" type="button">Annulla</button>
+        <button class="origin-sheet-btn save" id="originInputSave" type="button">Salva</button>
+      </div>
+    </div>
+  </div>
 
 
   <div id="cardZoomOverlay" class="card-zoom-overlay" aria-hidden="true">
@@ -4461,13 +4599,12 @@ paint-order="stroke">
   </div>
 
     <script>
-const API_BASE = 'https://api.cardtrader.com/api/v2';
+const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
     const INDEX_URL = 'data/pokemon-index.json';
     const META_URL = 'data/pokemon-index-meta.json';
-    const LS_TOKEN = 'ct_pokemon_token';
+    const PRICE_DB_URL = 'data/pokemon_price-db.json';
 
     const state = {
-      token: localStorage.getItem(LS_TOKEN) || '',
       cards: [],
       filtered: [],
       suggestions: [],
@@ -4494,11 +4631,16 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
         selected: { langKey: '', condKey: '', ctZero: false },
         loading: false,
         lastCardId: null,
+        priceSource: '',
+      },
+      priceDb: {
+        data: null,
+        promise: null,
+        error: null,
       },
     };
 
     const el = {
-      tokenBtn: document.getElementById('tokenBtn'),
       reloadBtn: document.getElementById('reloadBtn'),
       searchInput: document.getElementById('searchInput'),
       searchBtn: document.getElementById('searchBtn'),
@@ -4511,17 +4653,13 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
       countsText: document.getElementById('countsText'),
 	  timerChip: document.getElementById('timerChip'),
       progressBar: document.getElementById('progressBar'),
-      tokenModal: document.getElementById('tokenModal'),
-      tokenInput: document.getElementById('tokenInput'),
-      tokenMessage: document.getElementById('tokenMessage'),
-      saveTokenBtn: document.getElementById('saveTokenBtn'),
-      clearTokenBtn: document.getElementById('clearTokenBtn'),
       detailModal: document.getElementById('detailModal'),
       detailTopName: document.getElementById('detailTopName'),
       detailTopMeta: document.getElementById('detailTopMeta'),
       detailImageWrap: document.getElementById('detailImageWrap'),
       detailCardImage: document.getElementById('detailCardImage'),
       detailPriceValue: document.getElementById('detailPriceValue'),
+      detailPriceSource: document.getElementById('detailPriceSource'),
       detailOfferLabel: document.getElementById('detailOfferLabel'),
       cardRarity: document.getElementById('cardRarity'),
       cardSet: document.getElementById('cardSet'),
@@ -4530,6 +4668,14 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
       cardArtistInput: document.getElementById('cardArtistInput'),
       cardDateInput: document.getElementById('cardDateInput'),
       cardOriginInput: document.getElementById('cardOriginInput'),
+      cardOriginBtn: document.getElementById('cardOriginBtn'),
+      cardOriginValue: document.getElementById('cardOriginValue'),
+      originChoiceSheet: document.getElementById('originChoiceSheet'),
+      originInputSheet: document.getElementById('originInputSheet'),
+      originInputTitle: document.getElementById('originInputTitle'),
+      originDetailInput: document.getElementById('originDetailInput'),
+      originInputCancel: document.getElementById('originInputCancel'),
+      originInputSave: document.getElementById('originInputSave'),
       detailRaw: document.getElementById('detailRaw'),
       refreshPriceBtn: document.getElementById('refreshPriceBtn'),
       menuBtn: document.querySelector('#detailModal .menu-btn'),
@@ -4587,7 +4733,13 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
     }
 
     function openModal(modal) { modal.classList.add('open'); }
-    function closeModal(modal) { modal.classList.remove('open'); }
+    function closeModal(modal) {
+      modal.classList.remove('open');
+      if (modal && modal.id === 'detailModal') {
+        closeOriginChoiceSheet();
+        closeOriginInputSheet();
+      }
+    }
 
     function escapeHtml(value) {
       return String(value ?? '')
@@ -5502,7 +5654,7 @@ function finishUpdateTimer() {
         renderMarketControls(null, { noMatch: true });
         return;
       }
-      setPriceResult(formatEuroFromCents(chosen.priceCents), '');
+      setPriceResult(formatEuroFromCents(chosen.priceCents), '', { source: state.market.priceSource || 'live' });
       renderMarketControls(chosen);
     }
 
@@ -5539,7 +5691,87 @@ function finishUpdateTimer() {
       return null;
     }
 
+    function setPriceSource(source = '') {
+      state.market.priceSource = source || '';
+      if (!el.detailPriceSource) return;
+      el.detailPriceSource.textContent = source === 'live' ? '(Live)' : '';
+    }
+
+    async function loadPriceDatabase(force = false) {
+      if (!force && state.priceDb.data) return state.priceDb.data;
+      if (!force && state.priceDb.promise) return state.priceDb.promise;
+
+      state.priceDb.promise = (async () => {
+        const cacheBust = force ? `?t=${Date.now()}` : '';
+        const response = await fetch(`${PRICE_DB_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' });
+        if (!response.ok) {
+          throw new Error(`pokemon_price-db.json non caricato: HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+          throw new Error('pokemon_price-db.json non è un oggetto valido');
+        }
+
+        state.priceDb.data = data;
+        state.priceDb.error = null;
+        return data;
+      })();
+
+      try {
+        return await state.priceDb.promise;
+      } catch (error) {
+        state.priceDb.error = error;
+        state.priceDb.data = null;
+        throw error;
+      } finally {
+        state.priceDb.promise = null;
+      }
+    }
+
+    function getDatabasePriceEntry(card) {
+      const blueprintId = Number(card?.id);
+      if (!Number.isFinite(blueprintId)) return null;
+
+      const db = state.priceDb.data;
+      if (!db || typeof db !== 'object') return null;
+
+      const entry = db[String(blueprintId)];
+      const priceCents = Number(entry?.pc);
+      if (!entry || !Number.isFinite(priceCents)) return null;
+
+      return {
+        ...entry,
+        pc: priceCents,
+        p: Number.isFinite(Number(entry.p)) ? Number(entry.p) : Number((priceCents / 100).toFixed(2)),
+      };
+    }
+
+    function getDatabasePriceLabel(entry) {
+      const parts = ['Prezzo da database locale'];
+      if (entry?.l) parts.push(String(entry.l).toUpperCase());
+      if (entry?.c) parts.push(String(entry.c).toUpperCase());
+      if (Number(entry?.z) === 1) parts.push('CT Zero');
+      return parts.join(' · ');
+    }
+
+    async function loadPriceFromDatabaseFallback(card, originalError = null) {
+      await loadPriceDatabase();
+      if (state.selectedCard && Number(state.selectedCard.id) !== Number(card?.id)) return false;
+
+      const entry = getDatabasePriceEntry(card);
+      if (!entry) return false;
+
+      state.market.rows = [];
+      state.market.selected = { langKey: entry.l || '', condKey: entry.c || '', ctZero: Number(entry.z) === 1 };
+      setPriceResult(formatEuroFromCents(entry.pc), getDatabasePriceLabel(entry), { source: 'database' });
+      setMarketControlsDisabled(true);
+      console.warn('Prezzo live non disponibile, usato database locale.', originalError);
+      return true;
+    }
+
     function setPriceLoadingState(message = 'Carico prezzo...') {
+      setPriceSource('');
       if (el.detailPriceValue) el.detailPriceValue.textContent = '-';
       if (el.detailOfferLabel) el.detailOfferLabel.textContent = message;
       setMarketControlsDisabled(true);
@@ -5549,8 +5781,9 @@ function finishUpdateTimer() {
       }
     }
 
-    function setPriceResult(priceText, offerText) {
+    function setPriceResult(priceText, offerText, options = {}) {
       const cleanPrice = String(priceText || '-').replace(/^€\s*/i, '').trim() || '-';
+      setPriceSource(options.source || '');
       if (el.detailPriceValue) el.detailPriceValue.textContent = cleanPrice;
       if (typeof offerText === 'string' && offerText && el.detailOfferLabel) {
         el.detailOfferLabel.textContent = offerText;
@@ -5565,6 +5798,7 @@ function finishUpdateTimer() {
       if (!card) return;
       state.market.rows = [];
       state.market.selected = { langKey: '', condKey: '', ctZero: false };
+      state.market.priceSource = '';
       state.market.lastCardId = card.id;
       setPriceLoadingState();
       try {
@@ -5578,12 +5812,22 @@ function finishUpdateTimer() {
         const selected = pickBestMarketplaceOffer(products) || pricedProducts.sort((a, b) => a.priceCents - b.priceCents)[0];
         if (!selected) { setPriceResult('-', 'Offerta non disponibile'); return; }
         setMarketSelectionFromProduct(selected.product);
-        setPriceResult(formatEuroFromCents(selected.priceCents), '');
+        setPriceResult(formatEuroFromCents(selected.priceCents), '', { source: 'live' });
         renderMarketControls({ product: selected.product, priceCents: selected.priceCents });
       } catch (error) {
-        setPriceResult('-', `Errore prezzo: ${error.message}`);
+        try {
+          const usedDatabasePrice = await loadPriceFromDatabaseFallback(card, error);
+          if (!usedDatabasePrice) {
+            setPriceResult('-', `Errore prezzo live e nessun prezzo nel database: ${error.message}`);
+          }
+        } catch (dbError) {
+          const liveMessage = error instanceof Error ? error.message : String(error);
+          const dbMessage = dbError instanceof Error ? dbError.message : String(dbError);
+          setPriceResult('-', `Errore prezzo live: ${liveMessage}. Database non disponibile: ${dbMessage}`);
+        }
       } finally {
-        setMarketControlsDisabled(false);
+        const usingDatabaseFallback = state.market.priceSource === 'database';
+        setMarketControlsDisabled(usingDatabaseFallback ? true : false);
         if (el.refreshPriceBtn) {
           el.refreshPriceBtn.disabled = false;
           el.refreshPriceBtn.textContent = 'Aggiorna prezzo';
@@ -5704,22 +5948,12 @@ function finishUpdateTimer() {
       return score;
     }
 
-    function getStoredToken() {
-      const token = String(state.token || localStorage.getItem(LS_TOKEN) || '').trim();
-      state.token = token;
-      return token;
-    }
-
     async function api(path) {
-      const token = getStoredToken();
-      if (!token) throw new Error('Token mancante: apri Token API e salvalo di nuovo.');
-      const res = await fetch(`${API_BASE}${path}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await fetch(`${API_BASE}${path}`);
       if (!res.ok) {
         let text = '';
         try { text = await res.text(); } catch (_) {}
-        throw new Error(`API ${res.status}: ${text || res.statusText}`);
+        throw new Error(`Proxy Cloudflare ${res.status}: ${text || res.statusText}`);
       }
       return res.json();
     }
@@ -6182,6 +6416,7 @@ function finishUpdateTimer() {
       [el.cardTotalSetInput, el.cardArtistInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
         if (input) input.value = '';
       });
+      setCardOrigin('', '');
       if (el.detailRaw) el.detailRaw.textContent = JSON.stringify(card, null, 2);
       if (el.collapsibleContent && el.collapsibleTrigger) {
         el.collapsibleContent.classList.remove('open');
@@ -6191,17 +6426,158 @@ function finishUpdateTimer() {
       await loadMarketSummary(card);
     }
 
-    function attachEvents() {
-      el.tokenBtn.addEventListener('click', () => {
-        const token = getStoredToken();
-        el.tokenInput.value = token;
-        el.tokenMessage.textContent = token ? 'Token presente nel browser.' : '';
-        openModal(el.tokenModal);
-      });
 
-      document.querySelectorAll('[data-close]').forEach(btn => {
+    let pendingOriginType = '';
+
+    function toTitleCaseName(value = '') {
+      return String(value || '')
+        .trim()
+        .replace(/\s+/g, ' ')
+        .toLocaleLowerCase('it-IT')
+        .replace(/(^|[\s'’\-])([\p{L}])/gu, (match, separator, letter) => {
+          return separator + letter.toLocaleUpperCase('it-IT');
+        });
+    }
+
+    function formatEuroAmount(value = '') {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      const normalized = raw
+        .replace(/\s/g, '')
+        .replace(/€/g, '')
+        .replace(/\./g, ',')
+        .replace(/[^0-9,\-]/g, '');
+      const parts = normalized.split(',');
+      const integerPart = parts.shift() || '0';
+      const decimalPart = parts.join('');
+      const numberValue = Number(`${integerPart.replace(/(?!^)-/g, '')}.${decimalPart || '0'}`);
+      if (!Number.isFinite(numberValue)) return raw;
+      return new Intl.NumberFormat('it-IT', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(numberValue);
+    }
+
+    function normalizeOriginDetail(type = '', detail = '') {
+      const cleanType = String(type || '').trim();
+      if (cleanType === 'Regalo') return toTitleCaseName(detail);
+      if (cleanType === 'Acquisto Singolo') return formatEuroAmount(detail);
+      return String(detail || '').trim();
+    }
+
+    function setCardOrigin(type = '', detail = '') {
+      const cleanType = String(type || '').trim();
+      const cleanDetail = normalizeOriginDetail(cleanType, detail);
+      let label = cleanType;
+      if (cleanType === 'Acquisto Singolo' && cleanDetail) label = `${cleanType} - € ${cleanDetail}`;
+      if (cleanType === 'Regalo' && cleanDetail) label = `${cleanType} - ${cleanDetail}`;
+      if (el.cardOriginInput) el.cardOriginInput.value = label;
+      if (el.cardOriginValue) {
+        el.cardOriginValue.textContent = label || 'Non specificato';
+        el.cardOriginValue.classList.toggle('is-placeholder', !label);
+      }
+      document.querySelectorAll('[data-origin-type]').forEach((button) => {
+        button.classList.toggle('is-selected', button.dataset.originType === cleanType);
+      });
+    }
+
+    function openOriginChoiceSheet() {
+      if (!el.originChoiceSheet) return;
+      closeOriginInputSheet();
+      el.originChoiceSheet.classList.add('open');
+      el.originChoiceSheet.setAttribute('aria-hidden', 'false');
+      if (el.cardOriginBtn) el.cardOriginBtn.setAttribute('aria-expanded', 'true');
+    }
+
+    function closeOriginChoiceSheet() {
+      if (!el.originChoiceSheet) return;
+      el.originChoiceSheet.classList.remove('open');
+      el.originChoiceSheet.setAttribute('aria-hidden', 'true');
+      if (el.cardOriginBtn) el.cardOriginBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    function openOriginInputSheet(type) {
+      pendingOriginType = type;
+      closeOriginChoiceSheet();
+      if (!el.originInputSheet) return;
+      if (el.originInputTitle) {
+        el.originInputTitle.innerHTML = type === 'Acquisto Singolo'
+          ? 'Prezzo<span class="field-subtitle">Inserisci il prezzo pagato</span>'
+          : 'Regalo<span class="field-subtitle">Da chi arriva?</span>';
+      }
+      if (el.originDetailInput) {
+        el.originDetailInput.value = '';
+        el.originDetailInput.type = 'text';
+        el.originDetailInput.inputMode = type === 'Acquisto Singolo' ? 'decimal' : 'text';
+        el.originDetailInput.placeholder = type === 'Acquisto Singolo' ? 'Es. 12,50' : 'Es. Lorenzo';
+      }
+      el.originInputSheet.classList.add('open');
+      el.originInputSheet.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => el.originDetailInput?.focus());
+    }
+
+    function closeOriginInputSheet() {
+      if (!el.originInputSheet) return;
+      el.originInputSheet.classList.remove('open');
+      el.originInputSheet.setAttribute('aria-hidden', 'true');
+    }
+
+    function attachEvents() {
+document.querySelectorAll('[data-close]').forEach(btn => {
         btn.addEventListener('click', () => closeModal(document.getElementById(btn.dataset.close)));
       });
+
+      if (el.cardOriginBtn) {
+        el.cardOriginBtn.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          openOriginChoiceSheet();
+        });
+      }
+      if (el.originChoiceSheet) {
+        el.originChoiceSheet.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (event.target === el.originChoiceSheet) {
+            closeOriginChoiceSheet();
+            return;
+          }
+          const option = event.target.closest('[data-origin-type]');
+          if (!option) return;
+          const type = option.dataset.originType;
+          if (type === 'Bustina') {
+            setCardOrigin('Bustina', '');
+            closeOriginChoiceSheet();
+            return;
+          }
+          closeOriginChoiceSheet();
+          openOriginInputSheet(type);
+        });
+      }
+      if (el.originInputSheet) {
+        el.originInputSheet.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (event.target === el.originInputSheet) closeOriginInputSheet();
+        });
+      }
+      if (el.originInputCancel) {
+        el.originInputCancel.addEventListener('click', closeOriginInputSheet);
+      }
+      if (el.originInputSave) {
+        el.originInputSave.addEventListener('click', () => {
+          const value = el.originDetailInput ? el.originDetailInput.value.trim() : '';
+          setCardOrigin(pendingOriginType, value);
+          closeOriginInputSheet();
+        });
+      }
+      if (el.originDetailInput) {
+        el.originDetailInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            el.originInputSave?.click();
+          }
+          if (event.key === 'Escape') closeOriginInputSheet();
+        });
+      }
 
       if (el.detailOfferLabel) {
         el.detailOfferLabel.addEventListener('change', (event) => {
@@ -6267,7 +6643,7 @@ function finishUpdateTimer() {
         });
       }
 
-      [el.tokenModal, el.detailModal].forEach(backdrop => {
+      [el.detailModal].forEach(backdrop => {
         backdrop.addEventListener('click', (e) => {
           if (e.target === backdrop) closeModal(backdrop);
         });
@@ -6310,30 +6686,7 @@ function finishUpdateTimer() {
           });
         });
       }
-
-      el.saveTokenBtn.addEventListener('click', async () => {
-        const token = el.tokenInput.value.trim();
-        if (!token) {
-          el.tokenMessage.textContent = 'Inserisci un token valido.';
-          el.tokenMessage.className = 'helper error';
-          return;
-        }
-        state.token = token;
-        localStorage.setItem(LS_TOKEN, token);
-        el.tokenMessage.textContent = 'Token salvato nel browser.';
-        el.tokenMessage.className = 'helper success';
-        setTimeout(() => closeModal(el.tokenModal), 250);
-      });
-
-      el.clearTokenBtn.addEventListener('click', () => {
-        localStorage.removeItem(LS_TOKEN);
-        state.token = '';
-        el.tokenInput.value = '';
-        el.tokenMessage.textContent = 'Token rimosso dal browser.';
-        el.tokenMessage.className = 'helper';
-      });
-
-      if (el.reloadBtn) {
+if (el.reloadBtn) {
         el.reloadBtn.addEventListener('click', async () => {
           await fetchPokemonIndex(true);
         });
@@ -7697,6 +8050,8 @@ document.addEventListener('error', (event) => {
             closeCollectionMenu();
             closeOwnerNameSheet();
             closeRenameSheet();
+            if (typeof closeOriginChoiceSheet === 'function') closeOriginChoiceSheet();
+            if (typeof closeOriginInputSheet === 'function') closeOriginInputSheet();
           }
         });
 
