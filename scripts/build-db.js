@@ -3,17 +3,9 @@ import fs from 'fs/promises';
 const token = process.env.CARDTRADER_TOKEN;
 const API_BASE = 'https://api.cardtrader.com/api/v2';
 
-const OUT_DIR = process.env.OUT_DIR || './data';
-const PRICES_FILE = `${OUT_DIR}/pokemon-prices.json`;
-const META_FILE = `${OUT_DIR}/pokemon-prices-meta.json`;
-
-// Limiti regolabili da GitHub Actions / terminale.
-// Per provare solo poche espansioni: MAX_EXPANSIONS=20 node build-prices.js
-const PAUSE_MS = Number(process.env.PRICE_PAUSE_MS || 250);
-const MAX_EXPANSIONS = Number(process.env.MAX_EXPANSIONS || 0); // 0 = tutte
-const START_FROM = Number(process.env.START_FROM || 0); // indice espansione, 0-based
-const API_TIMEOUT_MS = Number(process.env.API_TIMEOUT_MS || 180000);
-const RETRIES = Number(process.env.PRICE_RETRIES || 2);
+const PAUSE_MS = Number(process.env.PAUSE_MS || 120);
+const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 180000);
+const RETRIES = Number(process.env.RETRIES || 3);
 
 if (!token) {
   throw new Error('CARDTRADER_TOKEN mancante');
@@ -23,46 +15,38 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function api(path, options = {}) {
-  const { timeoutMs = API_TIMEOUT_MS, retries = RETRIES } = options;
-  let lastError;
+async function api(path, attempt = 1) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(`${API_BASE}${path}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      signal: controller.signal
+    });
 
-    try {
-      const response = await fetch(`${API_BASE}${path}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        },
-        signal: controller.signal
-      });
-
-      clearTimeout(timeout);
-
-      if (!response.ok) {
-        const text = await response.text().catch(() => '');
-        throw new Error(`Errore API ${response.status}: ${text || response.statusText}`);
-      }
-
-      return response.json();
-    } catch (error) {
-      clearTimeout(timeout);
-      lastError = error;
-
-      const message = error instanceof Error ? error.message : String(error);
-      const wait = Math.min(15000, 1200 * (attempt + 1));
-
-      if (attempt < retries) {
-        console.warn(`Retry ${attempt + 1}/${retries} per ${path}: ${message}. Pausa ${wait}ms.`);
-        await sleep(wait);
-        continue;
-      }
+    if (!response.ok) {
+      const text = await response.text().catch(() => '');
+      throw new Error(`Errore API ${response.status}: ${text || response.statusText}`);
     }
-  }
 
-  throw lastError;
+    return response.json();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    if (attempt < RETRIES) {
+      const wait = 800 * attempt;
+      console.warn(`Retry ${attempt}/${RETRIES - 1} per ${path}: ${message}. Attesa ${wait}ms`);
+      await sleep(wait);
+      return api(path, attempt + 1);
+    }
+
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function extractArray(payload, preferredKeys = []) {
@@ -80,16 +64,124 @@ function extractArray(payload, preferredKeys = []) {
   return [];
 }
 
-function extractObject(payload, preferredKeys = []) {
-  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return null;
+function getGroupedProducts(payload) {
+  if (!payload || typeof payload !== 'object') return {};
 
-  for (const key of preferredKeys) {
-    if (payload[key] && typeof payload[key] === 'object' && !Array.isArray(payload[key])) {
-      return payload[key];
+  if (!Array.isArray(payload) && !payload.length) {
+    return payload;
+  }
+
+  return {};
+}
+
+function normalizeProduct(product) {
+  const blueprintId =
+    product.blueprint_id ??
+    product.blueprintId ??
+    product.blueprint?.id ??
+    product.card_id ??
+    product.cardId ??
+    null;
+
+  if (blueprintId == null) return null;
+
+  return {
+    id: product.id ?? null,
+    blueprint_id: Number(blueprintId),
+    price_cents: product.price_cents ?? product.priceCents ?? product.price?.cents ?? null,
+    price: product.price ?? product.price_eur ?? product.priceEUR ?? null,
+    currency: product.currency ?? product.price_currency ?? product.price?.currency ?? 'EUR',
+    quantity: product.quantity ?? product.available_quantity ?? product.count ?? null,
+    condition: product.condition ?? product.properties?.condition ?? product.properties_hash?.condition ?? '',
+    language: product.language ?? product.properties?.language ?? product.properties_hash?.language ?? '',
+    expansion_id: product.expansion_id ?? product.expansionId ?? product.expansion?.id ?? null,
+    user_id: product.user_id ?? product.userId ?? product.seller?.id ?? null,
+    user_name: product.user?.username ?? product.user?.name ?? product.seller?.username ?? product.seller?.name ?? '',
+    ct_zero: Boolean(
+      product.ct_zero ??
+      product.ctZero ??
+      product.is_ct_zero ??
+      product.properties?.ct_zero ??
+      product.properties_hash?.ct_zero ??
+      false
+    ),
+    raw: product
+  };
+}
+
+function addProduct(pricesByBlueprint, product) {
+  const normalized = normalizeProduct(product);
+  if (!normalized) return false;
+
+  const key = String(normalized.blueprint_id);
+
+  if (!pricesByBlueprint[key]) {
+    pricesByBlueprint[key] = [];
+  }
+
+  pricesByBlueprint[key].push(normalized);
+  return true;
+}
+
+function addProductsFromPayload(pricesByBlueprint, payload) {
+  let added = 0;
+
+  if (Array.isArray(payload)) {
+    for (const product of payload) {
+      if (addProduct(pricesByBlueprint, product)) added++;
+    }
+
+    return added;
+  }
+
+  if (!payload || typeof payload !== 'object') {
+    return added;
+  }
+
+  const possibleArrays = [
+    payload.products,
+    payload.marketplace_products,
+    payload.data,
+    payload.results,
+    payload.items
+  ].filter(Array.isArray);
+
+  if (possibleArrays.length) {
+    for (const arr of possibleArrays) {
+      for (const product of arr) {
+        if (addProduct(pricesByBlueprint, product)) added++;
+      }
+    }
+
+    return added;
+  }
+
+  // CardTrader marketplace/products con expansion_id può restituire un oggetto raggruppato per blueprint_id.
+  for (const [blueprintId, value] of Object.entries(payload)) {
+    if (Array.isArray(value)) {
+      for (const product of value) {
+        const merged = {
+          ...product,
+          blueprint_id: product.blueprint_id ?? blueprintId
+        };
+
+        if (addProduct(pricesByBlueprint, merged)) added++;
+      }
+
+      continue;
+    }
+
+    if (value && typeof value === 'object') {
+      const merged = {
+        ...value,
+        blueprint_id: value.blueprint_id ?? blueprintId
+      };
+
+      if (addProduct(pricesByBlueprint, merged)) added++;
     }
   }
 
-  return payload;
+  return added;
 }
 
 async function detectPokemonGame() {
@@ -110,139 +202,53 @@ async function detectPokemonGame() {
   return pokemon;
 }
 
-function getBlueprintId(product, fallbackId = null) {
-  const candidates = [
-    product?.blueprint_id,
-    product?.blueprintId,
-    product?.blueprint?.id,
-    product?.card_id,
-    product?.cardId,
-    product?.properties?.blueprint_id,
-    fallbackId
-  ];
-
-  for (const value of candidates) {
-    const n = Number(value);
-    if (Number.isFinite(n) && n > 0) return String(n);
-  }
-
-  return null;
-}
-
-function normalizeProduct(product, fallbackBlueprintId = null) {
-  const blueprintId = getBlueprintId(product, fallbackBlueprintId);
-
-  // Manteniamo tutto il prodotto originale, ma aggiungiamo campi normalizzati comodi
-  // per l'HTML. Sì, un minimo di civiltà in mezzo al JSON selvaggio.
-  return {
-    blueprint_id: blueprintId ? Number(blueprintId) : null,
-    id: product?.id ?? null,
-    price_cents: product?.price_cents ?? product?.priceCents ?? product?.price?.cents ?? null,
-    price: product?.price ?? product?.price_float ?? product?.priceFloat ?? null,
-    currency: product?.currency ?? product?.price_currency ?? product?.price?.currency ?? null,
-    language: product?.language ?? product?.properties?.language ?? product?.properties?.pokemon_language ?? null,
-    condition: product?.condition ?? product?.properties?.condition ?? product?.properties?.pokemon_condition ?? null,
-    ct_zero: product?.ct_zero ?? product?.ctZero ?? product?.properties?.ct_zero ?? product?.properties?.ctZero ?? null,
-    raw: product
-  };
-}
-
-function addProductsToPrices(pricesByBlueprint, payload) {
-  let added = 0;
-
-  // Caso 1: CardTrader spesso restituisce oggetto raggruppato per blueprint_id:
-  // { "123": [prodotti...], "456": [prodotti...] }
-  const objectPayload = extractObject(payload, ['products']);
-
-  if (objectPayload && !Array.isArray(objectPayload)) {
-    for (const [key, value] of Object.entries(objectPayload)) {
-      if (Array.isArray(value)) {
-        for (const product of value) {
-          const normalized = normalizeProduct(product, key);
-          const blueprintId = getBlueprintId(normalized, key);
-          if (!blueprintId) continue;
-
-          if (!pricesByBlueprint[blueprintId]) pricesByBlueprint[blueprintId] = [];
-          pricesByBlueprint[blueprintId].push(normalized);
-          added++;
-        }
-      } else if (value && typeof value === 'object') {
-        const normalized = normalizeProduct(value, key);
-        const blueprintId = getBlueprintId(normalized, key);
-        if (!blueprintId) continue;
-
-        if (!pricesByBlueprint[blueprintId]) pricesByBlueprint[blueprintId] = [];
-        pricesByBlueprint[blueprintId].push(normalized);
-        added++;
-      }
-    }
-
-    if (added > 0) return added;
-  }
-
-  // Caso 2: risposta piatta: [prodotti...]
-  const products = extractArray(payload, ['products', 'marketplace_products', 'data']);
-
-  for (const product of products) {
-    const normalized = normalizeProduct(product);
-    const blueprintId = getBlueprintId(normalized);
-    if (!blueprintId) continue;
-
-    if (!pricesByBlueprint[blueprintId]) pricesByBlueprint[blueprintId] = [];
-    pricesByBlueprint[blueprintId].push(normalized);
-    added++;
-  }
-
-  return added;
-}
-
 async function main() {
-  console.log('Avvio creazione DB SOLO PREZZI CardTrader per Pokémon...');
+  console.log('Avvio costruzione database PREZZI Pokémon completo...');
 
+  const info = await api('/info');
   const pokemonGame = await detectPokemonGame();
+
   console.log(`Game trovato: ${pokemonGame.name || pokemonGame.display_name || pokemonGame.id}`);
 
   const expansionsPayload = await api('/expansions');
   const expansions = extractArray(expansionsPayload, ['expansions']);
 
-  const pokemonExpansions = expansions.filter(x => Number(x?.game_id) === Number(pokemonGame.id));
+  const pokemonExpansions = expansions.filter(x =>
+    Number(x?.game_id) === Number(pokemonGame.id)
+  );
 
   if (!pokemonExpansions.length) {
     throw new Error('Nessuna espansione Pokémon trovata');
   }
 
-  const selectedExpansions = pokemonExpansions.slice(
-    START_FROM,
-    MAX_EXPANSIONS > 0 ? START_FROM + MAX_EXPANSIONS : undefined
-  );
-
-  console.log(`Espansioni Pokémon totali: ${pokemonExpansions.length}`);
-  console.log(`Espansioni da processare ora: ${selectedExpansions.length}`);
-  console.log(`Pausa tra richieste: ${PAUSE_MS}ms`);
+  console.log(`Espansioni Pokémon trovate: ${pokemonExpansions.length}`);
+  console.log(`Download prezzi marketplace per TUTTE le espansioni. Pausa ${PAUSE_MS}ms, timeout ${REQUEST_TIMEOUT_MS}ms, retry ${RETRIES}.`);
 
   const pricesByBlueprint = {};
   const skippedExpansions = [];
-  let totalProducts = 0;
-  let expansionsWithProducts = 0;
+  let totalOffers = 0;
+  let expansionsWithOffers = 0;
 
-  await fs.mkdir(OUT_DIR, { recursive: true });
+  for (let i = 0; i < pokemonExpansions.length; i++) {
+    const exp = pokemonExpansions[i];
 
-  for (let i = 0; i < selectedExpansions.length; i++) {
-    const globalIndex = START_FROM + i;
-    const exp = selectedExpansions[i];
-    console.log(`${globalIndex + 1}/${pokemonExpansions.length} - ${exp.code || exp.id}: ${exp.name}`);
+    console.log(`${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
 
     try {
-      const payload = await api(`/marketplace/products?expansion_id=${encodeURIComponent(exp.id)}`);
-      const added = addProductsToPrices(pricesByBlueprint, payload);
-      totalProducts += added;
+      const productsPayload = await api(`/marketplace/products?expansion_id=${encodeURIComponent(exp.id)}`);
+      const added = addProductsFromPayload(pricesByBlueprint, productsPayload);
 
-      if (added > 0) expansionsWithProducts++;
+      totalOffers += added;
 
-      console.log(`  offerte aggiunte: ${added} - carte con offerte finora: ${Object.keys(pricesByBlueprint).length}`);
+      if (added > 0) {
+        expansionsWithOffers++;
+      }
+
+      console.log(`  offerte aggiunte: ${added} - blueprint con offerte: ${Object.keys(pricesByBlueprint).length}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      console.warn(`  SKIP prezzi espansione ${exp.id} - ${exp.name}: ${message}`);
+
+      console.warn(`SKIP prezzi espansione ${exp.id} - ${exp.name}: ${message}`);
 
       skippedExpansions.push({
         id: exp.id,
@@ -252,39 +258,47 @@ async function main() {
       });
     }
 
-    // Salvataggio progressivo ogni 25 espansioni, così se cade non perdi tutto.
-    if ((i + 1) % 25 === 0) {
-      await fs.writeFile(PRICES_FILE, JSON.stringify(pricesByBlueprint));
-      console.log(`  salvataggio progressivo: ${Object.keys(pricesByBlueprint).length} carte con offerte`);
+    if (PAUSE_MS > 0) {
+      await sleep(PAUSE_MS);
     }
-
-    if (PAUSE_MS > 0) await sleep(PAUSE_MS);
   }
 
   const meta = {
     updatedAt: new Date().toISOString(),
+    appName: info.name || '',
+    appId: info.id || null,
     gameId: pokemonGame.id,
     gameName: pokemonGame.name || pokemonGame.display_name || 'Pokemon',
-    source: 'CardTrader /marketplace/products?expansion_id=',
-    expansionsTotal: pokemonExpansions.length,
-    startFrom: START_FROM,
-    maxExpansions: MAX_EXPANSIONS,
-    expansionsProcessed: selectedExpansions.length,
-    expansionsWithProducts,
-    blueprintWithOffersCount: Object.keys(pricesByBlueprint).length,
-    productsCount: totalProducts,
+    expansionsCount: pokemonExpansions.length,
+    expansionsWithOffers,
     skippedExpansionsCount: skippedExpansions.length,
     skippedExpansions,
+    blueprintWithOffersCount: Object.keys(pricesByBlueprint).length,
+    offersCount: totalOffers,
+    source: 'cardtrader-marketplace-products-by-expansion',
     indexVersion: 1
   };
 
-  await fs.writeFile(PRICES_FILE, JSON.stringify(pricesByBlueprint));
-  await fs.writeFile(META_FILE, JSON.stringify(meta, null, 2));
+  await fs.mkdir('./data', { recursive: true });
 
-  console.log('DB prezzi creato.');
-  console.log(`Carte con offerte: ${meta.blueprintWithOffersCount}`);
-  console.log(`Offerte totali salvate: ${meta.productsCount}`);
-  console.log(`Espansioni saltate: ${meta.skippedExpansionsCount}`);
+  await fs.writeFile(
+    './data/pokemon-prices.json',
+    JSON.stringify(pricesByBlueprint)
+  );
+
+  await fs.writeFile(
+    './data/pokemon-prices-meta.json',
+    JSON.stringify(meta)
+  );
+
+  console.log(`Database prezzi creato.`);
+  console.log(`Blueprint con offerte: ${meta.blueprintWithOffersCount}`);
+  console.log(`Offerte totali salvate: ${meta.offersCount}`);
+  console.log(`Espansioni con offerte: ${meta.expansionsWithOffers}/${meta.expansionsCount}`);
+
+  if (skippedExpansions.length) {
+    console.warn(`Espansioni saltate: ${skippedExpansions.length}`);
+  }
 }
 
 main().catch(error => {
