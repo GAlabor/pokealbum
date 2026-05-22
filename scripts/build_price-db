@@ -454,15 +454,15 @@ async function main() {
   await fs.mkdir('./data', { recursive: true });
 
   await fs.rm('./data/prices', { recursive: true, force: true });
-  await fs.rm('./data/pokemon-prices.json', { force: true });
+  await fs.rm('./data/pokemon_price-db.json', { force: true });
 
   await fs.writeFile(
-    './data/pokemon-prices.json',
+    './data/pokemon_price-db.json',
     JSON.stringify(prices)
   );
 
   await fs.writeFile(
-    './data/pokemon-prices-meta.json',
+    './data/pokemon_price-db-meta.json',
     JSON.stringify(meta, null, 2)
   );
 
@@ -471,7 +471,7 @@ async function main() {
   console.log(`Carte totali rilevate: ${cardsCount}`);
   console.log(`Offerte lette: ${offersReadCount}`);
   console.log(`Prezzi salvati: ${Object.keys(prices).length}`);
-  console.log(`Dimensione pokemon-prices.json: ${(jsonBytes / 1024 / 1024).toFixed(2)} MB`);
+  console.log(`Dimensione pokemon_price-db.json: ${(jsonBytes / 1024 / 1024).toFixed(2)} MB`);
 
   if (skippedExpansions.length) {
     console.warn(`Espansioni saltate: ${skippedExpansions.length}`);
