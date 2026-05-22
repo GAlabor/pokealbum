@@ -2,35 +2,46 @@ name: Update Pokemon Price DB
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 3 * * *"
 
 permissions:
   contents: write
 
+concurrency:
+  group: update-pokemon-price-db
+  cancel-in-progress: false
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   update-price-db:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
+      - name: Show trigger
+        run: |
+          echo "Trigger event: ${{ github.event_name }}"
+          date -u
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Pokemon Price DB
+      - name: Run Price DB builder
         run: node scripts/build_price.js
         env:
           CARDTRADER_TOKEN: ${{ secrets.CARDTRADER_TOKEN }}
 
-      - name: Commit and push price DB
+      - name: Commit updated price database
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -38,10 +49,10 @@ jobs:
           git add data/pokemon-prices.json data/pokemon-prices-meta.json
 
           if git diff --cached --quiet; then
-            echo "Nessuna modifica ai prezzi."
+            echo "Nessuna modifica da salvare"
             exit 0
           fi
 
           git commit -m "Auto update Pokemon Price DB"
           git pull --rebase origin main
-          git push
+          git push origin main
