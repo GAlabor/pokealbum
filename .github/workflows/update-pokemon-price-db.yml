@@ -37,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: Run Price DB builder
-        run: node scripts/build_price.js
+        run: node scripts/build_price-db.js
         env:
           CARDTRADER_TOKEN: ${{ secrets.CARDTRADER_TOKEN }}
 
