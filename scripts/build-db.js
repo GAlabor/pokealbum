@@ -64,98 +64,197 @@ function extractArray(payload, preferredKeys = []) {
   return [];
 }
 
-function getField(product, keys, fallback = '') {
-  for (const key of keys) {
-    const value = key.split('.').reduce((obj, part) => obj?.[part], product);
-    if (value !== undefined && value !== null && value !== '') return value;
-  }
-  return fallback;
+function normalize(value) {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
 }
 
-function normalizeProduct(product, forcedBlueprintId = null, forcedExpansionId = null) {
+function normalizeLang(value) {
+  return normalize(value).replace(/[^a-z]/g, '');
+}
+
+function isItalianLanguage(value) {
+  const lang = normalizeLang(value);
+  return ['it', 'ita', 'italian', 'italiano'].includes(lang);
+}
+
+function normalizeCondition(value) {
+  return normalize(value).replace(/[^a-z ]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function getProductLanguage(product) {
+  return product?.properties_hash?.language
+    || product?.properties_hash?.pokemon_language
+    || product?.properties_hash?.pkm_language
+    || product?.properties_hash?.mtg_language
+    || product?.language
+    || '';
+}
+
+function getProductPriceCents(product) {
+  const direct = Number(product?.price_cents);
+  if (Number.isFinite(direct)) return direct;
+
+  const nested = Number(product?.price?.cents);
+  if (Number.isFinite(nested)) return nested;
+
+  const rawPrice = Number(product?.price);
+  if (Number.isFinite(rawPrice)) {
+    return rawPrice > 1000 ? rawPrice : Math.round(rawPrice * 100);
+  }
+
+  return null;
+}
+
+function isCardTraderZero(product) {
+  return product?.user?.can_sell_via_hub === true
+    || product?.seller?.can_sell_via_hub === true
+    || product?.can_sell_via_hub === true;
+}
+
+const CONDITION_ORDER = ['NM', 'SP', 'MP', 'PL', 'PO'];
+
+function getConditionCode(value) {
+  const raw = String(value || '').trim().toUpperCase();
+  if (CONDITION_ORDER.includes(raw)) return raw;
+
+  const cond = normalizeCondition(value);
+  if (!cond) return '';
+
+  if (cond === 'near mint' || cond === 'nm' || cond.startsWith('near mint ')) return 'NM';
+  if (cond === 'slightly played' || cond === 'sp' || cond.startsWith('slightly played ')) return 'SP';
+  if (cond === 'moderately played' || cond === 'mp' || cond.startsWith('moderately played ')) return 'MP';
+  if (cond === 'played' || cond === 'pl') return 'PL';
+  if (cond === 'poor' || cond === 'po') return 'PO';
+
+  return raw || cond.toUpperCase();
+}
+
+function conditionRank(code) {
+  const idx = CONDITION_ORDER.indexOf(String(code || '').toUpperCase());
+  return idx >= 0 ? idx : 999;
+}
+
+function getLanguageKeyFromValue(value) {
+  const lang = normalizeLang(value);
+
+  if (['it', 'ita', 'italian', 'italiano'].includes(lang)) return 'it';
+  if (['en', 'eng', 'english', 'inglese', 'us', 'gb', 'uk'].includes(lang)) return 'en';
+  if (['fr', 'fra', 'fre', 'french', 'francese'].includes(lang)) return 'fr';
+  if (['es', 'esp', 'spa', 'spanish', 'spagnolo'].includes(lang)) return 'es';
+  if (['de', 'deu', 'ger', 'german', 'tedesco'].includes(lang)) return 'de';
+  if (['jp', 'ja', 'jpn', 'japanese', 'giapponese'].includes(lang)) return 'jp';
+  if (['cn', 'zh', 'zho', 'chi', 'chinese', 'cinese'].includes(lang)) return 'cn';
+
+  return lang || '';
+}
+
+function buildMarketRows(products) {
+  return (Array.isArray(products) ? products : [])
+    .map(product => {
+      const priceCents = getProductPriceCents(product);
+      if (!Number.isFinite(priceCents)) return null;
+
+      const rawLanguage = getProductLanguage(product);
+      const langKey = getLanguageKeyFromValue(rawLanguage);
+      const condKey = getConditionCode(product?.properties_hash?.condition || product?.condition || '');
+
+      if (!langKey || !condKey) return null;
+
+      return {
+        product,
+        priceCents,
+        langKey,
+        langLabel: rawLanguage,
+        condKey,
+        ctZero: isCardTraderZero(product)
+      };
+    })
+    .filter(Boolean);
+}
+
+function getLowestRow(rows) {
+  return (rows || []).slice().sort((a, b) => a.priceCents - b.priceCents)[0] || null;
+}
+
+function getBestByConditionThenPrice(rows) {
+  return (rows || []).slice().sort((a, b) => {
+    const rankDiff = conditionRank(a.condKey) - conditionRank(b.condKey);
+    if (rankDiff) return rankDiff;
+    return a.priceCents - b.priceCents;
+  })[0] || null;
+}
+
+function pickBestMarketplaceOffer(products) {
+  const rows = buildMarketRows(products);
+  if (!rows.length) return null;
+
+  const isItalianRow = row => isItalianLanguage(row.langLabel) || isItalianLanguage(row.langKey);
+  const isNearMintRow = row => row.condKey === 'NM';
+  const isOtherLanguageRow = row => !isItalianRow(row);
+
+  const prioritySteps = [
+    { kind: 'ita_near_mint_ctzero', rows: rows.filter(row => isItalianRow(row) && isNearMintRow(row) && row.ctZero), mode: 'price' },
+    { kind: 'ita_near_mint_no_ctzero', rows: rows.filter(row => isItalianRow(row) && isNearMintRow(row) && !row.ctZero), mode: 'price' },
+    { kind: 'ita_best_condition_ctzero', rows: rows.filter(row => isItalianRow(row) && row.ctZero), mode: 'condition' },
+    { kind: 'ita_best_condition_no_ctzero', rows: rows.filter(row => isItalianRow(row) && !row.ctZero), mode: 'condition' },
+    { kind: 'other_language_best_condition_ctzero', rows: rows.filter(row => isOtherLanguageRow(row) && row.ctZero), mode: 'condition' },
+    { kind: 'other_language_best_condition_no_ctzero', rows: rows.filter(row => isOtherLanguageRow(row) && !row.ctZero), mode: 'condition' },
+    { kind: 'lowest_absolute', rows, mode: 'price' },
+  ];
+
+  for (const step of prioritySteps) {
+    const row = step.mode === 'price' ? getLowestRow(step.rows) : getBestByConditionThenPrice(step.rows);
+
+    if (row) {
+      return {
+        kind: step.kind,
+        product: row.product,
+        priceCents: row.priceCents,
+        language: row.langKey,
+        condition: row.condKey,
+        ctZero: row.ctZero
+      };
+    }
+  }
+
+  return null;
+}
+
+function addGroupedProduct(groups, product, forcedBlueprintId = null) {
   const blueprintId =
-    forcedBlueprintId ??
-    product.blueprint_id ??
-    product.blueprintId ??
-    product.blueprint?.id ??
-    product.card_id ??
-    product.cardId ??
-    null;
+    forcedBlueprintId
+    ?? product?.blueprint_id
+    ?? product?.blueprintId
+    ?? product?.blueprint?.id
+    ?? product?.card_id
+    ?? product?.cardId
+    ?? null;
 
-  if (blueprintId == null) return null;
+  if (blueprintId == null) return false;
 
-  const priceCents =
-    product.price_cents ??
-    product.priceCents ??
-    product.price?.cents ??
-    product.price_currency_cents ??
-    null;
+  const key = String(Number(blueprintId));
+  if (!key || key === 'NaN') return false;
 
-  const price =
-    product.price_eur ??
-    product.priceEUR ??
-    product.price_float ??
-    product.price_value ??
-    null;
+  if (!groups[key]) groups[key] = [];
+  groups[key].push(product);
 
-  return {
-    id: product.id ?? null,
-    b: Number(blueprintId),
-    e: Number(product.expansion_id ?? product.expansionId ?? product.expansion?.id ?? forcedExpansionId ?? 0) || null,
-    pc: priceCents == null ? null : Number(priceCents),
-    p: price == null || typeof price === 'object' ? null : Number(price),
-    c: String(product.currency ?? product.price_currency ?? product.price?.currency ?? 'EUR'),
-    q: product.quantity ?? product.available_quantity ?? product.count ?? null,
-    cond: String(getField(product, [
-      'condition',
-      'properties.condition',
-      'properties_hash.condition',
-      'properties_hash.Condition'
-    ], '')),
-    lang: String(getField(product, [
-      'language',
-      'properties.language',
-      'properties_hash.language',
-      'properties_hash.Language'
-    ], '')),
-    ct0: Boolean(
-      product.ct_zero ??
-      product.ctZero ??
-      product.is_ct_zero ??
-      product.properties?.ct_zero ??
-      product.properties_hash?.ct_zero ??
-      false
-    )
-  };
-}
-
-function addProduct(pricesByBlueprint, product, forcedBlueprintId = null, forcedExpansionId = null) {
-  const normalized = normalizeProduct(product, forcedBlueprintId, forcedExpansionId);
-  if (!normalized) return false;
-
-  const key = String(normalized.b);
-
-  if (!pricesByBlueprint[key]) {
-    pricesByBlueprint[key] = [];
-  }
-
-  pricesByBlueprint[key].push(normalized);
   return true;
 }
 
-function addProductsFromPayload(pricesByBlueprint, payload, expansionId) {
-  let added = 0;
+function getProductsGroupedByBlueprint(payload) {
+  const groups = {};
 
   if (Array.isArray(payload)) {
-    for (const product of payload) {
-      if (addProduct(pricesByBlueprint, product, null, expansionId)) added++;
-    }
-
-    return added;
+    for (const product of payload) addGroupedProduct(groups, product);
+    return groups;
   }
 
   if (!payload || typeof payload !== 'object') {
-    return added;
+    return groups;
   }
 
   const possibleArrays = [
@@ -168,30 +267,24 @@ function addProductsFromPayload(pricesByBlueprint, payload, expansionId) {
 
   if (possibleArrays.length) {
     for (const arr of possibleArrays) {
-      for (const product of arr) {
-        if (addProduct(pricesByBlueprint, product, null, expansionId)) added++;
-      }
+      for (const product of arr) addGroupedProduct(groups, product);
     }
-
-    return added;
+    return groups;
   }
 
-  // CardTrader marketplace/products con expansion_id può restituire oggetto raggruppato per blueprint_id.
+  // CardTrader può restituire direttamente un oggetto: { blueprint_id: [products...] }
   for (const [blueprintId, value] of Object.entries(payload)) {
     if (Array.isArray(value)) {
-      for (const product of value) {
-        if (addProduct(pricesByBlueprint, product, blueprintId, expansionId)) added++;
-      }
-
+      for (const product of value) addGroupedProduct(groups, product, blueprintId);
       continue;
     }
 
     if (value && typeof value === 'object') {
-      if (addProduct(pricesByBlueprint, value, blueprintId, expansionId)) added++;
+      addGroupedProduct(groups, value, blueprintId);
     }
   }
 
-  return added;
+  return groups;
 }
 
 async function detectPokemonGame() {
@@ -212,13 +305,28 @@ async function detectPokemonGame() {
   return pokemon;
 }
 
+async function detectSingleCardCategory(gameId) {
+  const payload = await api(`/categories?game_id=${encodeURIComponent(gameId)}`);
+  const categories = extractArray(payload, ['categories']);
+
+  const direct = categories.find(c =>
+    (/single/i.test(String(c.name || '')) && /card/i.test(String(c.name || ''))) ||
+    /pokemon singles/i.test(String(c.name || '')) ||
+    /singles/i.test(String(c.name || ''))
+  );
+
+  return direct || categories[0] || null;
+}
+
 async function main() {
-  console.log('Avvio costruzione database PREZZI Pokémon completo, versione leggera...');
+  console.log('Avvio costruzione database PREZZI Pokémon con logica HTML...');
 
   const info = await api('/info');
   const pokemonGame = await detectPokemonGame();
+  const category = await detectSingleCardCategory(pokemonGame.id);
 
   console.log(`Game trovato: ${pokemonGame.name || pokemonGame.display_name || pokemonGame.id}`);
+  console.log(`Categoria: ${category?.name || category?.id || 'non trovata'}`);
 
   const expansionsPayload = await api('/expansions');
   const expansions = extractArray(expansionsPayload, ['expansions']);
@@ -231,30 +339,65 @@ async function main() {
     throw new Error('Nessuna espansione Pokémon trovata');
   }
 
-  console.log(`Espansioni Pokémon trovate: ${pokemonExpansions.length}`);
-  console.log(`Download prezzi marketplace per TUTTE le espansioni. Pausa ${PAUSE_MS}ms, timeout ${REQUEST_TIMEOUT_MS}ms, retry ${RETRIES}.`);
-
-  const pricesByBlueprint = {};
+  const prices = {};
   const skippedExpansions = [];
-  let totalOffers = 0;
-  let expansionsWithOffers = 0;
+  let cardsCount = 0;
+  let offersReadCount = 0;
+  let pricesCount = 0;
+
+  console.log(`Espansioni Pokémon trovate: ${pokemonExpansions.length}`);
+  console.log(`Scarico marketplace per espansione e salvo solo il prezzo vincente per blueprint.`);
 
   for (let i = 0; i < pokemonExpansions.length; i++) {
     const exp = pokemonExpansions[i];
-
     console.log(`${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
 
     try {
-      const productsPayload = await api(`/marketplace/products?expansion_id=${encodeURIComponent(exp.id)}`);
-      const added = addProductsFromPayload(pricesByBlueprint, productsPayload, exp.id);
+      // Conteggio carte totali, mantenendo la logica del vecchio build-db.
+      // Serve solo per meta/debug; NON salva il DB carte.
+      try {
+        const blueprintsPayload = await api(`/blueprints/export?expansion_id=${encodeURIComponent(exp.id)}`);
+        const blueprints = extractArray(blueprintsPayload, ['blueprints']);
 
-      totalOffers += added;
+        const cards = blueprints.filter(bp =>
+          Number(bp?.game_id) === Number(pokemonGame.id) &&
+          (!category || Number(bp?.category_id) === Number(category.id))
+        );
 
-      if (added > 0) {
-        expansionsWithOffers++;
+        cardsCount += cards.length;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.warn(`  conteggio carte non riuscito per ${exp.id}: ${message}`);
       }
 
-      console.log(`  offerte aggiunte: ${added} - blueprint con offerte: ${Object.keys(pricesByBlueprint).length}`);
+      const productsPayload = await api(`/marketplace/products?expansion_id=${encodeURIComponent(exp.id)}`);
+      const groupedProducts = getProductsGroupedByBlueprint(productsPayload);
+
+      let expansionPrices = 0;
+      let expansionOffers = 0;
+
+      for (const [blueprintId, products] of Object.entries(groupedProducts)) {
+        expansionOffers += products.length;
+
+        const selected = pickBestMarketplaceOffer(products);
+        if (!selected) continue;
+
+        prices[blueprintId] = {
+          pc: selected.priceCents,
+          p: Number((selected.priceCents / 100).toFixed(2)),
+          k: selected.kind,
+          l: selected.language,
+          c: selected.condition,
+          z: selected.ctZero ? 1 : 0
+        };
+
+        expansionPrices++;
+      }
+
+      offersReadCount += expansionOffers;
+      pricesCount += expansionPrices;
+
+      console.log(`  offerte lette: ${expansionOffers} - prezzi scelti: ${expansionPrices} - totale prezzi: ${Object.keys(prices).length}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
 
@@ -279,32 +422,43 @@ async function main() {
     appId: info.id || null,
     gameId: pokemonGame.id,
     gameName: pokemonGame.name || pokemonGame.display_name || 'Pokemon',
+    categoryId: category?.id || null,
+    categoryName: category?.name || '',
     expansionsCount: pokemonExpansions.length,
-    expansionsWithOffers,
+    cardsCount,
+    pricesCount: Object.keys(prices).length,
+    offersReadCount,
     skippedExpansionsCount: skippedExpansions.length,
     skippedExpansions,
-    blueprintWithOffersCount: Object.keys(pricesByBlueprint).length,
-    offersCount: totalOffers,
     source: 'cardtrader-marketplace-products-by-expansion',
+    priceLogic: [
+      'ita_near_mint_ctzero',
+      'ita_near_mint_no_ctzero',
+      'ita_best_condition_ctzero',
+      'ita_best_condition_no_ctzero',
+      'other_language_best_condition_ctzero',
+      'other_language_best_condition_no_ctzero',
+      'lowest_absolute'
+    ],
     shape: {
-      b: 'blueprint_id',
-      e: 'expansion_id',
-      pc: 'price_cents',
-      p: 'price',
-      c: 'currency',
-      q: 'quantity',
-      cond: 'condition',
-      lang: 'language',
-      ct0: 'ct_zero'
+      pc: 'prezzo in centesimi',
+      p: 'prezzo in euro',
+      k: 'criterio vincente',
+      l: 'lingua',
+      c: 'condizione',
+      z: 'ct_zero: 1 sì, 0 no'
     },
-    indexVersion: 2
+    indexVersion: 4
   };
 
   await fs.mkdir('./data', { recursive: true });
 
+  await fs.rm('./data/prices', { recursive: true, force: true });
+  await fs.rm('./data/pokemon-prices.json', { force: true });
+
   await fs.writeFile(
     './data/pokemon-prices.json',
-    JSON.stringify(pricesByBlueprint)
+    JSON.stringify(prices)
   );
 
   await fs.writeFile(
@@ -312,10 +466,12 @@ async function main() {
     JSON.stringify(meta, null, 2)
   );
 
+  const jsonBytes = Buffer.byteLength(JSON.stringify(prices), 'utf8');
   console.log(`Database prezzi creato.`);
-  console.log(`Blueprint con offerte: ${meta.blueprintWithOffersCount}`);
-  console.log(`Offerte totali salvate: ${meta.offersCount}`);
-  console.log(`Espansioni con offerte: ${meta.expansionsWithOffers}/${meta.expansionsCount}`);
+  console.log(`Carte totali rilevate: ${cardsCount}`);
+  console.log(`Offerte lette: ${offersReadCount}`);
+  console.log(`Prezzi salvati: ${Object.keys(prices).length}`);
+  console.log(`Dimensione pokemon-prices.json: ${(jsonBytes / 1024 / 1024).toFixed(2)} MB`);
 
   if (skippedExpansions.length) {
     console.warn(`Espansioni saltate: ${skippedExpansions.length}`);
