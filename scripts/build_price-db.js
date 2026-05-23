@@ -5,6 +5,8 @@ const API_BASE = 'https://api.cardtrader.com/api/v2';
 
 const PAUSE_MS = Number(process.env.PAUSE_MS || 120);
 const CONCURRENCY = Number(process.env.CONCURRENCY || 3);
+const MAX_REQUESTS_PER_SECOND = Number(process.env.MAX_REQUESTS_PER_SECOND || 8);
+const REQUEST_INTERVAL_MS = Math.ceil(1000 / Math.max(1, MAX_REQUESTS_PER_SECOND));
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 180000);
 const RETRIES = Number(process.env.RETRIES || 3);
 
@@ -16,11 +18,57 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+let rateLimitQueue = Promise.resolve();
+let lastApiRequestAt = 0;
+
+async function waitForRateLimit() {
+  let releaseQueue;
+  const previousQueue = rateLimitQueue;
+
+  rateLimitQueue = new Promise(resolve => {
+    releaseQueue = resolve;
+  });
+
+  await previousQueue;
+
+  try {
+    const now = Date.now();
+    const wait = Math.max(0, lastApiRequestAt + REQUEST_INTERVAL_MS - now);
+
+    if (wait > 0) {
+      await sleep(wait);
+    }
+
+    lastApiRequestAt = Date.now();
+  } finally {
+    releaseQueue();
+  }
+}
+
+function getRetryAfterMs(response) {
+  const retryAfter = response.headers.get('retry-after');
+  if (!retryAfter) return null;
+
+  const seconds = Number(retryAfter);
+  if (Number.isFinite(seconds)) {
+    return Math.max(0, seconds * 1000);
+  }
+
+  const date = Date.parse(retryAfter);
+  if (Number.isFinite(date)) {
+    return Math.max(0, date - Date.now());
+  }
+
+  return null;
+}
+
 async function api(path, attempt = 1) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
+    await waitForRateLimit();
+
     const response = await fetch(`${API_BASE}${path}`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -30,7 +78,10 @@ async function api(path, attempt = 1) {
 
     if (!response.ok) {
       const text = await response.text().catch(() => '');
-      throw new Error(`Errore API ${response.status}: ${text || response.statusText}`);
+      const error = new Error(`Errore API ${response.status}: ${text || response.statusText}`);
+      error.status = response.status;
+      error.retryAfterMs = getRetryAfterMs(response);
+      throw error;
     }
 
     return response.json();
@@ -38,7 +89,14 @@ async function api(path, attempt = 1) {
     const message = error instanceof Error ? error.message : String(error);
 
     if (attempt < RETRIES) {
-      const wait = 800 * attempt;
+      const status = error && typeof error === 'object' ? error.status : null;
+      const retryAfterMs = error && typeof error === 'object' ? error.retryAfterMs : null;
+      const wait = Number.isFinite(retryAfterMs)
+        ? retryAfterMs
+        : status === 429
+          ? 2000 * attempt
+          : 800 * attempt;
+
       console.warn(`Retry ${attempt}/${RETRIES - 1} per ${path}: ${message}. Attesa ${wait}ms`);
       await sleep(wait);
       return api(path, attempt + 1);
@@ -365,6 +423,7 @@ async function main() {
   console.log(`Espansioni Pokémon trovate: ${pokemonExpansions.length}`);
   console.log(`Scarico marketplace per espansione e salvo solo il prezzo vincente per blueprint.`);
   console.log(`Elaborazione parallela: ${CONCURRENCY} espansioni alla volta.`);
+  console.log(`Limite richieste API: massimo ${MAX_REQUESTS_PER_SECOND} al secondo.`);
 
   await runWithConcurrency(pokemonExpansions, async (exp, i) => {
     console.log(`${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
@@ -430,6 +489,8 @@ async function main() {
     categoryName: category?.name || '',
     expansionsCount: pokemonExpansions.length,
     cardsCount: null,
+    maxRequestsPerSecond: MAX_REQUESTS_PER_SECOND,
+    concurrency: CONCURRENCY,
     pricesCount: Object.keys(prices).length,
     offersReadCount,
     skippedExpansionsCount: skippedExpansions.length,
@@ -452,7 +513,7 @@ async function main() {
       c: 'condizione',
       z: 'ct_zero: 1 sì, 0 no'
     },
-    indexVersion: 5
+    indexVersion: 6
   };
 
   await fs.mkdir('./data', { recursive: true });
