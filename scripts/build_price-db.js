@@ -4,6 +4,7 @@ const token = process.env.CARDTRADER_TOKEN;
 const API_BASE = 'https://api.cardtrader.com/api/v2';
 
 const PAUSE_MS = Number(process.env.PAUSE_MS || 120);
+const CONCURRENCY = Number(process.env.CONCURRENCY || 3);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 180000);
 const RETRIES = Number(process.env.RETRIES || 3);
 
@@ -318,6 +319,22 @@ async function detectSingleCardCategory(gameId) {
   return direct || categories[0] || null;
 }
 
+async function runWithConcurrency(items, worker, concurrency) {
+  const safeConcurrency = Math.max(1, Number(concurrency) || 1);
+  let index = 0;
+
+  async function runner() {
+    while (index < items.length) {
+      const currentIndex = index++;
+      await worker(items[currentIndex], currentIndex);
+    }
+  }
+
+  await Promise.all(
+    Array.from({ length: Math.min(safeConcurrency, items.length) }, () => runner())
+  );
+}
+
 async function main() {
   console.log('Avvio costruzione database PREZZI Pokémon con logica HTML...');
 
@@ -341,35 +358,18 @@ async function main() {
 
   const prices = {};
   const skippedExpansions = [];
-  let cardsCount = 0;
   let offersReadCount = 0;
   let pricesCount = 0;
+  const lastExpansion = pokemonExpansions[pokemonExpansions.length - 1];
 
   console.log(`Espansioni Pokémon trovate: ${pokemonExpansions.length}`);
   console.log(`Scarico marketplace per espansione e salvo solo il prezzo vincente per blueprint.`);
+  console.log(`Elaborazione parallela: ${CONCURRENCY} espansioni alla volta.`);
 
-  for (let i = 0; i < pokemonExpansions.length; i++) {
-    const exp = pokemonExpansions[i];
+  await runWithConcurrency(pokemonExpansions, async (exp, i) => {
     console.log(`${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
 
     try {
-      // Conteggio carte totali, mantenendo la logica del vecchio build-db.
-      // Serve solo per meta/debug; NON salva il DB carte.
-      try {
-        const blueprintsPayload = await api(`/blueprints/export?expansion_id=${encodeURIComponent(exp.id)}`);
-        const blueprints = extractArray(blueprintsPayload, ['blueprints']);
-
-        const cards = blueprints.filter(bp =>
-          Number(bp?.game_id) === Number(pokemonGame.id) &&
-          (!category || Number(bp?.category_id) === Number(category.id))
-        );
-
-        cardsCount += cards.length;
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error);
-        console.warn(`  conteggio carte non riuscito per ${exp.id}: ${message}`);
-      }
-
       const productsPayload = await api(`/marketplace/products?expansion_id=${encodeURIComponent(exp.id)}`);
       const groupedProducts = getProductsGroupedByBlueprint(productsPayload);
 
@@ -398,6 +398,10 @@ async function main() {
       pricesCount += expansionPrices;
 
       console.log(`  offerte lette: ${expansionOffers} - prezzi scelti: ${expansionPrices} - totale prezzi: ${Object.keys(prices).length}`);
+
+      if (String(exp.id) === String(lastExpansion.id)) {
+        console.log(`Ultima espansione in elenco completata: ${exp.name || exp.id}`);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
 
@@ -414,7 +418,7 @@ async function main() {
     if (PAUSE_MS > 0) {
       await sleep(PAUSE_MS);
     }
-  }
+  }, CONCURRENCY);
 
   const meta = {
     updatedAt: new Date().toISOString(),
@@ -425,7 +429,7 @@ async function main() {
     categoryId: category?.id || null,
     categoryName: category?.name || '',
     expansionsCount: pokemonExpansions.length,
-    cardsCount,
+    cardsCount: null,
     pricesCount: Object.keys(prices).length,
     offersReadCount,
     skippedExpansionsCount: skippedExpansions.length,
@@ -448,7 +452,7 @@ async function main() {
       c: 'condizione',
       z: 'ct_zero: 1 sì, 0 no'
     },
-    indexVersion: 4
+    indexVersion: 5
   };
 
   await fs.mkdir('./data', { recursive: true });
@@ -468,7 +472,6 @@ async function main() {
 
   const jsonBytes = Buffer.byteLength(JSON.stringify(prices), 'utf8');
   console.log(`Database prezzi creato.`);
-  console.log(`Carte totali rilevate: ${cardsCount}`);
   console.log(`Offerte lette: ${offersReadCount}`);
   console.log(`Prezzi salvati: ${Object.keys(prices).length}`);
   console.log(`Dimensione pokemon_price-db.json: ${(jsonBytes / 1024 / 1024).toFixed(2)} MB`);
