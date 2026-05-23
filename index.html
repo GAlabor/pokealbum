@@ -458,6 +458,104 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .origin-sheet-btn.cancel{background:rgba(235,241,255,.68);color:#65779f;border:1px solid rgba(120,146,207,.16);}
 .origin-sheet-btn.save{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);box-shadow:0 10px 22px rgba(47,100,255,.24),inset 0 1px 0 rgba(255,255,255,.28);}
 
+
+
+/* Bottom sheet modifica prezzo manuale */
+.price-edit-backdrop,
+.price-picker-page{
+  position:fixed;
+  inset:0;
+  z-index:180;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .22s ease, visibility .22s ease, background-color .22s ease;
+}
+.price-edit-backdrop{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding:0 14px calc(var(--safe-bottom) + 12px);
+  background:rgba(34,48,86,0);
+}
+.price-edit-backdrop.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  background:rgba(34,48,86,.28);
+}
+.price-edit-sheet{
+  width:min(100%,430px);
+  border-radius:30px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:0 24px 54px rgba(25,38,82,.22), inset 0 1px 0 rgba(255,255,255,.88);
+  backdrop-filter:blur(26px) saturate(150%);
+  -webkit-backdrop-filter:blur(26px) saturate(150%);
+  padding:10px 12px 12px;
+  transform:translateY(calc(100% + 28px));
+  transition:transform .28s cubic-bezier(.22,.9,.24,1);
+  color:#20345f;
+}
+.price-edit-backdrop.open .price-edit-sheet{transform:translateY(0);}
+.price-edit-head{position:relative;min-height:50px;display:flex;align-items:flex-start;justify-content:center;margin-bottom:6px;}
+.price-edit-title{margin:13px 58px 0;color:#1c2e5a;font-size:19px;font-weight:900;line-height:1.08;letter-spacing:-.04em;text-align:center;}
+.price-edit-icon-btn{
+  position:absolute;
+  top:0;
+  width:var(--topbar-control-size);
+  height:var(--topbar-control-size);
+  min-width:var(--topbar-control-size);
+  min-height:var(--topbar-control-size);
+  border:1px solid rgba(255,255,255,.56);
+  border-radius:50%;
+  background:rgba(255,255,255,.58);
+  color:#5c6f99;
+  box-shadow:0 12px 24px rgba(73,96,157,.14), inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(20px) saturate(145%);
+  -webkit-backdrop-filter:blur(20px) saturate(145%);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .18s ease, background-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.price-edit-icon-btn.cancel{left:0;}
+.price-edit-icon-btn.confirm{right:0;color:var(--blue);}
+.price-edit-icon-btn:hover{transform:translateY(-1px);color:#3157c9;background:rgba(255,255,255,.68);box-shadow:0 16px 28px rgba(73,96,157,.18), inset 0 1px 0 rgba(255,255,255,.96);}
+.price-edit-icon-btn:active{transform:scale(.97);}
+.price-edit-icon-btn:focus-visible{outline:2px solid rgba(47,100,255,.24);outline-offset:3px;}
+.price-edit-icon-btn svg{width:23px;height:23px;display:block;fill:none;stroke:currentColor;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round;}
+.price-edit-rows{display:grid;gap:7px;}
+.price-edit-row{
+  width:100%;min-height:52px;border:0;border-radius:18px;background:rgba(248,251,255,.64);color:#20345f;font-family:inherit;padding:0 13px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:10px;text-align:left;box-shadow:inset 0 1px 0 rgba(255,255,255,.78);cursor:pointer;
+}
+.price-edit-label{font-size:15px;font-weight:850;letter-spacing:-.02em;color:#243865;}
+.price-edit-current{font-size:14px;font-weight:750;color:#8a96af;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.price-edit-arrow{font-size:20px;font-weight:850;color:#7181a3;line-height:1;}
+.price-edit-field{min-height:52px;border-radius:18px;background:rgba(248,251,255,.64);padding:7px 13px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,150px);align-items:center;gap:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.78);}
+.price-edit-input{width:100%;height:38px;border:1px solid rgba(120,146,207,.18);border-radius:15px;background:rgba(255,255,255,.72);color:#20345f;font-family:inherit;font-size:16px;font-weight:850;text-align:right;padding:0 12px;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.86);}
+.price-edit-input:focus{border-color:rgba(47,100,255,.34);box-shadow:0 0 0 4px rgba(47,100,255,.10), inset 0 1px 0 rgba(255,255,255,.9);}
+.price-picker-page{z-index:190;background:linear-gradient(180deg,rgba(241,246,255,.98),rgba(225,234,249,.98));padding:calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 16px);}
+.price-picker-page.open{opacity:1;visibility:visible;pointer-events:auto;}
+.price-picker-head{height:var(--topbar-control-size);position:relative;display:flex;align-items:flex-start;justify-content:center;margin-bottom:10px;}
+.price-picker-title{margin:13px 58px 0;color:#1c2e5a;font-size:19px;font-weight:900;letter-spacing:-.04em;}
+.price-picker-back{position:absolute;left:0;top:0;width:var(--topbar-control-size);height:var(--topbar-control-size);min-width:var(--topbar-control-size);min-height:var(--topbar-control-size);border:1px solid rgba(255,255,255,.56);border-radius:50%;background:rgba(255,255,255,.58);color:#5c6f99;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;box-shadow:0 12px 24px rgba(73,96,157,.14), inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);transition:transform .18s ease, background-color .18s ease, color .18s ease, box-shadow .18s ease;}
+.price-picker-back:hover{transform:translateY(-1px);color:#3157c9;background:rgba(255,255,255,.68);box-shadow:0 16px 28px rgba(73,96,157,.18), inset 0 1px 0 rgba(255,255,255,.96);}
+.price-picker-back:active{transform:scale(.97);}
+.price-picker-back:focus-visible{outline:2px solid rgba(47,100,255,.24);outline-offset:3px;}
+.price-picker-back svg{width:var(--topbar-control-icon-size);height:var(--topbar-control-icon-size);stroke:currentColor;fill:none;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round;}
+.price-picker-search{width:100%;height:50px;border:1px solid rgba(90,166,255,.22);border-radius:999px;background:rgba(255,255,255,.55);color:#20345f;font-family:inherit;font-size:16px;font-weight:700;padding:0 18px;margin-bottom:12px;outline:none;box-shadow:0 10px 24px rgba(66,89,152,.08), inset 0 1px 0 rgba(255,255,255,.88);}
+.price-picker-search::placeholder{color:#8491ad;font-weight:600;}
+.price-picker-list{display:grid;gap:7px;max-height:calc(100dvh - 150px);overflow:auto;-webkit-overflow-scrolling:touch;padding-bottom:10px;}
+.price-picker-option{width:100%;min-height:52px;border:0;border-radius:18px;background:rgba(255,255,255,.55);color:#20345f;font-family:inherit;font-size:16px;font-weight:850;letter-spacing:-.02em;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.78);cursor:pointer;text-align:left;}
+.price-picker-check{width:22px;height:22px;color:#2f64ff;opacity:0;flex:0 0 auto;}
+.price-picker-option.is-selected .price-picker-check{opacity:1;}
+.price-picker-empty{padding:20px;text-align:center;color:#7382a2;font-size:14px;font-weight:750;}
+@media (max-width:420px){.price-edit-backdrop{padding-left:12px;padding-right:12px;}.price-edit-sheet{border-radius:28px;}.price-edit-current{max-width:150px;}}
+
 .text-input:focus, .number-input:focus{border-color:rgba(47, 100, 255, 0.34);box-shadow:0 0 0 4px rgba(47, 100, 255, 0.1),
           inset 0 1px 0 rgba(255, 255, 255, 0.9);background:rgba(255, 255, 255, 0.96);}
 .color-picker-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:46px;overflow:visible;padding:4px 0;width:100%;min-width:0;flex-wrap:nowrap;}
@@ -1315,6 +1413,48 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 }
 #detailModal .market-arrow{font-size:10px;color:#333;line-height:1;display:inline-block;transition:transform .16s ease;}
 #detailModal .offer-controls.market-visual-controls.is-database-fallback .market-arrow{display:none;}
+#detailModal .offer-controls.market-visual-controls.is-manual-custom .market-arrow{display:none;}
+#detailModal .offer-controls.market-visual-controls.is-manual-custom .market-ui-btn{
+  cursor:default;
+  opacity:1;
+}
+#detailModal .offer-controls.market-visual-controls.is-manual-custom .market-ui-btn:disabled{
+  opacity:1;
+  cursor:default;
+}
+#detailModal .offer-controls.market-visual-controls.is-manual-custom .market-ctzero-pill{
+  cursor:default;
+  opacity:1;
+  height:24px;
+  min-height:24px;
+  padding:0 9px 0 7px;
+  gap:4px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#df922d 0%,#d47f1f 100%);
+  color:#fff;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.005em;
+  line-height:1;
+  box-shadow:0 7px 14px rgba(205,123,29,.22), inset 0 1px 0 rgba(255,255,255,.24);
+}
+#detailModal .offer-controls.market-visual-controls.is-manual-custom .market-ctzero-pill svg{
+  width:12px;
+  height:12px;
+  flex:0 0 12px;
+}
+#detailModal .offer-controls.market-visual-controls.is-manual-custom .market-ctzero-pill svg path,
+#detailModal .offer-controls.market-visual-controls.is-manual-custom .market-ctzero-pill svg polygon{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2.25;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+#detailModal .offer-controls.market-visual-controls.is-manual-custom .market-ctzero-pill .market-ctzero-pill-text{
+  transform:translateY(.1px);
+}
+
 #detailModal .market-ui-btn[aria-expanded="true"] .market-arrow{transform:rotate(180deg);}
 #detailModal .market-flag-img,
 #detailModal .market-flag-fallback{
@@ -2462,57 +2602,87 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 #detailModal .detail-price{
   position:relative !important;
 }
-#detailModal .manual-set-pill{
+#detailModal .price-dots-btn{
   position:absolute;
-  top:10px;
-  left:16px;
-  min-height:22px;
+  top:6px;
+  left:10px;
+  width:34px;
+  height:30px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:#5f6f91;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  gap:5px;
-  padding:0 8px 0 7px;
-  border-radius:999px;
-  border:1px solid rgba(120,146,207,.20);
-  background:rgba(248,251,255,.64);
-  color:#4f638b;
-  font-family:inherit;
-  font-size:10px;
-  font-weight:900;
-  line-height:22px;
-  letter-spacing:.02em;
-  white-space:nowrap;
+  gap:3px;
   cursor:pointer;
-  box-shadow:0 8px 18px rgba(66,89,152,.10), inset 0 1px 0 rgba(255,255,255,.86);
-  backdrop-filter:blur(16px) saturate(145%);
-  -webkit-backdrop-filter:blur(16px) saturate(145%);
-  transition:transform .16s ease, border-color .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
+  z-index:4;
+  transition:background-color .16s ease, color .16s ease, transform .16s ease;
   -webkit-tap-highlight-color:transparent;
 }
-#detailModal .manual-set-pill:hover{
-  transform:translateY(-1px);
-  border-color:rgba(47,100,255,.22);
-  background:rgba(255,255,255,.78);
-  color:#2f64ff;
-  box-shadow:0 10px 20px rgba(47,100,255,.12), inset 0 1px 0 rgba(255,255,255,.92);
-}
-#detailModal .manual-set-pill:active{
-  transform:scale(.97);
-}
-#detailModal .manual-set-pill:focus-visible{
-  outline:2px solid rgba(47,100,255,.24);
-  outline-offset:2px;
-}
-#detailModal .manual-set-pill svg{
-  width:12px;
-  height:12px;
+#detailModal .price-dots-btn::before,
+#detailModal .price-dots-btn::after,
+#detailModal .price-dots-btn span{
+  content:"";
+  width:4px;
+  height:4px;
+  border-radius:999px;
+  background:currentColor;
   display:block;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:2.2;
-  stroke-linecap:round;
-  stroke-linejoin:round;
+  box-shadow:0 1px 2px rgba(25,38,82,.10);
 }
+#detailModal .price-dots-btn:hover,
+#detailModal .price-dots-btn.is-open{
+  background:rgba(47,100,255,.07);
+  color:#2f64ff;
+}
+#detailModal .price-dots-btn:active{transform:scale(.96);}
+#detailModal .price-dots-btn:focus-visible{outline:2px solid rgba(47,100,255,.24);outline-offset:2px;}
+#detailModal .price-action-menu{
+  position:absolute;
+  top:38px;
+  left:10px;
+  width:148px;
+  padding:6px;
+  border-radius:16px;
+  background:rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.72);
+  box-shadow:0 18px 34px rgba(25,38,82,.16), inset 0 1px 0 rgba(255,255,255,.88);
+  backdrop-filter:blur(22px) saturate(150%);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(-4px) scale(.98);
+  transform-origin:top left;
+  transition:opacity .16s ease, visibility .16s ease, transform .16s ease;
+  z-index:8;
+}
+#detailModal .price-action-menu.open{
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transform:translateY(0) scale(1);
+}
+#detailModal .price-action-item{
+  width:100%;
+  min-height:38px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:#243865;
+  font-family:inherit;
+  font-size:13px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  text-align:left;
+  padding:0 10px;
+  cursor:pointer;
+}
+#detailModal .price-action-item:hover{background:rgba(47,100,255,.08);}
+#detailModal .price-action-item.danger{color:#c62828;}
+#detailModal .price-action-item.danger:hover{background:rgba(198,40,40,.08);}
 #detailModal .detail-price-source{
   position:absolute;
   top:10px;
@@ -4770,7 +4940,7 @@ paint-order="stroke">
           </div>
           <div class="detail-content">
             <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Retro carta Pokémon"></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""><button type="button" class="card-zoom-btn" id="cardZoomBtn" aria-label="Ingrandisci carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"></path><path d="M3 3l7 7"></path><path d="M16 3h5v5"></path><path d="M21 3l-7 7"></path><path d="M8 21H3v-5"></path><path d="M3 21l7-7"></path><path d="M16 21h5v-5"></path><path d="M21 21l-7-7"></path></svg></button></div>
-            <div class="detail-price"><span class="detail-price-label">Prezzo</span><button type="button" class="manual-set-pill" id="manualSetPill" aria-label="Modifica"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg><span>Modifica</span></button><span class="detail-price-source" id="detailPriceSource" aria-live="polite"></span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
+            <div class="detail-price"><span class="detail-price-label">Prezzo</span><button type="button" class="price-dots-btn" id="manualSetPill" aria-label="Opzioni prezzo" aria-haspopup="menu" aria-expanded="false"><span aria-hidden="true"></span></button><div class="price-action-menu" id="priceActionMenu" role="menu" aria-hidden="true"><button type="button" class="price-action-item" id="priceActionEdit" role="menuitem">Modifica</button><button type="button" class="price-action-item danger" id="priceActionRestore" role="menuitem">Ripristina</button></div><span class="detail-price-source" id="detailPriceSource" aria-live="polite"></span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-variant-card" aria-label="Varianti carta">
               <label class="detail-variant-row">
                 <span class="detail-variant-radio">
@@ -4841,6 +5011,54 @@ paint-order="stroke">
   </div>
 
 
+  <div class="price-edit-backdrop" id="priceEditSheet" aria-hidden="true">
+    <div class="price-edit-sheet" role="dialog" aria-modal="true" aria-labelledby="priceEditTitle">
+      <div class="price-edit-head">
+        <button class="price-edit-icon-btn cancel" id="priceEditCancel" type="button" aria-label="Annulla">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
+        </button>
+        <h2 class="price-edit-title" id="priceEditTitle">Modifica prezzo</h2>
+        <button class="price-edit-icon-btn confirm" id="priceEditConfirm" type="button" aria-label="Conferma">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg>
+        </button>
+      </div>
+      <div class="price-edit-rows">
+        <button class="price-edit-row" id="priceEditLanguageBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
+          <span class="price-edit-label">Lingua</span>
+          <span class="price-edit-current" id="priceEditLanguageValue"></span>
+          <span class="price-edit-arrow" aria-hidden="true">&gt;</span>
+        </button>
+        <button class="price-edit-row" id="priceEditConditionBtn" type="button" aria-haspopup="dialog" aria-expanded="false">
+          <span class="price-edit-label">Condizione</span>
+          <span class="price-edit-current" id="priceEditConditionValue"></span>
+          <span class="price-edit-arrow" aria-hidden="true">&gt;</span>
+        </button>
+        <label class="price-edit-field" for="priceEditAmount">
+          <span class="price-edit-label">Prezzo</span>
+          <input class="price-edit-input" id="priceEditAmount" type="text" inputmode="decimal" autocomplete="off" placeholder="€ 0,00">
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="price-picker-page" id="priceLanguagePage" aria-hidden="true">
+    <div class="price-picker-head">
+      <button class="price-picker-back" id="priceLanguageBack" type="button" aria-label="Torna a modifica prezzo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <h2 class="price-picker-title">Lingua</h2>
+    </div>
+    <input class="price-picker-search" id="priceLanguageSearch" type="search" autocomplete="off" placeholder="Cerca lingua">
+    <div class="price-picker-list" id="priceLanguageList"></div>
+  </div>
+
+  <div class="price-picker-page" id="priceConditionPage" aria-hidden="true">
+    <div class="price-picker-head">
+      <button class="price-picker-back" id="priceConditionBack" type="button" aria-label="Torna a modifica prezzo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
+      <h2 class="price-picker-title">Condizione</h2>
+    </div>
+    <div class="price-picker-list" id="priceConditionList"></div>
+  </div>
+
+
   <div id="cardZoomOverlay" class="card-zoom-overlay" aria-hidden="true">
     <button type="button" class="card-zoom-close" id="cardZoomClose" aria-label="Chiudi zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
     <div class="card-zoom-stage" id="cardZoomStage">
@@ -4889,6 +5107,7 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
         lastCardId: null,
         priceSource: '',
       },
+      manualPriceDraft: { langKey: '', condKey: '', priceText: '' },
       priceDb: {
         data: null,
         promise: null,
@@ -4920,6 +5139,25 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       detailPriceValue: document.getElementById('detailPriceValue'),
       detailPriceSource: document.getElementById('detailPriceSource'),
       detailOfferLabel: document.getElementById('detailOfferLabel'),
+      manualSetPill: document.getElementById('manualSetPill'),
+      priceActionMenu: document.getElementById('priceActionMenu'),
+      priceActionEdit: document.getElementById('priceActionEdit'),
+      priceActionRestore: document.getElementById('priceActionRestore'),
+      priceEditSheet: document.getElementById('priceEditSheet'),
+      priceEditCancel: document.getElementById('priceEditCancel'),
+      priceEditConfirm: document.getElementById('priceEditConfirm'),
+      priceEditLanguageBtn: document.getElementById('priceEditLanguageBtn'),
+      priceEditLanguageValue: document.getElementById('priceEditLanguageValue'),
+      priceEditConditionBtn: document.getElementById('priceEditConditionBtn'),
+      priceEditConditionValue: document.getElementById('priceEditConditionValue'),
+      priceEditAmount: document.getElementById('priceEditAmount'),
+      priceLanguagePage: document.getElementById('priceLanguagePage'),
+      priceLanguageBack: document.getElementById('priceLanguageBack'),
+      priceLanguageSearch: document.getElementById('priceLanguageSearch'),
+      priceLanguageList: document.getElementById('priceLanguageList'),
+      priceConditionPage: document.getElementById('priceConditionPage'),
+      priceConditionBack: document.getElementById('priceConditionBack'),
+      priceConditionList: document.getElementById('priceConditionList'),
       cardRarity: document.getElementById('cardRarity'),
       cardSet: document.getElementById('cardSet'),
       cardVersion: document.getElementById('cardVersion'),
@@ -4997,6 +5235,9 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       if (modal && modal.id === 'detailModal') {
         closeOriginChoiceSheet();
         closeOriginInputSheet();
+        closePriceEditSheet();
+        closePricePickerPage('language');
+        closePricePickerPage('condition');
       }
     }
 
@@ -5841,6 +6082,232 @@ function finishUpdateTimer() {
         </div>`;
     }
 
+
+    const MANUAL_LANGUAGE_OPTIONS = [
+      ['ita', 'Italiano'], ['eng', 'Inglese'], ['fra', 'Francese'], ['spa', 'Spagnolo'], ['deu', 'Tedesco'],
+      ['nld', 'Olandese'], ['por', 'Portoghese'], ['jpn', 'Giapponese'], ['zhsimplified', 'Cinese Semplificato'],
+      ['zhtraditional', 'Cinese Tradizionale'], ['kor', 'Coreano'], ['tha', 'Tailandese'], ['ind', 'Indonesiano'],
+      ['rus', 'Russo'], ['pol', 'Polacco']
+    ].map(([key, label]) => ({ key, label }));
+
+    const MANUAL_LANGUAGE_KEY_BY_LABEL = new Map(
+      MANUAL_LANGUAGE_OPTIONS.map(item => [normalize(item.label), item.key])
+    );
+
+    function getCanonicalManualLanguageKey(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      const normalizedKey = normalizeLang(raw);
+      const mappedLabel = MARKET_LANGUAGE_LABEL_MAP[normalizedKey] || getLanguageDisplayLabel(raw);
+      const canonicalKey = MANUAL_LANGUAGE_KEY_BY_LABEL.get(normalize(mappedLabel));
+      return canonicalKey || normalizedKey;
+    }
+
+    function parseManualPriceNumber(value) {
+      const raw = String(value || '').trim().replace(/€/g, '').replace(/\s/g, '');
+      if (!raw) return null;
+      let cleaned = raw;
+      if (cleaned.includes(',') && cleaned.includes('.')) {
+        cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+      } else if (cleaned.includes(',')) {
+        cleaned = cleaned.replace(',', '.');
+      }
+      const number = Number(cleaned);
+      return Number.isFinite(number) ? number : null;
+    }
+
+    function normalizeManualPriceInput(value) {
+      const number = parseManualPriceNumber(value);
+      if (!Number.isFinite(number)) return '';
+      return `€ ${number.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function manualPriceToCents(value) {
+      const numeric = parseManualPriceNumber(value);
+      if (!Number.isFinite(numeric)) return null;
+      return Math.round(numeric * 100);
+    }
+
+    function getCurrentPriceEditDefaults() {
+      const selected = state.market.selected || { langKey: '', condKey: '' };
+      const rawPrice = el.detailPriceValue ? el.detailPriceValue.textContent : '';
+      return {
+        langKey: selected.langKey ? getCanonicalManualLanguageKey(selected.langKey) : '',
+        condKey: selected.condKey || '',
+        priceText: rawPrice && rawPrice.trim() !== '-' ? normalizeManualPriceInput(rawPrice) : '',
+      };
+    }
+
+    function updatePriceEditValues() {
+      const draft = state.manualPriceDraft || { langKey: '', condKey: '', priceText: '' };
+      if (el.priceEditLanguageValue) el.priceEditLanguageValue.textContent = draft.langKey ? getLanguageDisplayLabel(draft.langKey) : '';
+      if (el.priceEditConditionValue) el.priceEditConditionValue.textContent = draft.condKey ? getConditionLabelFromCode(draft.condKey) : '';
+      if (el.priceEditAmount && document.activeElement !== el.priceEditAmount) el.priceEditAmount.value = draft.priceText || '';
+    }
+
+    function openPriceEditSheet() {
+      state.manualPriceDraft = getCurrentPriceEditDefaults();
+      updatePriceEditValues();
+      if (el.priceEditAmount) el.priceEditAmount.value = state.manualPriceDraft.priceText || '';
+      el.priceEditSheet?.classList.add('open');
+      el.priceEditSheet?.setAttribute('aria-hidden', 'false');
+    }
+
+    function closePriceEditSheet() {
+      el.priceEditSheet?.classList.remove('open');
+      el.priceEditSheet?.setAttribute('aria-hidden', 'true');
+      el.priceEditLanguageBtn?.setAttribute('aria-expanded', 'false');
+      el.priceEditConditionBtn?.setAttribute('aria-expanded', 'false');
+    }
+
+
+    function closePriceActionMenu() {
+      el.priceActionMenu?.classList.remove('open');
+      el.priceActionMenu?.setAttribute('aria-hidden', 'true');
+      el.manualSetPill?.classList.remove('is-open');
+      el.manualSetPill?.setAttribute('aria-expanded', 'false');
+    }
+
+    function togglePriceActionMenu() {
+      const isOpen = el.priceActionMenu?.classList.contains('open');
+      if (isOpen) {
+        closePriceActionMenu();
+        return;
+      }
+      el.priceActionMenu?.classList.add('open');
+      el.priceActionMenu?.setAttribute('aria-hidden', 'false');
+      el.manualSetPill?.classList.add('is-open');
+      el.manualSetPill?.setAttribute('aria-expanded', 'true');
+    }
+
+    async function restorePriceFromMarket() {
+      closePriceActionMenu();
+      closePriceEditSheet();
+      state.manualPriceDraft = { langKey: '', condKey: '', priceText: '' };
+      state.market.selected = { ...(state.market.selected || {}), manualCustom: false };
+      if (!state.selectedCard) return;
+      await loadMarketSummary(state.selectedCard);
+    }
+
+    function getManualLanguageOptions() {
+      const map = new Map(MANUAL_LANGUAGE_OPTIONS.map(item => [item.key, item.label]));
+      const usedLabels = new Set(MANUAL_LANGUAGE_OPTIONS.map(item => normalize(item.label)));
+
+      for (const row of state.market.rows || []) {
+        const rawLanguage = row.langKey || row.langLabel || '';
+        const label = row.langLabel || getLanguageDisplayLabel(rawLanguage);
+        const labelKey = normalize(label);
+        const canonicalKey = getCanonicalManualLanguageKey(rawLanguage || label);
+
+        if (!canonicalKey || usedLabels.has(labelKey)) continue;
+
+        map.set(canonicalKey, label);
+        usedLabels.add(labelKey);
+      }
+
+      return Array.from(map, ([key, label]) => ({ key, label }))
+        .sort((a, b) => {
+          const aIt = isItalianLanguage(a.label) ? -1 : 0;
+          const bIt = isItalianLanguage(b.label) ? -1 : 0;
+          if (aIt !== bIt) return aIt - bIt;
+          return String(a.label).localeCompare(String(b.label), 'it');
+        });
+    }
+
+    function renderPriceLanguageList() {
+      if (!el.priceLanguageList) return;
+      const query = normalize(el.priceLanguageSearch?.value || '');
+      const current = state.manualPriceDraft?.langKey || '';
+      const options = getManualLanguageOptions().filter(item => !query || normalize(item.label).includes(query) || normalize(item.key).includes(query));
+      el.priceLanguageList.innerHTML = options.length ? options.map(item => `
+        <button type="button" class="price-picker-option${item.key === current ? ' is-selected' : ''}" data-price-language="${escapeHtml(item.key)}">
+          <span>${escapeHtml(item.label)}</span>
+          <svg class="price-picker-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>`).join('') : '<div class="price-picker-empty">Nessuna lingua trovata</div>';
+    }
+
+    function renderPriceConditionList() {
+      if (!el.priceConditionList) return;
+      const current = state.manualPriceDraft?.condKey || '';
+      el.priceConditionList.innerHTML = CONDITION_ORDER.map(code => `
+        <button type="button" class="price-picker-option${code === current ? ' is-selected' : ''}" data-price-condition="${escapeHtml(code)}">
+          <span>${escapeHtml(getConditionLabelFromCode(code))}</span>
+          <svg class="price-picker-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>`).join('');
+    }
+
+    function openPricePickerPage(type) {
+      if (type === 'language') {
+        renderPriceLanguageList();
+        el.priceEditLanguageBtn?.setAttribute('aria-expanded', 'true');
+        el.priceLanguagePage?.classList.add('open');
+        el.priceLanguagePage?.setAttribute('aria-hidden', 'false');
+        setTimeout(() => el.priceLanguageSearch?.focus(), 80);
+      } else {
+        renderPriceConditionList();
+        el.priceEditConditionBtn?.setAttribute('aria-expanded', 'true');
+        el.priceConditionPage?.classList.add('open');
+        el.priceConditionPage?.setAttribute('aria-hidden', 'false');
+      }
+    }
+
+    function closePricePickerPage(type) {
+      if (type === 'language') {
+        el.priceLanguagePage?.classList.remove('open');
+        el.priceLanguagePage?.setAttribute('aria-hidden', 'true');
+        el.priceEditLanguageBtn?.setAttribute('aria-expanded', 'false');
+      } else {
+        el.priceConditionPage?.classList.remove('open');
+        el.priceConditionPage?.setAttribute('aria-hidden', 'true');
+        el.priceEditConditionBtn?.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    function renderManualPriceControls(draft = {}) {
+      if (!el.detailOfferLabel) return;
+      const langKey = draft.langKey || '';
+      const condKey = draft.condKey || '';
+      const langLabel = langKey ? getLanguageDisplayLabel(langKey) : '---';
+      const condValue = condKey || '---';
+
+      el.detailOfferLabel.innerHTML = `
+        <div class="offer-controls market-visual-controls is-manual-custom" aria-label="Prezzo personalizzato">
+          <div class="market-ui-dropdown" data-market-dropdown="language">
+            <button type="button" class="market-ui-btn" aria-label="Lingua personalizzata" disabled>
+              ${marketFlagMarkup(langLabel, langKey)}
+            </button>
+          </div>
+
+          <div class="market-ui-dropdown" data-market-dropdown="condition">
+            <button type="button" class="market-ui-btn" aria-label="Condizione personalizzata" disabled>
+              ${conditionBadgeMarkup(condValue)}
+            </button>
+          </div>
+
+          <button type="button" class="market-ctzero-pill is-custom" aria-label="Prezzo personalizzato" aria-pressed="true" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14.7 4.6l4.7 4.7"></path>
+              <path d="M5 19l3.35-.75 10.2-10.2a1.65 1.65 0 0 0 0-2.34l-.26-.26a1.65 1.65 0 0 0-2.34 0L5.75 15.65 5 19z"></path>
+            </svg>
+            <span class="market-ctzero-pill-text">CUSTOM</span>
+          </button>
+        </div>`;
+    }
+
+    function confirmManualPriceEdit() {
+      const draft = state.manualPriceDraft || { langKey: '', condKey: '', priceText: '' };
+      const normalizedPrice = normalizeManualPriceInput(el.priceEditAmount?.value || draft.priceText || '');
+      draft.priceText = normalizedPrice;
+      state.manualPriceDraft = draft;
+      state.market.selected = { ...(state.market.selected || {}), langKey: draft.langKey || '', condKey: draft.condKey || '', ctZero: Boolean(state.market.selected?.ctZero), manualCustom: true };
+      const cents = manualPriceToCents(normalizedPrice);
+      if (Number.isFinite(cents)) {
+        setPriceResult(normalizedPrice, '', { source: '' });
+      }
+      renderManualPriceControls(draft);
+      closePriceEditSheet();
+    }
+
     function setMarketSelectionFromProduct(product) {
       state.market.selected = {
         langKey: getLanguageKey(product),
@@ -6131,7 +6598,7 @@ function finishUpdateTimer() {
     async function loadMarketSummary(card) {
       if (!card) return;
       state.market.rows = [];
-      state.market.selected = { langKey: '', condKey: '', ctZero: false };
+      state.market.selected = { langKey: '', condKey: '', ctZero: false, manualCustom: false };
       state.market.priceSource = '';
       state.market.lastCardId = card.id;
       setPriceLoadingState();
@@ -6741,7 +7208,7 @@ function finishUpdateTimer() {
         el.detailImageWrap.innerHTML = '<div class="thumb-fallback">Immagine non disponibile</div>';
       }
       state.market.rows = [];
-      state.market.selected = { langKey: '', condKey: '', ctZero: false };
+      state.market.selected = { langKey: '', condKey: '', ctZero: false, manualCustom: false };
       state.market.loading = false;
       setPriceResult('-', 'Prezzo non ancora caricato');
       if (el.cardRarity) el.cardRarity.textContent = f.rarity || '';
@@ -6860,6 +7327,61 @@ function finishUpdateTimer() {
 document.querySelectorAll('[data-close]').forEach(btn => {
         btn.addEventListener('click', () => closeModal(document.getElementById(btn.dataset.close)));
       });
+
+      if (el.manualSetPill) el.manualSetPill.addEventListener('click', (event) => { event.stopPropagation(); togglePriceActionMenu(); });
+      if (el.priceActionMenu) {
+        el.priceActionMenu.addEventListener('click', event => event.stopPropagation());
+      }
+      if (el.priceActionEdit) {
+        el.priceActionEdit.addEventListener('click', () => { closePriceActionMenu(); openPriceEditSheet(); });
+      }
+      if (el.priceActionRestore) {
+        el.priceActionRestore.addEventListener('click', restorePriceFromMarket);
+      }
+      document.addEventListener('click', closePriceActionMenu);
+      document.addEventListener('keydown', event => { if (event.key === 'Escape') closePriceActionMenu(); });
+      if (el.priceEditSheet) {
+        el.priceEditSheet.addEventListener('click', (event) => {
+          if (event.target === el.priceEditSheet) closePriceEditSheet();
+        });
+      }
+      if (el.priceEditCancel) el.priceEditCancel.addEventListener('click', closePriceEditSheet);
+      if (el.priceEditConfirm) el.priceEditConfirm.addEventListener('click', confirmManualPriceEdit);
+      if (el.priceEditLanguageBtn) el.priceEditLanguageBtn.addEventListener('click', () => openPricePickerPage('language'));
+      if (el.priceEditConditionBtn) el.priceEditConditionBtn.addEventListener('click', () => openPricePickerPage('condition'));
+      if (el.priceEditAmount) {
+        el.priceEditAmount.addEventListener('input', () => { state.manualPriceDraft.priceText = el.priceEditAmount.value; });
+        el.priceEditAmount.addEventListener('blur', () => {
+          const formatted = normalizeManualPriceInput(el.priceEditAmount.value);
+          if (formatted) el.priceEditAmount.value = formatted;
+          state.manualPriceDraft.priceText = el.priceEditAmount.value;
+        });
+        el.priceEditAmount.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') { event.preventDefault(); el.priceEditConfirm?.click(); }
+          if (event.key === 'Escape') closePriceEditSheet();
+        });
+      }
+      if (el.priceLanguageBack) el.priceLanguageBack.addEventListener('click', () => closePricePickerPage('language'));
+      if (el.priceConditionBack) el.priceConditionBack.addEventListener('click', () => closePricePickerPage('condition'));
+      if (el.priceLanguageSearch) el.priceLanguageSearch.addEventListener('input', renderPriceLanguageList);
+      if (el.priceLanguageList) {
+        el.priceLanguageList.addEventListener('click', (event) => {
+          const option = event.target.closest('[data-price-language]');
+          if (!option) return;
+          state.manualPriceDraft.langKey = option.dataset.priceLanguage || '';
+          updatePriceEditValues();
+          closePricePickerPage('language');
+        });
+      }
+      if (el.priceConditionList) {
+        el.priceConditionList.addEventListener('click', (event) => {
+          const option = event.target.closest('[data-price-condition]');
+          if (!option) return;
+          state.manualPriceDraft.condKey = option.dataset.priceCondition || '';
+          updatePriceEditValues();
+          closePricePickerPage('condition');
+        });
+      }
 
       if (el.cardOriginBtn) {
         el.cardOriginBtn.addEventListener('click', (event) => {
