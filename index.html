@@ -1208,7 +1208,87 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   overflow:hidden !important;
 }
 #detailModal .market-ui-dropdown{position:relative;display:inline-flex;align-items:center;}
-#detailModal .detail-price{overflow:visible;}
+#detailModal .detail-price{overflow:visible;position:relative;}
+#detailModal .offline-price-badge{
+  position:absolute;
+  top:0;
+  right:0;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:3px 5px 3px 7px;
+  border-radius:999px;
+  background:rgba(248,251,255,.82);
+  border:1px solid rgba(120,146,207,.18);
+  color:#65779f;
+  font-size:9px;
+  font-weight:850;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  line-height:1;
+  box-shadow:0 6px 14px rgba(66,89,152,.10), inset 0 1px 0 rgba(255,255,255,.88);
+  z-index:12;
+}
+#detailModal .offline-price-help{
+  width:15px;
+  height:15px;
+  border:0;
+  border-radius:50%;
+  padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(47,100,255,.10);
+  color:#4267c7;
+  font:inherit;
+  font-size:10px;
+  font-weight:900;
+  line-height:1;
+  cursor:pointer;
+}
+#detailModal .offline-price-help:active{transform:scale(.96);}
+#detailModal .offline-price-toast{
+  position:absolute;
+  top:25px;
+  right:0;
+  width:max-content;
+  max-width:240px;
+  padding:8px 10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.96);
+  border:1px solid rgba(120,146,207,.20);
+  color:#111827;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.25;
+  text-align:left;
+  box-shadow:0 14px 28px rgba(66,89,152,.18), inset 0 1px 0 rgba(255,255,255,.9);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(-3px);
+  transition:opacity .18s ease, transform .18s ease, visibility .18s ease;
+  z-index:40;
+  text-transform:none;
+  letter-spacing:0;
+}
+#detailModal .offline-price-toast-title{
+  display:block;
+  color:#111827;
+  font-weight:850;
+}
+#detailModal .offline-price-toast-meta{
+  display:block;
+  margin-top:2px;
+  color:#9aa6bf;
+  font-weight:650;
+}
+#detailModal .offline-price-toast.show{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+
 #detailModal .offer-controls.market-visual-controls{position:relative;z-index:5;overflow:visible;}
 #detailModal .market-ui-btn{
   appearance:none;
@@ -1227,7 +1307,14 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
   color:#333;
 }
 #detailModal .market-ui-btn:disabled{opacity:.52;cursor:not-allowed;}
+#detailModal .offer-controls.market-visual-controls.is-database-fallback .market-ui-btn:disabled,
+#detailModal .offer-controls.market-visual-controls.is-database-fallback .market-ctzero-pill:disabled,
+#detailModal .offer-controls.market-visual-controls.is-database-fallback .market-ctzero-pill.is-disabled{
+  opacity:1;
+  cursor:default;
+}
 #detailModal .market-arrow{font-size:10px;color:#333;line-height:1;display:inline-block;transition:transform .16s ease;}
+#detailModal .offer-controls.market-visual-controls.is-database-fallback .market-arrow{display:none;}
 #detailModal .market-ui-btn[aria-expanded="true"] .market-arrow{transform:rotate(180deg);}
 #detailModal .market-flag-img,
 #detailModal .market-flag-fallback{
@@ -2375,18 +2462,161 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 #detailModal .detail-price{
   position:relative !important;
 }
+#detailModal .manual-set-pill{
+  position:absolute;
+  top:10px;
+  left:16px;
+  min-height:22px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:0 8px 0 7px;
+  border-radius:999px;
+  border:1px solid rgba(120,146,207,.20);
+  background:rgba(248,251,255,.64);
+  color:#4f638b;
+  font-family:inherit;
+  font-size:10px;
+  font-weight:900;
+  line-height:22px;
+  letter-spacing:.02em;
+  white-space:nowrap;
+  cursor:pointer;
+  box-shadow:0 8px 18px rgba(66,89,152,.10), inset 0 1px 0 rgba(255,255,255,.86);
+  backdrop-filter:blur(16px) saturate(145%);
+  -webkit-backdrop-filter:blur(16px) saturate(145%);
+  transition:transform .16s ease, border-color .16s ease, background-color .16s ease, color .16s ease, box-shadow .16s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+#detailModal .manual-set-pill:hover{
+  transform:translateY(-1px);
+  border-color:rgba(47,100,255,.22);
+  background:rgba(255,255,255,.78);
+  color:#2f64ff;
+  box-shadow:0 10px 20px rgba(47,100,255,.12), inset 0 1px 0 rgba(255,255,255,.92);
+}
+#detailModal .manual-set-pill:active{
+  transform:scale(.97);
+}
+#detailModal .manual-set-pill:focus-visible{
+  outline:2px solid rgba(47,100,255,.24);
+  outline-offset:2px;
+}
+#detailModal .manual-set-pill svg{
+  width:12px;
+  height:12px;
+  display:block;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2.2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
 #detailModal .detail-price-source{
   position:absolute;
-  top:4px;
-  right:12px;
-  min-height:16px;
-  color:#3f6fe9;
-  font-size:11px;
-  font-weight:900;
-  line-height:16px;
-  letter-spacing:-0.01em;
+  top:10px;
+  right:16px;
+  min-height:22px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  padding:0 8px 0 7px;
+  border-radius:999px;
+  background:linear-gradient(135deg,#7aa6ff 0%,#4f83ff 48%,#2f64ff 100%);
+  color:#fff;
+  font-size:10px;
+  font-weight:950;
+  line-height:22px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
   white-space:nowrap;
   pointer-events:none;
+  box-shadow:0 8px 18px rgba(47,100,255,.26), inset 0 1px 0 rgba(255,255,255,.38);
+  border:1px solid rgba(255,255,255,.36);
+}
+#detailModal .detail-price-source:empty{
+  display:none;
+}
+#detailModal .detail-price-source .live-dot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:#fff;
+  box-shadow:0 0 0 0 rgba(255,255,255,.72);
+  animation:liveDotPulse 1.45s ease-out infinite;
+}
+#detailModal .detail-price-source .live-text{
+  line-height:1;
+}
+#detailModal .detail-price-source.is-offline{
+  background:linear-gradient(135deg,#9aa6b8 0%,#7f8b9d 52%,#667386 100%);
+  color:#fff;
+  cursor:pointer;
+  pointer-events:auto;
+  box-shadow:0 8px 18px rgba(86,99,120,.22), inset 0 1px 0 rgba(255,255,255,.34);
+  border:1px solid rgba(255,255,255,.38);
+}
+#detailModal .detail-price-source.is-offline .offline-dot{
+  width:7px;
+  height:7px;
+  border-radius:999px;
+  background:#fff;
+  box-shadow:none;
+  animation:none;
+  flex:0 0 auto;
+}
+#detailModal .detail-price-source.is-offline .offline-text{
+  line-height:1;
+}
+#detailModal .detail-price-source.is-offline .offline-price-toast{
+  position:absolute;
+  top:28px;
+  right:0;
+  width:max-content;
+  max-width:260px;
+  padding:9px 11px;
+  border-radius:13px;
+  background:rgba(255,255,255,.78);
+  border:1px solid rgba(255,255,255,.62);
+  color:#20345f;
+  font-size:11px;
+  font-weight:750;
+  line-height:1.28;
+  text-align:left;
+  box-shadow:0 12px 26px rgba(66,89,152,.14), inset 0 1px 0 rgba(255,255,255,.86);
+  backdrop-filter:blur(18px) saturate(145%);
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translateY(-3px);
+  transition:opacity .18s ease, transform .18s ease, visibility .18s ease;
+  z-index:40;
+  text-transform:none;
+  letter-spacing:0;
+  display:grid;
+  gap:2px;
+}
+#detailModal .detail-price-source.is-offline .offline-price-toast.show{
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+#detailModal .detail-price-source.is-offline .offline-price-toast-title{
+  color:#111827;
+  font-weight:850;
+}
+#detailModal .detail-price-source.is-offline .offline-price-toast-meta{
+  color:#9aa6bf;
+  font-weight:650;
+}
+
+@keyframes liveDotPulse{
+  0%{box-shadow:0 0 0 0 rgba(255,255,255,.72);}
+  70%{box-shadow:0 0 0 6px rgba(255,255,255,0);}
+  100%{box-shadow:0 0 0 0 rgba(255,255,255,0);}
 }
 #detailModal .detail-price br{display:none !important;}
 #detailModal .detail-price-label{
@@ -4515,7 +4745,7 @@ paint-order="stroke">
           </div>
           <div class="detail-content">
             <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Retro carta Pokémon"></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""><button type="button" class="card-zoom-btn" id="cardZoomBtn" aria-label="Ingrandisci carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"></path><path d="M3 3l7 7"></path><path d="M16 3h5v5"></path><path d="M21 3l-7 7"></path><path d="M8 21H3v-5"></path><path d="M3 21l7-7"></path><path d="M16 21h5v-5"></path><path d="M21 21l-7-7"></path></svg></button></div>
-            <div class="detail-price"><span class="detail-price-label">Prezzo</span><span class="detail-price-source" id="detailPriceSource" aria-live="polite"></span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
+            <div class="detail-price"><span class="detail-price-label">Prezzo</span><button type="button" class="manual-set-pill" id="manualSetPill" aria-label="Modifica"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg><span>Modifica</span></button><span class="detail-price-source" id="detailPriceSource" aria-live="polite"></span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-variant-card" aria-label="Varianti carta">
               <label class="detail-variant-row">
                 <span class="detail-variant-radio">
@@ -4603,6 +4833,7 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     const INDEX_URL = 'data/pokemon-index.json';
     const META_URL = 'data/pokemon-index-meta.json';
     const PRICE_DB_URL = 'data/pokemon_price-db.json';
+    const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
 
     const state = {
       cards: [],
@@ -4637,6 +4868,9 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
         data: null,
         promise: null,
         error: null,
+        meta: null,
+        metaPromise: null,
+        metaError: null,
       },
     };
 
@@ -5551,7 +5785,7 @@ function finishUpdateTimer() {
             </button>`).join('');
 
       el.detailOfferLabel.innerHTML = `
-        <div class="offer-controls market-visual-controls" aria-label="Filtri offerta marketplace">
+        <div class="offer-controls market-visual-controls${options.databaseFallback ? ' is-database-fallback' : ''}" aria-label="Filtri offerta marketplace">
           <select class="offer-select market-native-control" data-market-filter="language" ${noMatch ? 'data-market-no-match="1"' : ''} ${disabled || noMatch ? 'disabled' : ''} tabindex="-1" aria-hidden="true">${langOptions}</select>
           <select class="offer-select market-native-control" data-market-filter="condition" ${noMatch ? 'data-market-no-match="1"' : ''} ${disabled || noMatch ? 'disabled' : ''} tabindex="-1" aria-hidden="true">${condOptions}</select>
           <input class="market-native-control" type="checkbox" data-market-filter="ctzero" ${selected.ctZero ? 'checked' : ''} ${disabled ? 'disabled' : ''} tabindex="-1" aria-hidden="true">
@@ -5694,7 +5928,69 @@ function finishUpdateTimer() {
     function setPriceSource(source = '') {
       state.market.priceSource = source || '';
       if (!el.detailPriceSource) return;
-      el.detailPriceSource.textContent = source === 'live' ? '(Live)' : '';
+
+      el.detailPriceSource.classList.toggle('is-live', source === 'live');
+      el.detailPriceSource.classList.toggle('is-offline', source === 'database');
+      el.detailPriceSource.innerHTML = source === 'live'
+        ? '<span class="live-dot" aria-hidden="true"></span><span class="live-text">LIVE</span>'
+        : source === 'database'
+          ? renderOfflinePriceBadge()
+          : '';
+      el.detailPriceSource.setAttribute('aria-label', source === 'live' ? 'Prezzo live' : source === 'database' ? 'Prezzo offline' : '');
+      el.detailPriceSource.setAttribute('role', source === 'database' ? 'button' : 'status');
+      el.detailPriceSource.tabIndex = source === 'database' ? 0 : -1;
+    }
+
+    async function loadPriceDatabaseMeta(force = false) {
+      if (!force && state.priceDb.meta) return state.priceDb.meta;
+      if (!force && state.priceDb.metaPromise) return state.priceDb.metaPromise;
+
+      state.priceDb.metaPromise = (async () => {
+        const cacheBust = force ? `?t=${Date.now()}` : '';
+        const response = await fetch(`${PRICE_DB_META_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' });
+        if (!response.ok) {
+          throw new Error(`pokemon_price-db-meta.json non caricato: HTTP ${response.status}`);
+        }
+
+        const meta = await response.json();
+        if (!meta || typeof meta !== 'object' || Array.isArray(meta)) {
+          throw new Error('pokemon_price-db-meta.json non è un oggetto valido');
+        }
+
+        state.priceDb.meta = meta;
+        state.priceDb.metaError = null;
+        return meta;
+      })();
+
+      try {
+        return await state.priceDb.metaPromise;
+      } catch (error) {
+        state.priceDb.metaError = error;
+        state.priceDb.meta = null;
+        return null;
+      } finally {
+        state.priceDb.metaPromise = null;
+      }
+    }
+
+    function getOfflinePriceUpdatedLabel() {
+      const value = state.priceDb.meta?.updatedAt || state.priceDb.meta?.createdAt || '';
+      if (!value) return 'alle __:__ del __/__/____';
+      const formatted = formatIndexDate(value);
+      if (!formatted || formatted === '-' || formatted === value) return 'alle __:__ del __/__/____';
+      const match = formatted.match(/^(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})$/);
+      if (!match) return 'alle __:__ del __/__/____';
+      return `alle ${match[2]} del ${match[1]}`;
+    }
+
+    function renderOfflinePriceBadge() {
+      return `
+        <span class="offline-dot" aria-hidden="true"></span>
+        <span class="offline-text">OFFLINE</span>
+        <span class="offline-price-toast" data-offline-price-toast role="status" aria-live="polite">
+          <span class="offline-price-toast-title">Server temporaneamente offline</span>
+          <span class="offline-price-toast-meta">Prezzo aggiornato ${escapeHtml(getOfflinePriceUpdatedLabel())}</span>
+        </span>`;
     }
 
     async function loadPriceDatabase(force = false) {
@@ -5748,7 +6044,7 @@ function finishUpdateTimer() {
     }
 
     function getDatabasePriceLabel(entry) {
-      const parts = ['Prezzo da database locale'];
+      const parts = [];
       if (entry?.l) parts.push(String(entry.l).toUpperCase());
       if (entry?.c) parts.push(String(entry.c).toUpperCase());
       if (Number(entry?.z) === 1) parts.push('CT Zero');
@@ -5756,15 +6052,28 @@ function finishUpdateTimer() {
     }
 
     async function loadPriceFromDatabaseFallback(card, originalError = null) {
-      await loadPriceDatabase();
+      await Promise.all([loadPriceDatabase(), loadPriceDatabaseMeta()]);
       if (state.selectedCard && Number(state.selectedCard.id) !== Number(card?.id)) return false;
 
       const entry = getDatabasePriceEntry(card);
       if (!entry) return false;
 
-      state.market.rows = [];
-      state.market.selected = { langKey: entry.l || '', condKey: entry.c || '', ctZero: Number(entry.z) === 1 };
-      setPriceResult(formatEuroFromCents(entry.pc), getDatabasePriceLabel(entry), { source: 'database' });
+      const langKey = getLanguageKeyFromValue(entry.l || '');
+      const condKey = getConditionCode(entry.c || '');
+      const ctZero = Number(entry.z) === 1;
+
+      state.market.rows = [{
+        product: null,
+        priceCents: entry.pc,
+        langKey,
+        langLabel: getLanguageDisplayLabel(entry.l || langKey),
+        condKey,
+        ctZero,
+      }];
+      state.market.selected = { langKey, condKey, ctZero };
+
+      setPriceResult(formatEuroFromCents(entry.pc), '', { source: 'database' });
+      renderMarketControls(null, { disabled: true, databaseFallback: true });
       setMarketControlsDisabled(true);
       console.warn('Prezzo live non disponibile, usato database locale.', originalError);
       return true;
@@ -6825,6 +7134,32 @@ el.autocomplete.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
         if (!card) return;
         openCardDetails(card.dataset.id);
+      });
+
+      function showOfflinePriceToast(badge) {
+        const toast = badge?.querySelector('[data-offline-price-toast]');
+        if (!toast) return;
+        if (toast._hideTimer) clearTimeout(toast._hideTimer);
+        toast.classList.add('show');
+        toast._hideTimer = setTimeout(() => {
+          toast.classList.remove('show');
+          toast._hideTimer = null;
+        }, 4000);
+      }
+
+      document.addEventListener('click', (event) => {
+        const badge = event.target.closest('.detail-price-source.is-offline');
+        if (!badge) return;
+        event.preventDefault();
+        event.stopPropagation();
+        showOfflinePriceToast(badge);
+      });
+
+      document.addEventListener('keydown', (event) => {
+        const badge = event.target.closest?.('.detail-price-source.is-offline');
+        if (!badge || (event.key !== 'Enter' && event.key !== ' ')) return;
+        event.preventDefault();
+        showOfflinePriceToast(badge);
       });
 
       if (el.refreshPriceBtn) {
