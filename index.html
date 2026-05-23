@@ -2618,6 +2618,31 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   70%{box-shadow:0 0 0 6px rgba(255,255,255,0);}
   100%{box-shadow:0 0 0 0 rgba(255,255,255,0);}
 }
+
+/* FIX DEFINITIVO: rimosso l'alone/pill fantasma dietro LIVE e OFFLINE */
+#detailModal .detail-price-source,
+#detailModal .detail-price-source.is-offline{
+  box-shadow:none !important;
+  filter:none !important;
+  text-shadow:none !important;
+  outline:none !important;
+  transform:none !important;
+  background-clip:padding-box !important;
+}
+#detailModal .detail-price-source::before,
+#detailModal .detail-price-source::after,
+#detailModal .detail-price-source.is-offline::before,
+#detailModal .detail-price-source.is-offline::after{
+  content:none !important;
+  display:none !important;
+}
+#detailModal .detail-price-source .live-dot,
+#detailModal .detail-price-source.is-offline .offline-dot{
+  box-shadow:none !important;
+  filter:none !important;
+  animation:none !important;
+}
+
 #detailModal .detail-price br{display:none !important;}
 #detailModal .detail-price-label{
   line-height:16px !important;
