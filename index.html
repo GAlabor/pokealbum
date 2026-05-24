@@ -245,6 +245,7 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .album-card .album-wrap{width:100%;max-width:190px;margin-bottom:0;overflow:hidden;border-radius:32px;}
 .album-info{position:absolute;inset:0;z-index:2;pointer-events:none;}
 .album-title{position:absolute;left:14%;top:14%;width:60%;min-height:26%;max-height:34%;margin:0;color:rgba(255, 255, 255, 0.96);font-size:var(--album-title-size, 16px);font-weight:650;line-height:1.08;transition:font-size 0.15s ease;letter-spacing:-0.03em;text-align:center;text-shadow:0 2px 8px rgba(0, 0, 0, 0.22);display:grid;place-items:center;overflow:hidden;white-space:normal;overflow-wrap:break-word;word-break:normal;text-wrap:balance;padding:0 8px;}
+.album-title.is-auto-name{opacity:.72;font-size:var(--album-title-size, 14px);font-weight:560;letter-spacing:.01em;text-transform:none;text-shadow:0 1px 6px rgba(0,0,0,.16);}
 .album-meta{position:absolute;right:16px;bottom:16px;margin:0;min-width:42px;height:32px;padding:0 9px;border:1px solid rgba(255, 255, 255, 0.22);border-radius:999px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:rgba(255, 255, 255, 0.18);color:#ffffff;font-size:12px;font-weight:650;line-height:1;letter-spacing:-0.01em;box-shadow:0 6px 14px rgba(0, 0, 0, 0.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
 .album-name{display:none;}
 .bottom-nav-shell{position:absolute;left:16px;right:16px;bottom:calc(var(--safe-bottom) + 10px);z-index:3;height:80px;border-radius:28px;background:rgba(255, 255, 255, 0.55);backdrop-filter:blur(24px) saturate(140%);box-shadow:0 16px 28px rgba(67, 83, 134, 0.15),
@@ -805,6 +806,13 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
         );background-size:cover;background-position:center;background-repeat:no-repeat;}
 .album-card .album.has-cover-image::before{background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(255,255,255,.06));}
 .album-card.is-pressed .album-wrap{transform:translateY(1px) scale(0.98);filter:drop-shadow(0 16px 20px rgba(57, 91, 176, 0.18)) saturate(1.04);}
+.album-card.is-drag-source{display:none !important;opacity:0;transform:none;pointer-events:none;}
+.album-card.album-drag-placeholder{min-height:0;border-radius:32px;background:rgba(47,100,255,.08);border:1px dashed rgba(47,100,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.72);}
+.album-drag-ghost{position:fixed;left:0;top:0;z-index:260;pointer-events:none;transform:translate3d(0,0,0) scale(1.04);filter:drop-shadow(0 22px 32px rgba(57,91,176,.24));opacity:.96;}
+.album-drag-ghost .album-wrap{width:100%;max-width:none;margin:0;}
+body.album-reorder-active, body.album-reorder-active *{cursor:grabbing !important;}
+.album-card .album-wrap{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+.album-card.is-pressed .album-wrap{touch-action:none;}
 
 .rename-sheet-backdrop{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34, 48, 86, 0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease, background-color .22s ease, visibility .22s ease;}
 .rename-sheet-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34, 48, 86, 0.22);}
@@ -1841,6 +1849,53 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 .home-add-album-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px;}
 .home-add-album-btn span:first-child{font-size:18px;font-weight:850;line-height:1;margin-top:-1px;}
 @media (max-width:420px){.home-add-album-btn{height:42px;padding:0 14px;font-size:12.5px;}}
+
+
+.home-section-placeholder{
+  flex:1 1 auto;
+  min-height:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:clamp(12px, 2.2vh, 22px) 8px 0;
+  text-align:center;
+}
+.home-section-placeholder.is-hidden{display:none;}
+.home-empty-card{
+  width:min(100%, 360px);
+  display:grid;
+  justify-items:center;
+  gap:14px;
+  padding:28px 22px 30px;
+  border-radius:28px;
+  background:rgba(255,255,255,.50);
+  border:1px solid rgba(255,255,255,.68);
+  box-shadow:0 22px 46px rgba(66,89,152,.12), inset 0 1px 0 rgba(255,255,255,.86);
+  backdrop-filter:blur(24px) saturate(145%);
+  -webkit-backdrop-filter:blur(24px) saturate(145%);
+}
+.home-empty-icon{
+  width:74px;
+  height:74px;
+  border-radius:24px;
+  display:grid;
+  place-items:center;
+  color:#2f64ff;
+  background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(235,242,255,.62));
+  border:1px solid rgba(255,255,255,.78);
+  box-shadow:0 14px 28px rgba(47,100,255,.12), inset 0 1px 0 rgba(255,255,255,.92);
+}
+.home-empty-icon svg{width:36px;height:36px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+.home-empty-title{margin:0;color:#1c2e5a;font-size:clamp(25px,4.6vh,34px);line-height:.98;font-weight:950;letter-spacing:-.06em;text-wrap:balance;}
+.home-empty-text{margin:0;max-width:286px;color:#6d7c9a;font-size:clamp(15px,2.1vh,17px);font-weight:520;line-height:1.36;letter-spacing:-.018em;text-wrap:balance;}
+.home-empty-note{margin-top:2px;min-height:32px;padding:0 13px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:rgba(47,100,255,.08);color:#2f64ff;font-size:12px;font-weight:820;letter-spacing:-.02em;}
+.home-add-album-btn.is-hidden,.home-search-shell.is-hidden{display:none !important;}
+@media (max-width:420px){
+  .home-section-placeholder{padding-top:clamp(10px,2vh,18px);}
+  .home-empty-card{padding:25px 20px 27px;border-radius:26px;}
+  .home-empty-icon{width:68px;height:68px;border-radius:22px;}
+  .home-empty-icon svg{width:33px;height:33px;}
+}
 
 #emptyState.hero{
   justify-content:flex-start;
@@ -4284,6 +4339,72 @@ body .bottom-nav-shell .fab{
   height:20px;
   display:block;
 }
+
+
+/* === ADD 24/05/2026: menu profilo + ripristino IndexedDB === */
+.profile-menu-backdrop{position:fixed;inset:0;z-index:240;background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,background-color .22s ease,visibility .22s ease;}
+.profile-menu-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.18);}
+.profile-menu-panel{position:absolute;right:0;top:0;width:min(52vw,260px);max-width:280px;height:100%;padding:calc(var(--safe-top) + 22px) 18px calc(var(--safe-bottom) + 18px);background:rgba(255,255,255,.78);border-left:1px solid rgba(255,255,255,.72);box-shadow:-18px 0 42px rgba(25,38,82,.18),inset 1px 0 0 rgba(255,255,255,.72);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);transform:translateX(104%);transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f;}
+.profile-menu-backdrop.open .profile-menu-panel{transform:translateX(0);}
+.profile-menu-title{margin:0 0 18px;font-size:16px;font-weight:950;letter-spacing:.18em;text-transform:uppercase;text-align:center;line-height:1;background:linear-gradient(135deg,#2f64ff 0%,#7aa6ff 52%,#8f7cff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 8px 22px rgba(47,100,255,.18);position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.profile-menu-divider{height:1px;background:rgba(111,134,188,.18);margin:0 0 10px;}
+.profile-menu-action{appearance:none;-webkit-appearance:none;width:100%;min-height:48px;border:0;border-radius:16px;background:transparent;color:#c62828;font-family:inherit;font-size:15px;font-weight:850;letter-spacing:-.02em;text-align:left;padding:0 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:flex-start;gap:10px;}
+.profile-menu-action:hover,.profile-menu-action:active{background:rgba(198,40,40,.08);}
+.profile-menu-action::after{content:none;display:none;}
+.restore-sheet-backdrop{position:fixed;inset:0;z-index:250;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,background-color .22s ease,visibility .22s ease;}
+.restore-sheet-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.28);}
+.restore-sheet{width:min(100%,430px);border-radius:30px;background:rgba(255,255,255,.80);border:1px solid rgba(255,255,255,.74);box-shadow:0 24px 54px rgba(25,38,82,.24),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);padding:10px 14px 14px;transform:translateY(calc(100% + 28px));transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f;}
+.restore-sheet-backdrop.open .restore-sheet{transform:translateY(0);}
+.restore-sheet-handle{width:42px;height:5px;border-radius:999px;background:rgba(113,129,163,.34);margin:2px auto 14px;}
+.restore-sheet-title{margin:0;color:#1c2e5a;font-size:20px;font-weight:950;line-height:1.08;letter-spacing:-.04em;text-align:center;}
+.restore-sheet-text{margin:7px auto 14px;max-width:330px;color:#7382a2;font-size:13px;font-weight:650;line-height:1.28;text-align:center;}
+.restore-sheet-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.restore-sheet-btn{appearance:none;-webkit-appearance:none;height:48px;border:0;border-radius:999px;font-family:inherit;font-size:14px;font-weight:900;letter-spacing:-.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease;}
+.restore-sheet-btn:active{transform:scale(.98);}
+.restore-sheet-btn.cancel{background:rgba(235,241,255,.70);color:#65779f;border:1px solid rgba(120,146,207,.16);}
+.restore-sheet-btn.confirm{color:#fff;background:linear-gradient(135deg,#ff7a7a 0%,#c62828 100%);box-shadow:0 10px 22px rgba(198,40,40,.24),inset 0 1px 0 rgba(255,255,255,.28);}
+@media (max-width:420px){.profile-menu-panel{width:50vw;min-width:190px;padding-left:16px;padding-right:14px;}.profile-menu-title{font-size:13px;letter-spacing:.16em;}.restore-sheet-backdrop{padding-left:12px;padding-right:12px;}.restore-sheet{border-radius:28px;}}
+
+/* === ADD 24/05/2026: salvataggio IndexedDB organizzato === */
+.storage-toast{position:fixed;left:50%;bottom:calc(var(--safe-bottom) + 104px);transform:translateX(-50%) translateY(12px);z-index:260;max-width:min(360px,calc(100vw - 32px));padding:10px 14px;border-radius:999px;background:rgba(21,40,68,.92);color:#fff;font-size:13px;font-weight:800;letter-spacing:-.01em;box-shadow:0 18px 34px rgba(25,38,82,.22),inset 0 1px 0 rgba(255,255,255,.18);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,transform .22s ease,visibility .22s ease;text-align:center;}
+.storage-toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0);}
+.storage-toast.error{background:rgba(122,28,28,.94);}
+
+/* PATCH: mantiene la barra di ricerca stabile nelle sezioni piene */
+.home-search-shell{
+  flex:0 0 50px !important;
+  height:50px !important;
+  min-height:50px !important;
+  max-height:50px !important;
+  width:auto;
+  align-self:stretch;
+  overflow:visible;
+}
+.home-search-input{
+  height:50px !important;
+  line-height:50px !important;
+}
+@media (max-width:420px){
+  .home-search-shell{
+    flex-basis:48px !important;
+    height:48px !important;
+    min-height:48px !important;
+    max-height:48px !important;
+  }
+  .home-search-input{
+    height:48px !important;
+    line-height:48px !important;
+  }
+}
+
+
+/* === FIX 25/05/2026: accento titolo menu profilo visibile senza modificare lo spazio sotto === */
+.profile-menu-title{
+  line-height:1.4 !important;
+  margin-bottom:calc(18px - .4em) !important;
+  overflow:visible !important;
+}
+
 </style></head>
   <body>
     <div class="phone-stage">
@@ -4438,7 +4559,7 @@ body .bottom-nav-shell .fab{
 
   <div class="collection-dropdown" id="collectionDropdown" role="menu" aria-label="Sezioni raccolta">
     <button class="collection-menu-item active" type="button" role="menuitem" data-section="Album"><span>Album</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
-    <button class="collection-menu-item" type="button" role="menuitem" data-section="Non in Album"><span>Non in Album</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
+    <button class="collection-menu-item" type="button" role="menuitem" data-section="Collezione"><span>Collezione</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
     <button class="collection-menu-item" type="button" role="menuitem" data-section="Set"><span>Set</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
     <button class="collection-menu-item" type="button" role="menuitem" data-section="Duplicati"><span>Duplicati</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
     <button class="collection-menu-item" type="button" role="menuitem" data-section="In arrivo"><span>In arrivo</span><span class="collection-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span></button>
@@ -4479,6 +4600,15 @@ body .bottom-nav-shell .fab{
             >
               <div class="albums-grid" id="albumsGrid"></div>
             </section>
+<section class="home-section-placeholder is-hidden" id="homeSectionPlaceholder" aria-live="polite">
+  <div class="home-empty-card">
+    <div class="home-empty-icon" id="homeSectionIcon" aria-hidden="true"></div>
+    <h1 class="home-empty-title" id="homeSectionTitle"></h1>
+    <p class="home-empty-text" id="homeSectionText"></p>
+    <div class="home-empty-note" id="homeSectionNote"></div>
+  </div>
+</section>
+
           </div>
 
           <section
@@ -5662,6 +5792,26 @@ paint-order="stroke">
           </div>
         </div>
 
+        <div class="profile-menu-backdrop" id="profileMenuBackdrop" aria-hidden="true">
+          <aside class="profile-menu-panel" id="profileMenuPanel" role="dialog" aria-modal="true" aria-labelledby="profileMenuTitle">
+            <h2 class="profile-menu-title" id="profileMenuTitle">POKÉALBUM</h2>
+            <div class="profile-menu-divider" aria-hidden="true"></div>
+            <button class="profile-menu-action" id="restoreDataBtn" type="button">Ripristina</button>
+          </aside>
+        </div>
+
+        <div class="restore-sheet-backdrop" id="restoreSheetBackdrop" aria-hidden="true">
+          <section class="restore-sheet" id="restoreSheet" role="dialog" aria-modal="true" aria-labelledby="restoreSheetTitle">
+            <div class="restore-sheet-handle" aria-hidden="true"></div>
+            <h2 class="restore-sheet-title" id="restoreSheetTitle">Ripristinare PokéAlbum?</h2>
+            <p class="restore-sheet-text">Questa operazione cancella tutti gli album, le carte, le impostazioni e la coda sync salvati in IndexedDB.</p>
+            <div class="restore-sheet-actions">
+              <button class="restore-sheet-btn cancel" id="restoreCancelBtn" type="button">Annulla</button>
+              <button class="restore-sheet-btn confirm" id="restoreConfirmBtn" type="button">Cancella tutto</button>
+            </div>
+          </section>
+        </div>
+
         <div class="rename-sheet-backdrop" id="renameSheetBackdrop" aria-hidden="true">
           <section class="rename-sheet" id="renameSheet" role="dialog" aria-modal="true" aria-labelledby="renameSheetTitle">
             <div class="rename-sheet-handle" aria-hidden="true"></div>
@@ -5717,6 +5867,8 @@ paint-order="stroke">
         </div>
       </main>
     </div>
+
+    <div class="storage-toast" id="storageToast" aria-live="polite" aria-hidden="true"></div>
 
     <template id="albumTemplate">
       <article class="album-card">
@@ -8148,6 +8300,7 @@ function finishUpdateTimer() {
         el.cardOriginValue.innerHTML = renderCardOriginValue(cleanType, cleanDetail, originInTransit);
         el.cardOriginValue.classList.toggle('is-placeholder', !label);
       }
+      pendingOriginType = cleanType;
       pendingOriginInTransit = originInTransit;
       if (el.originInTransitToggle) el.originInTransitToggle.checked = originInTransit;
       document.querySelectorAll('[data-origin-type]').forEach((button) => {
@@ -8602,6 +8755,77 @@ el.autocomplete.addEventListener('click', (e) => {
       }
     }
 
+
+    function buildCollectionCardPayload() {
+      const card = state.selectedCard;
+      if (!card) return null;
+      const f = getDisplayFields(card);
+      const marketSelected = state.market?.selected || {};
+      const priceValue = String(el.detailPriceValue?.textContent || '').trim();
+      const priceSource = String(el.detailPriceSource?.textContent || '').trim();
+      return {
+        blueprintId: card.id ?? card.blueprint_id ?? null,
+        image: {
+          fullUrl: getCardFullUrl(card) || '',
+          previewUrl: getCardPreviewUrl(card) || '',
+        },
+        display: {
+          name: toTitleCase(f.name || ''),
+          version: f.version || '',
+        },
+        set: {
+          code: f.setCode || '',
+          name: f.setName || '',
+          total: el.cardTotalSetInput?.value?.trim() || '',
+        },
+        rarity: f.rarity || '',
+        variants: {
+          holo: Boolean(el.variantHolo?.checked),
+          reverse: Boolean(el.variantReverse?.checked),
+          illustration: Boolean(el.variantIllustration?.checked),
+        },
+        artist: el.cardArtistInput?.value?.trim() || '',
+        releaseDate: el.cardDateInput?.value?.trim() || '',
+        origin: {
+          label: el.cardOriginInput?.value || '',
+          type: pendingOriginType || '',
+          inTransit: Boolean(pendingOriginInTransit),
+        },
+        priceAtAdd: {
+          valueText: priceValue && priceValue !== '-' ? priceValue : '',
+          currency: 'EUR',
+          source: priceSource,
+          offerLabel: el.detailOfferLabel?.textContent || '',
+          language: marketSelected.langKey || '',
+          condition: marketSelected.condKey || '',
+          ctZero: Boolean(marketSelected.ctZero),
+          manualCustom: Boolean(marketSelected.manualCustom),
+          capturedAt: new Date().toISOString(),
+        },
+        rawCard: card,
+      };
+    }
+
+    window.PokeAlbumCards = {
+      getSelectedCardPayload: buildCollectionCardPayload,
+    };
+
+    document.addEventListener('click', async (event) => {
+      const addButton = event.target.closest('.detail-add-card-btn');
+      if (!addButton) return;
+      event.preventDefault();
+      const payload = buildCollectionCardPayload();
+      if (!payload || typeof window.PokeAlbumStorage?.addCardToCurrentAlbum !== 'function') {
+        window.PokeAlbumStorage?.showToast?.('Crea o apri prima un album', true);
+        return;
+      }
+      await window.PokeAlbumStorage.addCardToCurrentAlbum(payload);
+      closeModal(el.detailModal);
+      if (typeof window.PokeAlbumStorage?.returnToCurrentAlbum === 'function') {
+        window.PokeAlbumStorage.returnToCurrentAlbum();
+      }
+    });
+
     async function init() {
       attachEvents();
       setTimerChip('00:00');
@@ -8867,6 +9091,14 @@ document.addEventListener('error', (event) => {
           emptyState: $("#emptyState"),
           albumsView: $("#albumsView"),
           albumsGrid: $("#albumsGrid"),
+          homeSectionPlaceholder: $("#homeSectionPlaceholder"),
+          homeSectionIcon: $("#homeSectionIcon"),
+          homeSectionTitle: $("#homeSectionTitle"),
+          homeSectionText: $("#homeSectionText"),
+          homeSectionNote: $("#homeSectionNote"),
+          homeSearchShell: $(".home-search-shell"),
+          homeAlbumSearchInput: $("#homeAlbumSearchInput"),
+          quickAddAlbumBtn: $("#quickAddAlbumBtn"),
           addAlbumBtn: $("#addAlbumBtn"),
           albumNeededToast: $("#albumNeededToast"),
           createFirstAlbumBtn: $("#createFirstAlbumBtn"),
@@ -8901,6 +9133,14 @@ document.addEventListener('error', (event) => {
           albumPreviewCover: $("#albumPreviewCover"),
           priceToggleBtn: $("#priceToggleBtn"),
           totalPriceValue: $("#totalPriceValue"),
+          homeProfileBtn: $("#homeProfileBtn"),
+          profileMenuBackdrop: $("#profileMenuBackdrop"),
+          profileMenuPanel: $("#profileMenuPanel"),
+          profileMenuTitle: $("#profileMenuTitle"),
+          restoreDataBtn: $("#restoreDataBtn"),
+          restoreSheetBackdrop: $("#restoreSheetBackdrop"),
+          restoreCancelBtn: $("#restoreCancelBtn"),
+          restoreConfirmBtn: $("#restoreConfirmBtn"),
           ownerNameBtn: $("#ownerNameBtn"),
           ownerNameSheetBackdrop: $("#ownerNameSheetBackdrop"),
           ownerNameInput: $("#ownerNameInput"),
@@ -8929,6 +9169,7 @@ document.addEventListener('error', (event) => {
           addFirstCardBtn: $("#addFirstCardBtn"),
           addCardSearchView: $("#addCardSearchView"),
           backFromCardSearchBtn: $("#backFromCardSearchBtn"),
+          storageToast: $("#storageToast"),
         };
 
         const DEFAULT_ALBUM = Object.freeze({
@@ -8942,6 +9183,8 @@ document.addEventListener('error', (event) => {
         });
         const LONG_PRESS_MS = 500;
         const MOVE_TOLERANCE_PX = 12;
+        const AUTO_SCROLL_EDGE_PX = 82;
+        const AUTO_SCROLL_MAX_SPEED = 16;
         const visibleTotalPrice = els.totalPriceValue.textContent.trim();
         const hiddenTotalPrice = "€ ****";
         const OWNER_NAME_STORAGE_KEY = "pokealbumOwnerName";
@@ -8962,10 +9205,413 @@ document.addEventListener('error', (event) => {
           contextIgnoreOpeningRelease: false,
           lastContextActionAt: 0,
           press: null,
+          drag: null,
+          albumAutoScroll: { raf: 0, speed: 0 },
           currentAlbum: null,
           addCardReturnView: "home",
           renamingAlbum: null,
           deletingAlbum: null,
+          currentHomeSection: "Album",
+        };
+
+
+        const STORAGE_SCHEMA_VERSION = 1;
+        const DB_NAME = "pokealbum-store";
+        const DB_VERSION = 1;
+        let dbPromise = null;
+        let storageToastTimer = 0;
+
+        const albumStoreFields = Object.freeze({
+          id: "ID stabile album",
+          schemaVersion: "Versione struttura dati",
+          name: "Nome album assegnato dall’utente, può essere vuoto",
+          autoName: "Nome automatico interno se non assegni un nome, es. Album 1",
+          publicName: "Nome da usare in messaggi e intestazioni",
+          sortName: "Nome normalizzato per ricerche/sync",
+          color: "Colore copertina",
+          appearance: "color/image",
+          imageDataUrl: "Foto copertina in base64",
+          imageName: "Nome file foto",
+          totalPages: "Numero pagine",
+          slotsPerPage: "Numero slot per pagina",
+          pageMode: "front oppure front-back",
+          totalSlots: "Slot effettivi",
+          cardCount: "Carte presenti",
+          createdAt: "Data creazione",
+          updatedAt: "Ultima modifica",
+          sync: "Metadati futuri Dropbox/Google"
+        });
+
+        const cardStoreFields = Object.freeze({
+          id: "ID stabile carta salvata",
+          albumId: "Album collegato, nullo se la carta è in Collezione",
+          collectionScope: "album oppure loose",
+          blueprintId: "ID blueprint CardTrader",
+          image: "URL immagine full/preview",
+          set: "code_set, code_name, totale set",
+          rarity: "Rarità",
+          variants: "holo/reverse/illustration",
+          artist: "Artista",
+          releaseDate: "Uscita",
+          origin: "Provenienza completa e in arrivo",
+          priceAtAdd: "Valore carta al momento dell'aggiunta",
+          addedAt: "Data aggiunta",
+          updatedAt: "Ultima modifica",
+          rawCard: "JSON originale carta per campi futuri",
+          sync: "Metadati futuri Dropbox/Google"
+        });
+
+        function makeId(prefix) {
+          const cryptoId = crypto?.randomUUID?.();
+          return cryptoId ? `${prefix}_${cryptoId}` : `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+        }
+
+        function openDb() {
+          if (dbPromise) return dbPromise;
+          dbPromise = new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            request.onupgradeneeded = () => {
+              const db = request.result;
+              if (!db.objectStoreNames.contains("albums")) {
+                const albums = db.createObjectStore("albums", { keyPath: "id" });
+                albums.createIndex("createdAt", "createdAt");
+                albums.createIndex("updatedAt", "updatedAt");
+                albums.createIndex("sortName", "sortName");
+              }
+              if (!db.objectStoreNames.contains("cards")) {
+                const cards = db.createObjectStore("cards", { keyPath: "id" });
+                cards.createIndex("albumId", "albumId");
+                cards.createIndex("blueprintId", "blueprintId");
+                cards.createIndex("addedAt", "addedAt");
+              }
+              if (!db.objectStoreNames.contains("settings")) {
+                db.createObjectStore("settings", { keyPath: "key" });
+              }
+              if (!db.objectStoreNames.contains("syncQueue")) {
+                const syncQueue = db.createObjectStore("syncQueue", { keyPath: "id" });
+                syncQueue.createIndex("createdAt", "createdAt");
+                syncQueue.createIndex("entity", "entity");
+              }
+            };
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+          });
+          return dbPromise;
+        }
+
+        async function idbRequest(request) {
+          return new Promise((resolve, reject) => {
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+          });
+        }
+
+        async function txDone(tx) {
+          return new Promise((resolve, reject) => {
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+            tx.onabort = () => reject(tx.error || new Error("Transazione IndexedDB annullata"));
+          });
+        }
+
+        async function putStore(storeName, value) {
+          const db = await openDb();
+          const tx = db.transaction(storeName, "readwrite");
+          tx.objectStore(storeName).put(value);
+          await txDone(tx);
+          return value;
+        }
+
+        async function deleteStore(storeName, key) {
+          const db = await openDb();
+          const tx = db.transaction(storeName, "readwrite");
+          tx.objectStore(storeName).delete(key);
+          await txDone(tx);
+        }
+
+        async function getAllStore(storeName) {
+          const db = await openDb();
+          return idbRequest(db.transaction(storeName, "readonly").objectStore(storeName).getAll());
+        }
+
+        async function getCardsByAlbum(albumId) {
+          const db = await openDb();
+          const tx = db.transaction("cards", "readonly");
+          return idbRequest(tx.objectStore("cards").index("albumId").getAll(albumId));
+        }
+
+        async function deleteCardsByAlbum(albumId) {
+          const cards = await getCardsByAlbum(albumId);
+          const db = await openDb();
+          const tx = db.transaction("cards", "readwrite");
+          const store = tx.objectStore("cards");
+          cards.forEach(card => store.delete(card.id));
+          await txDone(tx);
+        }
+
+        async function clearAllIndexedData() {
+          const db = await openDb();
+          const stores = Array.from(db.objectStoreNames);
+          if (!stores.length) return;
+          const tx = db.transaction(stores, "readwrite");
+          stores.forEach((storeName) => tx.objectStore(storeName).clear());
+          await txDone(tx);
+        }
+
+        function resetAppAfterRestore() {
+          els.albumsGrid.innerHTML = "";
+          state.albumCount = 0;
+          state.contextAlbum = null;
+          state.editingAlbum = null;
+          state.currentAlbum = null;
+          state.renamingAlbum = null;
+          state.deletingAlbum = null;
+          els.ownerNameBtn.textContent = defaultOwnerName;
+          closeAlbumDetail();
+          closeAddCardSearch();
+          closeAlbumForm();
+          closeRenameSheet();
+          closeDeleteSheet();
+          resetFormDefaults();
+          syncEmptyState();
+          updatePriceVisibility();
+        }
+
+        async function queueSync(entity, entityId, action, payload = {}) {
+          await putStore("syncQueue", {
+            id: makeId("sync"),
+            entity,
+            entityId,
+            action,
+            payload,
+            status: "pending",
+            createdAt: new Date().toISOString(),
+          });
+        }
+
+        function getAlbumNumberFromName(value) {
+          const match = String(value || "").trim().match(/^Album\s+(\d+)$/i);
+          return match ? Number(match[1]) : null;
+        }
+
+        function getUsedAlbumNumbers(excludeAlbumId = null) {
+          const used = new Set();
+          Array.from(els.albumsGrid?.children || []).forEach((albumNode) => {
+            const data = albumNode.albumData || {};
+            if (excludeAlbumId && data.id === excludeAlbumId) return;
+            [
+              data.autoName,
+              data.publicName,
+              data.name,
+              $(".album-title", albumNode)?.textContent,
+              $(".album-name", albumNode)?.textContent,
+            ].forEach((value) => {
+              const number = getAlbumNumberFromName(value);
+              if (number) used.add(number);
+            });
+          });
+          return used;
+        }
+
+        function getNextFreeAlbumName(excludeAlbumId = null) {
+          const used = getUsedAlbumNumbers(excludeAlbumId);
+          let number = 1;
+          while (used.has(number)) number += 1;
+          return `Album ${number}`;
+        }
+
+        function getAlbumFallbackName(createdAt = new Date().toISOString(), sequence = null) {
+          const cleanSequence = Number(sequence || 0);
+          return cleanSequence > 0 ? `Album ${cleanSequence}` : getNextFreeAlbumName();
+        }
+
+        function getAlbumPublicName(albumData = {}) {
+          const assignedName = String(albumData?.name || "").trim();
+          const autoName = String(albumData?.autoName || albumData?.fallbackName || "").trim();
+          return assignedName || autoName || getAlbumFallbackName(albumData?.createdAt);
+        }
+
+        function normalizeAlbumRecord(data = {}, existing = null) {
+          const now = new Date().toISOString();
+          const createdAt = existing?.createdAt || data.createdAt || now;
+          const totalPages = Math.max(1, Number(data.totalPages || DEFAULT_ALBUM.totalPages));
+          const slotsPerPage = Math.max(1, Number(data.slotsPerPage || DEFAULT_ALBUM.slotsPerPage));
+          const pageMode = data.pageMode === "front" ? "front" : "front-back";
+          const name = String(data.name ?? existing?.name ?? "").trim();
+          const autoName = String(data.autoName || existing?.autoName || getAlbumFallbackName(createdAt)).trim();
+          const publicName = name || autoName;
+          return {
+            id: existing?.id || data.id || makeId("album"),
+            schemaVersion: STORAGE_SCHEMA_VERSION,
+            name,
+            autoName,
+            publicName,
+            sortName: publicName.toLocaleLowerCase("it-IT"),
+            sortOrder: Number.isFinite(Number(data.sortOrder ?? existing?.sortOrder)) ? Number(data.sortOrder ?? existing?.sortOrder) : 0,
+            color: data.color || existing?.color || DEFAULT_ALBUM.color,
+            appearance: data.appearance === "image" ? "image" : "color",
+            imageDataUrl: data.imageDataUrl || "",
+            imageName: data.imageName || "",
+            totalPages,
+            slotsPerPage,
+            pageMode,
+            totalSlots: getEffectiveTotalSlots(totalPages, slotsPerPage, pageMode),
+            cardCount: Number(existing?.cardCount || data.cardCount || 0),
+            createdAt,
+            updatedAt: now,
+            sync: { provider: null, remoteId: null, dirty: true },
+            _fields: albumStoreFields,
+          };
+        }
+
+        function buildCardRecord(payload = {}, album = null) {
+          const now = new Date().toISOString();
+          const blueprintId = payload.blueprintId ?? payload.blueprint_id ?? payload.rawCard?.id ?? null;
+          return {
+            id: makeId("card"),
+            schemaVersion: STORAGE_SCHEMA_VERSION,
+            albumId: album?.id || null,
+            blueprintId,
+            image: {
+              fullUrl: payload.image?.fullUrl || payload.fullImageUrl || "",
+              previewUrl: payload.image?.previewUrl || payload.previewImageUrl || "",
+            },
+            display: payload.display || {},
+            set: {
+              code: payload.set?.code || payload.code_set || "",
+              name: payload.set?.name || payload.code_name || "",
+              total: payload.set?.total || payload.totalSet || "",
+            },
+            rarity: payload.rarity || "",
+            variants: {
+              holo: Boolean(payload.variants?.holo || payload.holo),
+              reverse: Boolean(payload.variants?.reverse || payload.reverse),
+              illustration: Boolean(payload.variants?.illustration || payload.illustration),
+            },
+            artist: payload.artist || "",
+            releaseDate: payload.releaseDate || payload.uscita || "",
+            origin: {
+              ...(payload.origin || {}),
+              inTransit: Boolean(payload.origin?.inTransit || payload.inArrivo),
+            },
+            priceAtAdd: payload.priceAtAdd || {},
+            addedAt: now,
+            updatedAt: now,
+            rawCard: payload.rawCard || payload.raw || {},
+            notes: "",
+            tags: [],
+            sync: { provider: null, remoteId: null, dirty: true },
+            _fields: cardStoreFields,
+          };
+        }
+
+        function showStorageToast(message, isError = false) {
+          if (!els.storageToast) return;
+          clearTimeout(storageToastTimer);
+          els.storageToast.textContent = message;
+          els.storageToast.classList.toggle("error", Boolean(isError));
+          els.storageToast.classList.add("show");
+          els.storageToast.setAttribute("aria-hidden", "false");
+          storageToastTimer = window.setTimeout(() => {
+            els.storageToast.classList.remove("show", "error");
+            els.storageToast.setAttribute("aria-hidden", "true");
+          }, 2400);
+        }
+
+        async function persistAlbumNode(albumNode, action = "upsert") {
+          if (!albumNode?.albumData) return null;
+          const normalized = normalizeAlbumRecord(albumNode.albumData, albumNode.albumData);
+          albumNode.albumData = normalized;
+          await putStore("albums", normalized);
+          await queueSync("album", normalized.id, action, normalized);
+          return normalized;
+        }
+
+        async function loadSavedAlbums() {
+          const albums = await getAllStore("albums");
+          albums
+            .sort((a, b) => {
+              const orderA = Number(a.sortOrder || 0);
+              const orderB = Number(b.sortOrder || 0);
+              if (orderA > 0 || orderB > 0) {
+                if (orderA !== orderB) return (orderA || Number.MAX_SAFE_INTEGER) - (orderB || Number.MAX_SAFE_INTEGER);
+              }
+              return String(a.createdAt).localeCompare(String(b.createdAt));
+            })
+            .forEach(album => {
+              state.albumCount += 1;
+              els.albumsGrid.appendChild(createAlbumNode(normalizeAlbumRecord(album, album)));
+            });
+          syncEmptyState();
+        }
+
+        async function saveSetting(key, value) {
+          await putStore("settings", { key, value, updatedAt: new Date().toISOString() });
+          await queueSync("setting", key, "upsert", { key, value });
+        }
+
+        async function loadSetting(key) {
+          const db = await openDb();
+          const record = await idbRequest(db.transaction("settings", "readonly").objectStore("settings").get(key));
+          return record?.value;
+        }
+
+        async function recalcAlbumCardCount(albumNode) {
+          if (!albumNode?.albumData?.id) return;
+          const cards = await getCardsByAlbum(albumNode.albumData.id);
+          albumNode.albumData.cardCount = cards.length;
+          await putStore("albums", albumNode.albumData);
+          renderAlbum(albumNode);
+        }
+
+        async function addCardToCurrentAlbum(payload) {
+          const shouldSaveInsideAlbum = state.addCardReturnView === "detail" && Boolean(state.currentAlbum?.albumData);
+
+          if (!shouldSaveInsideAlbum) {
+            const record = buildCardRecord(payload, null);
+            record.collectionScope = "loose";
+            record.albumId = null;
+            await putStore("cards", record);
+            await queueSync("card", record.id, "add", record);
+            showStorageToast("Aggiunta alla Collezione");
+            return record;
+          }
+
+          const albumNode = state.currentAlbum;
+          const record = buildCardRecord(payload, albumNode.albumData);
+          record.collectionScope = "album";
+          await putStore("cards", record);
+          await queueSync("card", record.id, "add", record);
+          albumNode.albumData.cardCount = Number(albumNode.albumData.cardCount || 0) + 1;
+          albumNode.albumData.updatedAt = new Date().toISOString();
+          await putStore("albums", albumNode.albumData);
+          renderAlbum(albumNode);
+          showStorageToast(`Carta salvata in ${getAlbumPublicName(albumNode.albumData)}`);
+          return record;
+        }
+
+        function returnToCurrentAlbum() {
+          const shouldReturnToDetail = state.addCardReturnView === "detail" && Boolean(state.currentAlbum);
+          if (shouldReturnToDetail) setView("detail");
+          else {
+            state.currentAlbum = null;
+            setView("home");
+          }
+        }
+
+        window.PokeAlbumStorage = {
+          openDb,
+          addCardToCurrentAlbum,
+          returnToCurrentAlbum,
+          showToast: showStorageToast,
+          schema: { albumStoreFields, cardStoreFields, version: STORAGE_SCHEMA_VERSION },
+          exportAll: async () => ({
+            albums: await getAllStore("albums"),
+            cards: await getAllStore("cards"),
+            settings: await getAllStore("settings"),
+            syncQueue: await getAllStore("syncQueue"),
+          }),
+          clearAll: clearAllIndexedData,
         };
 
         const stopEvent = (event) => {
@@ -9085,6 +9731,7 @@ document.addEventListener('error', (event) => {
         function getAlbumDataFromForm(fallbackName) {
           return {
             name: els.albumNameInput.value.trim(),
+            autoName: fallbackName,
             color: state.selectedColor,
             appearance: state.selectedAppearance,
             imageDataUrl: state.selectedImageDataUrl,
@@ -9170,19 +9817,22 @@ document.addEventListener('error', (event) => {
         }
 
         function renderAlbum(albumNode) {
-          const { name, color, appearance = "color", imageDataUrl = "", totalPages, slotsPerPage, pageMode = "front-back" } = albumNode.albumData;
+          const { name, color, appearance = "color", imageDataUrl = "", totalPages, slotsPerPage, pageMode = "front-back", cardCount = 0 } = albumNode.albumData;
           const totalSlots = getEffectiveTotalSlots(totalPages, slotsPerPage, pageMode);
           const cleanName = String(name || "").trim();
+          const publicName = getAlbumPublicName(albumNode.albumData);
+          const displayTitle = cleanName || publicName;
+          const isAutoName = !cleanName;
           const cover = $("[data-album-cover]", albumNode);
-          $(".album-name", albumNode).textContent = cleanName;
-          $(".album-title", albumNode).textContent = cleanName;
-          cover?.classList.toggle("has-album-title", Boolean(cleanName));
+          const title = $(".album-title", albumNode);
+          $(".album-name", albumNode).textContent = publicName;
+          title.textContent = displayTitle;
+          title.classList.toggle("is-auto-name", isAutoName);
+          cover?.classList.toggle("has-album-title", Boolean(displayTitle));
           fitAlbumTitle(albumNode);
-          $(".album-meta", albumNode).textContent = `0/${totalSlots}`;
+          $(".album-meta", albumNode).textContent = `${Number(cardCount || 0)}/${totalSlots}`;
           applyAlbumCoverStyle(cover, { color, appearance, imageDataUrl });
-          albumNode.title = cleanName
-            ? `${cleanName} · ${totalPages} pagine · ${totalSlots} slot totali · ${pageMode === "front-back" ? "fronte-retro" : "solo fronte"}`
-            : `${totalPages} pagine · ${totalSlots} slot totali · ${pageMode === "front-back" ? "fronte-retro" : "solo fronte"}`;
+          albumNode.title = `${publicName} · ${totalPages} pagine · ${totalSlots} slot totali · ${pageMode === "front-back" ? "fronte-retro" : "solo fronte"}`;
         }
 
         function createAlbumNode(data) {
@@ -9195,12 +9845,16 @@ document.addEventListener('error', (event) => {
 
         function syncEmptyState() {
           const hasAlbums = els.albumsGrid.children.length > 0;
-          els.emptyState.classList.toggle("is-hidden", hasAlbums);
-          els.albumsView.classList.toggle("is-hidden", !hasAlbums);
-          els.addAlbumBtn.classList.toggle("is-locked", !hasAlbums);
+          const isAlbumSection = state.currentHomeSection === "Album";
+          els.emptyState.classList.toggle("is-hidden", !isAlbumSection || hasAlbums);
+          els.albumsView.classList.toggle("is-hidden", !isAlbumSection || !hasAlbums);
+          els.homeSectionPlaceholder?.classList.toggle("is-hidden", isAlbumSection);
+          els.homeSearchShell?.classList.toggle("is-hidden", false);
+          els.quickAddAlbumBtn?.classList.toggle("is-hidden", !isAlbumSection);
+          els.addAlbumBtn.classList.toggle("is-locked", !isAlbumSection || !hasAlbums);
           els.addAlbumBtn.setAttribute(
             "aria-label",
-            hasAlbums ? "Aggiungi carta" : "Crea prima un album"
+            isAlbumSection && hasAlbums ? "Aggiungi carta" : "Crea prima un album"
           );
         }
 
@@ -9262,7 +9916,7 @@ document.addEventListener('error', (event) => {
         function openAlbumDetail(albumNode) {
           if (!albumNode?.albumData) return;
           state.currentAlbum = albumNode;
-          els.albumDetailTitle.textContent = albumNode.albumData.name || "Album";
+          els.albumDetailTitle.textContent = getAlbumPublicName(albumNode.albumData);
           setView("detail");
         }
 
@@ -9327,26 +9981,38 @@ document.addEventListener('error', (event) => {
           setView("home");
         }
 
-        function saveAlbum() {
-          if (state.editingAlbum) {
-            Object.assign(
-              state.editingAlbum.albumData,
-              getAlbumDataFromForm(state.editingAlbum.albumData.name),
-            );
-            renderAlbum(state.editingAlbum);
-            if (state.currentAlbum === state.editingAlbum) {
-              els.albumDetailTitle.textContent = state.editingAlbum.albumData.name || "Album";
+        async function saveAlbum() {
+          try {
+            if (state.editingAlbum) {
+              Object.assign(
+                state.editingAlbum.albumData,
+                getAlbumDataFromForm(state.editingAlbum.albumData.autoName || getAlbumPublicName(state.editingAlbum.albumData)),
+              );
+              state.editingAlbum.albumData = normalizeAlbumRecord(state.editingAlbum.albumData, state.editingAlbum.albumData);
+              renderAlbum(state.editingAlbum);
+              await persistAlbumNode(state.editingAlbum, "update");
+              if (state.currentAlbum === state.editingAlbum) {
+                els.albumDetailTitle.textContent = getAlbumPublicName(state.editingAlbum.albumData);
+              }
+              closeAlbumForm();
+              showStorageToast("Album aggiornato");
+              return;
             }
-            closeAlbumForm();
-            return;
-          }
 
-          state.albumCount += 1;
-          els.albumsGrid.appendChild(
-            createAlbumNode(getAlbumDataFromForm(`Album ${state.albumCount}`)),
-          );
-          syncEmptyState();
-          closeAlbumForm();
+            const autoName = getNextFreeAlbumName();
+            state.albumCount = Math.max(state.albumCount + 1, getAlbumNumberFromName(autoName) || 1);
+            const albumRecord = normalizeAlbumRecord(getAlbumDataFromForm(autoName));
+            const node = createAlbumNode(albumRecord);
+            els.albumsGrid.appendChild(node);
+            await persistAlbumNode(node, "create");
+            await persistAlbumOrder("create");
+            syncEmptyState();
+            closeAlbumForm();
+            showStorageToast("Album salvato");
+          } catch (error) {
+            console.error(error);
+            showStorageToast("Errore salvataggio album", true);
+          }
         }
 
         function updatePriceVisibility() {
@@ -9366,7 +10032,7 @@ document.addEventListener('error', (event) => {
           );
         }
 
-        function setOwnerName(name) {
+        async function setOwnerName(name) {
           const cleanName = name.trim() || defaultOwnerName;
           els.ownerNameBtn.textContent = cleanName;
           els.ownerNameBtn.setAttribute(
@@ -9376,13 +10042,25 @@ document.addEventListener('error', (event) => {
           try {
             localStorage.setItem(OWNER_NAME_STORAGE_KEY, cleanName);
           } catch {}
+          try {
+            await saveSetting(OWNER_NAME_STORAGE_KEY, cleanName);
+          } catch (error) {
+            console.warn("Nome proprietario non salvato in IndexedDB", error);
+          }
         }
 
-        function loadOwnerName() {
+        async function loadOwnerName() {
           try {
-            setOwnerName(localStorage.getItem(OWNER_NAME_STORAGE_KEY) || defaultOwnerName);
+            const savedName = await loadSetting(OWNER_NAME_STORAGE_KEY);
+            if (savedName) {
+              await setOwnerName(savedName);
+              return;
+            }
+          } catch {}
+          try {
+            await setOwnerName(localStorage.getItem(OWNER_NAME_STORAGE_KEY) || defaultOwnerName);
           } catch {
-            setOwnerName(defaultOwnerName);
+            await setOwnerName(defaultOwnerName);
           }
         }
 
@@ -9403,14 +10081,53 @@ document.addEventListener('error', (event) => {
           els.ownerNameInput.value = "";
         }
 
-        function saveOwnerNameSheet() {
+        async function saveOwnerNameSheet() {
           const name = els.ownerNameInput.value.trim();
           if (!name) {
             closeOwnerNameSheet();
             return;
           }
-          setOwnerName(name);
+          await setOwnerName(name);
           closeOwnerNameSheet();
+        }
+
+        function openProfileMenu() {
+          els.profileMenuBackdrop?.classList.add("open");
+          els.profileMenuBackdrop?.setAttribute("aria-hidden", "false");
+        }
+
+        function closeProfileMenu() {
+          els.profileMenuBackdrop?.classList.remove("open");
+          els.profileMenuBackdrop?.setAttribute("aria-hidden", "true");
+        }
+
+        function openRestoreSheet() {
+          els.restoreSheetBackdrop?.classList.add("open");
+          els.restoreSheetBackdrop?.setAttribute("aria-hidden", "false");
+        }
+
+        function closeRestoreSheet() {
+          els.restoreSheetBackdrop?.classList.remove("open");
+          els.restoreSheetBackdrop?.setAttribute("aria-hidden", "true");
+        }
+
+        function requestRestoreData(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          closeProfileMenu();
+          window.setTimeout(openRestoreSheet, 40);
+        }
+
+        async function confirmRestoreData() {
+          try {
+            await clearAllIndexedData();
+            closeRestoreSheet();
+            resetAppAfterRestore();
+            showStorageToast("PokéAlbum ripristinato");
+          } catch (error) {
+            console.error(error);
+            showStorageToast("Errore ripristino IndexedDB", true);
+          }
         }
 
         function editOwnerName() {
@@ -9485,22 +10202,25 @@ document.addEventListener('error', (event) => {
           els.renameAlbumInput.value = "";
         }
 
-        function saveRenameSheet() {
+        async function saveRenameSheet() {
           const albumNode = state.renamingAlbum;
           if (!albumNode) return;
           const name = els.renameAlbumInput.value.trim();
           albumNode.albumData.name = name;
+          albumNode.albumData = normalizeAlbumRecord(albumNode.albumData, albumNode.albumData);
           renderAlbum(albumNode);
+          await persistAlbumNode(albumNode, "rename");
           if (state.currentAlbum === albumNode) {
-            els.albumDetailTitle.textContent = name || "Album";
+            els.albumDetailTitle.textContent = getAlbumPublicName(albumNode.albumData);
           }
           closeRenameSheet();
+          showStorageToast("Nome album salvato");
         }
 
         function openDeleteSheet(albumNode) {
           if (!albumNode?.albumData) return;
           state.deletingAlbum = albumNode;
-          els.deleteAlbumName.textContent = albumNode.albumData.name || "Album";
+          els.deleteAlbumName.textContent = getAlbumPublicName(albumNode.albumData);
           els.deleteSheetBackdrop.classList.add("open");
           els.deleteSheetBackdrop.setAttribute("aria-hidden", "false");
         }
@@ -9512,14 +10232,26 @@ document.addEventListener('error', (event) => {
           els.deleteAlbumName.textContent = "Album";
         }
 
-        function confirmDeleteAlbum() {
+        async function confirmDeleteAlbum() {
           const albumNode = state.deletingAlbum;
           if (!albumNode) return;
-          albumNode.remove();
-          if (state.editingAlbum === albumNode) state.editingAlbum = null;
-          if (state.currentAlbum === albumNode) closeAlbumDetail();
-          closeDeleteSheet();
-          syncEmptyState();
+          try {
+            const albumId = albumNode.albumData?.id;
+            albumNode.remove();
+            if (albumId) {
+              await deleteCardsByAlbum(albumId);
+              await deleteStore("albums", albumId);
+              await queueSync("album", albumId, "delete", { id: albumId });
+            }
+            if (state.editingAlbum === albumNode) state.editingAlbum = null;
+            if (state.currentAlbum === albumNode) closeAlbumDetail();
+            closeDeleteSheet();
+            syncEmptyState();
+            showStorageToast("Album eliminato");
+          } catch (error) {
+            console.error(error);
+            showStorageToast("Errore eliminazione album", true);
+          }
         }
 
         const contextActions = {
@@ -9532,6 +10264,33 @@ document.addEventListener('error', (event) => {
           return event.target.closest(".album-card");
         }
 
+        function getAlbumNodes() {
+          return Array.from(els.albumsGrid?.children || []).filter((node) =>
+            node.classList?.contains("album-card") &&
+            !node.classList.contains("album-drag-placeholder") &&
+            !node.classList.contains("album-drag-ghost"),
+          );
+        }
+
+        async function persistAlbumOrder(reason = "reorder") {
+          const nodes = getAlbumNodes();
+          const now = new Date().toISOString();
+          const db = await openDb();
+          const tx = db.transaction("albums", "readwrite");
+          const store = tx.objectStore("albums");
+          nodes.forEach((node, index) => {
+            if (!node.albumData) return;
+            node.albumData.sortOrder = index + 1;
+            node.albumData.updatedAt = now;
+            store.put(node.albumData);
+          });
+          await txDone(tx);
+          await queueSync("albumOrder", "album-order", reason, {
+            albumIds: nodes.map((node) => node.albumData?.id).filter(Boolean),
+            updatedAt: now,
+          });
+        }
+
         function resetPressState(forceSelection = false) {
           const press = state.press;
           if (!press) return;
@@ -9539,10 +10298,172 @@ document.addEventListener('error', (event) => {
           press.albumNode.classList.remove("is-pressed");
           if (
             !forceSelection &&
+            !state.drag &&
             !els.contextMenuBackdrop.classList.contains("open")
           )
             toggleSelectionSuppressed(false);
           state.press = null;
+        }
+
+        function setAlbumGhostPosition(event) {
+          const drag = state.drag;
+          if (!drag?.ghost) return;
+          const x = event.clientX - drag.offsetX;
+          const y = event.clientY - drag.offsetY;
+          drag.ghost.style.left = `${x}px`;
+          drag.ghost.style.top = `${y}px`;
+        }
+
+        function moveAlbumPlaceholder(event) {
+          const drag = state.drag;
+          if (!drag?.placeholder) return;
+          const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".album-card");
+          if (
+            !target ||
+            target === drag.placeholder ||
+            target === drag.albumNode ||
+            target.classList.contains("album-drag-ghost") ||
+            target.classList.contains("is-drag-source") ||
+            !els.albumsGrid.contains(target)
+          ) return;
+
+          const rect = target.getBoundingClientRect();
+          const verticalSide = event.clientY > rect.top + rect.height / 2;
+          const horizontalSide = event.clientX > rect.left + rect.width / 2;
+          const insertAfter = Math.abs(event.clientY - (rect.top + rect.height / 2)) > rect.height * 0.22
+            ? verticalSide
+            : horizontalSide;
+          els.albumsGrid.insertBefore(drag.placeholder, insertAfter ? target.nextSibling : target);
+        }
+
+        function stopAlbumAutoScroll() {
+          const auto = state.albumAutoScroll;
+          if (!auto) return;
+          auto.speed = 0;
+          if (auto.raf) cancelAnimationFrame(auto.raf);
+          auto.raf = 0;
+        }
+
+        function runAlbumAutoScroll() {
+          const auto = state.albumAutoScroll;
+          const drag = state.drag;
+          const scrollBox = els.albumsView;
+          if (!auto || !drag || !scrollBox || !auto.speed) {
+            stopAlbumAutoScroll();
+            return;
+          }
+
+          const before = scrollBox.scrollTop;
+          scrollBox.scrollTop += auto.speed;
+          if (scrollBox.scrollTop !== before && Number.isFinite(drag.lastClientX) && Number.isFinite(drag.lastClientY)) {
+            moveAlbumPlaceholder({ clientX: drag.lastClientX, clientY: drag.lastClientY });
+          }
+
+          auto.raf = requestAnimationFrame(runAlbumAutoScroll);
+        }
+
+        function updateAlbumAutoScroll(event) {
+          const drag = state.drag;
+          const scrollBox = els.albumsView;
+          const auto = state.albumAutoScroll;
+          if (!drag || !scrollBox || !auto) return;
+
+          drag.lastClientX = event.clientX;
+          drag.lastClientY = event.clientY;
+
+          const rect = scrollBox.getBoundingClientRect();
+          const distanceTop = event.clientY - rect.top;
+          const distanceBottom = rect.bottom - event.clientY;
+          let speed = 0;
+
+          if (distanceTop < AUTO_SCROLL_EDGE_PX) {
+            const ratio = Math.max(0, Math.min(1, (AUTO_SCROLL_EDGE_PX - distanceTop) / AUTO_SCROLL_EDGE_PX));
+            speed = -Math.ceil(AUTO_SCROLL_MAX_SPEED * ratio);
+          } else if (distanceBottom < AUTO_SCROLL_EDGE_PX) {
+            const ratio = Math.max(0, Math.min(1, (AUTO_SCROLL_EDGE_PX - distanceBottom) / AUTO_SCROLL_EDGE_PX));
+            speed = Math.ceil(AUTO_SCROLL_MAX_SPEED * ratio);
+          }
+
+          const canScrollUp = scrollBox.scrollTop > 0;
+          const canScrollDown = scrollBox.scrollTop + scrollBox.clientHeight < scrollBox.scrollHeight - 1;
+          if ((speed < 0 && !canScrollUp) || (speed > 0 && !canScrollDown)) speed = 0;
+
+          auto.speed = speed;
+          if (speed && !auto.raf) auto.raf = requestAnimationFrame(runAlbumAutoScroll);
+          if (!speed && auto.raf) stopAlbumAutoScroll();
+        }
+
+        function startAlbumDrag(press, event) {
+          if (!press || state.drag) return;
+          clearTimeout(press.timer);
+          if (els.contextMenuBackdrop.classList.contains("open")) closeContextMenu();
+
+          const albumNode = press.albumNode;
+          const rect = albumNode.getBoundingClientRect();
+          const placeholder = document.createElement("div");
+          placeholder.className = "album-card album-drag-placeholder";
+          placeholder.style.width = `${rect.width}px`;
+          placeholder.style.height = `${rect.height}px`;
+
+          const ghost = albumNode.cloneNode(true);
+          ghost.classList.add("album-drag-ghost");
+          ghost.classList.remove("is-pressed", "is-drag-source");
+          ghost.style.width = `${rect.width}px`;
+          ghost.style.height = `${rect.height}px`;
+          ghost.style.left = `${rect.left}px`;
+          ghost.style.top = `${rect.top}px`;
+          document.body.appendChild(ghost);
+
+          albumNode.parentNode.insertBefore(placeholder, albumNode);
+          albumNode.classList.add("is-drag-source");
+          albumNode.classList.remove("is-pressed");
+
+          state.drag = {
+            albumNode,
+            placeholder,
+            ghost,
+            pointerId: press.pointerId,
+            offsetX: event.clientX - rect.left,
+            offsetY: event.clientY - rect.top,
+            lastClientX: event.clientX,
+            lastClientY: event.clientY,
+            startIndex: getAlbumNodes().indexOf(albumNode),
+          };
+
+          document.body.classList.add("album-reorder-active");
+          toggleSelectionSuppressed(true);
+          clearTextSelection();
+          setAlbumGhostPosition(event);
+          updateAlbumAutoScroll(event);
+        }
+
+        async function finishAlbumDrag(save = true) {
+          const drag = state.drag;
+          if (!drag) return false;
+          const { albumNode, placeholder, ghost, startIndex } = drag;
+          state.drag = null;
+          stopAlbumAutoScroll();
+
+          albumNode.classList.remove("is-drag-source", "is-pressed");
+          if (placeholder?.parentNode) placeholder.parentNode.insertBefore(albumNode, placeholder);
+          placeholder?.remove();
+          ghost?.remove();
+          document.body.classList.remove("album-reorder-active");
+          toggleSelectionSuppressed(false);
+          clearTextSelection();
+
+          const endIndex = getAlbumNodes().indexOf(albumNode);
+          const moved = startIndex !== endIndex;
+          if (save && moved) {
+            try {
+              await persistAlbumOrder("reorder");
+              showStorageToast("Ordine salvato");
+            } catch (error) {
+              console.error(error);
+              showStorageToast("Errore salvataggio ordine", true);
+            }
+          }
+          return moved;
         }
 
         on(els.albumsGrid, "pointerdown", (event) => {
@@ -9565,7 +10486,7 @@ document.addEventListener('error', (event) => {
             moved: false,
             triggered: false,
             timer: setTimeout(() => {
-              if (!state.press) return;
+              if (!state.press || state.drag) return;
               state.press.triggered = true;
               toggleSelectionSuppressed(true);
               clearTextSelection();
@@ -9573,6 +10494,7 @@ document.addEventListener('error', (event) => {
             }, LONG_PRESS_MS),
           };
 
+          if (event.cancelable) event.preventDefault();
           albumNode.classList.add("is-pressed");
           toggleSelectionSuppressed(true);
           clearTextSelection();
@@ -9582,25 +10504,44 @@ document.addEventListener('error', (event) => {
         });
 
         on(els.albumsGrid, "pointermove", (event) => {
+          const drag = state.drag;
+          if (drag && drag.pointerId === event.pointerId) {
+            event.preventDefault();
+            setAlbumGhostPosition(event);
+            moveAlbumPlaceholder(event);
+            updateAlbumAutoScroll(event);
+            return;
+          }
+
           const press = state.press;
-          if (!press || press.pointerId !== event.pointerId || press.triggered)
-            return;
-          if (
-            Math.hypot(
-              event.clientX - press.startX,
-              event.clientY - press.startY,
-            ) <= MOVE_TOLERANCE_PX
-          )
-            return;
+          if (!press || press.pointerId !== event.pointerId) return;
+          const distance = Math.hypot(
+            event.clientX - press.startX,
+            event.clientY - press.startY,
+          );
+          if (distance <= MOVE_TOLERANCE_PX) return;
+
           press.moved = true;
-          clearTimeout(press.timer);
-          press.timer = 0;
+          event.preventDefault();
+          startAlbumDrag(press, event);
         });
 
         on(
           els.albumsGrid,
           "pointerup pointercancel lostpointercapture",
-          (event) => {
+          async (event) => {
+            const drag = state.drag;
+            if (drag && (!event.pointerId || drag.pointerId === event.pointerId)) {
+              event.preventDefault();
+              try {
+                if (drag.albumNode?.hasPointerCapture?.(event.pointerId))
+                  drag.albumNode.releasePointerCapture?.(event.pointerId);
+              } catch {}
+              await finishAlbumDrag(true);
+              resetPressState();
+              return;
+            }
+
             const press = state.press;
             if (
               !press ||
@@ -9630,7 +10571,8 @@ document.addEventListener('error', (event) => {
           if (
             event.pointerType === "mouse" &&
             press?.pointerId === event.pointerId &&
-            !press.triggered
+            !press.triggered &&
+            !state.drag
           )
             resetPressState();
         });
@@ -9644,11 +10586,21 @@ document.addEventListener('error', (event) => {
           },
           { passive: true },
         );
+        els.albumsGrid.addEventListener(
+          "touchmove",
+          (event) => {
+            if ((state.press || state.drag) && event.target.closest(".album-wrap")) {
+              event.preventDefault();
+              clearTextSelection();
+            }
+          },
+          { passive: false },
+        );
         on(
           els.albumsGrid,
           "touchend",
           () => {
-            if (!els.contextMenuBackdrop.classList.contains("open"))
+            if (!els.contextMenuBackdrop.classList.contains("open") && !state.drag)
               toggleSelectionSuppressed(false);
             clearTextSelection();
           },
@@ -9766,9 +10718,7 @@ document.addEventListener('error', (event) => {
             return;
           }
 
-          if (!state.currentAlbum && els.albumsGrid.children.length === 1) {
-            state.currentAlbum = els.albumsGrid.children[0];
-          }
+          state.currentAlbum = null;
           openAddCardSearch("home");
         });
         els.createFirstAlbumBtn.addEventListener("click", () =>
@@ -9779,6 +10729,70 @@ document.addEventListener('error', (event) => {
         const collectionMenuLabel = $("#collectionMenuLabel");
         const collectionDropdown = $("#collectionDropdown");
         const homeFilterBtn = $("#homeFilterBtn");
+
+
+        const HOME_SECTION_EMPTY = {
+          "Collezione": {
+            title: "Nessuna carta in collezione",
+            text: "Quando aggiungerai le carte agli album, verranno raccolte qui in un elenco unico e ordinato.",
+            note: "Tutte le carte della raccolta",
+            icon: '<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="3"></rect><path d="M8.5 8h7"></path><path d="M8.5 12h7"></path><path d="M8.5 16h4"></path></svg>'
+          },
+          "Set": {
+            title: "Nessun set creato",
+            text: "Dopo l’aggiunta delle carte, i set verranno generati automaticamente e ordinati in base ai dati disponibili.",
+            note: "Creazione automatica dai tuoi album",
+            icon: '<svg viewBox="0 0 24 24"><rect x="4" y="5" width="7" height="7" rx="2"></rect><rect x="13" y="5" width="7" height="7" rx="2"></rect><rect x="4" y="14" width="7" height="5" rx="2"></rect><rect x="13" y="14" width="7" height="5" rx="2"></rect></svg>'
+          },
+          "Duplicati": {
+            title: "Nessun duplicato",
+            text: "Le carte presenti più volte nella raccolta verranno visualizzate qui, così potrai gestirle più facilmente.",
+            note: "Controllo duplicati automatico",
+            icon: '<svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="12" rx="3"></rect><path d="M10 4h6a3 3 0 0 1 3 3v8"></path><path d="M10 12h4"></path><path d="M10 15h3"></path></svg>'
+          },
+          "In arrivo": {
+            title: "Nessuna carta in arrivo",
+            text: "Le carte acquistate e segnate come in arrivo verranno mostrate qui fino alla loro aggiunta definitiva alla raccolta.",
+            note: "Tracciamento acquisti in arrivo",
+            icon: '<svg viewBox="0 0 24 24"><path d="M3.5 7.5h10v8h-10z"></path><path d="M13.5 10h3.5l3 3v2.5h-6.5"></path><circle cx="7" cy="17.5" r="1.5"></circle><circle cx="17" cy="17.5" r="1.5"></circle></svg>'
+          }
+        };
+
+        const HOME_SECTION_SEARCH_PLACEHOLDERS = {
+          "Album": "Cerca nei tuoi album",
+          "Collezione": "Cerca nella collezione",
+          "Set": "Cerca nei set",
+          "Duplicati": "Cerca nei duplicati",
+          "In arrivo": "Cerca nelle carte in arrivo"
+        };
+
+        function setHomeSection(section = "Album") {
+          const safeSection = section === "Album" || HOME_SECTION_EMPTY[section] ? section : "Album";
+          state.currentHomeSection = safeSection;
+          if (collectionMenuLabel) collectionMenuLabel.textContent = safeSection;
+          $$(".collection-menu-item[data-section]").forEach((button) => {
+            button.classList.toggle("active", button.dataset.section === safeSection);
+          });
+
+          const data = HOME_SECTION_EMPTY[safeSection];
+          const searchPlaceholder = HOME_SECTION_SEARCH_PLACEHOLDERS[safeSection] || HOME_SECTION_SEARCH_PLACEHOLDERS.Album;
+          if (els.homeAlbumSearchInput) {
+            els.homeAlbumSearchInput.value = "";
+            els.homeAlbumSearchInput.placeholder = searchPlaceholder;
+            els.homeAlbumSearchInput.setAttribute("aria-label", searchPlaceholder);
+          }
+          if (els.homeSearchShell) {
+            els.homeSearchShell.setAttribute("aria-label", searchPlaceholder);
+          }
+
+          if (data) {
+            if (els.homeSectionIcon) els.homeSectionIcon.innerHTML = data.icon;
+            if (els.homeSectionTitle) els.homeSectionTitle.textContent = data.title;
+            if (els.homeSectionText) els.homeSectionText.textContent = data.text;
+            if (els.homeSectionNote) els.homeSectionNote.textContent = data.note;
+          }
+          syncEmptyState();
+        }
 
         function closeCollectionMenu() {
           collectionMenuWrap?.classList.remove("is-open");
@@ -9814,12 +10828,11 @@ document.addEventListener('error', (event) => {
             return;
           }
           const section = item.dataset.section || "Album";
-          collectionMenuLabel.textContent = section;
-          $$(".collection-menu-item[data-section]").forEach((button) => {
-            button.classList.toggle("active", button === item);
-          });
+          setHomeSection(section);
           closeCollectionMenu();
         });
+
+        setHomeSection("Album");
 
         document.addEventListener("click", (event) => {
           if (!collectionMenuWrap?.contains(event.target)) closeCollectionMenu();
@@ -9830,6 +10843,8 @@ document.addEventListener('error', (event) => {
             closeCollectionMenu();
             closeOwnerNameSheet();
             closeRenameSheet();
+            closeProfileMenu();
+            closeRestoreSheet();
             if (typeof closeOriginChoiceSheet === 'function') closeOriginChoiceSheet();
             if (typeof closeOriginInputSheet === 'function') closeOriginInputSheet();
           }
@@ -9939,6 +10954,27 @@ document.addEventListener('error', (event) => {
           state.isPriceHidden = !state.isPriceHidden;
           updatePriceVisibility();
         });
+        els.homeProfileBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          openProfileMenu();
+        });
+        els.profileMenuBackdrop?.addEventListener("click", (event) => {
+          if (event.target === els.profileMenuBackdrop) closeProfileMenu();
+        });
+        els.profileMenuPanel?.addEventListener("click", (event) => event.stopPropagation());
+        els.profileMenuTitle?.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          closeProfileMenu();
+        });
+        els.restoreDataBtn?.addEventListener("click", requestRestoreData);
+        els.restoreCancelBtn?.addEventListener("click", closeRestoreSheet);
+        els.restoreConfirmBtn?.addEventListener("click", confirmRestoreData);
+        els.restoreSheetBackdrop?.addEventListener("click", (event) => {
+          if (event.target === els.restoreSheetBackdrop) closeRestoreSheet();
+        });
+
         els.ownerNameBtn.addEventListener("click", editOwnerName);
         els.ownerNameCancelBtn.addEventListener("click", closeOwnerNameSheet);
         els.ownerNameSaveBtn.addEventListener("click", saveOwnerNameSheet);
@@ -10014,10 +11050,20 @@ document.addEventListener('error', (event) => {
 
         els.backFromCardSearchBtn.addEventListener("click", closeAddCardSearch);
 
-        loadOwnerName();
-        updatePriceVisibility();
-        resetFormDefaults();
-        syncEmptyState();
+        (async () => {
+          try {
+            await openDb();
+            await loadSavedAlbums();
+            await loadOwnerName();
+          } catch (error) {
+            console.error(error);
+            showStorageToast("IndexedDB non disponibile", true);
+            await loadOwnerName();
+          }
+          updatePriceVisibility();
+          resetFormDefaults();
+          syncEmptyState();
+        })();
       })();
 </script>
   </body>
