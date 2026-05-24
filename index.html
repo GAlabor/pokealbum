@@ -435,7 +435,7 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
   -webkit-tap-highlight-color:transparent;
 }
 #detailModal .info-choice-btn:active{transform:scale(.99);}
-#detailModal .info-choice-value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;}
+#detailModal .info-choice-value{min-width:0;overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere;word-break:normal;text-align:left;}
 #detailModal .info-choice-value.is-placeholder{color:#9aa6bf;}
 #detailModal .info-choice-arrow{font-size:19px;line-height:1;color:#7181a3;font-weight:850;flex:0 0 auto;}
 .origin-sheet-input{
@@ -646,17 +646,18 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .form-row-dual{padding-top:9px;padding-bottom:9px;}
 .dual-fields-row{
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
   gap:8px;
   align-items:center;
 }
 .compact-field-line{
-  grid-template-columns:minmax(0,1fr) 58px;
-  column-gap:6px;
+  grid-template-columns:70px 92px;
+  column-gap:8px;
+  justify-content:start;
   min-width:0;
 }
 .compact-field-line.slots-field-line{
-  grid-template-columns:minmax(0,1fr) 58px;
+  grid-template-columns:70px 92px;
 }
 
 .field-subtitle{
@@ -689,11 +690,83 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .compact-field-line .choice-row-btn{padding-left:10px;padding-right:8px;gap:4px;}
 .compact-field-line .choice-row-btn svg{width:16px;height:16px;}
 @media (max-width:360px){
-  .dual-fields-row{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:6px;}
-  .compact-field-line{grid-template-columns:minmax(0,1fr) 50px;column-gap:5px;}
-  .compact-field-line.slots-field-line{grid-template-columns:minmax(0,1fr) 50px;}
+  .dual-fields-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;}
+  .compact-field-line{grid-template-columns:62px 86px;column-gap:5px;}
+  .compact-field-line.slots-field-line{grid-template-columns:62px 86px;}
   .compact-field-line .number-input,
   .compact-field-line .choice-row-btn{font-size:13px;padding-left:8px;padding-right:7px;}
+}
+
+.compact-stepper{
+  grid-area:input;
+  align-self:center;
+  width:92px;
+  max-width:92px;
+  height:36px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  padding:2px 4px;
+  border:1px solid rgba(120,146,207,.18);
+  border-radius:999px;
+  background:rgba(242,242,247,.82);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.92),0 8px 18px rgba(66,89,152,.08);
+}
+.compact-stepper-btn{
+  appearance:none;
+  -webkit-appearance:none;
+  width:18px;
+  height:18px;
+  min-width:18px;
+  min-height:18px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:#2f64ff;
+  font-family:inherit;
+  font-size:16px;
+  font-weight:750;
+  line-height:1;
+  display:grid;
+  place-items:center;
+  padding:0;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .15s ease,background-color .15s ease,color .15s ease;
+}
+.compact-stepper-btn:active{
+  background:rgba(47,100,255,.12);
+  transform:scale(.92);
+}
+.compact-stepper-value{
+  width:36px;
+  min-width:36px;
+  border:0;
+  background:transparent;
+  outline:0;
+  text-align:center;
+  color:#20345f;
+  font-family:inherit;
+  font-size:14px;
+  font-weight:850;
+  padding:0;
+  appearance:textfield;
+}
+.compact-stepper-value::-webkit-outer-spin-button,
+.compact-stepper-value::-webkit-inner-spin-button{
+  -webkit-appearance:none;
+  margin:0;
+}
+.compact-stepper span.compact-stepper-value{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+@media (max-width:360px){
+  .compact-stepper{width:86px;max-width:86px;height:34px;padding:2px 3px;}
+  .compact-stepper-btn{width:16px;height:16px;min-width:16px;min-height:16px;font-size:14px;}
+  .compact-stepper-value{width:32px;min-width:32px;font-size:13px;}
 }
 
 .field-line{display:grid;grid-template-columns:70px minmax(0, 1fr);grid-template-areas:"label input"
@@ -722,7 +795,9 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .slot-preview-card.is-active{z-index:1;background:rgba(47, 100, 255, 0.07);border-color:rgba(47, 100, 255, 0.14);box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.62);transform:none;}
 .slot-preview-label{margin:0 0 2px;color:#8390aa;font-size:10px;font-weight:800;letter-spacing:0.01em;text-transform:uppercase;white-space:nowrap;}
 .slot-preview-value{margin:0;color:#5c6b8c;font-size:12px;font-weight:750;letter-spacing:-0.02em;white-space:nowrap;}
-.slot-preview-value strong{color:#2f64ff;font-size:13px;font-weight:900;}
+.slot-preview-value strong{color:#2f64ff;font-size:18px;font-weight:950;line-height:1;}
+.slot-preview-card{cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.slot-preview-card:active{transform:scale(.985);}
 .album-card .album{background:var(--album-image, none), linear-gradient(
           180deg,
           var(--album-color-light, rgba(94, 133, 255, 0.95)),
@@ -970,7 +1045,7 @@ body{padding:14px;}
 .slot-preview-card{padding:6px 8px;border-radius:14px;}
 .slot-preview-label{font-size:9.5px;}
 .slot-preview-value{font-size:11.5px;}
-.slot-preview-value strong{font-size:12.5px;}
+.slot-preview-value strong{font-size:16px;}
 .glass-icon-btn{width:40px;height:40px;}
 .top-meta{padding:6px 4px 0;}
 .eyebrow{font-size:clamp(11px, 3.4vw, 16px);letter-spacing:0.14em;column-gap:0.35em;}
@@ -3547,6 +3622,668 @@ body .bottom-nav-shell .fab{
   body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10px) !important;}
 }
 
+
+
+/* Fix mobile: stepper compatti su un solo rigo, ripresi dal prototipo originale */
+@media (max-width:420px){
+  .form-row-dual{
+    padding-left:12px !important;
+    padding-right:12px !important;
+  }
+  .dual-fields-row{
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+    gap:4px !important;
+    align-items:center !important;
+  }
+  .compact-field-line{
+    grid-template-columns:42px 86px !important;
+    column-gap:4px !important;
+    justify-content:start !important;
+    align-items:center !important;
+    min-width:0 !important;
+    width:100% !important;
+  }
+  .compact-field-line.slots-field-line{
+    grid-template-columns:54px 86px !important;
+  }
+  .compact-field-line .form-label{
+    min-width:0 !important;
+    font-size:13px !important;
+    line-height:1.02 !important;
+    white-space:nowrap !important;
+    overflow:visible !important;
+  }
+  .compact-field-line .field-subtitle{
+    margin-top:1px !important;
+    font-size:10px !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+  .compact-stepper{
+    width:86px !important;
+    max-width:86px !important;
+    height:28px !important;
+    padding:2px 4px !important;
+    gap:2px !important;
+  }
+  .compact-stepper-btn{
+    width:16px !important;
+    height:16px !important;
+    min-width:16px !important;
+    min-height:16px !important;
+    font-size:14px !important;
+  }
+  .compact-stepper-value{
+    width:34px !important;
+    min-width:34px !important;
+    font-size:13px !important;
+  }
+}
+
+@media (max-width:340px){
+  .form-row-dual{
+    padding-left:10px !important;
+    padding-right:10px !important;
+  }
+  .dual-fields-row{gap:3px !important;}
+  .compact-field-line{grid-template-columns:38px 78px !important;column-gap:3px !important;}
+  .compact-field-line.slots-field-line{grid-template-columns:46px 78px !important;}
+  .compact-field-line .form-label{font-size:12px !important;}
+  .compact-field-line .field-subtitle{font-size:9px !important;}
+  .compact-stepper{width:78px !important;max-width:78px !important;padding:2px 3px !important;}
+  .compact-stepper-value{width:30px !important;min-width:30px !important;font-size:12px !important;}
+}
+
+
+/* Fix definitivo mobile: disposizione come prototipo compatto su una riga */
+@media (max-width:420px){
+  .form-row-dual{
+    padding-left:16px !important;
+    padding-right:16px !important;
+  }
+  .dual-fields-row{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:space-between !important;
+    gap:12px !important;
+    width:100% !important;
+  }
+  .compact-field-line,
+  .compact-field-line.slots-field-line{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px !important;
+    width:auto !important;
+    min-width:0 !important;
+    grid-template-columns:none !important;
+    grid-template-areas:none !important;
+    column-gap:0 !important;
+  }
+  .compact-field-line .form-label{
+    display:block !important;
+    grid-area:auto !important;
+    min-width:54px !important;
+    max-width:54px !important;
+    font-size:14px !important;
+    font-weight:850 !important;
+    line-height:1.02 !important;
+    letter-spacing:-0.02em !important;
+    white-space:nowrap !important;
+  }
+  .compact-field-line.slots-field-line .form-label{
+    min-width:61px !important;
+    max-width:61px !important;
+  }
+  .compact-field-line .field-subtitle{
+    display:block !important;
+    margin-top:1px !important;
+    font-size:11px !important;
+    font-weight:500 !important;
+    line-height:1 !important;
+    white-space:nowrap !important;
+  }
+  .compact-stepper{
+    grid-area:auto !important;
+    flex:0 0 auto !important;
+    width:90px !important;
+    max-width:90px !important;
+    height:30px !important;
+    padding:2px 4px !important;
+    gap:2px !important;
+  }
+  .compact-stepper-btn{
+    width:17px !important;
+    height:17px !important;
+    min-width:17px !important;
+    min-height:17px !important;
+    font-size:15px !important;
+    font-weight:700 !important;
+  }
+  .compact-stepper-value{
+    width:34px !important;
+    min-width:34px !important;
+    font-size:14px !important;
+    font-weight:850 !important;
+  }
+}
+
+@media (max-width:360px){
+  .form-row-dual{
+    padding-left:12px !important;
+    padding-right:12px !important;
+  }
+  .dual-fields-row{gap:8px !important;}
+  .compact-field-line,
+  .compact-field-line.slots-field-line{gap:5px !important;}
+  .compact-field-line .form-label{
+    min-width:48px !important;
+    max-width:48px !important;
+    font-size:13px !important;
+  }
+  .compact-field-line.slots-field-line .form-label{
+    min-width:56px !important;
+    max-width:56px !important;
+  }
+  .compact-field-line .field-subtitle{font-size:10px !important;}
+  .compact-stepper{
+    width:84px !important;
+    max-width:84px !important;
+    height:28px !important;
+    padding:2px 3px !important;
+  }
+  .compact-stepper-btn{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+    min-height:15px !important;
+    font-size:13px !important;
+  }
+  .compact-stepper-value{
+    width:30px !important;
+    min-width:30px !important;
+    font-size:13px !important;
+  }
+}
+
+
+/* Home stats card stile riferimento */
+#homeView .top-meta{
+  padding-right:0 !important;
+}
+#homeView .home-profile-btn{
+  z-index:12 !important;
+}
+#homeView .eyebrow{
+  padding-right:76px !important;
+}
+#homeView .home-stats-card{
+  width:100%;
+  min-height:82px;
+  margin:14px 0 0 !important;
+  padding:13px 16px 12px 16px;
+  border-radius:28px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 56px;
+  align-items:center;
+  gap:12px;
+  background:rgba(255,255,255,.66);
+  border:1px solid rgba(255,255,255,.68);
+  box-shadow:0 18px 34px rgba(73,96,157,.14), inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(24px) saturate(150%);
+  -webkit-backdrop-filter:blur(24px) saturate(150%);
+}
+#homeView .home-stats-copy{
+  min-width:0;
+  display:grid;
+  gap:6px;
+}
+#homeView .home-cards-line{
+  margin:0;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#243865;
+  line-height:1;
+  letter-spacing:-.03em;
+}
+#homeView .home-cards-count{
+  color:#2f64ff;
+  font-size:31px;
+  font-weight:950;
+  line-height:.92;
+  letter-spacing:-.06em;
+}
+#homeView .home-cards-line span:not(.home-cards-chevron){
+  color:#243865;
+  font-size:14px;
+  font-weight:900;
+}
+#homeView .home-cards-chevron{
+  color:#7382a2;
+  font-size:24px;
+  line-height:.75;
+  font-weight:850;
+  transform:translateY(-1px);
+}
+#homeView .home-value-line{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  min-width:0;
+  color:#7382a2;
+  font-size:11px;
+  font-weight:650;
+  line-height:1;
+  letter-spacing:-.02em;
+  white-space:nowrap;
+}
+#homeView .home-price-control{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  line-height:1;
+  white-space:nowrap;
+}
+#homeView .home-value-line .price-value{
+  color:#243865;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:-.03em;
+  line-height:1;
+}
+#homeView .home-value-line .price-toggle{
+  width:20px !important;
+  height:20px !important;
+  min-width:20px !important;
+  margin-left:0;
+  align-self:center;
+  flex:0 0 20px;
+  color:#8b98b6;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+#homeView .home-value-line .price-toggle .eye-icon{
+  width:14px !important;
+  height:14px !important;
+}
+#homeView .home-stats-album{
+  position:relative;
+  width:56px;
+  height:56px;
+  border-radius:21px;
+  display:grid;
+  place-items:center;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+#homeView .home-stats-album::before{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border-radius:18px;
+  background:rgba(47,100,255,.07);
+  filter:blur(.2px);
+}
+#homeView .home-stats-album-book{
+  position:relative;
+  width:30px;
+  height:38px;
+  border-radius:9px 12px 12px 9px;
+  background:linear-gradient(160deg,#7aa6ff 0%,#2f64ff 72%);
+  box-shadow:0 10px 18px rgba(47,100,255,.30), inset 0 1px 0 rgba(255,255,255,.35);
+}
+#homeView .home-stats-album-book::after{
+  content:"";
+  position:absolute;
+  right:5px;
+  top:5px;
+  bottom:5px;
+  width:4px;
+  border-radius:999px;
+  background:rgba(16,50,170,.32);
+}
+#homeView .home-stats-album-book::before{
+  content:"";
+  position:absolute;
+  left:4px;
+  top:6px;
+  bottom:6px;
+  width:2px;
+  border-radius:999px;
+  background:rgba(255,255,255,.34);
+}
+@media (max-width:420px){
+  #homeView .eyebrow{padding-right:72px !important;}
+  #homeView .home-stats-card{
+    min-height:78px;
+    margin-top:12px !important;
+    padding:12px 14px;
+    grid-template-columns:minmax(0,1fr) 52px;
+    border-radius:26px;
+  }
+  #homeView .home-cards-count{font-size:29px;}
+  #homeView .home-stats-album{width:52px;height:52px;border-radius:20px;}
+  #homeView .home-stats-album-book{width:28px;height:36px;}
+}
+
+
+#homeView .home-stats-album{
+  overflow:visible;
+  background:transparent !important;
+  box-shadow:none !important;
+}
+#homeView .home-stats-album::before{
+  display:none !important;
+}
+#homeView .home-stats-album-svg{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100%;
+  display:block;
+  border-radius:inherit;
+}
+
+/* Fix home header alignment + mobile profile position */
+#homeView .home-cards-line{
+  align-items:baseline !important;
+}
+#homeView .home-cards-count{
+  line-height:1 !important;
+  transform:translateY(1px);
+}
+#homeView .home-cards-line span:not(.home-cards-chevron){
+  line-height:1 !important;
+}
+#homeView .home-cards-chevron{
+  align-self:center !important;
+  transform:translateY(0) !important;
+}
+#homeView .home-value-line{
+  align-items:baseline !important;
+}
+#homeView .home-value-line > span,
+#homeView .home-value-line .price-value{
+  line-height:1 !important;
+}
+#homeView .home-value-line .price-toggle{
+  align-self:center !important;
+}
+@media (max-width:420px){
+  #homeView .home-profile-btn{
+    top:-4px !important;
+  }
+}
+
+
+/* Fix definitivo posizione omino login mobile: lo alzo, non lo mando in vacanza verso il basso */
+@media (max-width:420px){
+  #homeView .home-profile-btn{
+    top:-22px !important;
+  }
+}
+
+
+
+/* === FIX 24/05/2026: Dettagli carta in righe stile Lingua/Condizione/Prezzo === */
+#detailModal .info-card .info-list{
+  padding:12px 12px 14px !important;
+  gap:8px !important;
+}
+#detailModal .info-card .info-row{
+  min-height:52px !important;
+  display:grid !important;
+  grid-template-columns:minmax(0, 1fr) minmax(0, 1.22fr) !important;
+  align-items:center !important;
+  gap:10px !important;
+  padding:0 13px !important;
+  border-radius:18px !important;
+  background:rgba(248,251,255,.64) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.78) !important;
+}
+#detailModal .info-card .info-label{
+  min-width:0 !important;
+  color:#243865 !important;
+  font-size:15px !important;
+  font-weight:850 !important;
+  letter-spacing:-.02em !important;
+  line-height:1.15 !important;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+}
+#detailModal .info-card .info-value{
+  min-width:0 !important;
+  color:#20345f !important;
+  font-size:14px !important;
+  font-weight:750 !important;
+  letter-spacing:-.02em !important;
+  line-height:1.15 !important;
+  text-align:right !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+}
+#detailModal .info-card .static-info-row .info-value{
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+}
+#detailModal .info-card .editable-info-row{
+  grid-template-columns:minmax(0, 1fr) minmax(0, 1.22fr) auto !important;
+  cursor:text !important;
+}
+#detailModal .info-card .editable-info-row::after{
+  content:none;
+}
+#detailModal .info-card .origin-info-row{
+  cursor:pointer !important;
+}
+#detailModal .info-card .origin-info-row::after{
+  content:">";
+  color:#7181a3;
+  font-size:20px;
+  font-weight:850;
+  line-height:1;
+  flex:0 0 auto;
+}
+#detailModal .info-card .info-edit-input{
+  width:100% !important;
+  height:auto !important;
+  min-height:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  color:#20345f !important;
+  font-family:inherit !important;
+  font-size:14px !important;
+  font-weight:750 !important;
+  letter-spacing:-.02em !important;
+  line-height:1.15 !important;
+  text-align:right !important;
+  outline:none !important;
+}
+#detailModal .info-card .info-edit-input::placeholder{
+  color:#9aa6bf !important;
+  font-weight:750 !important;
+  opacity:1 !important;
+}
+#detailModal .info-card .info-edit-input:hover,
+#detailModal .info-card .info-edit-input:focus{
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+#detailModal .info-card .info-choice-btn{
+  width:100% !important;
+  min-height:0 !important;
+  height:auto !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  color:#20345f !important;
+  font-family:inherit !important;
+  font-size:14px !important;
+  font-weight:750 !important;
+  letter-spacing:-.02em !important;
+  line-height:1.15 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:0 !important;
+  cursor:pointer !important;
+}
+#detailModal .info-card .info-choice-value{
+  min-width:0 !important;
+  max-width:100% !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+  text-align:right !important;
+  color:#20345f !important;
+}
+#detailModal .info-card .info-choice-value.is-placeholder{
+  color:#9aa6bf !important;
+}
+#detailModal .info-card .info-choice-arrow{
+  display:none !important;
+}
+#detailModal .collection-separator{
+  margin:9px 0 1px !important;
+}
+
+/* Fix: i dettagli lunghi vanno a capo invece di sparire con i puntini. Perché no, il testo non è un bonsai. */
+#detailModal .info-card .info-row{
+  height:auto !important;
+}
+#detailModal .info-card .info-value,
+#detailModal .info-card .info-choice-value,
+#detailModal .info-card .info-label{
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+}
+#detailModal .info-card .origin-info-row,
+#detailModal .info-card .origin-info-row *{
+  -webkit-tap-highlight-color:transparent;
+}
+@media (max-width:420px){
+  #detailModal .info-card .info-row,
+  #detailModal .info-card .editable-info-row{
+    grid-template-columns:minmax(0, 1fr) minmax(0, 1.12fr) auto !important;
+    gap:8px !important;
+  }
+  #detailModal .info-card .info-row:not(.editable-info-row){
+    grid-template-columns:minmax(0, 1fr) minmax(0, 1.12fr) !important;
+  }
+}
+
+/* Stato spedizione per Acquisto Singolo */
+.origin-transit-toggle{
+  margin:10px 0 12px;
+  min-height:48px;
+  border-radius:18px;
+  background:rgba(248,251,255,.64);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.78);
+  color:#20345f;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:0 13px;
+  font-family:inherit;
+  font-size:15px;
+  font-weight:850;
+  letter-spacing:-.02em;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.origin-transit-toggle.is-hidden{display:none;}
+.origin-transit-copy{display:inline-flex;align-items:center;gap:8px;min-width:0;}
+.origin-transit-icon{width:36px;height:24px;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex:0 0 36px;}
+.origin-transit-icon svg{width:36px;height:24px;display:block;}
+.origin-transit-toggle input{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+  pointer-events:none;
+}
+.origin-transit-switch{
+  width:48px;
+  height:28px;
+  border-radius:999px;
+  background:rgba(128,143,176,.25);
+  position:relative;
+  flex:0 0 auto;
+  box-shadow:inset 0 1px 2px rgba(35,52,95,.12);
+  transition:background-color .18s ease;
+}
+.origin-transit-switch::after{
+  content:"";
+  position:absolute;
+  left:3px;
+  top:3px;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:rgba(255,255,255,.96);
+  box-shadow:0 4px 12px rgba(35,52,95,.18);
+  transition:transform .18s ease;
+}
+.origin-transit-toggle input:checked + .origin-transit-switch{
+  background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);
+}
+.origin-transit-toggle input:checked + .origin-transit-switch::after{
+  transform:translateX(20px);
+}
+#detailModal .origin-choice-lines{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:center;
+  gap:2px;
+  line-height:1.08;
+}
+#detailModal .origin-choice-main,
+#detailModal .origin-choice-subline{
+  display:block;
+  text-align:right;
+}
+#detailModal .origin-choice-subline{
+  font-size:13px;
+  font-weight:800;
+  color:#20345f;
+}
+#detailModal .origin-choice-truck{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;
+  height:20px;
+  margin-right:5px;
+  line-height:1;
+  vertical-align:-4px;
+  flex:0 0 auto;
+}
+#detailModal .origin-choice-truck svg{
+  width:30px;
+  height:20px;
+  display:block;
+}
 </style></head>
   <body>
     <div class="phone-stage">
@@ -3566,56 +4303,126 @@ body .bottom-nav-shell .fab{
                 <button class="accent name-edit-btn" id="ownerNameBtn" type="button" aria-label="Modifica nome proprietario">Il tuo nome</button>
               </p>
 
-              <div class="sub-wrap">
-                <p class="sub">
-                  Carte <strong>0</strong> - Totale
-                  <strong class="price-value" id="totalPriceValue"
-                    >€ 0,00</strong
-                  >
-                </p>
-                <button
-                  class="price-toggle"
-                  id="priceToggleBtn"
-                  type="button"
-                  aria-label="Nascondi totale"
-                  aria-pressed="false"
-                  title="Mostra o nascondi totale"
-                >
-                  <svg
-                    class="eye-icon eye-open"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12 18.7 18.5 12 18.5 1.5 12 1.5 12Z"
-                    ></path>
-                    <circle cx="12" cy="12" r="3.2"></circle>
+              <div class="sub-wrap home-stats-card" aria-label="Riepilogo collezione">
+                <div class="home-stats-copy">
+                  <p class="home-cards-line">
+                    <strong class="home-cards-count">0</strong>
+                    <span>Carte</span>
+                    <span class="home-cards-chevron" aria-hidden="true">›</span>
+                  </p>
+                  <div class="home-value-line">
+                    <span>Valore collezione</span>
+                    <span class="home-price-control">
+                      <strong class="price-value" id="totalPriceValue">€ 0,00</strong>
+                      <button
+                        class="price-toggle"
+                        id="priceToggleBtn"
+                        type="button"
+                        aria-label="Nascondi totale"
+                        aria-pressed="false"
+                        title="Mostra o nascondi totale"
+                      >
+                      <svg
+                        class="eye-icon eye-open"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M1.5 12s3.8-6.5 10.5-6.5S22.5 12 22.5 12 18.7 18.5 12 18.5 1.5 12 1.5 12Z"
+                        ></path>
+                        <circle cx="12" cy="12" r="3.2"></circle>
+                      </svg>
+                      <svg
+                        class="eye-icon eye-off"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                      >
+                        <path d="M3 3l18 18"></path>
+                        <path
+                          d="M10.6 5.7A10.9 10.9 0 0 1 12 5.5c6.7 0 10.5 6.5 10.5 6.5a18.5 18.5 0 0 1-3.2 4.2"
+                        ></path>
+                        <path
+                          d="M6.7 6.8C3.8 8.8 1.5 12 1.5 12s3.8 6.5 10.5 6.5c1.8 0 3.4-.5 4.8-1.2"
+                        ></path>
+                        <path d="M9.9 9.9a3.2 3.2 0 0 0 4.2 4.2"></path>
+                      </svg>
+                      </button>
+                    </span>
+                  </div>
+                </div>
+                <div class="home-stats-album" aria-hidden="true">
+                  <svg class="home-stats-album-svg" width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                  
+                    <defs>
+                      <radialGradient id="bg" cx="50%" cy="45%" r="55%">
+                        <stop offset="0%" stop-color="#F7FBFF"/>
+                        <stop offset="100%" stop-color="#EAF4FF"/>
+                      </radialGradient>
+                  
+                      <linearGradient id="cardMain" x1="90" y1="120" x2="340" y2="390">
+                        <stop offset="0%" stop-color="#4D82FF"/>
+                        <stop offset="100%" stop-color="#155BFF"/>
+                      </linearGradient>
+                  
+                      <linearGradient id="cardBack" x1="210" y1="110" x2="380" y2="390">
+                        <stop offset="0%" stop-color="#5C8DFF"/>
+                        <stop offset="100%" stop-color="#2D6CFF"/>
+                      </linearGradient>
+                  
+                      <linearGradient id="cardLight" x1="300" y1="130" x2="430" y2="380">
+                        <stop offset="0%" stop-color="#8BB1FF"/>
+                        <stop offset="100%" stop-color="#5E91FF"/>
+                      </linearGradient>
+                  
+                      <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+                        <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#1C55CC" flood-opacity="0.25"/>
+                      </filter>
+                  
+                      <filter id="smallShadow" x="-40%" y="-40%" width="180%" height="180%">
+                        <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#1C55CC" flood-opacity="0.35"/>
+                      </filter>
+                    </defs>
+                  
+                    <!-- sfondo -->
+                    <rect width="512" height="512" fill="none"/>
+                    <circle cx="256" cy="256" r="220" fill="none"/>
+                  
+                    <!-- stelline -->
+                    <path d="M145 94 C151 116 151 116 173 122 C151 128 151 128 145 150 C139 128 139 128 117 122 C139 116 139 116 145 94Z"
+                          fill="#4B7DFF" opacity="0.9"/>
+                  
+                    <path d="M386 116 C391 134 391 134 409 139 C391 144 391 144 386 162 C381 144 381 144 363 139 C381 134 381 134 386 116Z"
+                          fill="#4B7DFF" opacity="0.85"/>
+                  
+                    <!-- carte posteriori -->
+                    <rect x="214" y="130" width="150" height="260" rx="44"
+                          fill="url(#cardBack)" filter="url(#softShadow)"
+                          transform="rotate(4 289 260)"/>
+                  
+                    <rect x="270" y="150" width="110" height="240" rx="42"
+                          fill="url(#cardLight)" opacity="0.75" filter="url(#softShadow)"
+                          transform="rotate(10 325 270)"/>
+                  
+                    <!-- carta frontale -->
+                    <rect x="120" y="145" width="220" height="265" rx="42"
+                          fill="url(#cardMain)" filter="url(#softShadow)"/>
+                  
+                    <!-- luce bordo -->
+                    <rect x="123" y="148" width="214" height="259" rx="39"
+                          fill="none" stroke="#7AA5FF" stroke-opacity="0.45" stroke-width="2"/>
+                  
                   </svg>
-                  <svg
-                    class="eye-icon eye-off"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M3 3l18 18"></path>
-                    <path
-                      d="M10.6 5.7A10.9 10.9 0 0 1 12 5.5c6.7 0 10.5 6.5 10.5 6.5a18.5 18.5 0 0 1-3.2 4.2"
-                    ></path>
-                    <path
-                      d="M6.7 6.8C3.8 8.8 1.5 12 1.5 12s3.8 6.5 10.5 6.5c1.8 0 3.4-.5 4.8-1.2"
-                    ></path>
-                    <path d="M9.9 9.9a3.2 3.2 0 0 0 4.2 4.2"></path>
-                  </svg>
-                </button>
+                </div>
               </div>
             </header>
 <div class="home-top-controls">
@@ -3638,9 +4445,9 @@ body .bottom-nav-shell .fab{
   </div>
 </div>
 </div>
-<button class="home-add-album-btn" id="quickAddAlbumBtn" type="button" aria-label="Aggiungi Album" title="Aggiungi Album">
+<button class="home-add-album-btn" id="quickAddAlbumBtn" type="button" aria-label="Crea Album" title="Crea Album">
   <span aria-hidden="true">+</span>
-  <span>Aggiungi Album</span>
+  <span>Crea Album</span>
 </button>
 </div>
 
@@ -3677,7 +4484,7 @@ body .bottom-nav-shell .fab{
           <section
             class="add-album-view is-hidden"
             id="addAlbumView"
-            aria-label="Aggiungi collezione"
+            aria-label="Crea Album"
           >
             <div class="add-album-topbar">
               <button
@@ -3700,7 +4507,7 @@ body .bottom-nav-shell .fab{
               </button>
               <div class="add-album-title-wrap">
                 <h2 class="add-album-title" id="addAlbumTitle">
-                  Aggiungi collezione
+                  Crea Album
                 </h2>
               </div>
               <button
@@ -3848,25 +4655,25 @@ body .bottom-nav-shell .fab{
                       <svg class="slots-layout-svg is-active" data-slots-svg="4" aria-hidden="true" width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <pattern id="microDots4" width="4" height="4" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="0.35" fill="rgba(255,255,255,0.10)"/>
+      <circle cx="2" cy="2" r="0.35" fill="rgba(255,255,255,0.055)"/>
     </pattern>
 
     <linearGradient id="slotGloss4" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="rgba(255,255,255,0.34)"/>
-      <stop offset="0.45" stop-color="rgba(255,255,255,0.13)"/>
-      <stop offset="1" stop-color="rgba(255,255,255,0.04)"/>
+      <stop offset="0" stop-color="rgba(255,255,255,0.22)"/>
+      <stop offset="0.45" stop-color="rgba(255,255,255,0.09)"/>
+      <stop offset="1" stop-color="rgba(255,255,255,0.035)"/>
     </linearGradient>
   </defs>
 
-  <rect x="0" y="0" width="190" height="190" rx="28" fill="#050505"/>
+  <rect x="0" y="0" width="190" height="190" rx="28" fill="#20283a"/>
   <rect x="0" y="0" width="190" height="190" rx="28" fill="url(#microDots4)"/>
 
-  <g opacity="0.92">
-    <rect x="16" y="14" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="99" y="14" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+  <g opacity="0.82">
+    <rect x="16" y="14" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="99" y="14" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
 
-    <rect x="16" y="100" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="99" y="100" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+    <rect x="16" y="100" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="99" y="100" width="75" height="78" rx="8" fill="url(#slotGloss4)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
   </g>
 
 <text x="53.5" y="53.0"
@@ -3920,31 +4727,31 @@ paint-order="stroke">
 <svg class="slots-layout-svg" data-slots-svg="9" aria-hidden="true" width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <pattern id="microDots9" width="4" height="4" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="0.35" fill="rgba(255,255,255,0.10)"/>
+      <circle cx="2" cy="2" r="0.35" fill="rgba(255,255,255,0.055)"/>
     </pattern>
 
     <linearGradient id="slotGloss9" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="rgba(255,255,255,0.34)"/>
-      <stop offset="0.45" stop-color="rgba(255,255,255,0.13)"/>
-      <stop offset="1" stop-color="rgba(255,255,255,0.04)"/>
+      <stop offset="0" stop-color="rgba(255,255,255,0.22)"/>
+      <stop offset="0.45" stop-color="rgba(255,255,255,0.09)"/>
+      <stop offset="1" stop-color="rgba(255,255,255,0.035)"/>
     </linearGradient>
   </defs>
 
-  <rect x="0" y="0" width="190" height="190" rx="28" fill="#050505"/>
+  <rect x="0" y="0" width="190" height="190" rx="28" fill="#20283a"/>
   <rect x="0" y="0" width="190" height="190" rx="28" fill="url(#microDots9)"/>
 
-  <g opacity="0.92">
-    <rect x="16" y="14" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="71" y="14" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="126" y="14" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+  <g opacity="0.82">
+    <rect x="16" y="14" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="71" y="14" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="126" y="14" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
 
-    <rect x="16" y="69" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="71" y="69" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="126" y="69" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+    <rect x="16" y="69" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="71" y="69" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="126" y="69" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
 
-    <rect x="16" y="124" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="71" y="124" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="126" y="124" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+    <rect x="16" y="124" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="71" y="124" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="126" y="124" width="48" height="52" rx="6" fill="url(#slotGloss9)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
   </g>
 
 <text x="40.0" y="40.0"
@@ -4058,34 +4865,34 @@ paint-order="stroke">
 <svg class="slots-layout-svg" data-slots-svg="12" aria-hidden="true" width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <pattern id="microDots12" width="4" height="4" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="0.35" fill="rgba(255,255,255,0.10)"/>
+      <circle cx="2" cy="2" r="0.35" fill="rgba(255,255,255,0.055)"/>
     </pattern>
 
     <linearGradient id="slotGloss12" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="rgba(255,255,255,0.34)"/>
-      <stop offset="0.45" stop-color="rgba(255,255,255,0.13)"/>
-      <stop offset="1" stop-color="rgba(255,255,255,0.04)"/>
+      <stop offset="0" stop-color="rgba(255,255,255,0.22)"/>
+      <stop offset="0.45" stop-color="rgba(255,255,255,0.09)"/>
+      <stop offset="1" stop-color="rgba(255,255,255,0.035)"/>
     </linearGradient>
   </defs>
 
-  <rect x="0" y="0" width="190" height="190" rx="28" fill="#050505"/>
+  <rect x="0" y="0" width="190" height="190" rx="28" fill="#20283a"/>
   <rect x="0" y="0" width="190" height="190" rx="28" fill="url(#microDots12)"/>
 
-  <g opacity="0.92">
-    <rect x="12" y="10" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="55" y="10" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="98" y="10" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="141" y="10" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+  <g opacity="0.82">
+    <rect x="12" y="10" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="55" y="10" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="98" y="10" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="141" y="10" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
 
-    <rect x="12" y="69" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="55" y="69" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="98" y="69" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="141" y="69" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+    <rect x="12" y="69" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="55" y="69" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="98" y="69" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="141" y="69" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
 
-    <rect x="12" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="55" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="98" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="141" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+    <rect x="12" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="55" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="98" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="141" y="128" width="38" height="52" rx="5" fill="url(#slotGloss12)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
   </g>
 
 <text x="31.0" y="36.0"
@@ -4235,39 +5042,39 @@ paint-order="stroke">
 <svg class="slots-layout-svg" data-slots-svg="16" aria-hidden="true" width="190" height="190" viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <pattern id="microDots16" width="4" height="4" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="0.35" fill="rgba(255,255,255,0.10)"/>
+      <circle cx="2" cy="2" r="0.35" fill="rgba(255,255,255,0.055)"/>
     </pattern>
 
     <linearGradient id="slotGloss16" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="rgba(255,255,255,0.34)"/>
-      <stop offset="0.45" stop-color="rgba(255,255,255,0.13)"/>
-      <stop offset="1" stop-color="rgba(255,255,255,0.04)"/>
+      <stop offset="0" stop-color="rgba(255,255,255,0.22)"/>
+      <stop offset="0.45" stop-color="rgba(255,255,255,0.09)"/>
+      <stop offset="1" stop-color="rgba(255,255,255,0.035)"/>
     </linearGradient>
   </defs>
 
-  <rect x="0" y="0" width="190" height="190" rx="28" fill="#050505"/>
+  <rect x="0" y="0" width="190" height="190" rx="28" fill="#20283a"/>
   <rect x="0" y="0" width="190" height="190" rx="28" fill="url(#microDots16)"/>
 
-  <g opacity="0.92">
-    <rect x="13"  y="8" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="55"  y="8" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="97"  y="8" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="139" y="8" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+  <g opacity="0.82">
+    <rect x="13"  y="8" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="55"  y="8" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="97"  y="8" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="139" y="8" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
 
-    <rect x="13"  y="53" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="55"  y="53" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="97"  y="53" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="139" y="53" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+    <rect x="13"  y="53" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="55"  y="53" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="97"  y="53" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="139" y="53" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
 
-    <rect x="13"  y="98" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="55"  y="98" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="97"  y="98" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="139" y="98" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+    <rect x="13"  y="98" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="55"  y="98" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="97"  y="98" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="139" y="98" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
 
-    <rect x="13"  y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="55"  y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="97"  y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
-    <rect x="139" y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.30)" stroke-width="1"/>
+    <rect x="13"  y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="55"  y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="97"  y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+    <rect x="139" y="143" width="38" height="41" rx="5" fill="url(#slotGloss16)" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
   </g>
 
 <text x="32.0" y="28.5"
@@ -4472,25 +5279,29 @@ paint-order="stroke">
                 <div class="dual-fields-row">
                   <div class="field-line no-help compact-field-line">
                     <label class="form-label" for="totalPagesInput">Pagine<span class="field-subtitle">Totali</span></label>
-                    <input
-                      class="number-input"
-                      id="totalPagesInput"
-                      type="number"
-                      min="1"
-                      max="999"
-                      value="12"
-                    />
+                    <div class="compact-stepper" aria-label="Pagine totali">
+                      <button class="compact-stepper-btn" id="totalPagesMinusBtn" type="button" aria-label="Diminuisci pagine">−</button>
+                      <input
+                        class="compact-stepper-value"
+                        id="totalPagesInput"
+                        type="number"
+                        min="1"
+                        max="999"
+                        value="12"
+                        inputmode="numeric"
+                      />
+                      <button class="compact-stepper-btn" id="totalPagesPlusBtn" type="button" aria-label="Aumenta pagine">+</button>
+                    </div>
                   </div>
 
                   <div class="field-line no-help compact-field-line slots-field-line">
                     <label class="form-label" for="slotsPerPageInput">Slot<span class="field-subtitle">Per pagina</span></label>
                     <input id="slotsPerPageInput" type="hidden" value="4" />
-                    <button class="choice-row-btn" id="slotsChoiceBtn" type="button" aria-haspopup="dialog" aria-label="Scegli slot per pagina">
-                      <span id="slotsChoiceValue">4</span>
-                      <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M9 6l6 6-6 6" />
-                      </svg>
-                    </button>
+                    <div class="compact-stepper" aria-label="Slot per pagina">
+                      <button class="compact-stepper-btn" id="slotsMinusBtn" type="button" aria-label="Diminuisci slot">−</button>
+                      <span class="compact-stepper-value" id="slotsChoiceValue" aria-live="polite">4</span>
+                      <button class="compact-stepper-btn" id="slotsPlusBtn" type="button" aria-label="Aumenta slot">+</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -4965,7 +5776,7 @@ paint-order="stroke">
               </label>
             </div>
             <div class="detail-cards">
-              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="Non specificato"></div><div class="info-row editable-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue">Non specificato</span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div></div></section>
+              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div></div></section>
               <section class="info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="info-divider"></div><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
             </div>
           </div>
@@ -5003,6 +5814,11 @@ paint-order="stroke">
       <div class="choice-sheet-handle"></div>
       <h2 class="choice-sheet-title" id="originInputTitle">Dettaglio</h2>
       <input class="origin-sheet-input" id="originDetailInput" type="text" autocomplete="off">
+      <label class="origin-transit-toggle" id="originTransitWrap">
+        <span class="origin-transit-copy"><span class="origin-transit-icon" aria-hidden="true"><svg viewBox="0 0 1536 1024" xmlns="http://www.w3.org/2000/svg"><g fill="#152844"><path d="m545.12 344.07c11.06-19.17 32.69-31.79 54.89-31.44 115.35-0.13 230.7 0.05 346.05-0.06 13.5-0.03 27.08 5.13 36.57 14.84 11.44 10.72 17.27 26.92 15.82 42.48-1.45 10.88-3.2 21.71-4.75 32.57 29.73 0.53 59.49-0.05 89.24 0.3 13.75 0.76 27.19 6.61 37.22 16.04 5.94 5.16 10.1 11.92 14.78 18.16 19.35 26.73 38.64 53.5 57.72 80.42 9.49 13.01 13.73 29.85 11.07 45.77-3.84 25.58-7.49 51.19-11.33 76.77-1.67 10.01-2.1 20.51-6.72 29.76-7.23 16.28-23.69 28.53-41.66 29.38-12.83 0.22-25.67-0.03-38.51 0.1-5.23 19.25-20.22 35.41-38.62 42.89-19.27 8.27-42.41 6.24-60.21-4.75-13.82-8.59-24.89-22.2-29.18-38.02-88.21-0.32-176.44-0.08-264.65-0.13-5.32 17.36-17.7 32.48-33.86 40.82-14.41 7.17-31.42 9.31-47.01 5.03-22.33-5.65-41.08-23.61-47.42-45.79-16.53-0.16-33.07 0-49.6-0.14-4.1-0.24-8.13-2.16-10.73-5.37-4.63-5.54-5.06-14.26-0.61-20.03 3.09-4.12 8.15-6.67 13.32-6.42 15.34 0.13 30.69-0.01 46.03 0 2.42-15.38 10.3-29.95 22.06-40.18 14.05-12.67 33.7-18.9 52.48-16.38 13.05 1.9 25.78 7.36 35.53 16.36 11.86 10.18 19.67 24.77 21.98 40.2 68.7 0.08 137.39 0.13 206.09 0 4.21-25.54 7.63-51.2 11.58-76.78 4.89-31.52 9.46-63.09 14.3-94.62 6.87-42.87 13.2-85.82 19.69-128.75 0.87-10.18-7.19-20.34-17.62-20.77-116.68-0.07-233.37-0.02-350.05-0.02-10.18 0.01-20.28 5.28-25.8 13.88-2.61 3.88-3.74 8.44-4.75 12.94-0.34 0.21-1.01 0.63-1.34 0.85-9.69-0.19-19.4 0.34-29.08-0.1-0.28-0.22-0.85-0.65-1.13-0.86-0.08-10.15 3.27-20.17 8.21-28.95m443.91 90.22c-4.3 26.22-8.09 52.55-12.23 78.81-7.52 51.42-15.97 102.71-23.45 154.15 7.48-0.02 14.96 0.01 22.44-0.05 1.61-11.06 6.27-21.54 12.97-30.44 12.83-16.94 33.91-27.42 55.24-26.56 15.38 0.46 30.61 6.54 42.03 16.86 11.82 10.17 19.44 24.79 21.79 40.15 11.06 0.25 22.12-0.06 33.19 0.16 8.75 0.08 16.34-7.05 18.13-15.38 4.45-32 9.26-63.95 13.67-95.96 0.67-7.38-1.61-14.87-6.12-20.72-21.21-29.78-42.36-59.61-63.91-89.14-6.38-7.9-16.72-12.5-26.86-11.96-28.96 0.04-57.93-0.19-86.89 0.08m-348.49 209.35c-11.5 2.7-21.06 11.55-25.31 22.48-3.77 10.01-2.8 21.73 2.74 30.91 7.26 12.57 22.7 19.78 37 17.09 11.49-1.99 21.84-10.01 26.44-20.76 4.99-10.41 4.11-23.17-1.69-33.05-7.64-13.19-24.29-20.82-39.18-16.67m394.66-0.45c-12.71 2.45-23.62 12.07-27.65 24.37-3.35 10.44-1.8 22.39 4.49 31.44 9.55 14.51 30.4 20.05 45.77 11.75 15.02-7.22 22.93-25.82 18.42-41.73-4.45-17.37-23.33-29.73-41.03-25.83z"/><path d="m1028.5 465.65c2.73-1.07 5.71-1.08 8.61-1.07 10.29 0.01 20.59 0.04 30.88 0.04 7.32 0 14.36 3.98 18.3 10.12 16.49 22.87 32.79 45.87 49.21 68.79 3.17 3.96-0.57 9.96-5.53 9.04-31.65-0.04-63.29-0.11-94.94-0.02-5.38-0.11-11.27 0.72-16.01-2.41-5.96-3.24-9.08-10.42-8.21-17.03 2.62-16.33 5.02-32.69 7.56-49.03 0.69-3.84 0.31-8.02 2.27-11.52 1.65-3.18 4.56-5.59 7.86-6.91z"/></g><g fill="#0171f6"><path d="m341.39 409.62c3.38-1.27 7.03-1.06 10.57-1.05 100.67-0.04 201.35 0 302.02-0.01 5.58 0.01 11.81-0.82 16.55 2.85 7.34 4.71 9.32 15.43 4.44 22.59-3.17 4.39-8.41 7.56-13.93 7.31-104.68 0.04-209.35 0.01-314.03 0.03-7.15-0.29-14.1-5.56-15.54-12.72-1.95-7.66 2.44-16.32 9.92-19z"/><path d="m407.46 499.66c1.75-0.75 3.64-1.15 5.54-1.16 65.99 0.01 131.98-0.01 197.96-0.01 8.25-0.06 15.53 7.26 15.8 15.44 0.7 9.06-7.66 17.69-16.76 17.1-65.34 0.08-130.69 0.02-196.04 0.05-7.78 0.3-15.25-5.81-16.4-13.54-1.47-7.36 3-15.11 9.9-17.88z"/><path d="m469.35 588.48c4.11-1.27 8.46-0.61 12.69-0.67 17 0.03 34-0.04 50.99-0.07 8.83 0.13 16.59 8.44 15.82 17.31-0.39 8.45-8.49 15.61-16.88 15.28-19.33-0.04-38.66 0.02-57.98-0.03-4.96 0.01-9.93-2.31-12.93-6.29-3.45-4.5-4.33-10.83-2.18-16.09 1.65-4.63 5.93-7.9 10.47-9.44z"/></g></svg></span><span>In arrivo</span></span>
+        <input id="originInTransitToggle" type="checkbox" autocomplete="off">
+        <span class="origin-transit-switch" aria-hidden="true"></span>
+      </label>
       <div class="origin-sheet-actions">
         <button class="origin-sheet-btn cancel" id="originInputCancel" type="button">Annulla</button>
         <button class="origin-sheet-btn save" id="originInputSave" type="button">Salva</button>
@@ -5167,10 +5983,15 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       cardOriginInput: document.getElementById('cardOriginInput'),
       cardOriginBtn: document.getElementById('cardOriginBtn'),
       cardOriginValue: document.getElementById('cardOriginValue'),
+      variantHolo: document.getElementById('variantHolo'),
+      variantReverse: document.getElementById('variantReverse'),
+      variantIllustration: document.getElementById('variantIllustration'),
       originChoiceSheet: document.getElementById('originChoiceSheet'),
       originInputSheet: document.getElementById('originInputSheet'),
       originInputTitle: document.getElementById('originInputTitle'),
       originDetailInput: document.getElementById('originDetailInput'),
+      originTransitWrap: document.getElementById('originTransitWrap'),
+      originInTransitToggle: document.getElementById('originInTransitToggle'),
       originInputCancel: document.getElementById('originInputCancel'),
       originInputSave: document.getElementById('originInputSave'),
       detailRaw: document.getElementById('detailRaw'),
@@ -7186,6 +8007,7 @@ function finishUpdateTimer() {
       const card = state.cards.find(c => Number(c.id) === Number(cardId));
       if (!card) return;
       state.selectedCard = card;
+      resetCardDetailTemporaryFields();
       const f = getDisplayFields(card);
       const displayName = toTitleCase(f.name || 'Dettaglio carta');
       const detailImageUrl = getCardFullUrl(card);
@@ -7214,10 +8036,6 @@ function finishUpdateTimer() {
       if (el.cardRarity) el.cardRarity.textContent = f.rarity || '';
       if (el.cardSet) el.cardSet.textContent = setText || '';
       if (el.cardVersion) el.cardVersion.textContent = f.version || '';
-      [el.cardTotalSetInput, el.cardArtistInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
-        if (input) input.value = '';
-      });
-      setCardOrigin('', '');
       if (el.detailRaw) el.detailRaw.textContent = JSON.stringify(card, null, 2);
       if (el.collapsibleContent && el.collapsibleTrigger) {
         el.collapsibleContent.classList.remove('open');
@@ -7229,6 +8047,32 @@ function finishUpdateTimer() {
 
 
     let pendingOriginType = '';
+    let pendingOriginInTransit = false;
+
+    function resetCardDetailTemporaryFields() {
+      [el.cardTotalSetInput, el.cardArtistInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
+        if (input) input.value = '';
+      });
+
+      [el.variantHolo, el.variantReverse, el.variantIllustration].forEach(input => {
+        if (input) input.checked = false;
+      });
+
+      pendingOriginType = '';
+      pendingOriginInTransit = false;
+      if (el.originInTransitToggle) el.originInTransitToggle.checked = false;
+      setCardOrigin('', '', false);
+
+      state.manualPriceDraft = { langKey: '', condKey: '', priceText: '' };
+      state.market.selected = { langKey: '', condKey: '', ctZero: false, manualCustom: false };
+
+      closePriceActionMenu();
+      closePriceEditSheet();
+      closePricePickerPage('language');
+      closePricePickerPage('condition');
+      closeOriginChoiceSheet();
+      closeOriginInputSheet();
+    }
 
     function toTitleCaseName(value = '') {
       return String(value || '')
@@ -7266,17 +8110,46 @@ function finishUpdateTimer() {
       return String(detail || '').trim();
     }
 
-    function setCardOrigin(type = '', detail = '') {
+    function escapeHtml(value = '') {
+      return String(value || '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char]));
+    }
+
+    function renderCardOriginValue(type = '', detail = '', inTransit = false) {
+      const cleanType = String(type || '').trim();
+      const cleanDetail = String(detail || '').trim();
+      if (!cleanType) return '';
+      if (cleanType === 'Acquisto Singolo') {
+        const priceText = cleanDetail || '0,00';
+        const truck = inTransit ? '<span class="origin-choice-truck" aria-label="In arrivo" title="In arrivo"><svg viewBox="0 0 1536 1024" xmlns="http://www.w3.org/2000/svg"><g fill="#152844"><path d="m545.12 344.07c11.06-19.17 32.69-31.79 54.89-31.44 115.35-0.13 230.7 0.05 346.05-0.06 13.5-0.03 27.08 5.13 36.57 14.84 11.44 10.72 17.27 26.92 15.82 42.48-1.45 10.88-3.2 21.71-4.75 32.57 29.73 0.53 59.49-0.05 89.24 0.3 13.75 0.76 27.19 6.61 37.22 16.04 5.94 5.16 10.1 11.92 14.78 18.16 19.35 26.73 38.64 53.5 57.72 80.42 9.49 13.01 13.73 29.85 11.07 45.77-3.84 25.58-7.49 51.19-11.33 76.77-1.67 10.01-2.1 20.51-6.72 29.76-7.23 16.28-23.69 28.53-41.66 29.38-12.83 0.22-25.67-0.03-38.51 0.1-5.23 19.25-20.22 35.41-38.62 42.89-19.27 8.27-42.41 6.24-60.21-4.75-13.82-8.59-24.89-22.2-29.18-38.02-88.21-0.32-176.44-0.08-264.65-0.13-5.32 17.36-17.7 32.48-33.86 40.82-14.41 7.17-31.42 9.31-47.01 5.03-22.33-5.65-41.08-23.61-47.42-45.79-16.53-0.16-33.07 0-49.6-0.14-4.1-0.24-8.13-2.16-10.73-5.37-4.63-5.54-5.06-14.26-0.61-20.03 3.09-4.12 8.15-6.67 13.32-6.42 15.34 0.13 30.69-0.01 46.03 0 2.42-15.38 10.3-29.95 22.06-40.18 14.05-12.67 33.7-18.9 52.48-16.38 13.05 1.9 25.78 7.36 35.53 16.36 11.86 10.18 19.67 24.77 21.98 40.2 68.7 0.08 137.39 0.13 206.09 0 4.21-25.54 7.63-51.2 11.58-76.78 4.89-31.52 9.46-63.09 14.3-94.62 6.87-42.87 13.2-85.82 19.69-128.75 0.87-10.18-7.19-20.34-17.62-20.77-116.68-0.07-233.37-0.02-350.05-0.02-10.18 0.01-20.28 5.28-25.8 13.88-2.61 3.88-3.74 8.44-4.75 12.94-0.34 0.21-1.01 0.63-1.34 0.85-9.69-0.19-19.4 0.34-29.08-0.1-0.28-0.22-0.85-0.65-1.13-0.86-0.08-10.15 3.27-20.17 8.21-28.95m443.91 90.22c-4.3 26.22-8.09 52.55-12.23 78.81-7.52 51.42-15.97 102.71-23.45 154.15 7.48-0.02 14.96 0.01 22.44-0.05 1.61-11.06 6.27-21.54 12.97-30.44 12.83-16.94 33.91-27.42 55.24-26.56 15.38 0.46 30.61 6.54 42.03 16.86 11.82 10.17 19.44 24.79 21.79 40.15 11.06 0.25 22.12-0.06 33.19 0.16 8.75 0.08 16.34-7.05 18.13-15.38 4.45-32 9.26-63.95 13.67-95.96 0.67-7.38-1.61-14.87-6.12-20.72-21.21-29.78-42.36-59.61-63.91-89.14-6.38-7.9-16.72-12.5-26.86-11.96-28.96 0.04-57.93-0.19-86.89 0.08m-348.49 209.35c-11.5 2.7-21.06 11.55-25.31 22.48-3.77 10.01-2.8 21.73 2.74 30.91 7.26 12.57 22.7 19.78 37 17.09 11.49-1.99 21.84-10.01 26.44-20.76 4.99-10.41 4.11-23.17-1.69-33.05-7.64-13.19-24.29-20.82-39.18-16.67m394.66-0.45c-12.71 2.45-23.62 12.07-27.65 24.37-3.35 10.44-1.8 22.39 4.49 31.44 9.55 14.51 30.4 20.05 45.77 11.75 15.02-7.22 22.93-25.82 18.42-41.73-4.45-17.37-23.33-29.73-41.03-25.83z"/><path d="m1028.5 465.65c2.73-1.07 5.71-1.08 8.61-1.07 10.29 0.01 20.59 0.04 30.88 0.04 7.32 0 14.36 3.98 18.3 10.12 16.49 22.87 32.79 45.87 49.21 68.79 3.17 3.96-0.57 9.96-5.53 9.04-31.65-0.04-63.29-0.11-94.94-0.02-5.38-0.11-11.27 0.72-16.01-2.41-5.96-3.24-9.08-10.42-8.21-17.03 2.62-16.33 5.02-32.69 7.56-49.03 0.69-3.84 0.31-8.02 2.27-11.52 1.65-3.18 4.56-5.59 7.86-6.91z"/></g><g fill="#0171f6"><path d="m341.39 409.62c3.38-1.27 7.03-1.06 10.57-1.05 100.67-0.04 201.35 0 302.02-0.01 5.58 0.01 11.81-0.82 16.55 2.85 7.34 4.71 9.32 15.43 4.44 22.59-3.17 4.39-8.41 7.56-13.93 7.31-104.68 0.04-209.35 0.01-314.03 0.03-7.15-0.29-14.1-5.56-15.54-12.72-1.95-7.66 2.44-16.32 9.92-19z"/><path d="m407.46 499.66c1.75-0.75 3.64-1.15 5.54-1.16 65.99 0.01 131.98-0.01 197.96-0.01 8.25-0.06 15.53 7.26 15.8 15.44 0.7 9.06-7.66 17.69-16.76 17.1-65.34 0.08-130.69 0.02-196.04 0.05-7.78 0.3-15.25-5.81-16.4-13.54-1.47-7.36 3-15.11 9.9-17.88z"/><path d="m469.35 588.48c4.11-1.27 8.46-0.61 12.69-0.67 17 0.03 34-0.04 50.99-0.07 8.83 0.13 16.59 8.44 15.82 17.31-0.39 8.45-8.49 15.61-16.88 15.28-19.33-0.04-38.66 0.02-57.98-0.03-4.96 0.01-9.93-2.31-12.93-6.29-3.45-4.5-4.33-10.83-2.18-16.09 1.65-4.63 5.93-7.9 10.47-9.44z"/></g></svg></span>' : '';
+        return `<span class="origin-choice-lines"><span class="origin-choice-main">${escapeHtml(cleanType)}</span><span class="origin-choice-subline">${truck}€ ${escapeHtml(priceText)}</span></span>`;
+      }
+      return escapeHtml(cleanDetail ? `${cleanType} - ${cleanDetail}` : cleanType);
+    }
+
+    function setCardOrigin(type = '', detail = '', inTransit = false) {
       const cleanType = String(type || '').trim();
       const cleanDetail = normalizeOriginDetail(cleanType, detail);
+      const isSinglePurchase = cleanType === 'Acquisto Singolo';
+      const originInTransit = isSinglePurchase ? Boolean(inTransit) : false;
       let label = cleanType;
-      if (cleanType === 'Acquisto Singolo' && cleanDetail) label = `${cleanType} - € ${cleanDetail}`;
+      if (isSinglePurchase) {
+        const priceText = cleanDetail || '0,00';
+        label = `${cleanType}${originInTransit ? ' (In arrivo)' : ''} - € ${priceText}`;
+      }
       if (cleanType === 'Regalo' && cleanDetail) label = `${cleanType} - ${cleanDetail}`;
-      if (el.cardOriginInput) el.cardOriginInput.value = label;
+      if (el.cardOriginInput) el.cardOriginInput.value = label || '';
       if (el.cardOriginValue) {
-        el.cardOriginValue.textContent = label || 'Non specificato';
+        el.cardOriginValue.innerHTML = renderCardOriginValue(cleanType, cleanDetail, originInTransit);
         el.cardOriginValue.classList.toggle('is-placeholder', !label);
       }
+      pendingOriginInTransit = originInTransit;
+      if (el.originInTransitToggle) el.originInTransitToggle.checked = originInTransit;
       document.querySelectorAll('[data-origin-type]').forEach((button) => {
         button.classList.toggle('is-selected', button.dataset.originType === cleanType);
       });
@@ -7306,12 +8179,15 @@ function finishUpdateTimer() {
           ? 'Prezzo<span class="field-subtitle">Inserisci il prezzo pagato</span>'
           : 'Regalo<span class="field-subtitle">Da chi arriva?</span>';
       }
+      const isSinglePurchase = type === 'Acquisto Singolo';
       if (el.originDetailInput) {
         el.originDetailInput.value = '';
         el.originDetailInput.type = 'text';
-        el.originDetailInput.inputMode = type === 'Acquisto Singolo' ? 'decimal' : 'text';
-        el.originDetailInput.placeholder = type === 'Acquisto Singolo' ? 'Es. 12,50' : 'Es. Lorenzo';
+        el.originDetailInput.inputMode = isSinglePurchase ? 'decimal' : 'text';
+        el.originDetailInput.placeholder = isSinglePurchase ? 'Es. 12,50' : 'Es. Lorenzo';
       }
+      if (el.originTransitWrap) el.originTransitWrap.classList.toggle('is-hidden', !isSinglePurchase);
+      if (el.originInTransitToggle) el.originInTransitToggle.checked = isSinglePurchase ? pendingOriginInTransit : false;
       el.originInputSheet.classList.add('open');
       el.originInputSheet.setAttribute('aria-hidden', 'false');
       requestAnimationFrame(() => el.originDetailInput?.focus());
@@ -7390,6 +8266,14 @@ document.querySelectorAll('[data-close]').forEach(btn => {
           openOriginChoiceSheet();
         });
       }
+      const originInfoRow = document.querySelector('#detailModal .origin-info-row');
+      if (originInfoRow) {
+        originInfoRow.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          openOriginChoiceSheet();
+        });
+      }
       if (el.originChoiceSheet) {
         el.originChoiceSheet.addEventListener('click', (event) => {
           event.stopPropagation();
@@ -7401,7 +8285,7 @@ document.querySelectorAll('[data-close]').forEach(btn => {
           if (!option) return;
           const type = option.dataset.originType;
           if (type === 'Bustina') {
-            setCardOrigin('Bustina', '');
+            setCardOrigin('Bustina', '', false);
             closeOriginChoiceSheet();
             return;
           }
@@ -7421,7 +8305,8 @@ document.querySelectorAll('[data-close]').forEach(btn => {
       if (el.originInputSave) {
         el.originInputSave.addEventListener('click', () => {
           const value = el.originDetailInput ? el.originDetailInput.value.trim() : '';
-          setCardOrigin(pendingOriginType, value);
+          const inTransit = pendingOriginType === 'Acquisto Singolo' && Boolean(el.originInTransitToggle?.checked);
+          setCardOrigin(pendingOriginType, value, inTransit);
           closeOriginInputSheet();
         });
       }
@@ -7991,9 +8876,14 @@ document.addEventListener('error', (event) => {
           saveAlbumBtn: $("#saveAlbumBtn"),
           albumNameInput: $("#albumNameInput"),
           totalPagesInput: $("#totalPagesInput"),
+          totalPagesMinusBtn: $("#totalPagesMinusBtn"),
+          totalPagesPlusBtn: $("#totalPagesPlusBtn"),
           slotsPerPageInput: $("#slotsPerPageInput"),
+          slotsMinusBtn: $("#slotsMinusBtn"),
+          slotsPlusBtn: $("#slotsPlusBtn"),
           pageModeFrontBtn: $("#pageModeFrontBtn"),
           pageModeFrontBackBtn: $("#pageModeFrontBackBtn"),
+          pageModeToggle: $(".page-mode-toggle"),
           frontSlotCard: $("#frontSlotCard"),
           frontBackSlotCard: $("#frontBackSlotCard"),
           frontSlotTotal: $("#frontSlotTotal"),
@@ -8179,9 +9069,17 @@ document.addEventListener('error', (event) => {
           setTimeout(clearPageModeButtonState, 80);
         }
 
+        function togglePageMode() {
+          setPageMode(state.selectedPageMode === "front-back" ? "front" : "front-back");
+        }
+
         function getEffectiveTotalSlots(totalPages, slotsPerPage, pageMode) {
           const frontSlots = totalPages * slotsPerPage;
           return pageMode === "front-back" ? frontSlots * 2 : frontSlots;
+        }
+
+        function setPageModeFromTogglePoint(event) {
+          togglePageMode();
         }
 
         function getAlbumDataFromForm(fallbackName) {
@@ -8419,7 +9317,7 @@ document.addEventListener('error', (event) => {
         function openAlbumForm(albumNode = null) {
           els.addAlbumTitle.textContent = albumNode
             ? "Modifica album"
-            : "Aggiungi collezione";
+            : "Crea Album";
           albumNode ? fillFormFromAlbum(albumNode) : resetFormDefaults();
           setView("form");
         }
@@ -8945,26 +9843,38 @@ document.addEventListener('error', (event) => {
           homeFilterBtn.setAttribute("aria-pressed", active ? "true" : "false");
         });
 
-        on(els.totalPagesInput, "input change", updateSlotPreview);
-
-        const slotsChoiceBtn = $("#slotsChoiceBtn");
         const slotsChoiceValue = $("#slotsChoiceValue");
         const slotsChoiceSheet = $("#slotsChoiceSheet");
         const slotChoiceOptions = Array.from(document.querySelectorAll("[data-slots-value]"));
         const slotLayoutSvgs = Array.from(document.querySelectorAll("[data-slots-svg]"));
+        const slotStepperValues = [4, 9, 12, 16];
 
-        function openSlotsChoiceSheet() {
-          slotsChoiceSheet.classList.add("open");
-          slotsChoiceSheet.setAttribute("aria-hidden", "false");
+        function normalizeTotalPagesValue() {
+          const min = Number(els.totalPagesInput.min) || 1;
+          const max = Number(els.totalPagesInput.max) || 999;
+          const nextValue = Math.min(max, Math.max(min, parseInt(els.totalPagesInput.value, 10) || min));
+          els.totalPagesInput.value = nextValue;
+          updateSlotPreview();
+        }
+
+        function changeTotalPages(delta) {
+          normalizeTotalPagesValue();
+          const min = Number(els.totalPagesInput.min) || 1;
+          const max = Number(els.totalPagesInput.max) || 999;
+          const currentValue = parseInt(els.totalPagesInput.value, 10) || min;
+          els.totalPagesInput.value = Math.min(max, Math.max(min, currentValue + delta));
+          updateSlotPreview();
         }
 
         function closeSlotsChoiceSheet() {
+          if (!slotsChoiceSheet) return;
           slotsChoiceSheet.classList.remove("open");
           slotsChoiceSheet.setAttribute("aria-hidden", "true");
         }
 
         function syncSlotsChoice(value) {
-          const nextValue = String(value || DEFAULT_ALBUM.slotsPerPage);
+          const rawValue = Number(value || DEFAULT_ALBUM.slotsPerPage);
+          const nextValue = String(slotStepperValues.includes(rawValue) ? rawValue : DEFAULT_ALBUM.slotsPerPage);
           els.slotsPerPageInput.value = nextValue;
           if (slotsChoiceValue) slotsChoiceValue.textContent = nextValue;
           slotChoiceOptions.forEach((option) => {
@@ -8976,10 +9886,24 @@ document.addEventListener('error', (event) => {
           updateSlotPreview();
         }
 
-        on(slotsChoiceBtn, "click", openSlotsChoiceSheet);
-        on(slotsChoiceSheet, "click", (event) => {
-          if (event.target === slotsChoiceSheet) closeSlotsChoiceSheet();
-        });
+        function changeSlots(delta) {
+          const currentValue = Number(els.slotsPerPageInput.value) || DEFAULT_ALBUM.slotsPerPage;
+          const currentIndex = Math.max(0, slotStepperValues.indexOf(currentValue));
+          const nextIndex = Math.min(slotStepperValues.length - 1, Math.max(0, currentIndex + delta));
+          syncSlotsChoice(slotStepperValues[nextIndex]);
+        }
+
+        on(els.totalPagesInput, "input change", normalizeTotalPagesValue);
+        on(els.totalPagesMinusBtn, "click", () => changeTotalPages(-1));
+        on(els.totalPagesPlusBtn, "click", () => changeTotalPages(1));
+        on(els.slotsMinusBtn, "click", () => changeSlots(-1));
+        on(els.slotsPlusBtn, "click", () => changeSlots(1));
+
+        if (slotsChoiceSheet) {
+          on(slotsChoiceSheet, "click", (event) => {
+            if (event.target === slotsChoiceSheet) closeSlotsChoiceSheet();
+          });
+        }
         slotChoiceOptions.forEach((option) => {
           on(option, "click", () => {
             syncSlotsChoice(option.dataset.slotsValue);
@@ -8993,14 +9917,22 @@ document.addEventListener('error', (event) => {
           on(button, "pointerdown touchstart", () => button.classList.add("is-pressing"), { passive: true });
           on(button, "pointerup pointercancel touchend touchcancel mouseup mouseleave", clearPageModeButtonState, { passive: true });
         });
+        els.pageModeToggle?.addEventListener("click", (event) => {
+          event.preventDefault();
+          setPageModeFromTogglePoint(event);
+        });
         els.pageModeFrontBackBtn.addEventListener("click", (event) => {
           event.preventDefault();
-          setPageMode("front-back");
+          event.stopPropagation();
+          togglePageMode();
         });
         els.pageModeFrontBtn.addEventListener("click", (event) => {
           event.preventDefault();
-          setPageMode("front");
+          event.stopPropagation();
+          togglePageMode();
         });
+        els.frontBackSlotCard.addEventListener("click", () => setPageMode("front-back"));
+        els.frontSlotCard.addEventListener("click", () => setPageMode("front"));
         els.closeAddAlbumBtn.addEventListener("click", closeAlbumForm);
         els.saveAlbumBtn.addEventListener("click", saveAlbum);
         els.priceToggleBtn.addEventListener("click", () => {
