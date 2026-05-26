@@ -4519,7 +4519,7 @@ body:not(.ui-booting) #bottomNav{
   overflow-y:auto;
   overflow-x:hidden;
   -webkit-overflow-scrolling:touch;
-  padding:2px 6px calc(var(--safe-bottom) + 18px);
+  padding:14px 6px calc(var(--safe-bottom) + 18px);
 }
 .album-detail-cards.is-hidden{display:none;}
 
@@ -4586,43 +4586,6 @@ body:not(.ui-booting) #bottomNav{
 .home-set-detail-meta{margin:0;color:#7382a2;font-size:12px;font-weight:760;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .home-collection-card{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;}
 .home-collection-card:hover{transform:translateY(-1px);border-color:rgba(47,100,255,.18);box-shadow:0 14px 28px rgba(66,89,152,.14),inset 0 1px 0 rgba(255,255,255,.94);}
-
-.album-page-controls{
-  display:grid;
-  grid-template-columns:44px minmax(0, 1fr) 44px;
-  align-items:center;
-  gap:10px;
-  margin:-8px 0 8px;
-  padding:0 2px 6px;
-  border-radius:0;
-  background:transparent;
-  border:0;
-  box-shadow:none;
-  backdrop-filter:none;
-  -webkit-backdrop-filter:none;
-  position:sticky;
-  top:0;
-  z-index:5;
-}
-.album-page-nav{
-  width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.66);
-  color:#2f64ff;font-family:inherit;font-size:24px;font-weight:900;line-height:1;
-  display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
-  box-shadow:0 10px 22px rgba(73,96,157,.12), inset 0 1px 0 rgba(255,255,255,.92);
-  -webkit-tap-highlight-color:transparent;
-}
-.album-page-nav:disabled{opacity:.35;cursor:not-allowed;color:#8c99b5;}
-.album-page-nav:not(:disabled):active{transform:scale(.94);}
-.album-page-label-wrap{min-width:0;text-align:center;}
-.album-page-label{margin:0;color:#1c2e5a;font-size:18px;font-weight:950;line-height:1.05;letter-spacing:-.04em;}
-.album-page-subtitle{margin:3px 0 0;color:#7382a2;font-size:12px;font-weight:750;line-height:1.15;}
-.album-slot-empty{
-  width:100%;min-height:190px;border-radius:22px;border:1px dashed rgba(108,131,190,.34);
-  background:rgba(255,255,255,.38);display:flex;align-items:center;justify-content:center;
-  color:#8390aa;font-size:12px;font-weight:850;letter-spacing:.02em;text-transform:uppercase;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
-}
-
 .album-detail-cards-grid{
   display:grid;
   grid-template-columns:repeat(2, minmax(0, 1fr));
@@ -4715,198 +4678,6 @@ body:not(.ui-booting) #bottomNav{
 .album-detail-view{
   padding-bottom:calc(var(--safe-bottom) + 92px);
 }
-
-
-/* === TRASFORMAZIONE ALBUM RACCOGLITORE 26/05/2026 === */
-.album-detail-view{
-  gap:0 !important;
-  padding-bottom:calc(var(--safe-bottom) + 84px) !important;
-}
-.album-detail-topbar{
-  min-height:104px !important;
-  margin:0 0 22px !important;
-  padding:0 !important;
-  align-items:flex-start !important;
-  justify-content:space-between !important;
-  position:relative !important;
-}
-.album-detail-topbar .glass-icon-btn{
-  width:76px !important;
-  height:76px !important;
-  min-width:76px !important;
-  min-height:76px !important;
-  border-radius:999px !important;
-  border:1px solid rgba(255,255,255,.74) !important;
-  background:rgba(255,255,255,.72) !important;
-  color:#2f64ff !important;
-  box-shadow:0 14px 28px rgba(73,96,157,.10), inset 0 1px 0 rgba(255,255,255,.98) !important;
-  backdrop-filter:blur(24px) saturate(150%) !important;
-  -webkit-backdrop-filter:blur(24px) saturate(150%) !important;
-}
-.album-detail-topbar .glass-icon-btn:first-child{
-  color:#566485 !important;
-}
-.album-detail-topbar .glass-icon-btn svg{
-  width:34px !important;
-  height:34px !important;
-  stroke-width:2.7 !important;
-}
-.album-detail-title-wrap{
-  position:absolute !important;
-  left:96px !important;
-  right:96px !important;
-  top:12px !important;
-  transform:none !important;
-  text-align:left !important;
-  display:block !important;
-  pointer-events:none !important;
-}
-.album-detail-title{
-  margin:0 !important;
-  color:#1c2e5a !important;
-  font-size:38px !important;
-  font-weight:950 !important;
-  line-height:1.02 !important;
-  letter-spacing:-.055em !important;
-  white-space:nowrap !important;
-  overflow:hidden !important;
-  text-overflow:ellipsis !important;
-}
-.album-detail-title-wrap::after{
-  content:attr(data-album-subtitle);
-  display:block;
-  margin-top:6px;
-  color:#9aa6c1;
-  font-size:24px;
-  font-weight:820;
-  line-height:1.05;
-  letter-spacing:-.035em;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.album-detail-cards{
-  flex:1 1 auto !important;
-  min-height:0 !important;
-  padding:0 0 calc(var(--safe-bottom) + 18px) !important;
-  overflow-y:auto !important;
-}
-.album-page-controls{
-  position:relative !important;
-  top:auto !important;
-  z-index:5 !important;
-  display:grid !important;
-  grid-template-columns:72px minmax(0,1fr) 72px !important;
-  align-items:center !important;
-  gap:18px !important;
-  margin:0 0 22px !important;
-  padding:0 28px !important;
-}
-.album-page-nav{
-  width:72px !important;
-  height:72px !important;
-  border-radius:999px !important;
-  background:rgba(255,255,255,.58) !important;
-  color:#20345f !important;
-  box-shadow:none !important;
-  font-size:0 !important;
-  border:0 !important;
-}
-.album-page-nav::before{
-  content:"";
-  width:26px;
-  height:26px;
-  border-top:6px solid currentColor;
-  border-right:6px solid currentColor;
-  display:block;
-}
-#albumPagePrevBtn::before{transform:rotate(-135deg);margin-left:8px;}
-#albumPageNextBtn::before{transform:rotate(45deg);margin-right:8px;}
-.album-page-nav:disabled{opacity:.34 !important;color:#7d8ba9 !important;}
-.album-page-label-wrap{text-align:center !important;}
-.album-page-label{
-  margin:0 !important;
-  color:#1c2e5a !important;
-  font-size:31px !important;
-  font-weight:950 !important;
-  line-height:1.05 !important;
-  letter-spacing:-.045em !important;
-}
-.album-page-subtitle{display:none !important;}
-.album-detail-cards-grid{
-  display:grid !important;
-  grid-template-columns:repeat(var(--album-grid-cols, 3), minmax(0,1fr)) !important;
-  gap:var(--album-grid-row-gap, 28px) var(--album-grid-col-gap, 22px) !important;
-  align-content:start !important;
-  justify-items:stretch !important;
-  padding:0 8px 26px !important;
-}
-.album-detail-card,
-.album-slot-empty{
-  width:100% !important;
-  aspect-ratio:2.5 / 3.5 !important;
-  min-height:0 !important;
-  border-radius:22px !important;
-}
-.album-detail-card{
-  border:0 !important;
-  background:transparent !important;
-  box-shadow:none !important;
-  backdrop-filter:none !important;
-  -webkit-backdrop-filter:none !important;
-  overflow:visible !important;
-  display:block !important;
-}
-.album-detail-card-image-wrap{
-  width:100% !important;
-  height:100% !important;
-  aspect-ratio:auto !important;
-  padding:0 !important;
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-}
-.album-detail-card-image{
-  width:100% !important;
-  height:100% !important;
-  max-height:none !important;
-  object-fit:contain !important;
-  border-radius:13px !important;
-  filter:drop-shadow(0 10px 12px rgba(20,34,74,.22)) !important;
-}
-.album-detail-card-body{display:none !important;}
-.album-slot-empty{
-  border:5px solid rgba(255,255,255,.76) !important;
-  background:linear-gradient(145deg, rgba(255,255,255,.26), rgba(224,235,255,.34)) !important;
-  color:#8b98b6 !important;
-  font-size:26px !important;
-  font-weight:900 !important;
-  letter-spacing:-.045em !important;
-  text-transform:none !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.72), 0 8px 18px rgba(66,89,152,.08) !important;
-}
-.album-detail-card-image-wrap .card-duplicate-badge{
-  right:10px !important;
-  bottom:10px !important;
-  min-width:32px !important;
-  height:24px !important;
-  font-size:12px !important;
-}
-@media (max-width:520px){
-  .album-detail-topbar{min-height:82px !important;margin-bottom:16px !important;}
-  .album-detail-topbar .glass-icon-btn{width:58px !important;height:58px !important;min-width:58px !important;min-height:58px !important;}
-  .album-detail-topbar .glass-icon-btn svg{width:28px !important;height:28px !important;}
-  .album-detail-title-wrap{left:76px !important;right:76px !important;top:10px !important;}
-  .album-detail-title{font-size:26px !important;}
-  .album-detail-title-wrap::after{font-size:17px !important;margin-top:4px !important;}
-  .album-page-controls{grid-template-columns:54px minmax(0,1fr) 54px !important;gap:12px !important;padding:0 30px !important;margin-bottom:18px !important;}
-  .album-page-nav{width:54px !important;height:54px !important;}
-  .album-page-nav::before{width:20px;height:20px;border-width:5px;}
-  .album-page-label{font-size:26px !important;}
-  .album-detail-cards-grid{gap:22px 16px !important;padding-left:2px !important;padding-right:2px !important;}
-  .album-slot-empty{border-width:4px !important;font-size:22px !important;border-radius:20px !important;}
-}
-
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -6059,14 +5830,6 @@ paint-order="stroke">
             </section>
 
             <section class="album-detail-cards is-hidden" id="albumDetailCardsView" aria-label="Carte nell'album">
-              <div class="album-page-controls" id="albumPageControls" aria-label="Navigazione pagine album">
-                <button class="album-page-nav" id="albumPagePrevBtn" type="button" aria-label="Pagina precedente">&lt;</button>
-                <div class="album-page-label-wrap" aria-live="polite">
-                  <p class="album-page-label" id="albumPageLabel">Pagina 1</p>
-                  <p class="album-page-subtitle" id="albumPageSubtitle">0/0 slot di 0</p>
-                </div>
-                <button class="album-page-nav" id="albumPageNextBtn" type="button" aria-label="Pagina successiva">&gt;</button>
-              </div>
               <div class="album-detail-cards-grid" id="albumDetailCardsGrid"></div>
             </section>
           </section>
@@ -9705,11 +9468,6 @@ document.addEventListener('error', (event) => {
           albumDetailTitle: $("#albumDetailTitle"),
           albumDetailEmptyState: $("#albumDetailEmptyState"),
           albumDetailCardsView: $("#albumDetailCardsView"),
-          albumPageControls: $("#albumPageControls"),
-          albumPagePrevBtn: $("#albumPagePrevBtn"),
-          albumPageNextBtn: $("#albumPageNextBtn"),
-          albumPageLabel: $("#albumPageLabel"),
-          albumPageSubtitle: $("#albumPageSubtitle"),
           albumDetailCardsGrid: $("#albumDetailCardsGrid"),
           backToAlbumsBtn: $("#backToAlbumsBtn"),
           albumDetailAddBtn: $("#albumDetailAddBtn"),
@@ -9755,8 +9513,6 @@ document.addEventListener('error', (event) => {
           drag: null,
           albumAutoScroll: { raf: 0, speed: 0 },
           currentAlbum: null,
-          albumDetailPage: 1,
-          albumDetailCards: [],
           addCardReturnView: "home",
           renamingAlbum: null,
           deletingAlbum: null,
@@ -10188,41 +9944,6 @@ document.addEventListener('error', (event) => {
           ].filter(Boolean).join(" · ");
         }
 
-        function getAlbumCardCollectorNumber(card = {}) {
-          const raw = card.rawCard || {};
-          const candidates = [
-            card.collector_number,
-            card.collectorNumber,
-            card.display?.number,
-            raw.collector_number,
-            raw.number,
-            raw.card_number,
-            raw.num,
-            raw.fixed_properties?.collector_number,
-          ];
-          return String(candidates.find((value) => String(value ?? "").trim()) ?? "").trim();
-        }
-
-        function getAlbumCardSlotNumber(card = {}) {
-          const rawValue = getAlbumCardCollectorNumber(card);
-          const match = String(rawValue).match(/\d+/);
-          if (!match) return 0;
-          return Number.parseInt(match[0], 10) || 0;
-        }
-
-        function formatAlbumSlotNumber(value) {
-          const totalSlots = Math.max(1, Number(state.currentAlbum?.albumData?.totalSlots || 0) || 0);
-          const digits = Math.max(3, String(totalSlots || value || 0).length);
-          return String(value).padStart(digits, "0");
-        }
-
-        function getAlbumDetailGridColumns(slotsPerPage) {
-          const value = Math.max(1, Number(slotsPerPage) || 1);
-          if (value <= 4) return 2;
-          if (value <= 9) return 3;
-          return 4;
-        }
-
 
         function normalizeDuplicatePart(value = "") {
           return String(value ?? "")
@@ -10298,78 +10019,16 @@ document.addEventListener('error', (event) => {
           });
         }
 
-        function getAlbumCardsInInsertionOrder(cards = []) {
-          return getUniqueCardsByDuplicateKey(Array.isArray(cards) ? cards : [])
-            .slice()
-            .sort((a, b) => {
-              const dateCompare = String(a.addedAt || "").localeCompare(String(b.addedAt || ""));
-              if (dateCompare !== 0) return dateCompare;
-              return String(a.id || "").localeCompare(String(b.id || ""));
-            });
-        }
-
-        function getAlbumDetailPageConfig(cards = []) {
-          const albumData = state.currentAlbum?.albumData || {};
-          const slotsPerPage = Math.max(1, Number(albumData.slotsPerPage || DEFAULT_ALBUM.slotsPerPage) || 1);
-          const configuredPages = Math.max(1, Number(albumData.totalPages || DEFAULT_ALBUM.totalPages) || 1);
-          const pageMode = albumData.pageMode || DEFAULT_ALBUM.pageMode;
-          const configuredTotalSlots = Math.max(1, Number(albumData.totalSlots || getEffectiveTotalSlots(configuredPages, slotsPerPage, pageMode)) || 1);
-          const insertedCardsCount = Array.isArray(cards) ? cards.length : 0;
-          const neededPages = Math.max(1, Math.ceil(Math.max(insertedCardsCount, configuredTotalSlots) / slotsPerPage));
-          const totalPages = Math.max(configuredPages, neededPages);
-          const totalSlots = Math.max(configuredTotalSlots, totalPages * slotsPerPage);
-          const currentPage = Math.min(totalPages, Math.max(1, Number(state.albumDetailPage || 1) || 1));
-          return { slotsPerPage, totalPages, currentPage, totalSlots };
-        }
-
-        function renderAlbumDetailPageControls(cards = []) {
-          const orderedCards = Array.isArray(cards) ? cards : [];
-          const { slotsPerPage, totalPages, currentPage, totalSlots } = getAlbumDetailPageConfig(orderedCards);
-          state.albumDetailPage = currentPage;
-          if (els.albumPageLabel) els.albumPageLabel.textContent = `Pagina ${currentPage}`;
-          const pageStartIndex = (currentPage - 1) * slotsPerPage;
-          const filled = orderedCards.slice(pageStartIndex, pageStartIndex + slotsPerPage).length;
-          if (els.albumPageSubtitle) {
-            els.albumPageSubtitle.textContent = `${filled}/${slotsPerPage} di ${totalSlots} totali`;
-          }
-          const titleWrap = document.querySelector(".album-detail-title-wrap");
-          if (titleWrap) titleWrap.setAttribute("data-album-subtitle", `${filled}/${slotsPerPage} di ${totalSlots} totali`);
-          if (els.albumPagePrevBtn) els.albumPagePrevBtn.disabled = currentPage <= 1;
-          if (els.albumPageNextBtn) els.albumPageNextBtn.disabled = currentPage >= totalPages;
-        }
-
-        function changeAlbumDetailPage(delta) {
-          const cards = Array.isArray(state.albumDetailCards) ? state.albumDetailCards : [];
-          const { totalPages, currentPage } = getAlbumDetailPageConfig(cards);
-          state.albumDetailPage = Math.min(totalPages, Math.max(1, currentPage + delta));
-          renderAlbumDetailCards(cards);
-        }
-
         function renderAlbumDetailCards(cards = []) {
-          const uniqueCards = getAlbumCardsInInsertionOrder(cards);
-          state.albumDetailCards = uniqueCards;
-          els.albumDetailEmptyState?.classList.add("is-hidden");
-          els.albumDetailCardsView?.classList.remove("is-hidden");
+          const safeCards = getUniqueCardsByDuplicateKey(Array.isArray(cards) ? cards : []);
+          const hasCards = safeCards.length > 0;
+          els.albumDetailEmptyState?.classList.toggle("is-hidden", hasCards);
+          els.albumDetailCardsView?.classList.toggle("is-hidden", !hasCards);
           if (!els.albumDetailCardsGrid) return;
-          const { slotsPerPage, currentPage } = getAlbumDetailPageConfig(uniqueCards);
-          const gridCols = getAlbumDetailGridColumns(slotsPerPage);
-          els.albumDetailCardsGrid.style.setProperty("--album-grid-cols", String(gridCols));
-          els.albumDetailCardsGrid.style.setProperty("--album-grid-col-gap", gridCols >= 4 ? "14px" : "22px");
-          els.albumDetailCardsGrid.style.setProperty("--album-grid-row-gap", gridCols >= 4 ? "24px" : "28px");
-
-          const pageStart = (currentPage - 1) * slotsPerPage + 1;
-          const pageStartIndex = pageStart - 1;
-          const pageCards = uniqueCards.slice(pageStartIndex, pageStartIndex + slotsPerPage);
-          const bySlot = new Map();
-          pageCards.forEach((card, index) => {
-            bySlot.set(pageStart + index, card);
-          });
-          renderAlbumDetailPageControls(uniqueCards);
-
-          const slotsHtml = Array.from({ length: slotsPerPage }, (_, index) => {
-            const slotNumber = pageStart + index;
-            const card = bySlot.get(slotNumber);
-            if (card) {
+          els.albumDetailCardsGrid.innerHTML = safeCards
+            .slice()
+            .sort((a, b) => String(a.addedAt || "").localeCompare(String(b.addedAt || "")))
+            .map((card) => {
               const imageUrl = getAlbumCardImage(card);
               const title = albumDetailEscapeHtml(getAlbumCardTitle(card));
               const meta = albumDetailEscapeHtml(getAlbumCardMeta(card));
@@ -10379,7 +10038,7 @@ document.addEventListener('error', (event) => {
                 : `<div class="album-detail-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
-                <article class="album-detail-card" data-card-id="${albumDetailEscapeHtml(card.id || "")}" data-slot-number="${slotNumber}">
+                <article class="album-detail-card" data-card-id="${albumDetailEscapeHtml(card.id || "")}">
                   <div class="album-detail-card-image-wrap">${imageHtml}${duplicateBadge}</div>
                   <div class="album-detail-card-body">
                     <p class="album-detail-card-title">${title}</p>
@@ -10388,14 +10047,7 @@ document.addEventListener('error', (event) => {
                   </div>
                 </article>
               `;
-            }
-            return `
-              <article class="album-slot-empty" aria-label="Slot vuoto ${slotNumber}">
-                ${formatAlbumSlotNumber(slotNumber)}
-              </article>
-            `;
-          }).join("");
-          els.albumDetailCardsGrid.innerHTML = slotsHtml;
+            }).join("");
         }
 
         async function renderHomeCollectionCards() {
@@ -11027,8 +10679,6 @@ document.addEventListener('error', (event) => {
         function openAlbumDetail(albumNode) {
           if (!albumNode?.albumData) return;
           state.currentAlbum = albumNode;
-          state.albumDetailPage = 1;
-          state.albumDetailCards = [];
           els.albumDetailTitle.textContent = getAlbumPublicName(albumNode.albumData);
           renderAlbumDetailCards([]);
           void refreshCurrentAlbumDetailCards();
@@ -11037,8 +10687,6 @@ document.addEventListener('error', (event) => {
 
         function closeAlbumDetail() {
           state.currentAlbum = null;
-          state.albumDetailPage = 1;
-          state.albumDetailCards = [];
           setView("home");
         }
 
@@ -11931,9 +11579,6 @@ document.addEventListener('error', (event) => {
           }
           openAddCardSearch(isInsideAlbumDetail ? "detail" : "home");
         });
-        els.albumPagePrevBtn?.addEventListener("click", () => changeAlbumDetailPage(-1));
-        els.albumPageNextBtn?.addEventListener("click", () => changeAlbumDetailPage(1));
-
         els.createFirstAlbumBtn.addEventListener("click", () =>
           openAlbumForm(),
         );
