@@ -860,6 +860,7 @@ body.album-reorder-active, body.album-reorder-active *{cursor:grabbing !importan
 html.suppress-selection, html.suppress-selection *, body.suppress-selection, body.suppress-selection *{user-select:none !important;-webkit-user-select:none !important;-webkit-touch-callout:none !important;}
 svg{overflow:visible;}
 .album-detail-empty{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:clamp(12px, 2.2vh, 18px);padding:clamp(10px, 2vh, 18px) 8px 0;}
+.album-detail-empty.is-hidden{display:none !important;}
 .card-placeholder-wrap{margin-bottom:28px;filter:drop-shadow(0 18px 22px rgba(57, 91, 176, 0.10));display:flex;align-items:center;justify-content:center;}
 .empty-card-icon{width:152px;height:208px;border:8px solid #d9d9de;border-radius:22px;position:relative;background:rgba(255, 255, 255, 0.42);}
 .empty-card-ring{position:absolute;top:50%;left:50%;width:78px;height:78px;border:6px solid #d0d0d5;border-radius:50%;transform:translate(-50%, -50%);}
@@ -1889,6 +1890,15 @@ h1{font-size:clamp(24px, 4.2vh, 31px);max-width:230px;}
 .home-empty-title{margin:0;color:#1c2e5a;font-size:clamp(25px,4.6vh,34px);line-height:.98;font-weight:950;letter-spacing:-.06em;text-wrap:balance;}
 .home-empty-text{margin:0;max-width:286px;color:#6d7c9a;font-size:clamp(15px,2.1vh,17px);font-weight:520;line-height:1.36;letter-spacing:-.018em;text-wrap:balance;}
 .home-empty-note{margin-top:2px;min-height:32px;padding:0 13px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:rgba(47,100,255,.08);color:#2f64ff;font-size:12px;font-weight:820;letter-spacing:-.02em;}
+
+.home-create-actions{display:inline-flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0;}
+.home-search-toggle-btn{appearance:none;-webkit-appearance:none;width:43px;height:43px;min-width:43px;border:1px solid rgba(255,255,255,.78);border-radius:999px;background:rgba(255,255,255,.66);color:#647492;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 24px rgba(66,89,152,.105),inset 0 1px 0 rgba(255,255,255,.96);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,background-color .16s ease,color .16s ease,box-shadow .16s ease;}
+.home-search-toggle-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.80);color:#2f64ff;box-shadow:0 16px 28px rgba(66,89,152,.14),inset 0 1px 0 rgba(255,255,255,.98);}
+.home-search-toggle-btn:active{transform:scale(.98);}
+.home-search-toggle-btn.is-active{color:#2f64ff;background:rgba(255,255,255,.74);}
+.home-search-toggle-btn svg{width:20px;height:20px;stroke-width:2.1;}
+@media (max-width:420px){.home-create-actions{gap:7px;}.home-search-toggle-btn{width:42px;height:42px;min-width:42px;}.home-search-toggle-btn svg{width:19px;height:19px;}}
+
 .home-add-album-btn.is-hidden,.home-search-shell.is-hidden{display:none !important;}
 @media (max-width:420px){
   .home-section-placeholder{padding-top:clamp(10px,2vh,18px);}
@@ -4405,17 +4415,288 @@ body .bottom-nav-shell .fab{
   overflow:visible !important;
 }
 
+
+
+/* === OMINO LOGIN ANIMATO SU SALVATAGGIO - sfondo chiaro === */
+.home-profile-btn .login-save-icon{
+  overflow:visible;
+}
+.home-profile-btn .cerchio-base{
+  stroke:#cbd5e1;
+  stroke-width:20;
+  fill:none;
+  transition:stroke .25s ease, filter .25s ease;
+}
+.home-profile-btn .cerchio-loader{
+  stroke:var(--blue, #2f64ff);
+  stroke-width:20;
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:320 975;
+  opacity:0;
+}
+.home-profile-btn .utente{
+  fill:#94a3b8;
+}
+.home-profile-btn.saving .cerchio-loader{
+  opacity:1;
+  animation:homeProfileMultiGiro 1.65s linear forwards,
+            homeProfileHideLoader .2s ease 1.65s forwards;
+}
+.home-profile-btn.saving .cerchio-base{
+  animation:homeProfileAccensioneTotale .35s ease 1.65s forwards,
+            homeProfileSpegnimentoTotale .65s ease 2.35s forwards;
+}
+@keyframes homeProfileMultiGiro{
+  from{
+    stroke-dashoffset:-120;
+    filter:drop-shadow(0 0 7px var(--blue, #2f64ff));
+  }
+  to{
+    stroke-dashoffset:-4000;
+    filter:drop-shadow(0 0 7px var(--blue, #2f64ff));
+  }
+}
+@keyframes homeProfileHideLoader{
+  to{opacity:0;}
+}
+@keyframes homeProfileAccensioneTotale{
+  to{
+    stroke:var(--blue, #2f64ff);
+    filter:drop-shadow(0 0 10px var(--blue, #2f64ff));
+  }
+}
+@keyframes homeProfileSpegnimentoTotale{
+  from{
+    stroke:var(--blue, #2f64ff);
+    filter:drop-shadow(0 0 10px var(--blue, #2f64ff));
+  }
+  to{
+    stroke:#cbd5e1;
+    filter:none;
+  }
+}
+
+
+
+/* === FIX 26/05/2026: niente lampeggio UI al refresh ===
+   Durante il bootstrap IndexedDB la home viene tenuta stabile: niente transizioni,
+   niente animazioni, niente comparsa momentanea di album/FAB/icone prima del render finale. */
+body.ui-booting *,
+body.ui-booting *::before,
+body.ui-booting *::after{
+  transition:none !important;
+  animation:none !important;
+}
+
+body.ui-booting #emptyState,
+body.ui-booting #albumsView,
+body.ui-booting #homeSectionPlaceholder,
+body.ui-booting #bottomNav,
+body.ui-booting .album-card,
+body.ui-booting .album-wrap,
+body.ui-booting .plus-badge,
+body.ui-booting .fab-wrap,
+body.ui-booting .fab,
+body.ui-booting #albumDetailAddBtn,
+body.ui-booting #addFirstCardBtn{
+  opacity:0 !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
+
+body:not(.ui-booting) #emptyState,
+body:not(.ui-booting) #albumsView,
+body:not(.ui-booting) #homeSectionPlaceholder,
+body:not(.ui-booting) #bottomNav{
+  opacity:1;
+}
+
+/* Dettaglio album: griglia carte salvate */
+.album-detail-cards{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  padding:14px 6px calc(var(--safe-bottom) + 18px);
+}
+.album-detail-cards.is-hidden{display:none;}
+
+.home-collection-view{flex:1 1 auto;min-height:0;margin-top:clamp(14px,2vh,22px);padding:clamp(18px,2.6vh,28px) 8px calc(var(--safe-bottom) + 24px);overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;border-top:1px solid rgba(108,131,190,.14);}
+.home-collection-view.is-hidden{display:none;}
+.home-collection-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-content:start;}
+.home-collection-card{border:1px solid rgba(255,255,255,.62);border-radius:18px;background:rgba(255,255,255,.54);color:#20345f;box-shadow:0 10px 22px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.88);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);overflow:hidden;min-width:0;}
+.home-collection-card-image-wrap{height:154px;padding:8px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,.18));overflow:hidden;}
+.home-collection-card-image{width:auto;height:100%;max-width:100%;max-height:138px;object-fit:contain;display:block;border-radius:9px;}
+.home-collection-card-fallback{height:124px;display:flex;align-items:center;justify-content:center;text-align:center;color:#7382a2;font-size:11px;font-weight:750;padding:8px;}
+.home-collection-card-body{padding:8px 9px 10px;display:grid;gap:3px;}
+.home-collection-card-title{margin:0;color:#1c2e5a;font-size:12.5px;font-weight:850;line-height:1.12;min-height:28px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.home-collection-card-meta,.home-collection-card-album,.home-collection-card-price{margin:0;color:#7382a2;font-size:10.8px;font-weight:650;line-height:1.18;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.home-collection-card-album{color:#2f64ff;font-weight:760;}
+.home-collection-card-price{color:#1c2e5a;font-weight:820;}
+.home-collection-card-image-wrap,
+.album-detail-card-image-wrap{position:relative;}
+.card-duplicate-badge{
+  position:absolute;
+  right:9px;
+  bottom:8px;
+  z-index:3;
+  min-width:32px;
+  height:24px;
+  padding:0 9px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,rgba(47,100,255,.96),rgba(87,134,255,.96));
+  color:#fff;
+  font-size:12px;
+  font-weight:950;
+  line-height:1;
+  letter-spacing:-.03em;
+  box-shadow:0 8px 16px rgba(47,100,255,.28), inset 0 1px 0 rgba(255,255,255,.36);
+  border:1px solid rgba(255,255,255,.62);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  pointer-events:none;
+}
+.album-detail-card-image-wrap .card-duplicate-badge{
+  right:14px;
+  bottom:12px;
+}
+
+@media (min-width:700px){.home-collection-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}}
+.home-set-card{border:1px solid rgba(255,255,255,.62);border-radius:20px;background:rgba(255,255,255,.56);color:#20345f;box-shadow:0 12px 26px rgba(66,89,152,.12),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);overflow:hidden;min-width:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;}
+.home-set-card:hover{transform:translateY(-1px);border-color:rgba(47,100,255,.18);box-shadow:0 16px 30px rgba(66,89,152,.15),inset 0 1px 0 rgba(255,255,255,.94);}
+.home-set-card-head{padding:12px 12px 10px;display:grid;gap:5px;border-bottom:1px solid rgba(111,134,188,.12);}
+.home-set-card-title{margin:0;color:#1c2e5a;font-size:14px;font-weight:900;line-height:1.12;letter-spacing:-.035em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.home-set-card-meta{margin:0;color:#7382a2;font-size:11px;font-weight:760;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.home-set-card-count{color:#2f64ff;font-weight:900;}
+.home-set-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:9px 10px 11px;min-height:74px;}
+.home-set-preview-slot{height:58px;border-radius:10px;background:rgba(235,241,255,.68);display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(120,146,207,.12);}
+.home-set-preview-img{width:100%;height:100%;object-fit:contain;display:block;}
+.home-set-preview-more{color:#7382a2;font-size:11px;font-weight:900;}
+@media (min-width:700px){.home-set-preview-slot{height:68px;}}
+.home-set-detail-head{grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:2px 2px 8px;}
+.home-set-back-btn{width:42px;height:42px;border:1px solid rgba(255,255,255,.62);border-radius:50%;background:rgba(255,255,255,.58);color:#5c6f99;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 24px rgba(73,96,157,.12),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.home-set-back-btn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round;}
+.home-set-detail-title-wrap{min-width:0;display:grid;gap:2px;}
+.home-set-detail-title{margin:0;color:#1c2e5a;font-size:18px;font-weight:930;line-height:1.08;letter-spacing:-.045em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.home-set-detail-meta{margin:0;color:#7382a2;font-size:12px;font-weight:760;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.home-collection-card{cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;}
+.home-collection-card:hover{transform:translateY(-1px);border-color:rgba(47,100,255,.18);box-shadow:0 14px 28px rgba(66,89,152,.14),inset 0 1px 0 rgba(255,255,255,.94);}
+.album-detail-cards-grid{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:14px 12px;
+  align-content:start;
+  justify-items:center;
+}
+.album-detail-card{
+  width:100%;
+  min-width:0;
+  border:1px solid rgba(255,255,255,.58);
+  border-radius:22px;
+  background:rgba(255,255,255,.50);
+  box-shadow:0 14px 28px rgba(66,89,152,.12), inset 0 1px 0 rgba(255,255,255,.78);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  overflow:hidden;
+  color:#20345f;
+}
+.album-detail-card-image-wrap{
+  width:100%;
+  aspect-ratio:2.5 / 3.5;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 10px 6px;
+}
+.album-detail-card-image{
+  width:100%;
+  height:100%;
+  max-height:188px;
+  object-fit:contain;
+  display:block;
+  border-radius:13px;
+  filter:drop-shadow(0 10px 14px rgba(20,34,74,.16));
+}
+.album-detail-card-fallback{
+  width:100%;
+  height:100%;
+  min-height:150px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  text-align:center;
+  padding:12px;
+  color:#7382a2;
+  font-size:12px;
+  font-weight:800;
+  background:rgba(248,251,255,.56);
+}
+.album-detail-card-body{
+  padding:7px 10px 10px;
+  display:grid;
+  gap:3px;
+}
+.album-detail-card-title{
+  margin:0;
+  color:#1c2e5a;
+  font-size:13px;
+  font-weight:900;
+  letter-spacing:-.03em;
+  line-height:1.15;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+}
+.album-detail-card-meta{
+  margin:0;
+  color:#7382a2;
+  font-size:11px;
+  font-weight:700;
+  line-height:1.25;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.album-detail-card-price{
+  margin:2px 0 0;
+  color:#2f64ff;
+  font-size:12px;
+  font-weight:900;
+  line-height:1.2;
+}
+@media (min-width:520px){
+  .album-detail-cards-grid{grid-template-columns:repeat(3, minmax(0, 1fr));}
+}
+
+/* === FIX: FAB Aggiungi carta globale === */
+.album-detail-view{
+  padding-bottom:calc(var(--safe-bottom) + 92px);
+}
 </style></head>
-  <body>
+  <body class="ui-booting">
     <div class="phone-stage">
       <main class="screen">
         <section class="content">
           <div class="app-view" id="homeView">
             <button class="home-profile-btn" id="homeProfileBtn" type="button" aria-label="Profilo utente" title="Profilo">
-              <svg class="home-profile-icon" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle class="profile-ring" cx="256" cy="256" r="206" />
-                <circle class="profile-head" cx="256" cy="184" r="55" />
-                <path class="profile-body" d="M146 365C146 303.7 195.7 254 257 254C318.3 254 368 303.7 368 365C368 377.7 357.7 388 345 388H169C156.3 388 146 377.7 146 365Z" />
+              <svg class="home-profile-icon login-save-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <!-- CERCHIO BASE -->
+                <circle class="cerchio-base" cx="256" cy="256" r="206" />
+
+                <!-- SEGMENTO ANIMATO -->
+                <circle class="cerchio-loader" cx="256" cy="256" r="206" />
+
+                <!-- TESTA -->
+                <circle class="utente" cx="256" cy="184" r="55" />
+
+                <!-- BUSTO -->
+                <path class="utente" d="M146 365C146 303.7 195.7 254 257 254C318.3 254 368 303.7 368 365C368 377.7 357.7 388 345 388H169C156.3 388 146 377.7 146 365Z" />
               </svg>
             </button>
             <header class="top-meta">
@@ -4427,7 +4708,7 @@ body .bottom-nav-shell .fab{
               <div class="sub-wrap home-stats-card" aria-label="Riepilogo collezione">
                 <div class="home-stats-copy">
                   <p class="home-cards-line">
-                    <strong class="home-cards-count">0</strong>
+                    <strong class="home-cards-count" id="homeCardsCount">0</strong>
                     <span>Carte</span>
                     <span class="home-cards-chevron" aria-hidden="true">›</span>
                   </p>
@@ -4566,13 +4847,21 @@ body .bottom-nav-shell .fab{
   </div>
 </div>
 </div>
+<div class="home-create-actions">
 <button class="home-add-album-btn" id="quickAddAlbumBtn" type="button" aria-label="Crea Album" title="Crea Album">
   <span aria-hidden="true">+</span>
   <span>Crea Album</span>
 </button>
+<button class="home-search-toggle-btn" id="homeSearchToggleBtn" type="button" aria-label="Mostra ricerca" aria-expanded="false" title="Cerca">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="11" cy="11" r="7"></circle>
+    <path d="M20 20l-3.5-3.5"></path>
+  </svg>
+</button>
+</div>
 </div>
 
-<div class="home-search-shell" aria-label="Cerca nei tuoi album">
+<div class="home-search-shell is-hidden" aria-label="Cerca nei tuoi album">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <circle cx="11" cy="11" r="7"></circle>
     <path d="M20 20l-3.5-3.5"></path>
@@ -4599,6 +4888,9 @@ body .bottom-nav-shell .fab{
               aria-label="Album creati"
             >
               <div class="albums-grid" id="albumsGrid"></div>
+            </section>
+            <section class="home-collection-view is-hidden" id="homeCollectionView" aria-label="Carte in collezione">
+              <div class="home-collection-grid" id="homeCollectionGrid"></div>
             </section>
 <section class="home-section-placeholder is-hidden" id="homeSectionPlaceholder" aria-live="polite">
   <div class="home-empty-card">
@@ -5535,6 +5827,10 @@ paint-order="stroke">
               <button class="cta" id="addFirstCardBtn" type="button">
                 Aggiungi prima carta
               </button>
+            </section>
+
+            <section class="album-detail-cards is-hidden" id="albumDetailCardsView" aria-label="Carte nell'album">
+              <div class="album-detail-cards-grid" id="albumDetailCardsGrid"></div>
             </section>
           </section>
 
@@ -8767,7 +9063,9 @@ el.autocomplete.addEventListener('click', (e) => {
         blueprintId: card.id ?? card.blueprint_id ?? null,
         image: {
           fullUrl: getCardFullUrl(card) || '',
-          previewUrl: getCardPreviewUrl(card) || '',
+          // Per le anteprime salvate in album/collezione uso comunque la risoluzione migliore.
+          // La dimensione piccola resta solo CSS: il file/URL conservato è quello full.
+          previewUrl: getCardFullUrl(card) || getCardPreviewUrl(card) || '',
         },
         display: {
           name: toTitleCase(f.name || ''),
@@ -9091,6 +9389,8 @@ document.addEventListener('error', (event) => {
           emptyState: $("#emptyState"),
           albumsView: $("#albumsView"),
           albumsGrid: $("#albumsGrid"),
+          homeCollectionView: $("#homeCollectionView"),
+          homeCollectionGrid: $("#homeCollectionGrid"),
           homeSectionPlaceholder: $("#homeSectionPlaceholder"),
           homeSectionIcon: $("#homeSectionIcon"),
           homeSectionTitle: $("#homeSectionTitle"),
@@ -9098,6 +9398,7 @@ document.addEventListener('error', (event) => {
           homeSectionNote: $("#homeSectionNote"),
           homeSearchShell: $(".home-search-shell"),
           homeAlbumSearchInput: $("#homeAlbumSearchInput"),
+          homeSearchToggleBtn: $("#homeSearchToggleBtn"),
           quickAddAlbumBtn: $("#quickAddAlbumBtn"),
           addAlbumBtn: $("#addAlbumBtn"),
           albumNeededToast: $("#albumNeededToast"),
@@ -9133,6 +9434,7 @@ document.addEventListener('error', (event) => {
           albumPreviewCover: $("#albumPreviewCover"),
           priceToggleBtn: $("#priceToggleBtn"),
           totalPriceValue: $("#totalPriceValue"),
+          homeCardsCount: $("#homeCardsCount"),
           homeProfileBtn: $("#homeProfileBtn"),
           profileMenuBackdrop: $("#profileMenuBackdrop"),
           profileMenuPanel: $("#profileMenuPanel"),
@@ -9164,6 +9466,9 @@ document.addEventListener('error', (event) => {
           deleteConfirmBtn: $("#deleteConfirmBtn"),
           albumDetailView: $("#albumDetailView"),
           albumDetailTitle: $("#albumDetailTitle"),
+          albumDetailEmptyState: $("#albumDetailEmptyState"),
+          albumDetailCardsView: $("#albumDetailCardsView"),
+          albumDetailCardsGrid: $("#albumDetailCardsGrid"),
           backToAlbumsBtn: $("#backToAlbumsBtn"),
           albumDetailAddBtn: $("#albumDetailAddBtn"),
           addFirstCardBtn: $("#addFirstCardBtn"),
@@ -9185,7 +9490,7 @@ document.addEventListener('error', (event) => {
         const MOVE_TOLERANCE_PX = 12;
         const AUTO_SCROLL_EDGE_PX = 82;
         const AUTO_SCROLL_MAX_SPEED = 16;
-        const visibleTotalPrice = els.totalPriceValue.textContent.trim();
+        let visibleTotalPrice = els.totalPriceValue.textContent.trim();
         const hiddenTotalPrice = "€ ****";
         const OWNER_NAME_STORAGE_KEY = "pokealbumOwnerName";
         const defaultOwnerName = els.ownerNameBtn.textContent.trim();
@@ -9212,6 +9517,9 @@ document.addEventListener('error', (event) => {
           renamingAlbum: null,
           deletingAlbum: null,
           currentHomeSection: "Album",
+          currentSetGroupKey: null,
+          isHomeSearchOpen: false,
+          cardDuplicateCounts: new Map(),
         };
 
 
@@ -9220,6 +9528,10 @@ document.addEventListener('error', (event) => {
         const DB_VERSION = 1;
         let dbPromise = null;
         let storageToastTimer = 0;
+
+        /* L’animazione dell’omino profilo resta disarmata durante il caricamento iniziale.
+           Viene abilitata solo dopo che l’app ha finito di leggere/sincronizzare i dati salvati. */
+        let homeProfileSaveAnimationEnabled = false;
 
         const albumStoreFields = Object.freeze({
           id: "ID stabile album",
@@ -9314,7 +9626,18 @@ document.addEventListener('error', (event) => {
           });
         }
 
+
+        function triggerHomeProfileSaveAnimation() {
+          if (!homeProfileSaveAnimationEnabled) return;
+          const profileBtn = document.getElementById("homeProfileBtn");
+          if (!profileBtn) return;
+          profileBtn.classList.remove("saving");
+          void profileBtn.offsetWidth;
+          profileBtn.classList.add("saving");
+        }
+
         async function putStore(storeName, value) {
+          triggerHomeProfileSaveAnimation();
           const db = await openDb();
           const tx = db.transaction(storeName, "readwrite");
           tx.objectStore(storeName).put(value);
@@ -9323,6 +9646,7 @@ document.addEventListener('error', (event) => {
         }
 
         async function deleteStore(storeName, key) {
+          triggerHomeProfileSaveAnimation();
           const db = await openDb();
           const tx = db.transaction(storeName, "readwrite");
           tx.objectStore(storeName).delete(key);
@@ -9340,7 +9664,18 @@ document.addEventListener('error', (event) => {
           return idbRequest(tx.objectStore("cards").index("albumId").getAll(albumId));
         }
 
+        async function getAllCards() {
+          return getAllStore("cards");
+        }
+
+        function getAlbumNameById(albumId) {
+          if (!albumId) return "Collezione";
+          const albumNode = Array.from(els.albumsGrid?.children || []).find((node) => node.albumData?.id === albumId);
+          return albumNode?.albumData ? getAlbumPublicName(albumNode.albumData) : "Album";
+        }
+
         async function deleteCardsByAlbum(albumId) {
+          triggerHomeProfileSaveAnimation();
           const cards = await getCardsByAlbum(albumId);
           const db = await openDb();
           const tx = db.transaction("cards", "readwrite");
@@ -9350,6 +9685,7 @@ document.addEventListener('error', (event) => {
         }
 
         async function clearAllIndexedData() {
+          triggerHomeProfileSaveAnimation();
           const db = await openDb();
           const stores = Array.from(db.objectStoreNames);
           if (!stores.length) return;
@@ -9374,7 +9710,7 @@ document.addEventListener('error', (event) => {
           closeDeleteSheet();
           resetFormDefaults();
           syncEmptyState();
-          updatePriceVisibility();
+          void refreshHomeCollectionTotals();
         }
 
         async function queueSync(entity, entityId, action, payload = {}) {
@@ -9458,8 +9794,8 @@ document.addEventListener('error', (event) => {
             totalSlots: getEffectiveTotalSlots(totalPages, slotsPerPage, pageMode),
             cardCount: Number(existing?.cardCount || data.cardCount || 0),
             createdAt,
-            updatedAt: now,
-            sync: { provider: null, remoteId: null, dirty: true },
+            updatedAt: existing?.updatedAt || data.updatedAt || now,
+            sync: data.sync || existing?.sync || { provider: null, remoteId: null, dirty: true },
             _fields: albumStoreFields,
           };
         }
@@ -9472,10 +9808,20 @@ document.addEventListener('error', (event) => {
             schemaVersion: STORAGE_SCHEMA_VERSION,
             albumId: album?.id || null,
             blueprintId,
-            image: {
-              fullUrl: payload.image?.fullUrl || payload.fullImageUrl || "",
-              previewUrl: payload.image?.previewUrl || payload.previewImageUrl || "",
-            },
+            image: (() => {
+              const rawFullUrl = payload.image?.fullUrl || payload.fullImageUrl || "";
+              const rawPreviewUrl = payload.image?.previewUrl || payload.previewImageUrl || "";
+              const rawCard = payload.rawCard || payload.raw || {};
+              const bestFullUrl = rawFullUrl
+                || getCardFullUrl(rawCard)
+                || deriveCardTraderImageUrl(rawPreviewUrl, "full")
+                || rawPreviewUrl
+                || "";
+              return {
+                fullUrl: bestFullUrl,
+                previewUrl: bestFullUrl || rawPreviewUrl || "",
+              };
+            })(),
             display: payload.display || {},
             set: {
               code: payload.set?.code || payload.code_set || "",
@@ -9559,9 +9905,397 @@ document.addEventListener('error', (event) => {
         async function recalcAlbumCardCount(albumNode) {
           if (!albumNode?.albumData?.id) return;
           const cards = await getCardsByAlbum(albumNode.albumData.id);
-          albumNode.albumData.cardCount = cards.length;
+          albumNode.albumData.cardCount = getUniqueCardsByDuplicateKey(cards).length;
           await putStore("albums", albumNode.albumData);
           renderAlbum(albumNode);
+          if (state.currentAlbum === albumNode) {
+            renderAlbumDetailCards(cards);
+          }
+          void refreshHomeCollectionTotals();
+        }
+
+        function albumDetailEscapeHtml(value = "") {
+          return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          }[char]));
+        }
+
+        function getAlbumCardImage(card = {}) {
+          const raw = card.rawCard || {};
+          const fullUrl = String(card.image?.fullUrl || "").trim()
+            || getCardFullUrl(raw)
+            || deriveCardTraderImageUrl(card.image?.previewUrl, "full");
+          return fullUrl || String(card.image?.previewUrl || "").trim() || "";
+        }
+
+        function getAlbumCardTitle(card = {}) {
+          return card.display?.name || card.rawCard?.name || card.rawCard?.local_name || "Carta Pokémon";
+        }
+
+        function getAlbumCardMeta(card = {}) {
+          return [
+            card.set?.name || card.set?.code || "",
+            card.rarity || "",
+            card.display?.version || "",
+          ].filter(Boolean).join(" · ");
+        }
+
+
+        function normalizeDuplicatePart(value = "") {
+          return String(value ?? "")
+            .trim()
+            .toLocaleLowerCase("it-IT")
+            .replace(/\s+/g, " ");
+        }
+
+        function getCardDuplicateKey(card = {}) {
+          const raw = card.rawCard || {};
+          const blueprintId = card.blueprintId || raw.id || raw.blueprint_id || raw.card_id || "";
+          if (blueprintId) return `bp:${String(blueprintId)}`;
+          const setCode = normalizeDuplicatePart(card.set?.code || raw.set_code || raw.code_set || raw.expansion?.code || raw.set?.code || "");
+          const setName = normalizeDuplicatePart(card.set?.name || raw.set_name || raw.expansion_name || raw.code_name || raw.expansion?.name || raw.set?.name || "");
+          const number = normalizeDuplicatePart(card.display?.number || raw.collector_number || raw.number || raw.card_number || raw.num || "");
+          const title = normalizeDuplicatePart(getAlbumCardTitle(card));
+          return `fallback:${setCode}|${setName}|${number}|${title}`;
+        }
+
+        function buildDuplicateCountMap(cards = []) {
+          const map = new Map();
+          (Array.isArray(cards) ? cards : []).forEach((card) => {
+            const key = getCardDuplicateKey(card);
+            if (!key) return;
+            map.set(key, (map.get(key) || 0) + 1);
+          });
+          return map;
+        }
+
+        async function refreshDuplicateCountCache() {
+          const cards = await getAllCards();
+          state.cardDuplicateCounts = buildDuplicateCountMap(cards);
+          return state.cardDuplicateCounts;
+        }
+
+        function getCardDuplicateCount(card = {}) {
+          const key = getCardDuplicateKey(card);
+          return Number(state.cardDuplicateCounts?.get(key) || 1);
+        }
+
+        function getDuplicateBadgeHtml(card = {}) {
+          const count = getCardDuplicateCount(card);
+          return count > 1 ? `<span class="card-duplicate-badge" aria-label="${count} copie">x${count}</span>` : "";
+        }
+
+        function getDuplicateCards(cards = []) {
+          const countMap = buildDuplicateCountMap(cards);
+          return (Array.isArray(cards) ? cards : []).filter((card) => {
+            const key = getCardDuplicateKey(card);
+            return key && Number(countMap.get(key) || 0) > 1;
+          });
+        }
+
+        function getUniqueCardsByDuplicateKey(cards = []) {
+          const map = new Map();
+          (Array.isArray(cards) ? cards : []).forEach((card) => {
+            const key = getCardDuplicateKey(card) || String(card?.id || Math.random());
+            const current = map.get(key);
+            const currentDate = current ? String(current.addedAt || '') : '';
+            const nextDate = String(card?.addedAt || '');
+            if (!current || nextDate.localeCompare(currentDate) < 0) {
+              map.set(key, card);
+            }
+          });
+          return Array.from(map.values());
+        }
+
+        function getUniqueDuplicateCards(cards = []) {
+          const countMap = buildDuplicateCountMap(cards);
+          return getUniqueCardsByDuplicateKey(cards).filter((card) => {
+            const key = getCardDuplicateKey(card);
+            return key && Number(countMap.get(key) || 0) > 1;
+          });
+        }
+
+        function renderAlbumDetailCards(cards = []) {
+          const safeCards = getUniqueCardsByDuplicateKey(Array.isArray(cards) ? cards : []);
+          const hasCards = safeCards.length > 0;
+          els.albumDetailEmptyState?.classList.toggle("is-hidden", hasCards);
+          els.albumDetailCardsView?.classList.toggle("is-hidden", !hasCards);
+          if (!els.albumDetailCardsGrid) return;
+          els.albumDetailCardsGrid.innerHTML = safeCards
+            .slice()
+            .sort((a, b) => String(a.addedAt || "").localeCompare(String(b.addedAt || "")))
+            .map((card) => {
+              const imageUrl = getAlbumCardImage(card);
+              const title = albumDetailEscapeHtml(getAlbumCardTitle(card));
+              const meta = albumDetailEscapeHtml(getAlbumCardMeta(card));
+              const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
+              const imageHtml = imageUrl
+                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
+                : `<div class="album-detail-card-fallback">Immagine non disponibile</div>`;
+              const duplicateBadge = getDuplicateBadgeHtml(card);
+              return `
+                <article class="album-detail-card" data-card-id="${albumDetailEscapeHtml(card.id || "")}">
+                  <div class="album-detail-card-image-wrap">${imageHtml}${duplicateBadge}</div>
+                  <div class="album-detail-card-body">
+                    <p class="album-detail-card-title">${title}</p>
+                    ${meta ? `<p class="album-detail-card-meta">${meta}</p>` : ""}
+                    ${price ? `<p class="album-detail-card-price">${price}</p>` : ""}
+                  </div>
+                </article>
+              `;
+            }).join("");
+        }
+
+        async function renderHomeCollectionCards() {
+          if (!els.homeCollectionView || !els.homeCollectionGrid) return [];
+          if (state.currentHomeSection !== "Collezione") {
+            els.homeCollectionView.classList.add("is-hidden");
+            return [];
+          }
+          const cards = await getAllCards();
+          state.cardDuplicateCounts = buildDuplicateCountMap(cards);
+          const safeCards = getUniqueCardsByDuplicateKey(Array.isArray(cards) ? cards : []);
+          const hasCards = safeCards.length > 0;
+          els.homeCollectionView.classList.toggle("is-hidden", !hasCards);
+          els.homeSectionPlaceholder?.classList.toggle("is-hidden", hasCards);
+          els.homeCollectionGrid.innerHTML = safeCards
+            .slice()
+            .sort((a, b) => String(b.addedAt || "").localeCompare(String(a.addedAt || "")))
+            .map((card) => {
+              const imageUrl = getAlbumCardImage(card);
+              const title = albumDetailEscapeHtml(getAlbumCardTitle(card));
+              const meta = albumDetailEscapeHtml(getAlbumCardMeta(card));
+              const albumName = albumDetailEscapeHtml(getAlbumNameById(card.albumId));
+              const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
+              const imageHtml = imageUrl
+                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
+                : `<div class="home-collection-card-fallback">Immagine non disponibile</div>`;
+              const duplicateBadge = getDuplicateBadgeHtml(card);
+              return `
+                <article class="home-collection-card" data-card-id="${albumDetailEscapeHtml(card.id || "")}" data-blueprint-id="${albumDetailEscapeHtml(card.blueprintId || card.rawCard?.id || "")}">
+                  <div class="home-collection-card-image-wrap">${imageHtml}${duplicateBadge}</div>
+                  <div class="home-collection-card-body">
+                    <p class="home-collection-card-title">${title}</p>
+                    ${meta ? `<p class="home-collection-card-meta">${meta}</p>` : ""}
+                    ${albumName ? `<p class="home-collection-card-album">${albumName}</p>` : ""}
+                    ${price ? `<p class="home-collection-card-price">${price}</p>` : ""}
+                  </div>
+                </article>
+              `;
+            }).join("");
+          return safeCards;
+        }
+
+        function getSetDisplayNameFromCard(card = {}) {
+          const raw = card.rawCard || {};
+          const candidates = [
+            card.set?.name,
+            raw.set_name,
+            raw.expansion_name,
+            raw.code_name,
+            raw.expansion?.name,
+            raw.set?.name,
+          ];
+          const name = candidates.map(value => String(value || '').trim()).find(Boolean);
+          return name || 'Set sconosciuto';
+        }
+
+        function getSetDisplayCodeFromCard(card = {}) {
+          const raw = card.rawCard || {};
+          const candidates = [
+            card.set?.code,
+            raw.set_code,
+            raw.code_set,
+            raw.expansion?.code,
+            raw.set?.code,
+          ];
+          return candidates.map(value => String(value || '').trim()).find(Boolean) || '';
+        }
+
+        function getSetGroupKey(card = {}) {
+          const name = getSetDisplayNameFromCard(card).toLocaleLowerCase('it-IT');
+          const code = getSetDisplayCodeFromCard(card).toLocaleLowerCase('it-IT');
+          return `${name}__${code}`;
+        }
+
+        function renderHomeSetCardList(group) {
+          if (!els.homeCollectionView || !els.homeCollectionGrid) return [];
+          const cards = getUniqueCardsByDuplicateKey(Array.isArray(group?.cards) ? group.cards.slice() : []);
+          const title = albumDetailEscapeHtml(group?.name || 'Set sconosciuto');
+          const code = albumDetailEscapeHtml(group?.code || '');
+          const count = cards.length;
+          els.homeCollectionView.classList.remove('is-hidden');
+          els.homeSectionPlaceholder?.classList.add('is-hidden');
+          els.homeCollectionGrid.innerHTML = `
+            <div class="home-set-detail-head">
+              <button class="home-set-back-btn" type="button" data-set-back aria-label="Torna ai set">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+              </button>
+              <div class="home-set-detail-title-wrap">
+                <p class="home-set-detail-title">${title}</p>
+                <p class="home-set-detail-meta">${code ? `${code} · ` : ''}${count} carte</p>
+              </div>
+            </div>
+            ${cards
+              .sort((a, b) => String(b.addedAt || '').localeCompare(String(a.addedAt || '')))
+              .map((card) => {
+                const imageUrl = getAlbumCardImage(card);
+                const cardTitle = albumDetailEscapeHtml(getAlbumCardTitle(card));
+                const meta = albumDetailEscapeHtml(getAlbumCardMeta(card));
+                const albumName = albumDetailEscapeHtml(getAlbumNameById(card.albumId));
+                const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || '');
+                const imageHtml = imageUrl
+                  ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${cardTitle}" loading="lazy">`
+                  : `<div class="home-collection-card-fallback">Immagine non disponibile</div>`;
+                const duplicateBadge = getDuplicateBadgeHtml(card);
+                return `
+                  <article class="home-collection-card" data-card-id="${albumDetailEscapeHtml(card.id || '')}" data-blueprint-id="${albumDetailEscapeHtml(card.blueprintId || card.rawCard?.id || '')}">
+                    <div class="home-collection-card-image-wrap">${imageHtml}${duplicateBadge}</div>
+                    <div class="home-collection-card-body">
+                      <p class="home-collection-card-title">${cardTitle}</p>
+                      ${meta ? `<p class="home-collection-card-meta">${meta}</p>` : ''}
+                      ${albumName ? `<p class="home-collection-card-album">${albumName}</p>` : ''}
+                      ${price ? `<p class="home-collection-card-price">${price}</p>` : ''}
+                    </div>
+                  </article>
+                `;
+              }).join('')}
+          `;
+          return cards;
+        }
+
+        async function renderHomeSetGroups() {
+          if (!els.homeCollectionView || !els.homeCollectionGrid) return [];
+          if (state.currentHomeSection !== 'Set') return [];
+
+          const cards = await getAllCards();
+          state.cardDuplicateCounts = buildDuplicateCountMap(cards);
+          const visibleCards = getUniqueCardsByDuplicateKey(Array.isArray(cards) ? cards : []);
+          const groupsMap = new Map();
+          visibleCards.forEach((card) => {
+            const key = getSetGroupKey(card);
+            if (!groupsMap.has(key)) {
+              groupsMap.set(key, {
+                key,
+                name: getSetDisplayNameFromCard(card),
+                code: getSetDisplayCodeFromCard(card),
+                cards: [],
+              });
+            }
+            groupsMap.get(key).cards.push(card);
+          });
+
+          const groups = Array.from(groupsMap.values()).sort((a, b) => {
+            const byName = String(a.name || '').localeCompare(String(b.name || ''), 'it', { sensitivity: 'base' });
+            if (byName) return byName;
+            return String(a.code || '').localeCompare(String(b.code || ''), 'it', { sensitivity: 'base' });
+          });
+
+          if (state.currentSetGroupKey) {
+            const selectedGroup = groups.find(group => group.key === state.currentSetGroupKey);
+            if (selectedGroup) return renderHomeSetCardList(selectedGroup);
+            state.currentSetGroupKey = null;
+          }
+
+          const hasSets = groups.length > 0;
+          els.homeCollectionView.classList.toggle('is-hidden', !hasSets);
+          els.homeSectionPlaceholder?.classList.toggle('is-hidden', hasSets);
+          els.homeCollectionGrid.innerHTML = groups.map((group) => {
+            const title = albumDetailEscapeHtml(group.name || 'Set sconosciuto');
+            const code = albumDetailEscapeHtml(group.code || '');
+            const count = group.cards.length;
+            const previewCards = group.cards
+              .slice()
+              .sort((a, b) => String(b.addedAt || '').localeCompare(String(a.addedAt || '')))
+              .slice(0, 3);
+            const preview = previewCards.map((card) => {
+              const imageUrl = getAlbumCardImage(card);
+              const cardTitle = albumDetailEscapeHtml(getAlbumCardTitle(card));
+              return imageUrl
+                ? `<div class="home-set-preview-slot"><img class="home-set-preview-img" src="${albumDetailEscapeHtml(imageUrl)}" alt="${cardTitle}" loading="lazy"></div>`
+                : `<div class="home-set-preview-slot home-set-preview-more">?</div>`;
+            }).join('');
+            const missingSlots = Math.max(0, 3 - previewCards.length);
+            const fillers = Array.from({ length: missingSlots }, () => `<div class="home-set-preview-slot"></div>`).join('');
+            return `
+              <article class="home-set-card" data-set-key="${albumDetailEscapeHtml(group.key)}">
+                <div class="home-set-card-head">
+                  <p class="home-set-card-title">${title}</p>
+                  <p class="home-set-card-meta">${code ? `${code} · ` : ''}<span class="home-set-card-count">${count}</span> carte</p>
+                </div>
+                <div class="home-set-preview">${preview}${fillers}</div>
+              </article>
+            `;
+          }).join('');
+          return groups;
+        }
+
+
+        async function renderHomeDuplicateCards() {
+          if (!els.homeCollectionView || !els.homeCollectionGrid) return [];
+          if (state.currentHomeSection !== "Duplicati") {
+            els.homeCollectionView.classList.add("is-hidden");
+            return [];
+          }
+          const cards = await getAllCards();
+          state.cardDuplicateCounts = buildDuplicateCountMap(cards);
+          const duplicateCards = getUniqueDuplicateCards(cards)
+            .sort((a, b) => {
+              const byKey = getCardDuplicateKey(a).localeCompare(getCardDuplicateKey(b), "it", { sensitivity: "base" });
+              if (byKey) return byKey;
+              return String(b.addedAt || "").localeCompare(String(a.addedAt || ""));
+            });
+
+          const hasDuplicates = duplicateCards.length > 0;
+          els.homeCollectionView.classList.toggle("is-hidden", !hasDuplicates);
+          els.homeSectionPlaceholder?.classList.toggle("is-hidden", hasDuplicates);
+
+          els.homeCollectionGrid.innerHTML = duplicateCards.map((card) => {
+            const imageUrl = getAlbumCardImage(card);
+            const title = albumDetailEscapeHtml(getAlbumCardTitle(card));
+            const meta = albumDetailEscapeHtml(getAlbumCardMeta(card));
+            const albumName = albumDetailEscapeHtml(getAlbumNameById(card.albumId));
+            const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
+            const imageHtml = imageUrl
+              ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
+              : `<div class="home-collection-card-fallback">Immagine non disponibile</div>`;
+            const duplicateBadge = getDuplicateBadgeHtml(card);
+            return `
+              <article class="home-collection-card" data-card-id="${albumDetailEscapeHtml(card.id || "")}" data-blueprint-id="${albumDetailEscapeHtml(card.blueprintId || card.rawCard?.id || "")}">
+                <div class="home-collection-card-image-wrap">${imageHtml}${duplicateBadge}</div>
+                <div class="home-collection-card-body">
+                  <p class="home-collection-card-title">${title}</p>
+                  ${meta ? `<p class="home-collection-card-meta">${meta}</p>` : ""}
+                  ${albumName ? `<p class="home-collection-card-album">${albumName}</p>` : ""}
+                  ${price ? `<p class="home-collection-card-price">${price}</p>` : ""}
+                </div>
+              </article>
+            `;
+          }).join("");
+          return duplicateCards;
+        }
+
+        async function refreshHomeSectionContent() {
+          if (state.currentHomeSection === 'Collezione') return renderHomeCollectionCards();
+          if (state.currentHomeSection === 'Set') return renderHomeSetGroups();
+          if (state.currentHomeSection === 'Duplicati') return renderHomeDuplicateCards();
+          if (els.homeCollectionView) els.homeCollectionView.classList.add('is-hidden');
+          return [];
+        }
+
+        async function refreshCurrentAlbumDetailCards() {
+          if (!state.currentAlbum?.albumData?.id) {
+            renderAlbumDetailCards([]);
+            return [];
+          }
+          await refreshDuplicateCountCache();
+          const cards = await getCardsByAlbum(state.currentAlbum.albumData.id);
+          renderAlbumDetailCards(cards);
+          return cards;
         }
 
         async function addCardToCurrentAlbum(payload) {
@@ -9573,6 +10307,9 @@ document.addEventListener('error', (event) => {
             record.albumId = null;
             await putStore("cards", record);
             await queueSync("card", record.id, "add", record);
+            await refreshDuplicateCountCache();
+            await refreshHomeSectionContent();
+            await refreshHomeCollectionTotals();
             showStorageToast("Aggiunta alla Collezione");
             return record;
           }
@@ -9582,18 +10319,25 @@ document.addEventListener('error', (event) => {
           record.collectionScope = "album";
           await putStore("cards", record);
           await queueSync("card", record.id, "add", record);
-          albumNode.albumData.cardCount = Number(albumNode.albumData.cardCount || 0) + 1;
+          await refreshDuplicateCountCache();
+          const albumCards = await getCardsByAlbum(albumNode.albumData.id);
+          albumNode.albumData.cardCount = getUniqueCardsByDuplicateKey(albumCards).length;
           albumNode.albumData.updatedAt = new Date().toISOString();
           await putStore("albums", albumNode.albumData);
           renderAlbum(albumNode);
-          showStorageToast(`Carta salvata in ${getAlbumPublicName(albumNode.albumData)}`);
+          renderAlbumDetailCards(albumCards);
+          await refreshHomeSectionContent();
+          await refreshHomeCollectionTotals();
+          showStorageToast(`Carta salvata in ${getAlbumPublicName(albumNode.albumData)} e in Collezione`);
           return record;
         }
 
         function returnToCurrentAlbum() {
           const shouldReturnToDetail = state.addCardReturnView === "detail" && Boolean(state.currentAlbum);
-          if (shouldReturnToDetail) setView("detail");
-          else {
+          if (shouldReturnToDetail) {
+            void refreshCurrentAlbumDetailCards();
+            setView("detail");
+          } else {
             state.currentAlbum = null;
             setView("home");
           }
@@ -9843,18 +10587,34 @@ document.addEventListener('error', (event) => {
           return node;
         }
 
+        function setHomeSearchOpen(isOpen, { focus = false, clear = false } = {}) {
+          state.isHomeSearchOpen = Boolean(isOpen);
+          els.homeSearchShell?.classList.toggle("is-hidden", !state.isHomeSearchOpen);
+          els.homeSearchToggleBtn?.classList.toggle("is-active", state.isHomeSearchOpen);
+          els.homeSearchToggleBtn?.setAttribute("aria-label", state.isHomeSearchOpen ? "Nascondi ricerca" : "Mostra ricerca");
+          els.homeSearchToggleBtn?.setAttribute("aria-expanded", state.isHomeSearchOpen ? "true" : "false");
+          if (clear && els.homeAlbumSearchInput) els.homeAlbumSearchInput.value = "";
+          if (state.isHomeSearchOpen && focus && els.homeAlbumSearchInput) {
+            requestAnimationFrame(() => els.homeAlbumSearchInput.focus());
+          }
+        }
+
         function syncEmptyState() {
           const hasAlbums = els.albumsGrid.children.length > 0;
           const isAlbumSection = state.currentHomeSection === "Album";
           els.emptyState.classList.toggle("is-hidden", !isAlbumSection || hasAlbums);
           els.albumsView.classList.toggle("is-hidden", !isAlbumSection || !hasAlbums);
-          els.homeSectionPlaceholder?.classList.toggle("is-hidden", isAlbumSection);
-          els.homeSearchShell?.classList.toggle("is-hidden", false);
+          const isDynamicSection = state.currentHomeSection === "Collezione" || state.currentHomeSection === "Set" || state.currentHomeSection === "Duplicati";
+          els.homeSectionPlaceholder?.classList.toggle("is-hidden", isAlbumSection || isDynamicSection);
+          els.homeCollectionView?.classList.toggle("is-hidden", !isDynamicSection);
+          setHomeSearchOpen(state.isHomeSearchOpen);
           els.quickAddAlbumBtn?.classList.toggle("is-hidden", !isAlbumSection);
-          els.addAlbumBtn.classList.toggle("is-locked", !isAlbumSection || !hasAlbums);
+          // Il pulsante globale "Aggiungi carta" resta abilitato in tutte le sezioni
+          // quando esiste almeno un album. Prima era legato solo alla sezione Album.
+          els.addAlbumBtn.classList.toggle("is-locked", !hasAlbums);
           els.addAlbumBtn.setAttribute(
             "aria-label",
-            isAlbumSection && hasAlbums ? "Aggiungi carta" : "Crea prima un album"
+            hasAlbums ? "Aggiungi carta" : "Crea prima un album"
           );
         }
 
@@ -9863,11 +10623,14 @@ document.addEventListener('error', (event) => {
           const isDetail = view === "detail";
           const isCardSearch = view === "card-search";
           const isSecondaryView = isForm || isDetail || isCardSearch;
+          const shouldHideGlobalAddButton = isForm || isCardSearch;
           els.homeView.classList.toggle("is-hidden", isSecondaryView);
           els.addAlbumView.classList.toggle("is-hidden", !isForm);
           els.albumDetailView.classList.toggle("is-hidden", !isDetail);
           els.addCardSearchView.classList.toggle("is-hidden", !isCardSearch);
-          els.bottomNav.classList.toggle("is-hidden", isSecondaryView);
+          // Il FAB "Aggiungi carta" deve restare disponibile anche nelle schermate interne
+          // dove ha senso usarlo, ad esempio dettaglio album, Collezione, Set e Duplicati.
+          els.bottomNav.classList.toggle("is-hidden", shouldHideGlobalAddButton);
           els.content.classList.toggle("is-form-open", isSecondaryView);
         }
 
@@ -9917,6 +10680,8 @@ document.addEventListener('error', (event) => {
           if (!albumNode?.albumData) return;
           state.currentAlbum = albumNode;
           els.albumDetailTitle.textContent = getAlbumPublicName(albumNode.albumData);
+          renderAlbumDetailCards([]);
+          void refreshCurrentAlbumDetailCards();
           setView("detail");
         }
 
@@ -10008,11 +10773,82 @@ document.addEventListener('error', (event) => {
             await persistAlbumOrder("create");
             syncEmptyState();
             closeAlbumForm();
-            showStorageToast("Album salvato");
+            showStorageToast(`${getAlbumPublicName(albumRecord)} creato`);
           } catch (error) {
             console.error(error);
             showStorageToast("Errore salvataggio album", true);
           }
+        }
+
+        function parseCollectionPriceAmount(value) {
+          if (typeof value === "number") return Number.isFinite(value) ? value : 0;
+          const raw = String(value ?? "").trim();
+          if (!raw || raw === "-" || raw.includes("****")) return 0;
+          let clean = raw
+            .replace(/[^\d,.\-]/g, "")
+            .replace(/\s+/g, "");
+          if (!clean) return 0;
+
+          const hasComma = clean.includes(",");
+          const hasDot = clean.includes(".");
+          if (hasComma && hasDot) {
+            const lastComma = clean.lastIndexOf(",");
+            const lastDot = clean.lastIndexOf(".");
+            if (lastComma > lastDot) {
+              clean = clean.replace(/\./g, "").replace(",", ".");
+            } else {
+              clean = clean.replace(/,/g, "");
+            }
+          } else if (hasComma) {
+            clean = clean.replace(/\./g, "").replace(",", ".");
+          }
+
+          const amount = Number.parseFloat(clean);
+          return Number.isFinite(amount) ? amount : 0;
+        }
+
+        function getCollectionCardPriceAmount(card = {}) {
+          const price = card.priceAtAdd || {};
+          const candidates = [
+            price.amount,
+            price.value,
+            price.price,
+            price.numericValue,
+            price.valueText,
+            price.offerLabel,
+          ];
+          for (const candidate of candidates) {
+            const amount = parseCollectionPriceAmount(candidate);
+            if (amount > 0) return amount;
+          }
+          return 0;
+        }
+
+        function formatCollectionTotalPrice(value) {
+          return new Intl.NumberFormat("it-IT", {
+            style: "currency",
+            currency: "EUR",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(Number(value) || 0);
+        }
+
+        async function refreshHomeCollectionTotals() {
+          let cards = [];
+          try {
+            cards = await getAllCards();
+          } catch (error) {
+            console.warn("Totali collezione non aggiornati", error);
+          }
+          const safeCards = getUniqueCardsByDuplicateKey(Array.isArray(cards) ? cards : []);
+          const totalCards = safeCards.length;
+          const totalValue = safeCards.reduce((sum, card) => sum + getCollectionCardPriceAmount(card), 0);
+          if (els.homeCardsCount) {
+            els.homeCardsCount.textContent = String(totalCards);
+          }
+          visibleTotalPrice = formatCollectionTotalPrice(totalValue);
+          updatePriceVisibility();
+          return { totalCards, totalValue };
         }
 
         function updatePriceVisibility() {
@@ -10032,13 +10868,18 @@ document.addEventListener('error', (event) => {
           );
         }
 
-        async function setOwnerName(name) {
-          const cleanName = name.trim() || defaultOwnerName;
+        function applyOwnerName(name) {
+          const cleanName = String(name || "").trim() || defaultOwnerName;
           els.ownerNameBtn.textContent = cleanName;
           els.ownerNameBtn.setAttribute(
             "aria-label",
             `Modifica nome proprietario: ${cleanName}`,
           );
+          return cleanName;
+        }
+
+        async function setOwnerName(name) {
+          const cleanName = applyOwnerName(name);
           try {
             localStorage.setItem(OWNER_NAME_STORAGE_KEY, cleanName);
           } catch {}
@@ -10053,14 +10894,14 @@ document.addEventListener('error', (event) => {
           try {
             const savedName = await loadSetting(OWNER_NAME_STORAGE_KEY);
             if (savedName) {
-              await setOwnerName(savedName);
+              applyOwnerName(savedName);
               return;
             }
           } catch {}
           try {
-            await setOwnerName(localStorage.getItem(OWNER_NAME_STORAGE_KEY) || defaultOwnerName);
+            applyOwnerName(localStorage.getItem(OWNER_NAME_STORAGE_KEY) || defaultOwnerName);
           } catch {
-            await setOwnerName(defaultOwnerName);
+            applyOwnerName(defaultOwnerName);
           }
         }
 
@@ -10069,6 +10910,11 @@ document.addEventListener('error', (event) => {
           els.ownerNameInput.value = currentName;
           els.ownerNameSheetBackdrop.classList.add("open");
           els.ownerNameSheetBackdrop.setAttribute("aria-hidden", "false");
+
+          // Durante la modifica del nome proprietario il pulsante globale
+          // "Aggiungi carta" viene nascosto temporaneamente.
+          els.bottomNav?.classList.add("is-hidden");
+
           window.setTimeout(() => {
             els.ownerNameInput.focus();
             els.ownerNameInput.select();
@@ -10079,6 +10925,14 @@ document.addEventListener('error', (event) => {
           els.ownerNameSheetBackdrop.classList.remove("open");
           els.ownerNameSheetBackdrop.setAttribute("aria-hidden", "true");
           els.ownerNameInput.value = "";
+
+          // Ripristina il pulsante solo se non siamo in una schermata in cui
+          // deve restare nascosto, come creazione album o ricerca carta.
+          const isForm = !els.addAlbumView?.classList.contains("is-hidden");
+          const isCardSearch = !els.addCardSearchView?.classList.contains("is-hidden");
+          if (!isForm && !isCardSearch) {
+            els.bottomNav?.classList.remove("is-hidden");
+          }
         }
 
         async function saveOwnerNameSheet() {
@@ -10273,6 +11127,7 @@ document.addEventListener('error', (event) => {
         }
 
         async function persistAlbumOrder(reason = "reorder") {
+          triggerHomeProfileSaveAnimation();
           const nodes = getAlbumNodes();
           const now = new Date().toISOString();
           const db = await openDb();
@@ -10718,8 +11573,11 @@ document.addEventListener('error', (event) => {
             return;
           }
 
-          state.currentAlbum = null;
-          openAddCardSearch("home");
+          const isInsideAlbumDetail = !els.albumDetailView.classList.contains("is-hidden") && Boolean(state.currentAlbum?.albumData);
+          if (!isInsideAlbumDetail) {
+            state.currentAlbum = null;
+          }
+          openAddCardSearch(isInsideAlbumDetail ? "detail" : "home");
         });
         els.createFirstAlbumBtn.addEventListener("click", () =>
           openAlbumForm(),
@@ -10769,6 +11627,8 @@ document.addEventListener('error', (event) => {
         function setHomeSection(section = "Album") {
           const safeSection = section === "Album" || HOME_SECTION_EMPTY[section] ? section : "Album";
           state.currentHomeSection = safeSection;
+          setHomeSearchOpen(false, { clear: true });
+          if (safeSection !== "Set") state.currentSetGroupKey = null;
           if (collectionMenuLabel) collectionMenuLabel.textContent = safeSection;
           $$(".collection-menu-item[data-section]").forEach((button) => {
             button.classList.toggle("active", button.dataset.section === safeSection);
@@ -10792,6 +11652,7 @@ document.addEventListener('error', (event) => {
             if (els.homeSectionNote) els.homeSectionNote.textContent = data.note;
           }
           syncEmptyState();
+          void refreshHomeSectionContent();
         }
 
         function closeCollectionMenu() {
@@ -10816,6 +11677,38 @@ document.addEventListener('error', (event) => {
           event.stopPropagation();
           closeCollectionMenu();
           openAlbumForm();
+        });
+
+        els.homeSearchToggleBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          closeCollectionMenu();
+          setHomeSearchOpen(!state.isHomeSearchOpen, { focus: true, clear: !state.isHomeSearchOpen });
+        });
+
+        els.homeCollectionGrid?.addEventListener("click", async (event) => {
+          const backButton = event.target.closest("[data-set-back]");
+          if (backButton) {
+            event.preventDefault();
+            state.currentSetGroupKey = null;
+            await renderHomeSetGroups();
+            return;
+          }
+
+          const setCard = event.target.closest(".home-set-card[data-set-key]");
+          if (setCard && state.currentHomeSection === "Set") {
+            event.preventDefault();
+            state.currentSetGroupKey = setCard.dataset.setKey || null;
+            await renderHomeSetGroups();
+            return;
+          }
+
+          const collectionCard = event.target.closest(".home-collection-card[data-blueprint-id], .home-collection-card[data-card-id]");
+          if (!collectionCard) return;
+          const blueprintId = collectionCard.dataset.blueprintId;
+          if (blueprintId && typeof openCardDetails === "function") {
+            openCardDetails(blueprintId);
+          }
         });
 
         collectionDropdown?.addEventListener("click", (event) => {
@@ -11059,10 +11952,17 @@ document.addEventListener('error', (event) => {
             console.error(error);
             showStorageToast("IndexedDB non disponibile", true);
             await loadOwnerName();
+          } finally {
+            await refreshHomeCollectionTotals();
+            resetFormDefaults();
+            syncEmptyState();
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                document.body.classList.remove("ui-booting");
+                homeProfileSaveAnimationEnabled = true;
+              });
+            });
           }
-          updatePriceVisibility();
-          resetFormDefaults();
-          syncEmptyState();
         })();
       })();
 </script>
