@@ -10840,7 +10840,7 @@ document.addEventListener('error', (event) => {
                 : `<div class="album-detail-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
-                <article class="album-detail-card" data-card-id="${albumDetailEscapeHtml(card.id || "")}" data-slot-number="${slotNumber}">
+                <article class="album-detail-card" data-card-id="${albumDetailEscapeHtml(card.id || "")}" data-blueprint-id="${albumDetailEscapeHtml(card.blueprintId || card.rawCard?.id || "")}" data-slot-number="${slotNumber}">
                   <div class="album-detail-card-image-wrap">${imageHtml}${duplicateBadge}</div>
                   <div class="album-detail-card-body">
                     <p class="album-detail-card-title">${title}</p>
@@ -12523,6 +12523,17 @@ document.addEventListener('error', (event) => {
           if (!collectionCard) return;
           const blueprintId = collectionCard.dataset.blueprintId;
           if (blueprintId && typeof openCardDetails === "function") {
+            openCardDetails(blueprintId);
+          }
+        });
+
+        els.albumDetailCardsGrid?.addEventListener("click", (event) => {
+          const albumCard = event.target.closest(".album-detail-card[data-blueprint-id], .album-detail-card[data-card-id]");
+          if (!albumCard) return;
+
+          const blueprintId = albumCard.dataset.blueprintId;
+          if (blueprintId && typeof openCardDetails === "function") {
+            event.preventDefault();
             openCardDetails(blueprintId);
           }
         });
