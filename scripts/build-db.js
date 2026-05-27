@@ -68,6 +68,43 @@ function buildSearchText(...values) {
     .join(' ');
 }
 
+function cleanImageUrl(value) {
+  return String(value ?? '').trim();
+}
+
+function replaceFileNamePrefix(url, newPrefix) {
+  const cleaned = cleanImageUrl(url);
+  if (!cleaned) return '';
+
+  const slashIndex = cleaned.lastIndexOf('/');
+  if (slashIndex === -1) return cleaned;
+
+  const basePath = cleaned.slice(0, slashIndex + 1);
+  const fileName = cleaned.slice(slashIndex + 1);
+
+  const cleanFileName = fileName.replace(/^(preview_|show_)/i, '');
+
+  return `${basePath}${newPrefix}${cleanFileName}`;
+}
+
+function buildImageUrls(imageUrl) {
+  const cleaned = cleanImageUrl(imageUrl);
+
+  if (!cleaned) {
+    return {
+      preview: '',
+      show: '',
+      full: ''
+    };
+  }
+
+  return {
+    preview: replaceFileNamePrefix(cleaned, 'preview_'),
+    show: replaceFileNamePrefix(cleaned, 'show_'),
+    full: replaceFileNamePrefix(cleaned, '')
+  };
+}
+
 async function detectPokemonGame() {
   const payload = await api('/games');
   const games = extractArray(payload, ['games']);
@@ -154,33 +191,41 @@ async function main() {
     );
 
     for (const bp of cards) {
-const baseCard = {
-  id: Number(bp.id),
-  name: bp.name || '-',
-  collector_number: bp.fixed_properties?.collector_number || '',
-  number_norm: getNumberNorm(bp.fixed_properties?.collector_number),
-  rarity: bp.fixed_properties?.pokemon_rarity || '',
-  version: bp.version || '',
-  expansion_id: bp.expansion_id,
-  set_name: exp.name || '',
-  set_code: exp.code || '',
-  image_url: bp.image_url || ''
-};
+      const images = buildImageUrls(bp.image_url || '');
 
-const card = {
-  ...baseCard,
-  q: buildSearchText(
-    baseCard.name,
-    baseCard.collector_number,
-    baseCard.rarity,
-    baseCard.version,
-    baseCard.set_name,
-    baseCard.set_code
-  )
-};
+      const baseCard = {
+        id: Number(bp.id),
+        name: bp.name || '-',
+        collector_number: bp.fixed_properties?.collector_number || '',
+        number_norm: getNumberNorm(bp.fixed_properties?.collector_number),
+        rarity: bp.fixed_properties?.pokemon_rarity || '',
+        version: bp.version || '',
+        expansion_id: bp.expansion_id,
+        set_name: exp.name || '',
+        set_code: exp.code || '',
 
-// Database ottimizzato: campo q già pronto per ricerca veloce.
-allCards.push(card);
+        // Compatibilità con il vecchio vi262.html.
+        // Per ora resta, così non spacchiamo tutto come fanno gli umani quando "ottimizzano".
+        image_url: images.preview,
+
+        // Nuova gestione pulita immagini.
+        images
+      };
+
+      const card = {
+        ...baseCard,
+        q: buildSearchText(
+          baseCard.name,
+          baseCard.collector_number,
+          baseCard.rarity,
+          baseCard.version,
+          baseCard.set_name,
+          baseCard.set_code
+        )
+      };
+
+      // Database ottimizzato: campo q già pronto per ricerca veloce.
+      allCards.push(card);
     }
   }
 
@@ -196,7 +241,15 @@ allCards.push(card);
     expansionsCount: pokemonExpansions.length,
     skippedExpansionsCount: skippedExpansions.length,
     skippedExpansions,
-    indexVersion: 3
+    indexVersion: 4,
+    imageSchema: {
+      version: 1,
+      fields: [
+        'images.preview',
+        'images.show',
+        'images.full'
+      ]
+    }
   };
 
   await fs.mkdir('./data', { recursive: true });
