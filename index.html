@@ -7584,43 +7584,39 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
 
-    function deriveCardTraderImageUrl(url, variant = 'full') {
-      const sourceUrl = String(url || '').trim();
-      if (!sourceUrl) return '';
+    function deriveCardTraderImageUrl(url, variant) {
+      const raw = String(url || '').trim();
+      if (!raw) return '';
+      if (!raw.includes('/uploads/blueprints/image/')) return raw;
 
-      // Fonte unica: il database GitHub salva già bp.image_url.
-      // Da quel solo URL deriviamo le tre versioni CardTrader:
-      // preview_* per autocomplete, show_* per risultati/album, file pulito per dettaglio.
-      if (!sourceUrl.includes('/uploads/blueprints/image/')) return sourceUrl;
+      const filename = raw.split('/').pop() || '';
+      const cleanFilename = filename.replace(/^(preview_|show_)/i, '');
 
-      const cleanFilename = (sourceUrl.split('/').pop() || '').replace(/^(preview_|show_)/i, '');
-      if (!cleanFilename) return sourceUrl;
+      if (variant === 'preview') {
+        return raw.replace(/\/[^/]+$/i, `/preview_${cleanFilename}`);
+      }
 
-      const prefix = variant === 'preview'
-        ? 'preview_'
-        : (variant === 'show' || variant === 'medium')
-          ? 'show_'
-          : '';
+      if (variant === 'show') {
+        return raw.replace(/\/[^/]+$/i, `/show_${cleanFilename}`);
+      }
 
-      return sourceUrl.replace(/\/[^/]+$/i, `/${prefix}${cleanFilename}`);
-    }
+      if (variant === 'full') {
+        return raw.replace(/\/[^/]+$/i, `/${cleanFilename}`);
+      }
 
-    function getCardImageUrl(card, variant = 'full') {
-      // Niente campi alternativi, fallback fantasiosi o ricerca del blueprint nell'HTML.
-      // Il database contiene già image_url: qui si cambia solo il prefisso del filename.
-      return deriveCardTraderImageUrl(card?.image_url, variant);
+      return raw;
     }
 
     function getCardPreviewUrl(card) {
-      return getCardImageUrl(card, 'preview');
-    }
-
-    function getCardMediumUrl(card) {
-      return getCardImageUrl(card, 'show');
+      return String(card?.image_preview_url || '').trim()
+        || deriveCardTraderImageUrl(card?.image_url, 'preview')
+        || String(card?.image_url || '').trim();
     }
 
     function getCardFullUrl(card) {
-      return getCardImageUrl(card, 'full');
+      return String(card?.image_full_url || '').trim()
+        || deriveCardTraderImageUrl(card?.image_url, 'full')
+        || String(card?.image_url || '').trim();
     }
 
 	function formatDuration(ms) {
@@ -8996,7 +8992,7 @@ function finishUpdateTimer() {
       const displaySetCode = String(f.setCode || '').toUpperCase();
       const displaySetName = f.setName || '';
 
-      const imageUrl = getCardMediumUrl(card);
+      const imageUrl = getCardPreviewUrl(card);
       const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
       const imagePriority = resultIndex < 4 ? 'high' : 'auto';
 
@@ -9786,12 +9782,10 @@ el.autocomplete.addEventListener('click', (e) => {
       return {
         blueprintId: card.id ?? card.blueprint_id ?? null,
         image: {
-          // Full pulita: usata solo nel dettaglio/zoom.
           fullUrl: getCardFullUrl(card) || '',
-          // Show/medium: usata per album e griglie delle carte possedute.
-          mediumUrl: getCardMediumUrl(card) || '',
-          // Preview: resta utile solo per retrocompatibilità o eventuali viste ultraleggere.
-          previewUrl: getCardPreviewUrl(card) || '',
+          // Per le anteprime salvate in album/collezione uso comunque la risoluzione migliore.
+          // La dimensione piccola resta solo CSS: il file/URL conservato è quello full.
+          previewUrl: getCardFullUrl(card) || getCardPreviewUrl(card) || '',
         },
         display: {
           name: toTitleCase(f.name || ''),
@@ -10292,7 +10286,7 @@ document.addEventListener('error', (event) => {
           albumId: "Album collegato, nullo se la carta è in Collezione",
           collectionScope: "album oppure loose",
           blueprintId: "ID blueprint CardTrader",
-          image: "URL immagini full/show/preview",
+          image: "URL immagine full/preview",
           set: "code_set, code_name, totale set",
           rarity: "Rarità",
           variants: "holo/reverse/illustration",
@@ -10542,15 +10536,17 @@ document.addEventListener('error', (event) => {
             albumId: album?.id || null,
             blueprintId,
             image: (() => {
+              const rawFullUrl = payload.image?.fullUrl || payload.fullImageUrl || "";
+              const rawPreviewUrl = payload.image?.previewUrl || payload.previewImageUrl || "";
               const rawCard = payload.rawCard || payload.raw || {};
-              const sourceUrl = String(rawCard.image_url || payload.image?.fullUrl || payload.fullImageUrl || payload.image?.mediumUrl || payload.mediumImageUrl || payload.image?.previewUrl || payload.previewImageUrl || "").trim();
-              const bestFullUrl = getCardFullUrl(rawCard) || deriveCardTraderImageUrl(sourceUrl, "full") || "";
-              const bestMediumUrl = getCardMediumUrl(rawCard) || deriveCardTraderImageUrl(sourceUrl, "show") || "";
-              const bestPreviewUrl = getCardPreviewUrl(rawCard) || deriveCardTraderImageUrl(sourceUrl, "preview") || "";
+              const bestFullUrl = rawFullUrl
+                || getCardFullUrl(rawCard)
+                || deriveCardTraderImageUrl(rawPreviewUrl, "full")
+                || rawPreviewUrl
+                || "";
               return {
                 fullUrl: bestFullUrl,
-                mediumUrl: bestMediumUrl,
-                previewUrl: bestPreviewUrl,
+                previewUrl: bestFullUrl || rawPreviewUrl || "",
               };
             })(),
             display: payload.display || {},
@@ -10655,47 +10651,12 @@ document.addEventListener('error', (event) => {
           }[char]));
         }
 
-        function getAlbumCardShowUrl(card = {}) {
-          const raw = card.rawCard || {};
-          const savedMedium = String(card.image?.mediumUrl || "").trim();
-          const savedFull = String(card.image?.fullUrl || "").trim();
-          const savedPreview = String(card.image?.previewUrl || "").trim();
-
-          const sourceUrl = raw.image_url || savedMedium || savedFull || savedPreview;
-          const candidates = [
-            getCardMediumUrl(raw),
-            savedMedium ? deriveCardTraderImageUrl(savedMedium, "show") : "",
-            sourceUrl ? deriveCardTraderImageUrl(sourceUrl, "show") : "",
-          ];
-
-          return candidates.map(value => String(value || "").trim()).find(Boolean) || "";
-        }
-
-        function getAlbumCardFullImageUrl(card = {}) {
-          const raw = card.rawCard || {};
-          const savedFull = String(card.image?.fullUrl || "").trim();
-          const savedMedium = String(card.image?.mediumUrl || "").trim();
-          const savedPreview = String(card.image?.previewUrl || "").trim();
-          const sourceUrl = raw.image_url || savedFull || savedMedium || savedPreview;
-          return getCardFullUrl(raw)
-            || (sourceUrl ? deriveCardTraderImageUrl(sourceUrl, "full") : "")
-            || "";
-        }
-
         function getAlbumCardImage(card = {}) {
-          return getAlbumCardShowUrl(card) || getAlbumCardFullImageUrl(card) || "";
-        }
-
-        function warmAlbumCardImages(cards = [], limit = 12) {
-          if (!Array.isArray(cards) || !cards.length) return;
-          cards.slice(0, limit).forEach((card) => {
-            const src = getAlbumCardShowUrl(card);
-            if (!src) return;
-            const img = new Image();
-            img.decoding = "async";
-            img.loading = "eager";
-            img.src = src;
-          });
+          const raw = card.rawCard || {};
+          const fullUrl = String(card.image?.fullUrl || "").trim()
+            || getCardFullUrl(raw)
+            || deriveCardTraderImageUrl(card.image?.previewUrl, "full");
+          return fullUrl || String(card.image?.previewUrl || "").trim() || "";
         }
 
         function getAlbumCardTitle(card = {}) {
@@ -10896,10 +10857,8 @@ document.addEventListener('error', (event) => {
               const title = albumDetailEscapeHtml(getAlbumCardTitle(card));
               const meta = albumDetailEscapeHtml(getAlbumCardMeta(card));
               const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
-              const imageLoading = index < 12 ? "eager" : "lazy";
-              const imagePriority = index < 6 ? "high" : "auto";
               const imageHtml = imageUrl
-                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="${imageLoading}" decoding="async" fetchpriority="${imagePriority}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'album-detail-card-fallback',textContent:'Immagine non disponibile'}))">`
+                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
                 : `<div class="album-detail-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
@@ -10944,7 +10903,7 @@ document.addEventListener('error', (event) => {
               const albumName = albumDetailEscapeHtml(getAlbumNameById(card.albumId));
               const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
               const imageHtml = imageUrl
-                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'home-collection-card-fallback',textContent:'Immagine non disponibile'}))">`
+                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
                 : `<div class="home-collection-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
@@ -11088,7 +11047,7 @@ document.addEventListener('error', (event) => {
               const imageUrl = getAlbumCardImage(card);
               const cardTitle = albumDetailEscapeHtml(getAlbumCardTitle(card));
               return imageUrl
-                ? `<div class="home-set-preview-slot"><img class="home-set-preview-img" src="${albumDetailEscapeHtml(imageUrl)}" alt="${cardTitle}" loading="lazy" decoding="async" fetchpriority="low"></div>`
+                ? `<div class="home-set-preview-slot"><img class="home-set-preview-img" src="${albumDetailEscapeHtml(imageUrl)}" alt="${cardTitle}" loading="lazy"></div>`
                 : `<div class="home-set-preview-slot home-set-preview-more">?</div>`;
             }).join('');
             const missingSlots = Math.max(0, 3 - previewCards.length);
@@ -11166,7 +11125,6 @@ document.addEventListener('error', (event) => {
           }
           await refreshDuplicateCountCache();
           const cards = await getCardsByAlbum(state.currentAlbum.albumData.id);
-          warmAlbumCardImages(cards);
           renderAlbumDetailCards(cards);
           return cards;
         }
@@ -11198,7 +11156,6 @@ document.addEventListener('error', (event) => {
           albumNode.albumData.updatedAt = new Date().toISOString();
           await putStore("albums", albumNode.albumData);
           renderAlbum(albumNode);
-          warmAlbumCardImages(albumCards);
           renderAlbumDetailCards(albumCards);
           await refreshHomeSectionContent();
           await refreshHomeCollectionTotals();
