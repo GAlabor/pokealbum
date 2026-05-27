@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:db": "node scripts/build-db.js"
+    "build:db": "node scripts/build-db.js",
+    "test:r2": "node scripts/upload-r2-test.js"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.864.0",
+    "sharp": "^0.34.3"
   }
 }
