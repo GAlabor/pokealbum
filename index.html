@@ -10539,14 +10539,19 @@ document.addEventListener('error', (event) => {
               const rawFullUrl = payload.image?.fullUrl || payload.fullImageUrl || "";
               const rawPreviewUrl = payload.image?.previewUrl || payload.previewImageUrl || "";
               const rawCard = payload.rawCard || payload.raw || {};
+              const bestPreviewUrl = rawPreviewUrl
+                || getCardPreviewUrl(rawCard)
+                || deriveCardTraderImageUrl(rawFullUrl, "preview")
+                || rawFullUrl
+                || "";
               const bestFullUrl = rawFullUrl
                 || getCardFullUrl(rawCard)
-                || deriveCardTraderImageUrl(rawPreviewUrl, "full")
-                || rawPreviewUrl
+                || deriveCardTraderImageUrl(bestPreviewUrl, "full")
+                || bestPreviewUrl
                 || "";
               return {
                 fullUrl: bestFullUrl,
-                previewUrl: bestFullUrl || rawPreviewUrl || "",
+                previewUrl: bestPreviewUrl,
               };
             })(),
             display: payload.display || {},
@@ -10653,10 +10658,25 @@ document.addEventListener('error', (event) => {
 
         function getAlbumCardImage(card = {}) {
           const raw = card.rawCard || {};
+          const previewUrl = String(card.image?.previewUrl || "").trim()
+            || getCardPreviewUrl(raw)
+            || deriveCardTraderImageUrl(card.image?.fullUrl, "preview");
           const fullUrl = String(card.image?.fullUrl || "").trim()
             || getCardFullUrl(raw)
-            || deriveCardTraderImageUrl(card.image?.previewUrl, "full");
-          return fullUrl || String(card.image?.previewUrl || "").trim() || "";
+            || deriveCardTraderImageUrl(previewUrl, "full");
+          return previewUrl || fullUrl || "";
+        }
+
+        function warmAlbumCardImages(cards = [], limit = 16) {
+          if (!Array.isArray(cards) || !cards.length) return;
+          cards.slice(0, limit).forEach((card) => {
+            const src = getAlbumCardImage(card);
+            if (!src) return;
+            const img = new Image();
+            img.decoding = "async";
+            img.loading = "eager";
+            img.src = src;
+          });
         }
 
         function getAlbumCardTitle(card = {}) {
@@ -10857,8 +10877,10 @@ document.addEventListener('error', (event) => {
               const title = albumDetailEscapeHtml(getAlbumCardTitle(card));
               const meta = albumDetailEscapeHtml(getAlbumCardMeta(card));
               const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
+              const imageLoading = index < 12 ? "eager" : "lazy";
+              const imagePriority = index < 6 ? "high" : "auto";
               const imageHtml = imageUrl
-                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
+                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="${imageLoading}" decoding="async" fetchpriority="${imagePriority}">`
                 : `<div class="album-detail-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
@@ -10903,7 +10925,7 @@ document.addEventListener('error', (event) => {
               const albumName = albumDetailEscapeHtml(getAlbumNameById(card.albumId));
               const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
               const imageHtml = imageUrl
-                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
+                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy" decoding="async" fetchpriority="low">`
                 : `<div class="home-collection-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
@@ -11047,7 +11069,7 @@ document.addEventListener('error', (event) => {
               const imageUrl = getAlbumCardImage(card);
               const cardTitle = albumDetailEscapeHtml(getAlbumCardTitle(card));
               return imageUrl
-                ? `<div class="home-set-preview-slot"><img class="home-set-preview-img" src="${albumDetailEscapeHtml(imageUrl)}" alt="${cardTitle}" loading="lazy"></div>`
+                ? `<div class="home-set-preview-slot"><img class="home-set-preview-img" src="${albumDetailEscapeHtml(imageUrl)}" alt="${cardTitle}" loading="lazy" decoding="async" fetchpriority="low"></div>`
                 : `<div class="home-set-preview-slot home-set-preview-more">?</div>`;
             }).join('');
             const missingSlots = Math.max(0, 3 - previewCards.length);
@@ -11125,6 +11147,7 @@ document.addEventListener('error', (event) => {
           }
           await refreshDuplicateCountCache();
           const cards = await getCardsByAlbum(state.currentAlbum.albumData.id);
+          warmAlbumCardImages(cards);
           renderAlbumDetailCards(cards);
           return cards;
         }
@@ -11156,6 +11179,7 @@ document.addEventListener('error', (event) => {
           albumNode.albumData.updatedAt = new Date().toISOString();
           await putStore("albums", albumNode.albumData);
           renderAlbum(albumNode);
+          warmAlbumCardImages(albumCards);
           renderAlbumDetailCards(albumCards);
           await refreshHomeSectionContent();
           await refreshHomeCollectionTotals();
