@@ -9782,10 +9782,10 @@ el.autocomplete.addEventListener('click', (e) => {
       return {
         blueprintId: card.id ?? card.blueprint_id ?? null,
         image: {
+          // La full image resta disponibile per dettaglio/zoom.
           fullUrl: getCardFullUrl(card) || '',
-          // Per le anteprime salvate in album/collezione uso comunque la risoluzione migliore.
-          // La dimensione piccola resta solo CSS: il file/URL conservato è quello full.
-          previewUrl: getCardFullUrl(card) || getCardPreviewUrl(card) || '',
+          // In album salvo e uso la preview leggera: su telefono la full dentro la griglia rallenta tutto.
+          previewUrl: getCardPreviewUrl(card) || getCardFullUrl(card) || '',
         },
         display: {
           name: toTitleCase(f.name || ''),
@@ -10656,21 +10656,41 @@ document.addEventListener('error', (event) => {
           }[char]));
         }
 
-        function getAlbumCardImage(card = {}) {
+        function getAlbumCardPreviewUrl(card = {}) {
           const raw = card.rawCard || {};
-          const previewUrl = String(card.image?.previewUrl || "").trim()
-            || getCardPreviewUrl(raw)
-            || deriveCardTraderImageUrl(card.image?.fullUrl, "preview");
-          const fullUrl = String(card.image?.fullUrl || "").trim()
-            || getCardFullUrl(raw)
-            || deriveCardTraderImageUrl(previewUrl, "full");
-          return previewUrl || fullUrl || "";
+          const savedPreview = String(card.image?.previewUrl || "").trim();
+          const savedFull = String(card.image?.fullUrl || "").trim();
+
+          // Le griglie dell'album devono usare SEMPRE la preview leggera.
+          // Nei salvataggi precedenti previewUrl poteva contenere per errore la full image:
+          // su telefono questo obbligava Safari a scaricare/decodificare immagini enormi dentro la griglia.
+          const candidates = [
+            savedPreview ? deriveCardTraderImageUrl(savedPreview, "preview") : "",
+            getCardPreviewUrl(raw),
+            savedFull ? deriveCardTraderImageUrl(savedFull, "preview") : "",
+          ];
+
+          return candidates.map(value => String(value || "").trim()).find(Boolean) || "";
         }
 
-        function warmAlbumCardImages(cards = [], limit = 16) {
+        function getAlbumCardFullImageUrl(card = {}) {
+          const raw = card.rawCard || {};
+          const savedFull = String(card.image?.fullUrl || "").trim();
+          const savedPreview = String(card.image?.previewUrl || "").trim();
+          return savedFull
+            || getCardFullUrl(raw)
+            || (savedPreview ? deriveCardTraderImageUrl(savedPreview, "full") : "")
+            || "";
+        }
+
+        function getAlbumCardImage(card = {}) {
+          return getAlbumCardPreviewUrl(card) || getAlbumCardFullImageUrl(card) || "";
+        }
+
+        function warmAlbumCardImages(cards = [], limit = 12) {
           if (!Array.isArray(cards) || !cards.length) return;
           cards.slice(0, limit).forEach((card) => {
-            const src = getAlbumCardImage(card);
+            const src = getAlbumCardPreviewUrl(card);
             if (!src) return;
             const img = new Image();
             img.decoding = "async";
@@ -10880,7 +10900,7 @@ document.addEventListener('error', (event) => {
               const imageLoading = index < 12 ? "eager" : "lazy";
               const imagePriority = index < 6 ? "high" : "auto";
               const imageHtml = imageUrl
-                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="${imageLoading}" decoding="async" fetchpriority="${imagePriority}">`
+                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="${imageLoading}" decoding="async" fetchpriority="${imagePriority}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'album-detail-card-fallback',textContent:'Immagine non disponibile'}))">`
                 : `<div class="album-detail-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
@@ -10925,7 +10945,7 @@ document.addEventListener('error', (event) => {
               const albumName = albumDetailEscapeHtml(getAlbumNameById(card.albumId));
               const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
               const imageHtml = imageUrl
-                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy" decoding="async" fetchpriority="low">`
+                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy" decoding="async" fetchpriority="low" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'home-collection-card-fallback',textContent:'Immagine non disponibile'}))">`
                 : `<div class="home-collection-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
