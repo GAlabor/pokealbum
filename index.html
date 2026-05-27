@@ -5367,6 +5367,29 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   }
 }
 
+
+/* === MICRO FIX 27/05/2026: griglia album più compatta, carte leggermente più grandi === */
+.album-detail-cards-grid{
+  gap:10px 10px !important;
+  padding-left:0 !important;
+  padding-right:0 !important;
+  padding-bottom:24px !important;
+}
+
+@media (max-width:420px){
+  .album-detail-cards-grid{
+    gap:8px 8px !important;
+    padding-left:0 !important;
+    padding-right:0 !important;
+  }
+}
+
+@media (max-width:360px){
+  .album-detail-cards-grid{
+    gap:7px 7px !important;
+  }
+}
+
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
