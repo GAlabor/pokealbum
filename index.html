@@ -7,6 +7,8 @@
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
     <title>PokéAlbum Home</title>
+    <link rel="preconnect" href="https://cardtrader.com" crossorigin>
+    <link rel="dns-prefetch" href="//cardtrader.com">
     <link rel="preconnect" href="https://www.cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//www.cardtrader.com"><style>
 .album-needed-toast{opacity:0;visibility:hidden;pointer-events:none;}
@@ -7584,39 +7586,22 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
 
-    function deriveCardTraderImageUrl(url, variant) {
-      const raw = String(url || '').trim();
-      if (!raw) return '';
-      if (!raw.includes('/uploads/blueprints/image/')) return raw;
-
-      const filename = raw.split('/').pop() || '';
-      const cleanFilename = filename.replace(/^(preview_|show_)/i, '');
-
-      if (variant === 'preview') {
-        return raw.replace(/\/[^/]+$/i, `/preview_${cleanFilename}`);
-      }
-
-      if (variant === 'show') {
-        return raw.replace(/\/[^/]+$/i, `/show_${cleanFilename}`);
-      }
-
-      if (variant === 'full') {
-        return raw.replace(/\/[^/]+$/i, `/${cleanFilename}`);
-      }
-
-      return raw;
+    function getCardImageUrl(card, variant = 'preview') {
+      const wanted = String(variant || 'preview').trim().toLowerCase();
+      const images = card?.images || {};
+      return String(images?.[wanted] || '').trim();
     }
 
     function getCardPreviewUrl(card) {
-      return String(card?.image_preview_url || '').trim()
-        || deriveCardTraderImageUrl(card?.image_url, 'preview')
-        || String(card?.image_url || '').trim();
+      return getCardImageUrl(card, 'preview');
+    }
+
+    function getCardShowUrl(card) {
+      return getCardImageUrl(card, 'show');
     }
 
     function getCardFullUrl(card) {
-      return String(card?.image_full_url || '').trim()
-        || deriveCardTraderImageUrl(card?.image_url, 'full')
-        || String(card?.image_url || '').trim();
+      return getCardImageUrl(card, 'full');
     }
 
 	function formatDuration(ms) {
@@ -8992,7 +8977,7 @@ function finishUpdateTimer() {
       const displaySetCode = String(f.setCode || '').toUpperCase();
       const displaySetName = f.setName || '';
 
-      const imageUrl = getCardPreviewUrl(card);
+      const imageUrl = getCardShowUrl(card);
       const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
       const imagePriority = resultIndex < 4 ? 'high' : 'auto';
 
@@ -9110,12 +9095,12 @@ function finishUpdateTimer() {
 
       const rows = items.map((card, index) => {
         const f = getDisplayFields(card);
-        const previewUrl = getCardPreviewUrl(card);
+        const previewSrc = getCardPreviewUrl(card);
 
         return `
           <div class="suggestion ${index === state.activeSuggestion ? 'active' : ''}" data-suggestion-index="${index}">
-            ${previewUrl
-              ? `<img class="suggestion-thumb" loading="lazy" decoding="async" src="${escapeHtml(previewUrl)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
+            ${previewSrc
+              ? `<img class="suggestion-thumb" loading="lazy" decoding="async" src="${escapeHtml(previewSrc)}" alt="${escapeHtml(f.name || 'Carta')}" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'suggestion-thumb-fallback',textContent:'N/D'}))">`
               : `<div class="suggestion-thumb-fallback">N/D</div>`}
             <div class="suggestion-main">
               <div class="suggestion-title">${highlightSuggestionText(formatSuggestionHeadline(card), el.searchInput.value)}</div>
@@ -9781,11 +9766,10 @@ el.autocomplete.addEventListener('click', (e) => {
       const priceSource = String(el.detailPriceSource?.textContent || '').trim();
       return {
         blueprintId: card.id ?? card.blueprint_id ?? null,
-        image: {
-          fullUrl: getCardFullUrl(card) || '',
-          // Per le anteprime salvate in album/collezione uso comunque la risoluzione migliore.
-          // La dimensione piccola resta solo CSS: il file/URL conservato è quello full.
-          previewUrl: getCardFullUrl(card) || getCardPreviewUrl(card) || '',
+        images: {
+          preview: getCardPreviewUrl(card) || '',
+          show: getCardShowUrl(card) || '',
+          full: getCardFullUrl(card) || '',
         },
         display: {
           name: toTitleCase(f.name || ''),
@@ -10535,18 +10519,15 @@ document.addEventListener('error', (event) => {
             schemaVersion: STORAGE_SCHEMA_VERSION,
             albumId: album?.id || null,
             blueprintId,
-            image: (() => {
-              const rawFullUrl = payload.image?.fullUrl || payload.fullImageUrl || "";
-              const rawPreviewUrl = payload.image?.previewUrl || payload.previewImageUrl || "";
+            images: (() => {
               const rawCard = payload.rawCard || payload.raw || {};
-              const bestFullUrl = rawFullUrl
-                || getCardFullUrl(rawCard)
-                || deriveCardTraderImageUrl(rawPreviewUrl, "full")
-                || rawPreviewUrl
-                || "";
+              const sourceImages = payload.images || rawCard.images || {};
+
               return {
-                fullUrl: bestFullUrl,
-                previewUrl: bestFullUrl || rawPreviewUrl || "",
+                preview: String(sourceImages.preview || '').trim(),
+                show: String(sourceImages.show || '').trim(),
+                full: String(sourceImages.full || '').trim(),
+                showLocal: String(sourceImages.showLocal || '').trim(),
               };
             })(),
             display: payload.display || {},
@@ -10652,11 +10633,8 @@ document.addEventListener('error', (event) => {
         }
 
         function getAlbumCardImage(card = {}) {
-          const raw = card.rawCard || {};
-          const fullUrl = String(card.image?.fullUrl || "").trim()
-            || getCardFullUrl(raw)
-            || deriveCardTraderImageUrl(card.image?.previewUrl, "full");
-          return fullUrl || String(card.image?.previewUrl || "").trim() || "";
+          const images = card.images || {};
+          return String(images.showLocal || images.show || '').trim();
         }
 
         function getAlbumCardTitle(card = {}) {
