@@ -4712,6 +4712,30 @@ body:not(.ui-booting) #bottomNav{
 }
 
 /* === FIX: FAB Aggiungi carta globale === */
+
+/* === FIX PULSANTI TOPBAR ALBUM: usa lo stile corrente, non quello maggiorato === */
+.album-detail-topbar{
+  min-height:var(--topbar-control-size) !important;
+  margin:0 0 12px !important;
+  padding:0 0 var(--poke-topbar-bottom, 6px) !important;
+  align-items:flex-start !important;
+  justify-content:space-between !important;
+  position:relative !important;
+}
+.album-detail-topbar .glass-icon-btn{
+  width:var(--topbar-control-size) !important;
+  height:var(--topbar-control-size) !important;
+  min-width:var(--topbar-control-size) !important;
+  min-height:var(--topbar-control-size) !important;
+  border-radius:50% !important;
+}
+.album-detail-topbar .glass-icon-btn svg{
+  width:var(--topbar-control-icon-size) !important;
+  height:var(--topbar-control-icon-size) !important;
+  stroke-width:2.35 !important;
+}
+.album-detail-topbar .glass-icon-btn:first-child{color:#5c6f99 !important;}
+.album-detail-topbar .glass-icon-btn.is-confirm{color:var(--blue) !important;}
 .album-detail-view{
   padding-bottom:calc(var(--safe-bottom) + 92px);
 }
@@ -4722,52 +4746,26 @@ body:not(.ui-booting) #bottomNav{
   gap:0 !important;
   padding-bottom:calc(var(--safe-bottom) + 84px) !important;
 }
-.album-detail-topbar{
-  min-height:104px !important;
-  margin:0 0 22px !important;
-  padding:0 !important;
-  align-items:flex-start !important;
-  justify-content:space-between !important;
-  position:relative !important;
-}
-.album-detail-topbar .glass-icon-btn{
-  width:76px !important;
-  height:76px !important;
-  min-width:76px !important;
-  min-height:76px !important;
-  border-radius:999px !important;
-  border:1px solid rgba(255,255,255,.74) !important;
-  background:rgba(255,255,255,.72) !important;
-  color:#2f64ff !important;
-  box-shadow:0 14px 28px rgba(73,96,157,.10), inset 0 1px 0 rgba(255,255,255,.98) !important;
-  backdrop-filter:blur(24px) saturate(150%) !important;
-  -webkit-backdrop-filter:blur(24px) saturate(150%) !important;
-}
-.album-detail-topbar .glass-icon-btn:first-child{
-  color:#566485 !important;
-}
-.album-detail-topbar .glass-icon-btn svg{
-  width:34px !important;
-  height:34px !important;
-  stroke-width:2.7 !important;
-}
 .album-detail-title-wrap{
   position:absolute !important;
-  left:96px !important;
-  right:96px !important;
-  top:12px !important;
+  left:58px !important;
+  right:74px !important;
+  top:5px !important;
   transform:none !important;
   text-align:left !important;
-  display:block !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  min-height:44px !important;
   pointer-events:none !important;
 }
 .album-detail-title{
   margin:0 !important;
   color:#1c2e5a !important;
-  font-size:38px !important;
-  font-weight:950 !important;
-  line-height:1.02 !important;
-  letter-spacing:-.055em !important;
+  font-size:18px !important;
+  font-weight:850 !important;
+  line-height:1.05 !important;
+  letter-spacing:-.035em !important;
   white-space:nowrap !important;
   overflow:hidden !important;
   text-overflow:ellipsis !important;
@@ -4775,12 +4773,12 @@ body:not(.ui-booting) #bottomNav{
 .album-detail-title-wrap::after{
   content:attr(data-album-subtitle);
   display:block;
-  margin-top:6px;
-  color:#9aa6c1;
-  font-size:24px;
-  font-weight:820;
-  line-height:1.05;
-  letter-spacing:-.035em;
+  margin-top:2px;
+  color:#7d8ba9;
+  font-size:11px;
+  font-weight:700;
+  line-height:1.1;
+  letter-spacing:-.015em;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -4892,19 +4890,481 @@ body:not(.ui-booting) #bottomNav{
   height:24px !important;
   font-size:12px !important;
 }
-@media (max-width:520px){
-  .album-detail-topbar{min-height:82px !important;margin-bottom:16px !important;}
-  .album-detail-topbar .glass-icon-btn{width:58px !important;height:58px !important;min-width:58px !important;min-height:58px !important;}
-  .album-detail-topbar .glass-icon-btn svg{width:28px !important;height:28px !important;}
-  .album-detail-title-wrap{left:76px !important;right:76px !important;top:10px !important;}
-  .album-detail-title{font-size:26px !important;}
-  .album-detail-title-wrap::after{font-size:17px !important;margin-top:4px !important;}
+
   .album-page-controls{grid-template-columns:54px minmax(0,1fr) 54px !important;gap:12px !important;padding:0 30px !important;margin-bottom:18px !important;}
   .album-page-nav{width:54px !important;height:54px !important;}
   .album-page-nav::before{width:20px;height:20px;border-width:5px;}
   .album-page-label{font-size:26px !important;}
   .album-detail-cards-grid{gap:22px 16px !important;padding-left:2px !important;padding-right:2px !important;}
   .album-slot-empty{border-width:4px !important;font-size:22px !important;border-radius:20px !important;}
+}
+
+
+
+/* === FIX NAVIGAZIONE PAGINA ALBUM: più piccola e pulita === */
+.album-page-controls{
+  position:relative !important;
+  top:auto !important;
+  z-index:5 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:12px !important;
+  margin:2px 0 14px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+.album-page-label-wrap{
+  min-width:0 !important;
+  text-align:center !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+.album-page-label{
+  margin:0 !important;
+  color:#111827 !important;
+  font-size:18px !important;
+  font-weight:780 !important;
+  line-height:1.1 !important;
+  letter-spacing:-.035em !important;
+  white-space:nowrap !important;
+}
+.album-page-subtitle{
+  display:none !important;
+}
+.album-page-nav{
+  width:28px !important;
+  height:32px !important;
+  min-width:28px !important;
+  min-height:32px !important;
+  border:0 !important;
+  border-radius:12px !important;
+  background:transparent !important;
+  color:#111827 !important;
+  box-shadow:none !important;
+  font-size:0 !important;
+  line-height:1 !important;
+  padding:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  -webkit-tap-highlight-color:transparent !important;
+  transition:transform .15s ease, background-color .15s ease, opacity .15s ease !important;
+}
+.album-page-nav::before{
+  content:"" !important;
+  width:10px !important;
+  height:10px !important;
+  border-top:2.6px solid currentColor !important;
+  border-right:2.6px solid currentColor !important;
+  display:block !important;
+}
+#albumPagePrevBtn::before{
+  transform:rotate(-135deg) !important;
+  margin-left:4px !important;
+}
+#albumPageNextBtn::before{
+  transform:rotate(45deg) !important;
+  margin-right:4px !important;
+}
+.album-page-nav:not(:disabled):hover{
+  background:rgba(17,24,39,.05) !important;
+}
+.album-page-nav:not(:disabled):active{
+  transform:scale(.90) !important;
+  background:rgba(17,24,39,.08) !important;
+}
+.album-page-nav:disabled{
+  opacity:.28 !important;
+  color:#7d8ba9 !important;
+  cursor:not-allowed !important;
+}
+@media (max-width:420px){
+  .album-page-controls{
+    gap:10px !important;
+    margin:0 0 13px !important;
+    padding:0 !important;
+  }
+  .album-page-nav{
+    width:26px !important;
+    height:30px !important;
+    min-width:26px !important;
+    min-height:30px !important;
+  }
+  .album-page-nav::before{
+    width:9px !important;
+    height:9px !important;
+    border-width:2.5px !important;
+  }
+  .album-page-label{
+    font-size:17px !important;
+    font-weight:780 !important;
+  }
+}
+
+
+
+/* === FIX FINALE: chevron pagina album compatti, vicini ed equidistanti === */
+.album-page-controls{
+  position:relative !important;
+  top:auto !important;
+  z-index:5 !important;
+  display:grid !important;
+  grid-template-columns:auto auto auto !important;
+  align-items:center !important;
+  justify-content:center !important;
+  justify-items:center !important;
+  column-gap:12px !important;
+  row-gap:0 !important;
+  width:100% !important;
+  margin:0 0 14px !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+.album-page-label-wrap{
+  min-width:0 !important;
+  width:auto !important;
+  text-align:center !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 !important;
+  padding:0 !important;
+}
+.album-page-label{
+  margin:0 !important;
+  color:#111827 !important;
+  font-size:18px !important;
+  font-weight:780 !important;
+  line-height:1.1 !important;
+  letter-spacing:-.035em !important;
+  white-space:nowrap !important;
+}
+.album-page-subtitle{display:none !important;}
+.album-page-nav{
+  width:24px !important;
+  height:30px !important;
+  min-width:24px !important;
+  min-height:30px !important;
+  border:0 !important;
+  border-radius:10px !important;
+  background:transparent !important;
+  color:#111827 !important;
+  box-shadow:none !important;
+  font-size:0 !important;
+  line-height:1 !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  -webkit-tap-highlight-color:transparent !important;
+  transition:transform .15s ease, background-color .15s ease, opacity .15s ease !important;
+}
+.album-page-nav::before{
+  content:"" !important;
+  width:10px !important;
+  height:10px !important;
+  border-top:2.6px solid currentColor !important;
+  border-right:2.6px solid currentColor !important;
+  display:block !important;
+  margin:0 !important;
+  transform-origin:center !important;
+}
+#albumPagePrevBtn::before{transform:rotate(-135deg) !important;}
+#albumPageNextBtn::before{transform:rotate(45deg) !important;}
+.album-page-nav:not(:disabled):hover{background:rgba(17,24,39,.05) !important;}
+.album-page-nav:not(:disabled):active{transform:scale(.90) !important;background:rgba(17,24,39,.08) !important;}
+.album-page-nav:disabled{opacity:.28 !important;color:#7d8ba9 !important;cursor:not-allowed !important;}
+@media (max-width:420px){
+  .album-page-controls{column-gap:10px !important;margin:0 0 13px !important;}
+  .album-page-nav{width:22px !important;height:28px !important;min-width:22px !important;min-height:28px !important;}
+  .album-page-nav::before{width:9px !important;height:9px !important;border-width:2.5px !important;}
+  .album-page-label{font-size:17px !important;font-weight:780 !important;}
+}
+
+
+/* === FIX UI PAGINA ALBUM: pill compatta stile esempio_new === */
+.album-page-controls{
+  position:relative !important;
+  top:auto !important;
+  z-index:5 !important;
+  width:max-content !important;
+  max-width:calc(100% - 32px) !important;
+  min-height:54px !important;
+  display:inline-grid !important;
+  grid-template-columns:30px auto 30px !important;
+  align-items:center !important;
+  justify-content:center !important;
+  justify-items:center !important;
+  column-gap:10px !important;
+  row-gap:0 !important;
+  margin:0 auto 16px !important;
+  padding:5px 14px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.64) !important;
+  border:1px solid rgba(255,255,255,.72) !important;
+  box-shadow:
+    0 14px 28px rgba(67,83,134,.12),
+    inset 0 1px 0 rgba(255,255,255,.92) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+}
+.album-page-label-wrap{
+  min-width:0 !important;
+  width:auto !important;
+  text-align:center !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  margin:0 !important;
+  padding:0 2px !important;
+}
+.album-page-label{
+  margin:0 !important;
+  color:#32456f !important;
+  font-size:16px !important;
+  font-weight:800 !important;
+  line-height:1 !important;
+  letter-spacing:-.035em !important;
+  white-space:nowrap !important;
+}
+.album-page-count{
+  color:#2f64ff !important;
+  font-weight:900 !important;
+}
+.album-page-subtitle{
+  display:none !important;
+}
+.album-page-nav{
+  width:30px !important;
+  height:38px !important;
+  min-width:30px !important;
+  min-height:38px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:transparent !important;
+  color:#9ba9c2 !important;
+  box-shadow:none !important;
+  font-size:0 !important;
+  line-height:1 !important;
+  padding:0 !important;
+  margin:0 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  cursor:pointer !important;
+  -webkit-tap-highlight-color:transparent !important;
+  transition:transform .15s ease, background-color .15s ease, color .15s ease, opacity .15s ease !important;
+}
+.album-page-nav::before{
+  content:"" !important;
+  width:11px !important;
+  height:11px !important;
+  border-top:3px solid currentColor !important;
+  border-right:3px solid currentColor !important;
+  display:block !important;
+  margin:0 !important;
+  transform-origin:center !important;
+}
+#albumPagePrevBtn::before{
+  transform:rotate(-135deg) !important;
+}
+#albumPageNextBtn::before{
+  transform:rotate(45deg) !important;
+}
+.album-page-nav:not(:disabled):hover{
+  color:#6f7f9d !important;
+  background:rgba(47,100,255,.06) !important;
+}
+.album-page-nav:not(:disabled):active{
+  transform:scale(.90) !important;
+  background:rgba(47,100,255,.10) !important;
+}
+.album-page-nav:disabled{
+  opacity:.32 !important;
+  color:#a9b5ca !important;
+  cursor:not-allowed !important;
+}
+@media (max-width:420px){
+  .album-page-controls{
+    min-height:52px !important;
+    grid-template-columns:28px auto 28px !important;
+    column-gap:9px !important;
+    margin:0 auto 15px !important;
+    padding:4px 13px !important;
+  }
+  .album-page-nav{
+    width:28px !important;
+    height:36px !important;
+    min-width:28px !important;
+    min-height:36px !important;
+  }
+  .album-page-nav::before{
+    width:10px !important;
+    height:10px !important;
+    border-width:3px !important;
+  }
+  .album-page-label{
+    font-size:15px !important;
+  }
+}
+
+
+/* === MICRO FIX: pill pagina album più piccola === */
+.album-page-controls{
+  min-height:42px !important;
+  grid-template-columns:24px auto 24px !important;
+  column-gap:6px !important;
+  margin:0 auto 12px !important;
+  padding:3px 10px !important;
+  border-radius:999px !important;
+}
+.album-page-label-wrap{
+  padding:0 1px !important;
+}
+.album-page-label{
+  font-size:14px !important;
+  font-weight:800 !important;
+}
+.album-page-nav{
+  width:24px !important;
+  height:30px !important;
+  min-width:24px !important;
+  min-height:30px !important;
+}
+.album-page-nav::before{
+  width:9px !important;
+  height:9px !important;
+  border-top-width:2.6px !important;
+  border-right-width:2.6px !important;
+}
+@media (max-width:420px){
+  .album-page-controls{
+    min-height:40px !important;
+    grid-template-columns:22px auto 22px !important;
+    column-gap:5px !important;
+    margin:0 auto 11px !important;
+    padding:3px 9px !important;
+  }
+  .album-page-label{
+    font-size:13.5px !important;
+  }
+  .album-page-nav{
+    width:22px !important;
+    height:28px !important;
+    min-width:22px !important;
+    min-height:28px !important;
+  }
+  .album-page-nav::before{
+    width:8px !important;
+    height:8px !important;
+    border-top-width:2.5px !important;
+    border-right-width:2.5px !important;
+  }
+}
+
+
+
+/* === POSIZIONE FINALE: pill pagina album in basso stile esempio3 === */
+.album-detail-cards{
+  position:relative !important;
+  padding-top:2px !important;
+  padding-bottom:calc(var(--safe-bottom) + 92px) !important;
+}
+.album-page-controls{
+  position:fixed !important;
+  left:50% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:calc(var(--safe-bottom) + 22px) !important;
+  transform:translateX(-50%) !important;
+  z-index:30 !important;
+  margin:0 !important;
+}
+.album-page-nav:not(:disabled):active{
+  transform:scale(.90) !important;
+}
+@media (max-width:420px){
+  .album-detail-cards{
+    padding-bottom:calc(var(--safe-bottom) + 84px) !important;
+  }
+  .album-page-controls{
+    bottom:calc(var(--safe-bottom) + 18px) !important;
+  }
+}
+
+
+
+/* === FIX ALBUM: elimina la grossa tabbar sotto senza spostare FAB e pill pagina === */
+body:has(#albumDetailView:not(.is-hidden)) .content.is-form-open{
+  padding-bottom:0 !important;
+}
+
+body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{
+  position:fixed !important;
+  left:auto !important;
+  right:20px !important;
+  bottom:calc(var(--safe-bottom) + 14px) !important;
+  width:auto !important;
+  height:auto !important;
+  min-width:0 !important;
+  min-height:0 !important;
+  padding:0 !important;
+  margin:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  display:block !important;
+  z-index:90 !important;
+  pointer-events:none !important;
+}
+
+body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .nav-item{
+  display:none !important;
+}
+
+body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab-wrap{
+  display:block !important;
+  margin:0 !important;
+  padding:5px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,0.76) !important;
+  border:1px solid rgba(255,255,255,0.78) !important;
+  box-shadow:
+    0 18px 34px rgba(47,100,255,0.20),
+    0 7px 14px rgba(66,89,152,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.98) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+  pointer-events:auto !important;
+}
+
+body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
+  position:relative !important;
+  z-index:1 !important;
+  pointer-events:auto !important;
+}
+
+@media (max-width:420px){
+  body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{
+    right:14px !important;
+    bottom:calc(var(--safe-bottom) + 10px) !important;
+  }
 }
 
 </style></head>
@@ -6062,7 +6522,7 @@ paint-order="stroke">
               <div class="album-page-controls" id="albumPageControls" aria-label="Navigazione pagine album">
                 <button class="album-page-nav" id="albumPagePrevBtn" type="button" aria-label="Pagina precedente">&lt;</button>
                 <div class="album-page-label-wrap" aria-live="polite">
-                  <p class="album-page-label" id="albumPageLabel">Pagina 1</p>
+                  <p class="album-page-label" id="albumPageLabel">Pagina <span class="album-page-count">1</span></p>
                   <p class="album-page-subtitle" id="albumPageSubtitle">0/0 slot di 0</p>
                 </div>
                 <button class="album-page-nav" id="albumPageNextBtn" type="button" aria-label="Pagina successiva">&gt;</button>
@@ -10326,7 +10786,7 @@ document.addEventListener('error', (event) => {
           const orderedCards = Array.isArray(cards) ? cards : [];
           const { slotsPerPage, totalPages, currentPage, totalSlots } = getAlbumDetailPageConfig(orderedCards);
           state.albumDetailPage = currentPage;
-          if (els.albumPageLabel) els.albumPageLabel.textContent = `Pagina ${currentPage}`;
+          if (els.albumPageLabel) els.albumPageLabel.innerHTML = `Pagina <span class="album-page-count">${currentPage}/${totalPages}</span>`;
           const pageStartIndex = (currentPage - 1) * slotsPerPage;
           const filled = orderedCards.slice(pageStartIndex, pageStartIndex + slotsPerPage).length;
           if (els.albumPageSubtitle) {
