@@ -203,12 +203,6 @@ async function main() {
         expansion_id: bp.expansion_id,
         set_name: exp.name || '',
         set_code: exp.code || '',
-
-        // Compatibilità con il vecchio vi262.html.
-        // Per ora resta, così non spacchiamo tutto come fanno gli umani quando "ottimizzano".
-        image_url: images.preview,
-
-        // Nuova gestione pulita immagini.
         images
       };
 
@@ -224,7 +218,6 @@ async function main() {
         )
       };
 
-      // Database ottimizzato: campo q già pronto per ricerca veloce.
       allCards.push(card);
     }
   }
