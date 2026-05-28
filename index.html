@@ -5449,6 +5449,53 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   }
 }
 
+
+/* === FIX SPIGOLI SLOT VUOTI / CARTE INSERITE ===
+   Gli slot vuoti devono seguire lo stesso raggio visivo delle carte inserite. */
+.album-slot-empty{
+  border-radius:13px !important;
+}
+@media (max-width:420px){
+  .album-slot-empty{
+    border-radius:13px !important;
+  }
+}
+
+
+/* === FIX OMBRA/TAGLIO CARTE INSERITE IN ALBUM 28/05/2026 ===
+   Rimuove l'ombra scura generata dal drop-shadow delle immagini,
+   evita che le ombre si uniscano tra slot vicini e rende il ritaglio netto. */
+.album-detail-card{
+  overflow:hidden !important;
+  border-radius:13px !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+.album-detail-card-image-wrap{
+  overflow:hidden !important;
+  border-radius:13px !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+.album-detail-card-image{
+  display:block !important;
+  width:100% !important;
+  height:100% !important;
+  object-fit:cover !important;
+  border-radius:13px !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+.album-detail-card-image-wrap .card-duplicate-badge{
+  right:6px !important;
+  bottom:6px !important;
+}
+.album-slot-empty{
+  overflow:hidden !important;
+}
+
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
