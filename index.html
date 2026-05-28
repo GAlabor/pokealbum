@@ -5450,69 +5450,66 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 }
 
 
-/* === FIX SPIGOLI SLOT VUOTI / CARTE INSERITE ===
-   Gli slot vuoti devono seguire lo stesso raggio visivo delle carte inserite. */
-.album-slot-empty{
-  border-radius:13px !important;
-}
-@media (max-width:420px){
-  .album-slot-empty{
-    border-radius:13px !important;
-  }
-}
 
-
-/* === FIX OMBRA/TAGLIO CARTE INSERITE IN ALBUM 28/05/2026 ===
-   Rimuove l'ombra scura generata dal drop-shadow delle immagini,
-   evita che le ombre si uniscano tra slot vicini e rende il ritaglio netto. */
+/* === FIX v279: arrotondamento album senza tagliare i bordi ===
+   Correzione rispetto al fix precedente:
+   - niente inset percentuale: non mangia più sopra/sotto/lati;
+   - raggio ellittico scritto correttamente con slash, quindi sinistra/destra restano simmetrici;
+   - arrotondamento applicato al contenitore, immagine pulita senza doppio radius. */
 .album-detail-card{
-  overflow:hidden !important;
-  border-radius:13px !important;
+  overflow:visible !important;
+  border-radius:0 !important;
   background:transparent !important;
   box-shadow:none !important;
   filter:none !important;
 }
+
 .album-detail-card-image-wrap{
+  box-sizing:border-box !important;
+  position:relative !important;
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
   overflow:hidden !important;
-  border-radius:13px !important;
+  border-radius:5.2% / 3.7% !important;
+  -webkit-clip-path:inset(0 round 5.2% / 3.7%) !important;
+  clip-path:inset(0 round 5.2% / 3.7%) !important;
   background:transparent !important;
   box-shadow:none !important;
   filter:none !important;
+  isolation:isolate !important;
+  transform:translateZ(0) !important;
+  backface-visibility:hidden !important;
 }
-.album-detail-card-image{
+
+.album-detail-card-image,
+.album-detail-card-image-wrap img{
   display:block !important;
   width:100% !important;
   height:100% !important;
-  object-fit:cover !important;
-  border-radius:13px !important;
-  box-shadow:none !important;
-  filter:none !important;
-}
-.album-detail-card-image-wrap .card-duplicate-badge{
-  right:6px !important;
-  bottom:6px !important;
-}
-.album-slot-empty{
-  overflow:hidden !important;
-}
-
-
-/* === FIX TAGLIO IMMAGINI ALBUM 28/05/2026 ===
-   Le carte nell'album devono mostrare l'immagine completa: niente crop.
-   Mantiene il taglio pulito del contenitore, ma usa contain invece di cover. */
-.album-detail-card-image-wrap{
-  overflow:hidden !important;
-  border-radius:13px !important;
-  background:transparent !important;
-}
-.album-detail-card-image{
-  width:100% !important;
-  height:100% !important;
+  max-width:100% !important;
+  max-height:100% !important;
   object-fit:contain !important;
   object-position:center center !important;
-  border-radius:13px !important;
+  border-radius:0 !important;
+  -webkit-clip-path:none !important;
+  clip-path:none !important;
   box-shadow:none !important;
   filter:none !important;
+  transform:translateZ(0) !important;
+  backface-visibility:hidden !important;
+}
+
+.album-detail-card-image-wrap .card-duplicate-badge{
+  right:8px !important;
+  bottom:8px !important;
+}
+
+.album-slot-empty{
+  overflow:hidden !important;
+  border-radius:5.2% / 3.7% !important;
+  -webkit-clip-path:inset(0 round 5.2% / 3.7%) !important;
+  clip-path:inset(0 round 5.2% / 3.7%) !important;
 }
 
 </style></head>
@@ -10927,7 +10924,7 @@ document.addEventListener('error', (event) => {
 
         function getAlbumCardImage(card = {}) {
           const images = card.images || {};
-          return String(images.showLocal || images.show || '').trim();
+          return String(images.show || images.showLocal || '').trim();
         }
 
         function getAlbumCardTitle(card = {}) {
