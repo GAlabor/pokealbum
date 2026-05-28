@@ -3405,6 +3405,12 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 .card-zoom-overlay.open{
   display:block;
 }
+body.card-zoom-open{
+  overflow:hidden;
+  overscroll-behavior:none;
+  touch-action:none;
+}
+
 .card-zoom-stage{
   position:absolute;
   inset:0;
@@ -3414,6 +3420,11 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
   justify-content:center;
   padding:calc(var(--safe-top) + 64px) 18px calc(var(--safe-bottom) + 94px);
   cursor:grab;
+  overscroll-behavior:none;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-touch-callout:none;
 }
 .card-zoom-stage.is-dragging{
   cursor:grabbing;
@@ -5389,6 +5400,52 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 @media (max-width:360px){
   .album-detail-cards-grid{
     gap:7px 7px !important;
+  }
+}
+
+
+/* === FIX RESPONSIVE RACCOGLITORE: layout fisso, dimensione carte adattiva === */
+.album-detail-cards-grid{
+  --album-grid-cols:3;
+  --album-grid-rows:3;
+  --album-card-width:110px;
+  --album-grid-col-gap:10px;
+  --album-grid-row-gap:10px;
+  --album-grid-available-height:auto;
+  display:grid !important;
+  grid-template-columns:repeat(var(--album-grid-cols), var(--album-card-width)) !important;
+  grid-auto-rows:auto !important;
+  gap:var(--album-grid-row-gap) var(--album-grid-col-gap) !important;
+  width:100% !important;
+  min-height:var(--album-grid-available-height) !important;
+  justify-content:center !important;
+  justify-items:center !important;
+  align-content:center !important;
+  padding-left:0 !important;
+  padding-right:0 !important;
+}
+.album-detail-card,
+.album-slot-empty{
+  width:var(--album-card-width) !important;
+  max-width:var(--album-card-width) !important;
+  aspect-ratio:2.5 / 3.5 !important;
+  min-height:0 !important;
+}
+.album-detail-card-image-wrap{
+  width:100% !important;
+  height:100% !important;
+}
+.album-detail-card-image{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+}
+@media (max-height:700px){
+  .album-page-controls{
+    bottom:calc(var(--safe-bottom) + 12px) !important;
+  }
+  body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{
+    bottom:calc(var(--safe-bottom) + 8px) !important;
   }
 }
 
@@ -9620,11 +9677,20 @@ if (el.reloadBtn) {
         }
       });
 
+      const moveSearchCaretToEnd = () => {
+        const input = el.searchInput;
+        if (!input || !input.value) return;
+        const end = input.value.length;
+        requestAnimationFrame(() => {
+          try {
+            input.setSelectionRange(end, end);
+          } catch (_) {}
+        });
+      };
+
       el.searchInput.addEventListener('focus', () => {
         const query = el.searchInput.value;
-        if (query) {
-          requestAnimationFrame(() => el.searchInput.select());
-        }
+        moveSearchCaretToEnd();
         if (!state.cards.length) {
           fetchPokemonIndex(false, { silent: true }).catch(() => {});
           return;
@@ -9633,11 +9699,8 @@ if (el.reloadBtn) {
         renderSuggestions(state.suggestions);
       });
 
-      el.searchInput.addEventListener('click', () => {
-        if (el.searchInput.value) {
-          el.searchInput.select();
-        }
-      });
+      el.searchInput.addEventListener('click', moveSearchCaretToEnd);
+      el.searchInput.addEventListener('touchend', moveSearchCaretToEnd);
 
       el.searchInput.addEventListener('keydown', (e) => {
         if (!state.suggestions.length) {
@@ -9864,7 +9927,7 @@ document.addEventListener('load', (event) => {
 
 
 
-/* === ADD 21/05/2026: viewer zoom carta === */
+/* === FIX 28/05/2026: viewer zoom carta stabile con pinch/pan reale === */
 (function initCardZoomViewer(){
   const overlay = document.getElementById('cardZoomOverlay');
   const stage = document.getElementById('cardZoomStage');
@@ -9878,38 +9941,121 @@ document.addEventListener('load', (event) => {
   const zoomBtn = document.getElementById('cardZoomBtn');
   if (!overlay || !stage || !zoomImg || !detailWrap || !detailImg) return;
 
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 4.5;
+  const DOUBLE_TAP_DELAY = 280;
+
   const zoomState = {
     scale: 1,
     x: 0,
     y: 0,
-    dragging: false,
-    startX: 0,
-    startY: 0,
-    originX: 0,
-    originY: 0,
-    lastTap: 0,
     pointers: new Map(),
+    mode: 'idle',
+    panStartX: 0,
+    panStartY: 0,
+    panOriginX: 0,
+    panOriginY: 0,
     pinchStartDistance: 0,
     pinchStartScale: 1,
+    pinchStartCenter: null,
+    pinchStartContentPoint: null,
+    lastTap: 0,
   };
 
   function clamp(value, min, max){
     return Math.max(min, Math.min(max, value));
   }
 
-  function applyZoom(){
-    zoomState.scale = clamp(zoomState.scale, 1, 4);
-    if (zoomState.scale <= 1) {
+  function getStageMetrics(){
+    const rect = stage.getBoundingClientRect();
+    const style = window.getComputedStyle(stage);
+    const padLeft = parseFloat(style.paddingLeft) || 0;
+    const padRight = parseFloat(style.paddingRight) || 0;
+    const padTop = parseFloat(style.paddingTop) || 0;
+    const padBottom = parseFloat(style.paddingBottom) || 0;
+    const width = Math.max(1, rect.width - padLeft - padRight);
+    const height = Math.max(1, rect.height - padTop - padBottom);
+
+    return {
+      rect,
+      width,
+      height,
+      centerX: rect.left + padLeft + (width / 2),
+      centerY: rect.top + padTop + (height / 2),
+    };
+  }
+
+  function getBaseImageSize(){
+    const rect = zoomImg.getBoundingClientRect();
+    const scale = zoomState.scale || 1;
+    return {
+      width: Math.max(1, rect.width / scale),
+      height: Math.max(1, rect.height / scale),
+    };
+  }
+
+  function pointerCenter(){
+    const pts = [...zoomState.pointers.values()];
+    if (!pts.length) return null;
+    const sum = pts.reduce((acc, point) => {
+      acc.x += point.clientX;
+      acc.y += point.clientY;
+      return acc;
+    }, { x: 0, y: 0 });
+
+    return {
+      clientX: sum.x / pts.length,
+      clientY: sum.y / pts.length,
+    };
+  }
+
+  function pointerDistance(){
+    const pts = [...zoomState.pointers.values()];
+    if (pts.length < 2) return 0;
+    return Math.hypot(
+      pts[0].clientX - pts[1].clientX,
+      pts[0].clientY - pts[1].clientY
+    );
+  }
+
+  function getContentPointAt(clientX, clientY){
+    const metrics = getStageMetrics();
+    return {
+      x: (clientX - metrics.centerX - zoomState.x) / zoomState.scale,
+      y: (clientY - metrics.centerY - zoomState.y) / zoomState.scale,
+    };
+  }
+
+  function keepContentPointAt(contentPoint, clientX, clientY){
+    const metrics = getStageMetrics();
+    zoomState.x = clientX - metrics.centerX - (contentPoint.x * zoomState.scale);
+    zoomState.y = clientY - metrics.centerY - (contentPoint.y * zoomState.scale);
+  }
+
+  function clampPan(){
+    const metrics = getStageMetrics();
+    const base = getBaseImageSize();
+    const scaledWidth = base.width * zoomState.scale;
+    const scaledHeight = base.height * zoomState.scale;
+
+    const maxX = Math.max(0, (scaledWidth - metrics.width) / 2);
+    const maxY = Math.max(0, (scaledHeight - metrics.height) / 2);
+
+    zoomState.x = clamp(zoomState.x, -maxX, maxX);
+    zoomState.y = clamp(zoomState.y, -maxY, maxY);
+
+    if (zoomState.scale <= MIN_SCALE + 0.001) {
       zoomState.x = 0;
       zoomState.y = 0;
-    } else {
-      const limit = 220 * zoomState.scale;
-      zoomState.x = clamp(zoomState.x, -limit, limit);
-      zoomState.y = clamp(zoomState.y, -limit, limit);
     }
-    zoomImg.style.setProperty('--zoom-scale', zoomState.scale.toFixed(3));
-    zoomImg.style.setProperty('--zoom-x', `${zoomState.x}px`);
-    zoomImg.style.setProperty('--zoom-y', `${zoomState.y}px`);
+  }
+
+  function applyZoom(){
+    zoomState.scale = clamp(zoomState.scale, MIN_SCALE, MAX_SCALE);
+    clampPan();
+    zoomImg.style.setProperty('--zoom-scale', zoomState.scale.toFixed(4));
+    zoomImg.style.setProperty('--zoom-x', `${zoomState.x.toFixed(2)}px`);
+    zoomImg.style.setProperty('--zoom-y', `${zoomState.y.toFixed(2)}px`);
   }
 
   function resetZoom(){
@@ -9917,6 +10063,23 @@ document.addEventListener('load', (event) => {
     zoomState.x = 0;
     zoomState.y = 0;
     applyZoom();
+  }
+
+  function zoomTo(scale, clientX, clientY){
+    const nextScale = clamp(scale, MIN_SCALE, MAX_SCALE);
+    const point = getContentPointAt(clientX, clientY);
+    zoomState.scale = nextScale;
+    keepContentPointAt(point, clientX, clientY);
+    applyZoom();
+  }
+
+  function zoomBy(delta, clientX, clientY){
+    const metrics = getStageMetrics();
+    zoomTo(
+      zoomState.scale + delta,
+      clientX ?? metrics.centerX,
+      clientY ?? metrics.centerY
+    );
   }
 
   function openZoom(){
@@ -9927,20 +10090,58 @@ document.addEventListener('load', (event) => {
     overlay.classList.add('open');
     overlay.setAttribute('aria-hidden', 'false');
     document.documentElement.classList.add('suppress-selection');
+    document.body.classList.add('card-zoom-open');
   }
 
   function closeZoom(){
     overlay.classList.remove('open');
     overlay.setAttribute('aria-hidden', 'true');
     document.documentElement.classList.remove('suppress-selection');
+    document.body.classList.remove('card-zoom-open');
     zoomState.pointers.clear();
+    zoomState.mode = 'idle';
+    zoomState.pinchStartDistance = 0;
+    zoomState.pinchStartCenter = null;
+    zoomState.pinchStartContentPoint = null;
     stage.classList.remove('is-dragging');
   }
 
-  function zoomBy(delta){
-    const previous = zoomState.scale;
-    zoomState.scale = clamp(zoomState.scale + delta, 1, 4);
-    if (previous !== zoomState.scale) applyZoom();
+  function beginPinch(){
+    const center = pointerCenter();
+    const distance = pointerDistance();
+    if (!center || distance <= 0) return;
+
+    zoomState.mode = 'pinch';
+    zoomState.pinchStartDistance = distance;
+    zoomState.pinchStartScale = zoomState.scale;
+    zoomState.pinchStartCenter = center;
+    zoomState.pinchStartContentPoint = getContentPointAt(center.clientX, center.clientY);
+    stage.classList.add('is-dragging');
+  }
+
+  function beginPan(event){
+    zoomState.mode = 'pan';
+    zoomState.panStartX = event.clientX;
+    zoomState.panStartY = event.clientY;
+    zoomState.panOriginX = zoomState.x;
+    zoomState.panOriginY = zoomState.y;
+    stage.classList.add('is-dragging');
+  }
+
+  function handleDoubleTap(event){
+    const now = Date.now();
+    if (now - zoomState.lastTap > DOUBLE_TAP_DELAY) {
+      zoomState.lastTap = now;
+      return false;
+    }
+
+    zoomState.lastTap = 0;
+    if (zoomState.scale <= 1.05) {
+      zoomTo(2.35, event.clientX, event.clientY);
+    } else {
+      resetZoom();
+    }
+    return true;
   }
 
   detailWrap.addEventListener('click', (event) => {
@@ -9948,7 +10149,14 @@ document.addEventListener('load', (event) => {
     if (event.target.closest('.image-loading-placeholder')) return;
     openZoom();
   });
-  if (zoomBtn) zoomBtn.addEventListener('click', (event) => { event.stopPropagation(); openZoom(); });
+
+  if (zoomBtn) {
+    zoomBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      openZoom();
+    });
+  }
+
   closeBtn?.addEventListener('click', closeZoom);
   zoomInBtn?.addEventListener('click', () => zoomBy(.35));
   zoomOutBtn?.addEventListener('click', () => zoomBy(-.35));
@@ -9969,93 +10177,112 @@ document.addEventListener('load', (event) => {
   stage.addEventListener('wheel', (event) => {
     if (!overlay.classList.contains('open')) return;
     event.preventDefault();
-    zoomBy(event.deltaY < 0 ? .18 : -.18);
+    zoomBy(event.deltaY < 0 ? .18 : -.18, event.clientX, event.clientY);
   }, { passive:false });
 
   stage.addEventListener('dblclick', (event) => {
     event.preventDefault();
-    if (zoomState.scale <= 1.05) {
-      zoomState.scale = 2.2;
-    } else {
-      resetZoom();
-      return;
-    }
-    applyZoom();
+    if (zoomState.scale <= 1.05) zoomTo(2.35, event.clientX, event.clientY);
+    else resetZoom();
   });
-
-  function pointerDistance(){
-    const pts = [...zoomState.pointers.values()];
-    if (pts.length < 2) return 0;
-    const dx = pts[0].clientX - pts[1].clientX;
-    const dy = pts[0].clientY - pts[1].clientY;
-    return Math.hypot(dx, dy);
-  }
 
   stage.addEventListener('pointerdown', (event) => {
     if (!overlay.classList.contains('open')) return;
-    zoomState.pointers.set(event.pointerId, { clientX:event.clientX, clientY:event.clientY });
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+    event.preventDefault();
+    zoomState.pointers.set(event.pointerId, {
+      clientX: event.clientX,
+      clientY: event.clientY,
+    });
     stage.setPointerCapture?.(event.pointerId);
 
     if (zoomState.pointers.size === 2) {
-      zoomState.pinchStartDistance = pointerDistance();
-      zoomState.pinchStartScale = zoomState.scale;
+      beginPinch();
       return;
     }
 
-    const now = Date.now();
-    if (now - zoomState.lastTap < 280) {
-      zoomState.lastTap = 0;
-      if (zoomState.scale <= 1.05) zoomState.scale = 2.2;
-      else resetZoom();
-      applyZoom();
-      return;
+    if (zoomState.pointers.size === 1) {
+      if (handleDoubleTap(event)) return;
+      if (zoomState.scale > 1.001) beginPan(event);
     }
-    zoomState.lastTap = now;
-
-    if (zoomState.scale <= 1) return;
-    zoomState.dragging = true;
-    zoomState.startX = event.clientX;
-    zoomState.startY = event.clientY;
-    zoomState.originX = zoomState.x;
-    zoomState.originY = zoomState.y;
-    stage.classList.add('is-dragging');
-  });
+  }, { passive:false });
 
   stage.addEventListener('pointermove', (event) => {
     if (!zoomState.pointers.has(event.pointerId)) return;
-    zoomState.pointers.set(event.pointerId, { clientX:event.clientX, clientY:event.clientY });
+    event.preventDefault();
 
-    if (zoomState.pointers.size === 2 && zoomState.pinchStartDistance > 0) {
+    zoomState.pointers.set(event.pointerId, {
+      clientX: event.clientX,
+      clientY: event.clientY,
+    });
+
+    if (zoomState.pointers.size >= 2) {
+      if (zoomState.mode !== 'pinch' || !zoomState.pinchStartContentPoint) beginPinch();
+
       const distance = pointerDistance();
-      if (distance > 0) {
-        zoomState.scale = clamp(zoomState.pinchStartScale * (distance / zoomState.pinchStartDistance), 1, 4);
+      const center = pointerCenter();
+      if (distance > 0 && center && zoomState.pinchStartDistance > 0) {
+        zoomState.scale = clamp(
+          zoomState.pinchStartScale * (distance / zoomState.pinchStartDistance),
+          MIN_SCALE,
+          MAX_SCALE
+        );
+
+        keepContentPointAt(
+          zoomState.pinchStartContentPoint,
+          center.clientX,
+          center.clientY
+        );
         applyZoom();
       }
       return;
     }
 
-    if (!zoomState.dragging || zoomState.scale <= 1) return;
-    zoomState.x = zoomState.originX + (event.clientX - zoomState.startX);
-    zoomState.y = zoomState.originY + (event.clientY - zoomState.startY);
+    if (zoomState.mode !== 'pan' || zoomState.scale <= 1.001) return;
+
+    zoomState.x = zoomState.panOriginX + (event.clientX - zoomState.panStartX);
+    zoomState.y = zoomState.panOriginY + (event.clientY - zoomState.panStartY);
     applyZoom();
-  });
+  }, { passive:false });
 
   function endPointer(event){
-    zoomState.pointers.delete(event.pointerId);
-    if (zoomState.pointers.size < 2) {
-      zoomState.pinchStartDistance = 0;
-      zoomState.pinchStartScale = zoomState.scale;
+    if (zoomState.pointers.has(event.pointerId)) {
+      event.preventDefault();
+      zoomState.pointers.delete(event.pointerId);
     }
-    if (zoomState.pointers.size === 0) {
-      zoomState.dragging = false;
-      stage.classList.remove('is-dragging');
+
+    if (zoomState.pointers.size >= 2) {
+      beginPinch();
+      return;
     }
+
+    if (zoomState.pointers.size === 1) {
+      const remaining = [...zoomState.pointers.values()][0];
+      zoomState.mode = zoomState.scale > 1.001 ? 'pan' : 'idle';
+      zoomState.panStartX = remaining.clientX;
+      zoomState.panStartY = remaining.clientY;
+      zoomState.panOriginX = zoomState.x;
+      zoomState.panOriginY = zoomState.y;
+      return;
+    }
+
+    zoomState.mode = 'idle';
+    zoomState.pinchStartDistance = 0;
+    zoomState.pinchStartCenter = null;
+    zoomState.pinchStartContentPoint = null;
+    stage.classList.remove('is-dragging');
   }
 
-  stage.addEventListener('pointerup', endPointer);
-  stage.addEventListener('pointercancel', endPointer);
-})();
+  stage.addEventListener('pointerup', endPointer, { passive:false });
+  stage.addEventListener('pointercancel', endPointer, { passive:false });
+  stage.addEventListener('lostpointercapture', endPointer, { passive:false });
 
+  window.addEventListener('resize', () => {
+    if (!overlay.classList.contains('open')) return;
+    applyZoom();
+  });
+})();
 
 document.addEventListener('error', (event) => {
   const target = event.target;
@@ -10685,6 +10912,48 @@ document.addEventListener('error', (event) => {
         }
 
 
+        function updateAlbumDetailGridMetrics(slotsPerPage) {
+          const grid = els.albumDetailCardsGrid;
+          if (!grid) return;
+
+          const cols = getAlbumDetailGridColumns(slotsPerPage);
+          const rows = Math.max(1, Math.ceil((Math.max(1, Number(slotsPerPage) || 1)) / cols));
+          const viewportWidth = Math.max(320, Math.round(window.innerWidth || document.documentElement.clientWidth || 320));
+          const viewportHeight = Math.max(480, Math.round(window.visualViewport?.height || window.innerHeight || document.documentElement.clientHeight || 480));
+          const isSmallPhone = viewportWidth <= 420;
+          const isShortPhone = viewportHeight <= 720;
+
+          const colGap = cols >= 4 ? (isSmallPhone ? 8 : 10) : (isSmallPhone ? 8 : 10);
+          const rowGap = isShortPhone ? 7 : 10;
+          const parentWidth = Math.max(240, Math.round(grid.parentElement?.clientWidth || grid.clientWidth || viewportWidth));
+          const gridTop = Math.max(0, Math.round(grid.getBoundingClientRect?.().top || 0));
+          const bottomReserve = isShortPhone ? 96 : 112;
+          const availableHeight = Math.max(180, viewportHeight - gridTop - bottomReserve);
+          const cardRatio = 2.5 / 3.5;
+
+          const widthLimitedCard = Math.floor((parentWidth - ((cols - 1) * colGap)) / cols);
+          const heightLimitedCard = Math.floor(((availableHeight - ((rows - 1) * rowGap)) / rows) * cardRatio);
+          const maxPhoneCard = viewportWidth >= 700 ? 190 : 168;
+          const cardWidth = Math.max(54, Math.min(widthLimitedCard, heightLimitedCard, maxPhoneCard));
+
+          grid.style.setProperty("--album-grid-cols", String(cols));
+          grid.style.setProperty("--album-grid-rows", String(rows));
+          grid.style.setProperty("--album-grid-col-gap", `${colGap}px`);
+          grid.style.setProperty("--album-grid-row-gap", `${rowGap}px`);
+          grid.style.setProperty("--album-grid-available-height", `${availableHeight}px`);
+          grid.style.setProperty("--album-card-width", `${cardWidth}px`);
+        }
+
+        function scheduleAlbumDetailGridMetricsUpdate() {
+          if (!els.albumDetailCardsGrid || els.albumDetailView?.classList.contains("is-hidden")) return;
+          if (state.albumGridMetricsRaf) cancelAnimationFrame(state.albumGridMetricsRaf);
+          state.albumGridMetricsRaf = requestAnimationFrame(() => {
+            const { slotsPerPage } = getAlbumDetailPageConfig(state.albumDetailCards || []);
+            updateAlbumDetailGridMetrics(slotsPerPage);
+          });
+        }
+
+
         function normalizeDuplicatePart(value = "") {
           return String(value ?? "")
             .trim()
@@ -10813,10 +11082,7 @@ document.addEventListener('error', (event) => {
           els.albumDetailCardsView?.classList.remove("is-hidden");
           if (!els.albumDetailCardsGrid) return;
           const { slotsPerPage, currentPage } = getAlbumDetailPageConfig(uniqueCards);
-          const gridCols = getAlbumDetailGridColumns(slotsPerPage);
-          els.albumDetailCardsGrid.style.setProperty("--album-grid-cols", String(gridCols));
-          els.albumDetailCardsGrid.style.setProperty("--album-grid-col-gap", gridCols >= 4 ? "14px" : "22px");
-          els.albumDetailCardsGrid.style.setProperty("--album-grid-row-gap", gridCols >= 4 ? "24px" : "28px");
+          updateAlbumDetailGridMetrics(slotsPerPage);
 
           const pageStart = (currentPage - 1) * slotsPerPage + 1;
           const pageStartIndex = pageStart - 1;
@@ -10857,6 +11123,7 @@ document.addEventListener('error', (event) => {
             `;
           }).join("");
           els.albumDetailCardsGrid.innerHTML = slotsHtml;
+          scheduleAlbumDetailGridMetricsUpdate();
         }
 
         async function renderHomeCollectionCards() {
@@ -12769,6 +13036,9 @@ document.addEventListener('error', (event) => {
         });
 
         els.backFromCardSearchBtn.addEventListener("click", closeAddCardSearch);
+
+        window.addEventListener("resize", scheduleAlbumDetailGridMetricsUpdate, { passive: true });
+        window.visualViewport?.addEventListener("resize", scheduleAlbumDetailGridMetricsUpdate, { passive: true });
 
         (async () => {
           try {
