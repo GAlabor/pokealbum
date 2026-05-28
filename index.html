@@ -5496,6 +5496,25 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   overflow:hidden !important;
 }
 
+
+/* === FIX TAGLIO IMMAGINI ALBUM 28/05/2026 ===
+   Le carte nell'album devono mostrare l'immagine completa: niente crop.
+   Mantiene il taglio pulito del contenitore, ma usa contain invece di cover. */
+.album-detail-card-image-wrap{
+  overflow:hidden !important;
+  border-radius:13px !important;
+  background:transparent !important;
+}
+.album-detail-card-image{
+  width:100% !important;
+  height:100% !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+  border-radius:13px !important;
+  box-shadow:none !important;
+  filter:none !important;
+}
+
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -11149,7 +11168,7 @@ document.addEventListener('error', (event) => {
               const meta = albumDetailEscapeHtml(getAlbumCardMeta(card));
               const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
               const imageHtml = imageUrl
-                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
+                ? `<img class="album-detail-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="eager" decoding="async" data-original-src="${albumDetailEscapeHtml(imageUrl)}">`
                 : `<div class="album-detail-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
@@ -11170,7 +11189,64 @@ document.addEventListener('error', (event) => {
             `;
           }).join("");
           els.albumDetailCardsGrid.innerHTML = slotsHtml;
+          refreshVisibleAlbumImages({ force: false });
           scheduleAlbumDetailGridMetricsUpdate();
+        }
+
+        function getCleanImageSrc(src = "") {
+          return String(src || "").replace(/([?&])_paReload=\d+(&?)/, (match, prefix, suffix) => suffix ? prefix : "");
+        }
+
+        function refreshImageNode(img, options = {}) {
+          if (!img) return;
+          const original = img.dataset.originalSrc || getCleanImageSrc(img.getAttribute("src") || img.currentSrc || "");
+          if (!original) return;
+          img.dataset.originalSrc = original;
+          img.decoding = "async";
+          img.loading = "eager";
+
+          const isBroken = !img.complete || img.naturalWidth === 0 || img.naturalHeight === 0;
+          if (!options.force && !isBroken) return;
+
+          const previousOnload = img.onload;
+          const previousOnerror = img.onerror;
+          img.style.visibility = "hidden";
+          img.onload = function(event) {
+            img.style.visibility = "";
+            if (typeof previousOnload === "function") previousOnload.call(this, event);
+            img.onload = previousOnload || null;
+            img.onerror = previousOnerror || null;
+          };
+          img.onerror = function(event) {
+            const separator = original.includes("?") ? "&" : "?";
+            const bustedSrc = `${original}${separator}_paReload=${Date.now()}`;
+            if (img.getAttribute("src") !== bustedSrc) img.src = bustedSrc;
+            img.style.visibility = "";
+            if (typeof previousOnerror === "function") previousOnerror.call(this, event);
+            img.onload = previousOnload || null;
+            img.onerror = previousOnerror || null;
+          };
+
+          img.removeAttribute("src");
+          void img.offsetHeight;
+          img.src = original;
+        }
+
+        function refreshVisibleAlbumImages(options = {}) {
+          const imageNodes = [
+            ...$$(".album-detail-card-image"),
+            ...$$(".home-collection-card-image")
+          ];
+          imageNodes.forEach((img) => refreshImageNode(img, options));
+        }
+
+        let albumImagesResumeTimer = null;
+        function scheduleAlbumImagesResumeRefresh(force = true) {
+          window.clearTimeout(albumImagesResumeTimer);
+          albumImagesResumeTimer = window.setTimeout(() => {
+            refreshVisibleAlbumImages({ force });
+            scheduleAlbumDetailGridMetricsUpdate();
+          }, 80);
         }
 
         async function renderHomeCollectionCards() {
@@ -11195,7 +11271,7 @@ document.addEventListener('error', (event) => {
               const albumName = albumDetailEscapeHtml(getAlbumNameById(card.albumId));
               const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
               const imageHtml = imageUrl
-                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
+                ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="eager" decoding="async" data-original-src="${albumDetailEscapeHtml(imageUrl)}">`
                 : `<div class="home-collection-card-fallback">Immagine non disponibile</div>`;
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
@@ -11384,7 +11460,7 @@ document.addEventListener('error', (event) => {
             const albumName = albumDetailEscapeHtml(getAlbumNameById(card.albumId));
             const price = albumDetailEscapeHtml(card.priceAtAdd?.valueText || "");
             const imageHtml = imageUrl
-              ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="lazy">`
+              ? `<img class="home-collection-card-image" src="${albumDetailEscapeHtml(imageUrl)}" alt="${title}" loading="eager" decoding="async" data-original-src="${albumDetailEscapeHtml(imageUrl)}">`
               : `<div class="home-collection-card-fallback">Immagine non disponibile</div>`;
             const duplicateBadge = getDuplicateBadgeHtml(card);
             return `
@@ -13086,6 +13162,11 @@ document.addEventListener('error', (event) => {
 
         window.addEventListener("resize", scheduleAlbumDetailGridMetricsUpdate, { passive: true });
         window.visualViewport?.addEventListener("resize", scheduleAlbumDetailGridMetricsUpdate, { passive: true });
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") scheduleAlbumImagesResumeRefresh(true);
+        }, { passive: true });
+        window.addEventListener("pageshow", () => scheduleAlbumImagesResumeRefresh(true), { passive: true });
+        window.addEventListener("focus", () => scheduleAlbumImagesResumeRefresh(false), { passive: true });
 
         (async () => {
           try {
