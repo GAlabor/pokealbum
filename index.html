@@ -5654,6 +5654,13 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 #detailModal.is-saved-card-detail .saved-location-pill{display:inline-flex;}
 #detailModal:not(.is-saved-card-detail) .saved-only-row{display:none !important;}
 #detailModal.is-saved-card-detail .add-only-row{display:none !important;}
+/* Sezioni separate: dettaglio carta da aggiungere / dettaglio carta salvata */
+#detailModal .saved-detail-card{display:none !important;}
+#detailModal.is-saved-card-detail .add-detail-card{display:none !important;}
+#detailModal.is-saved-card-detail .saved-detail-card{display:block !important;}
+#detailModal.is-saved-card-detail .saved-detail-card[aria-hidden="true"]{display:block !important;}
+#detailModal:not(.is-saved-card-detail) .saved-detail-card{display:none !important;}
+
 
 /* === MOD 28/05/2026: dettaglio carta salvata solo lettura pulito === */
 #detailModal.is-saved-card-detail .detail-price{
@@ -6603,17 +6610,17 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   width:100% !important;
   max-width:none !important;
   min-width:0 !important;
-  height:66px !important;
-  min-height:66px !important;
-  max-height:66px !important;
-  padding:8px 14px 9px !important;
+  height:auto !important;
+  min-height:72px !important;
+  max-height:none !important;
+  padding:9px 14px 10px !important;
   border-radius:20px !important;
   display:grid !important;
   grid-template-rows:auto auto !important;
   align-content:center !important;
   justify-items:center !important;
-  gap:3px !important;
-  overflow:hidden !important;
+  gap:8px !important;
+  overflow:visible !important;
 }
 #detailModal.is-saved-card-detail .detail-price::before{
   content:"VALORE ATTUALE" !important;
@@ -6652,12 +6659,13 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 }
 @media (max-width:420px){
   #detailModal.is-saved-card-detail .detail-price{
-    height:62px !important;
-    min-height:62px !important;
-    max-height:62px !important;
-    padding:7px 12px 8px !important;
+    height:auto !important;
+    min-height:68px !important;
+    max-height:none !important;
+    padding:8px 12px 9px !important;
     border-radius:19px !important;
-    gap:2px !important;
+    gap:7px !important;
+    overflow:visible !important;
   }
   #detailModal.is-saved-card-detail .detail-price-value{
     font-size:30px !important;
@@ -6721,6 +6729,233 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   color:#6f7f9f !important;
   stroke:currentColor !important;
 }
+
+
+/* === MOD 29/05/2026: Dettagli Carta non aggiunta con stessa grafica della carta aggiunta ===
+   Mantiene i campi modificabili, ma uniforma layout, spazi, card, etichette e valori. */
+#detailModal:not(.is-saved-card-detail) .info-card{
+  border-radius:22px !important;
+  padding:13px 11px 12px !important;
+  background:rgba(255,255,255,.62) !important;
+  border:1px solid rgba(255,255,255,.70) !important;
+  box-shadow:0 12px 24px rgba(66,89,152,.09), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  backdrop-filter:blur(24px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(24px) saturate(145%) !important;
+  overflow:visible !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card-title{
+  min-height:28px !important;
+  margin:0 !important;
+  padding:0 0 9px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  color:#1c2e5a !important;
+  font-size:17px !important;
+  font-weight:900 !important;
+  line-height:1.05 !important;
+  letter-spacing:-.035em !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card-title::before{
+  content:"" !important;
+  width:24px !important;
+  height:24px !important;
+  flex:0 0 24px !important;
+  display:block !important;
+  background-color:#6F7DA1 !important;
+  opacity:.78 !important;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2211%22%20y%3D%226%22%20width%3D%2226%22%20height%3D%2236%22%20rx%3D%225%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22M17%2024h14%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%222.2%22%20fill%3D%22black%22%20stroke%3D%22none%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat !important;
+  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2211%22%20y%3D%226%22%20width%3D%2226%22%20height%3D%2236%22%20rx%3D%225%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22M17%2024h14%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%222.2%22%20fill%3D%22black%22%20stroke%3D%22none%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-divider{
+  margin:0 2px 10px !important;
+  height:1px !important;
+  background:rgba(111,134,188,.16) !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card .info-list{
+  padding:0 !important;
+  gap:7px !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card .info-row,
+#detailModal:not(.is-saved-card-detail) .info-card .editable-info-row{
+  min-height:42px !important;
+  padding:7px 11px !important;
+  border-radius:15px !important;
+  display:grid !important;
+  grid-template-columns:minmax(94px,.85fr) minmax(0,1.15fr) !important;
+  align-items:center !important;
+  gap:8px !important;
+  background:rgba(248,251,255,.54) !important;
+  border:1px solid rgba(120,146,207,.10) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75) !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card .info-label{
+  color:#65779f !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  line-height:1.05 !important;
+  letter-spacing:.055em !important;
+  text-transform:uppercase !important;
+  white-space:normal !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+  hyphens:none !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card .info-value,
+#detailModal:not(.is-saved-card-detail) .info-card .info-choice-value,
+#detailModal:not(.is-saved-card-detail) .info-card .info-edit-input{
+  color:#20345f !important;
+  -webkit-text-fill-color:#20345f !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+  line-height:1.15 !important;
+  letter-spacing:-.02em !important;
+  text-align:right !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+  word-break:normal !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card .info-choice-btn,
+#detailModal:not(.is-saved-card-detail) .info-card .info-edit-input{
+  width:100% !important;
+  min-height:0 !important;
+  height:auto !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  font-family:inherit !important;
+  cursor:pointer !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card .info-edit-input{
+  cursor:text !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-card .info-edit-input::placeholder,
+#detailModal:not(.is-saved-card-detail) .info-card .info-choice-value.is-placeholder,
+#detailModal:not(.is-saved-card-detail) .info-card .info-value.is-empty-value,
+#detailModal:not(.is-saved-card-detail) .info-card .info-choice-value.is-empty-value,
+#detailModal:not(.is-saved-card-detail) .info-card .info-edit-input.is-empty-value{
+  color:#9aa6bf !important;
+  -webkit-text-fill-color:#9aa6bf !important;
+  opacity:1 !important;
+  font-weight:800 !important;
+}
+#detailModal:not(.is-saved-card-detail) .origin-info-row{
+  cursor:pointer !important;
+  grid-template-columns:minmax(94px,.85fr) minmax(0,1.15fr) auto !important;
+}
+#detailModal:not(.is-saved-card-detail) .origin-info-row::after{
+  content:none !important;
+  display:none !important;
+}
+#detailModal:not(.is-saved-card-detail) .info-choice-arrow{
+  display:inline-flex !important;
+  color:#6f7f9f !important;
+  font-size:19px !important;
+  font-weight:900 !important;
+  line-height:1 !important;
+  flex:0 0 auto !important;
+}
+#detailModal:not(.is-saved-card-detail) .no-chevron-info-row{
+  grid-template-columns:minmax(94px,.85fr) minmax(0,1.15fr) !important;
+}
+
+@media (max-width:420px){
+  #detailModal:not(.is-saved-card-detail) .info-card{
+    border-radius:20px !important;
+    padding:12px 10px 11px !important;
+  }
+  #detailModal:not(.is-saved-card-detail) .info-card-title{
+    font-size:16px !important;
+    gap:7px !important;
+  }
+  #detailModal:not(.is-saved-card-detail) .info-card-title::before{
+    width:26px !important;
+    height:26px !important;
+    flex-basis:26px !important;
+  }
+  #detailModal:not(.is-saved-card-detail) .info-card .info-row,
+  #detailModal:not(.is-saved-card-detail) .info-card .editable-info-row{
+    min-height:40px !important;
+    padding:6px 10px !important;
+    grid-template-columns:minmax(82px,.78fr) minmax(0,1.22fr) !important;
+    gap:7px !important;
+  }
+  #detailModal:not(.is-saved-card-detail) .origin-info-row{
+    grid-template-columns:minmax(82px,.78fr) minmax(0,1.22fr) auto !important;
+  }
+  #detailModal:not(.is-saved-card-detail) .no-chevron-info-row{
+    grid-template-columns:minmax(82px,.78fr) minmax(0,1.22fr) !important;
+  }
+  #detailModal:not(.is-saved-card-detail) .info-card .info-label{
+    font-size:10.5px !important;
+    letter-spacing:.045em !important;
+  }
+  #detailModal:not(.is-saved-card-detail) .info-card .info-value,
+  #detailModal:not(.is-saved-card-detail) .info-card .info-choice-value,
+  #detailModal:not(.is-saved-card-detail) .info-card .info-edit-input{
+    font-size:12.5px !important;
+  }
+}
+
+
+
+/* === MOD: titolo Tipo Carta nella scheda da aggiungere + JSON senza separatore === */
+#detailModal:not(.is-saved-card-detail) .detail-variant-card::before{
+  content:"TIPO CARTA";
+  grid-column:1 / -1;
+  display:block;
+  width:100%;
+  margin:0 0 2px;
+  color:#7382a2;
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.02em;
+  line-height:1;
+  text-transform:uppercase;
+  text-align:center;
+}
+#detailModal:not(.is-saved-card-detail) .detail-variant-card{
+  row-gap:9px !important;
+}
+#detailModal .json-info-card .collapsible-trigger{
+  border-bottom:0 !important;
+}
+
+/* === MOD 30/05/2026: titolo scheda carta da aggiungere allineato a sinistra come scheda salvata === */
+#detailModal:not(.is-saved-card-detail) .card-sheet-topbar{
+  justify-content:flex-start !important;
+}
+#detailModal:not(.is-saved-card-detail) .detail-top-title-wrap{
+  position:static !important;
+  transform:none !important;
+  left:auto !important;
+  right:auto !important;
+  top:auto !important;
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  display:grid !important;
+  gap:2px !important;
+  text-align:left !important;
+  pointer-events:none !important;
+  align-self:center !important;
+}
+#detailModal:not(.is-saved-card-detail) .detail-top-card-name{
+  text-align:left !important;
+  font-size:18px !important;
+  line-height:1.12 !important;
+  font-weight:850 !important;
+  letter-spacing:-.035em !important;
+}
+#detailModal:not(.is-saved-card-detail) .detail-top-card-meta{
+  text-align:left !important;
+  font-size:11px !important;
+  line-height:1.1 !important;
+  color:#7181a3 !important;
+  margin-top:2px !important;
+}
+
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -8257,8 +8492,8 @@ paint-order="stroke">
               </label>
             </div>
             <div class="detail-cards">
-              <section class="info-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row static-info-row saved-only-row"><div class="info-label">Tipo Carta</div><div class="info-value" id="cardVariantsSummary"></div></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section>
-              <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="info-divider"></div><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
+              <section class="info-card add-detail-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section><section class="info-card saved-detail-card" aria-hidden="true"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="savedCardRarity"></div></div><div class="info-row static-info-row"><div class="info-label">Tipo Carta</div><div class="info-value" id="savedCardVariantsSummary"></div></div><div class="info-row static-info-row"><div class="info-label">Provenienza</div><div class="info-value" id="savedCardOriginValue"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="savedCardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="savedCardVersion"></div></div><div class="info-row static-info-row"><div class="info-label">Totale Set</div><div class="info-value" id="savedCardTotalSet"></div></div><div class="info-row static-info-row"><div class="info-label">Uscita</div><div class="info-value" id="savedCardDate"></div></div><div class="info-row static-info-row"><div class="info-label">Illustratore</div><div class="info-value" id="savedCardArtist"></div></div></div></section>
+              <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
               <div class="saved-location-pill" id="savedLocationPill" aria-label="Posizione carta salvata"></div>
             </div>
           </div>
@@ -8460,6 +8695,14 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       cardSet: document.getElementById('cardSet'),
       cardVersion: document.getElementById('cardVersion'),
       cardVariantsSummary: document.getElementById('cardVariantsSummary'),
+      savedCardRarity: document.getElementById('savedCardRarity'),
+      savedCardVariantsSummary: document.getElementById('savedCardVariantsSummary'),
+      savedCardOriginValue: document.getElementById('savedCardOriginValue'),
+      savedCardSet: document.getElementById('savedCardSet'),
+      savedCardVersion: document.getElementById('savedCardVersion'),
+      savedCardTotalSet: document.getElementById('savedCardTotalSet'),
+      savedCardDate: document.getElementById('savedCardDate'),
+      savedCardArtist: document.getElementById('savedCardArtist'),
       savedLocationPill: document.getElementById('savedLocationPill'),
       cardTotalSetInput: document.getElementById('cardTotalSetInput'),
       cardArtistInput: document.getElementById('cardArtistInput'),
@@ -10518,6 +10761,8 @@ function finishUpdateTimer() {
 
     function resetCardDetailTemporaryFields() {
       el.detailModal?.classList.remove('is-saved-card-detail');
+      el.detailModal?.querySelector('.saved-detail-card')?.setAttribute('aria-hidden', 'true');
+      el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'false');
       [el.cardTotalSetInput, el.cardArtistInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
         if (input) {
           input.value = '';
@@ -10687,7 +10932,21 @@ function finishUpdateTimer() {
     }
 
     function attachEvents() {
-document.querySelectorAll('[data-close]').forEach(btn => {
+      const syncVariantSelection = (changedInput) => {
+        if (!changedInput || !changedInput.checked) return;
+        if (changedInput === el.variantIllustration) {
+          if (el.variantHolo) el.variantHolo.checked = false;
+          if (el.variantReverse) el.variantReverse.checked = false;
+          return;
+        }
+        if ((changedInput === el.variantHolo || changedInput === el.variantReverse) && el.variantIllustration) {
+          el.variantIllustration.checked = false;
+        }
+      };
+      [el.variantHolo, el.variantReverse, el.variantIllustration].forEach(input => {
+        if (input) input.addEventListener('change', () => syncVariantSelection(input));
+      });
+      document.querySelectorAll('[data-close]').forEach(btn => {
         btn.addEventListener('click', () => closeModal(document.getElementById(btn.dataset.close)));
       });
 
@@ -12251,21 +12510,26 @@ document.addEventListener('error', (event) => {
           const originLabel = getSavedCardOriginLabel(savedCard);
 
           el.detailModal?.classList.add('is-saved-card-detail');
+          el.detailModal?.querySelector('.saved-detail-card')?.setAttribute('aria-hidden', 'false');
+          el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'true');
           if (el.detailTopName) el.detailTopName.textContent = detailValueOrEmpty(title);
           if (el.detailTopMeta) el.detailTopMeta.textContent = detailValueOrEmpty(meta);
           setReadonlyDetailImage(getAlbumCardImage(savedCard), title);
           setPriceResult(priceText, '', { source: '' });
           if (el.detailOfferLabel) el.detailOfferLabel.textContent = '';
-          setReadonlyDetailText(el.cardRarity, savedCard.rarity);
-          setReadonlyDetailText(el.cardVariantsSummary, formatSavedCardVariantSummary(savedCard).replace(/^-$/, ''));
-          setReadonlyDetailText(el.cardSet, setText);
-          setReadonlyDetailText(el.cardVersion, number);
-          setReadonlyDetailInput(el.cardTotalSetInput, savedCard.set?.total);
-          setReadonlyDetailInput(el.cardDateInput, savedCard.releaseDate);
-          setReadonlyDetailInput(el.cardArtistInput, savedCard.artist);
+          setReadonlyDetailText(el.savedCardRarity, savedCard.rarity);
+          setReadonlyDetailText(el.savedCardVariantsSummary, formatSavedCardVariantSummary(savedCard).replace(/^-$/, ''));
+          setReadonlyDetailText(el.savedCardSet, setText);
+          setReadonlyDetailText(el.savedCardVersion, number);
+          setReadonlyDetailText(el.savedCardTotalSet, savedCard.set?.total);
+          setReadonlyDetailText(el.savedCardDate, savedCard.releaseDate);
+          setReadonlyDetailText(el.savedCardArtist, savedCard.artist);
           if (el.cardOriginInput) {
             el.cardOriginInput.value = detailValueOrEmpty(originLabel);
             el.cardOriginInput.classList.toggle('is-empty-value', isDetailValueEmpty(originLabel));
+          }
+          if (el.savedCardOriginValue) {
+            setReadonlyDetailText(el.savedCardOriginValue, originLabel);
           }
           if (el.cardOriginValue) {
             const originEmpty = isDetailValueEmpty(originLabel);
