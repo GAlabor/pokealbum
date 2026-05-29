@@ -4632,7 +4632,7 @@ body:not(.ui-booting) #bottomNav{
 .album-slot-empty{
   width:100%;min-height:190px;border-radius:22px;border:1px dashed rgba(108,131,190,.34);
   background:rgba(255,255,255,.38);display:flex;align-items:center;justify-content:center;
-  color:#8390aa;font-size:12px;font-weight:850;letter-spacing:.02em;text-transform:uppercase;
+  color:#8390aa;font-size:12px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;font-variant-caps:all-small-caps;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.62);
 }
 
@@ -4890,10 +4890,11 @@ body:not(.ui-booting) #bottomNav{
   border:5px solid rgba(255,255,255,.76) !important;
   background:linear-gradient(145deg, rgba(255,255,255,.26), rgba(224,235,255,.34)) !important;
   color:#8b98b6 !important;
-  font-size:26px !important;
-  font-weight:900 !important;
-  letter-spacing:-.045em !important;
-  text-transform:none !important;
+  font-size:15px !important;
+  font-weight:950 !important;
+  letter-spacing:.10em !important;
+  text-transform:uppercase !important;
+  font-variant-caps:all-small-caps !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.72), 0 8px 18px rgba(66,89,152,.08) !important;
 }
 .album-detail-card-image-wrap .card-duplicate-badge{
@@ -5512,6 +5513,1214 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   clip-path:inset(0 round 5.2% / 3.7%) !important;
 }
 
+
+/* === FIX: slot vuoti con stessi spigoli delle carte presenti === */
+.album-detail-card-image-wrap,
+.album-slot-empty{
+  border-radius:5.2% / 3.7% !important;
+  -webkit-clip-path:inset(0 round 5.2% / 3.7%) !important;
+  clip-path:inset(0 round 5.2% / 3.7%) !important;
+}
+
+.album-slot-empty{
+  box-sizing:border-box !important;
+  overflow:hidden !important;
+}
+
+
+
+/* === FIX SLOT VUOTI: effetto card placeholder + testo centrato e piu leggibile === */
+.album-slot-empty{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  text-align:center !important;
+  box-sizing:border-box !important;
+  padding:0 5px !important;
+
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255,255,255,.78), rgba(255,255,255,0) 34%),
+    linear-gradient(145deg, rgba(238,244,255,.92), rgba(213,225,248,.96)) !important;
+  border:4px solid rgba(255,255,255,.86) !important;
+  color:#7d8aa8 !important;
+
+  font-size:clamp(7px, calc(var(--album-card-width, 96px) * 0.115), 14px) !important;
+  font-weight:950 !important;
+  line-height:1 !important;
+  letter-spacing:.04em !important;
+  text-transform:uppercase !important;
+  font-variant:normal !important;
+  font-variant-caps:normal !important;
+
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:clip !important;
+  word-break:normal !important;
+  overflow-wrap:normal !important;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.92),
+    inset 0 -14px 28px rgba(123,148,195,.13),
+    0 8px 18px rgba(66,89,152,.09) !important;
+}
+@media (max-width:420px){
+  .album-slot-empty{
+    border-width:3px !important;
+    font-size:clamp(7px, calc(var(--album-card-width, 88px) * 0.108), 12px) !important;
+    letter-spacing:.032em !important;
+    padding:0 4px !important;
+  }
+}
+
+
+
+/* Swipe pagine album */
+.album-detail-cards{
+  touch-action:pan-y pinch-zoom;
+  overscroll-behavior-x:contain;
+  -webkit-overflow-scrolling:touch;
+}
+.album-detail-cards-grid{
+  will-change:transform, opacity, filter;
+  transition:transform .20s cubic-bezier(.22,.9,.24,1), opacity .20s ease, filter .20s ease;
+  transform-origin:center;
+}
+.album-detail-cards-grid.is-page-swiping{
+  transition:none !important;
+}
+.album-detail-cards-grid.is-page-settling{
+  transition:transform .22s cubic-bezier(.22,.9,.24,1), opacity .22s ease, filter .22s ease !important;
+}
+.album-detail-cards-grid.is-page-entering{
+  animation:albumPageEnter .34s cubic-bezier(.22,.9,.24,1) both;
+}
+.album-detail-cards-grid.is-page-entering.from-next{
+  --album-page-enter-x:34px;
+}
+.album-detail-cards-grid.is-page-entering.from-prev{
+  --album-page-enter-x:-34px;
+}
+@keyframes albumPageEnter{
+  0%{transform:translate3d(var(--album-page-enter-x, 0), 0, 0) scale(.985);opacity:.15;filter:blur(5px);}
+  58%{opacity:1;filter:blur(0);}
+  100%{transform:translate3d(0,0,0) scale(1);opacity:1;filter:blur(0);}
+}
+@media (prefers-reduced-motion:reduce){
+  .album-detail-cards-grid,
+  .album-detail-cards-grid.is-page-entering{
+    transition:none !important;
+    animation:none !important;
+  }
+}
+
+
+/* === MOD 28/05/2026: dettaglio carta salvata dall'album, solo lettura === */
+#detailModal.is-saved-card-detail .detail-top-title-wrap{
+  position:static !important;
+  transform:none !important;
+  left:auto !important;
+  right:auto !important;
+  top:auto !important;
+  flex:1 1 auto !important;
+  min-width:0 !important;
+  text-align:left !important;
+  pointer-events:none !important;
+  align-self:center !important;
+}
+#detailModal.is-saved-card-detail .detail-top-card-name{
+  text-align:left !important;
+  font-size:clamp(18px,2.2vh,22px) !important;
+  line-height:1.05 !important;
+}
+#detailModal.is-saved-card-detail .detail-top-card-meta{
+  text-align:left !important;
+  font-size:12px !important;
+  margin-top:2px !important;
+}
+#detailModal.is-saved-card-detail .card-sheet-actions,
+#detailModal.is-saved-card-detail .detail-variant-card,
+#detailModal.is-saved-card-detail .detail-offer,
+#detailModal.is-saved-card-detail .detail-price-label,
+#detailModal.is-saved-card-detail .detail-price-source,
+#detailModal.is-saved-card-detail .price-dots-btn,
+#detailModal.is-saved-card-detail .price-action-menu,
+#detailModal.is-saved-card-detail .json-info-card{display:none !important;}
+#detailModal.is-saved-card-detail .detail-price{width:auto !important;justify-self:center !important;min-width:118px !important;padding:8px 18px !important;border-radius:999px !important;}
+#detailModal.is-saved-card-detail .detail-price-line{justify-content:center !important;margin:0 !important;}
+#detailModal.is-saved-card-detail .editable-info-row,#detailModal.is-saved-card-detail .origin-info-row{cursor:default !important;}
+#detailModal.is-saved-card-detail .origin-info-row::after{content:none !important;}
+#detailModal.is-saved-card-detail .info-edit-input,#detailModal.is-saved-card-detail .info-choice-btn{pointer-events:none !important;cursor:default !important;}
+#detailModal .saved-location-pill{display:none;justify-self:center;margin:2px auto 0;min-height:30px;padding:0 14px;border-radius:999px;align-items:center;justify-content:center;color:#3157c9;background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.66);box-shadow:0 10px 24px rgba(66,89,152,.10), inset 0 1px 0 rgba(255,255,255,.88);font-size:12px;font-weight:850;letter-spacing:-.01em;}
+#detailModal.is-saved-card-detail .saved-location-pill{display:inline-flex;}
+#detailModal:not(.is-saved-card-detail) .saved-only-row{display:none !important;}
+#detailModal.is-saved-card-detail .add-only-row{display:none !important;}
+
+/* === MOD 28/05/2026: dettaglio carta salvata solo lettura pulito === */
+#detailModal.is-saved-card-detail .detail-price{
+  width:auto !important;
+  min-width:0 !important;
+  height:54px !important;
+  min-height:54px !important;
+  max-height:54px !important;
+  padding:0 !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+#detailModal.is-saved-card-detail .detail-price-line{
+  margin:0 !important;
+  padding:0 !important;
+  justify-content:center !important;
+}
+#detailModal.is-saved-card-detail .detail-price-currency{
+  font-size:20px !important;
+  font-weight:650 !important;
+  color:#1c2e5a !important;
+}
+#detailModal.is-saved-card-detail .detail-price-value{
+  font-size:30px !important;
+  font-weight:900 !important;
+  color:#1c2e5a !important;
+}
+#detailModal.is-saved-card-detail .info-choice-btn,
+#detailModal.is-saved-card-detail .info-edit-input{
+  pointer-events:none !important;
+  cursor:default !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  padding-left:0 !important;
+  color:#20345f !important;
+  -webkit-text-fill-color:#20345f !important;
+  opacity:1 !important;
+}
+#detailModal.is-saved-card-detail .info-choice-arrow{
+  display:none !important;
+}
+#detailModal.is-saved-card-detail .info-choice-value{
+  color:#20345f !important;
+}
+#detailModal.is-saved-card-detail .info-choice-value.is-placeholder{
+  color:#8a96af !important;
+}
+#detailModal.is-saved-card-detail .info-edit-input{
+  height:auto !important;
+  min-height:0 !important;
+  font-size:13px !important;
+  font-weight:750 !important;
+}
+#detailModal .saved-location-pill{
+  display:none;
+  justify-self:center;
+  margin:8px auto 0;
+  min-height:42px;
+  padding:0 14px;
+  border-radius:999px;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  color:#2f64ff;
+  background:rgba(255,255,255,.58);
+  border:1px solid rgba(255,255,255,.64);
+  box-shadow:0 14px 28px rgba(66,89,152,.12), inset 0 1px 0 rgba(255,255,255,.92);
+  backdrop-filter:blur(22px) saturate(145%);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  font-size:13px;
+  font-weight:850;
+  letter-spacing:-.02em;
+  pointer-events:none;
+}
+#detailModal.is-saved-card-detail .saved-location-pill{display:inline-flex;}
+#detailModal .saved-location-pill .saved-location-text{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  white-space:nowrap;
+}
+#detailModal .saved-location-pill .saved-location-chevron{
+  width:16px;
+  height:16px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2.3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  flex:0 0 auto;
+  transform:rotate(-90deg);
+  opacity:.9;
+}
+
+
+/* === MOD 28/05/2026: grafica dettaglio carta salvata stile riferimento === */
+#detailModal.is-saved-card-detail .card-sheet-container{
+  max-width:560px !important;
+  padding:calc(var(--safe-top) + 10px) 18px calc(var(--safe-bottom) + 24px) !important;
+}
+#detailModal.is-saved-card-detail .detail-content{
+  gap:18px !important;
+}
+#detailModal.is-saved-card-detail .detail-image-wrap{
+  margin-bottom:2px !important;
+}
+#detailModal.is-saved-card-detail .detail-price{
+  width:100% !important;
+  min-height:128px !important;
+  height:auto !important;
+  max-height:none !important;
+  padding:26px 18px 24px !important;
+  border-radius:34px !important;
+  background:rgba(255,255,255,.76) !important;
+  border:1px solid rgba(255,255,255,.72) !important;
+  box-shadow:0 22px 44px rgba(66,89,152,.12), inset 0 1px 0 rgba(255,255,255,.94) !important;
+  backdrop-filter:blur(26px) saturate(150%) !important;
+  -webkit-backdrop-filter:blur(26px) saturate(150%) !important;
+  display:grid !important;
+  place-items:center !important;
+  gap:8px !important;
+  text-align:center !important;
+}
+#detailModal.is-saved-card-detail .detail-price::before{
+  content:"VALORE ATTUALE";
+  display:block;
+  color:#7382a2;
+  font-size:15px;
+  font-weight:900;
+  letter-spacing:.02em;
+  line-height:1;
+  text-transform:uppercase;
+}
+#detailModal.is-saved-card-detail .detail-price-line{
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:baseline !important;
+  justify-content:center !important;
+  gap:9px !important;
+  line-height:1 !important;
+}
+#detailModal.is-saved-card-detail .detail-price-currency{
+  font-size:39px !important;
+  font-weight:650 !important;
+  line-height:.95 !important;
+  letter-spacing:-.06em !important;
+  color:#0f2a73 !important;
+}
+#detailModal.is-saved-card-detail .detail-price-value{
+  font-size:72px !important;
+  font-weight:950 !important;
+  line-height:.88 !important;
+  letter-spacing:-.07em !important;
+  color:#0f2a73 !important;
+}
+#detailModal.is-saved-card-detail .detail-cards{
+  gap:16px !important;
+}
+#detailModal.is-saved-card-detail .info-card{
+  border-radius:32px !important;
+  background:rgba(255,255,255,.72) !important;
+  border:1px solid rgba(255,255,255,.74) !important;
+  box-shadow:0 24px 48px rgba(66,89,152,.13), inset 0 1px 0 rgba(255,255,255,.94) !important;
+  backdrop-filter:blur(28px) saturate(150%) !important;
+  -webkit-backdrop-filter:blur(28px) saturate(150%) !important;
+  padding:22px 18px 20px !important;
+  overflow:visible !important;
+}
+#detailModal.is-saved-card-detail .info-card-title{
+  min-height:44px !important;
+  margin:0 !important;
+  padding:0 0 18px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:16px !important;
+  color:#0f2a73 !important;
+  font-size:28px !important;
+  font-weight:950 !important;
+  line-height:1 !important;
+  letter-spacing:-.045em !important;
+}
+#detailModal.is-saved-card-detail .info-card-title::before{
+  content:"";
+  width:48px;
+  height:48px;
+  flex:0 0 48px;
+  display:block;
+  background-color:#2f64ff;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='black' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='7' y='9' width='34' height='30' rx='3'/%3E%3Cpath d='M7 18h34M7 30h34'/%3E%3Ccircle cx='24' cy='24' r='6'/%3E%3Cpath d='M18 24H7M41 24H30'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='black' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='7' y='9' width='34' height='30' rx='3'/%3E%3Cpath d='M7 18h34M7 30h34'/%3E%3Ccircle cx='24' cy='24' r='6'/%3E%3Cpath d='M18 24H7M41 24H30'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+}
+#detailModal.is-saved-card-detail .info-divider{
+  margin:0 2px 18px !important;
+  height:2px !important;
+  background:rgba(111,134,188,.20) !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-list{
+  padding:0 !important;
+  gap:16px !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-row,
+#detailModal.is-saved-card-detail .info-card .editable-info-row{
+  min-height:70px !important;
+  padding:0 22px !important;
+  border-radius:22px !important;
+  grid-template-columns:minmax(0, .92fr) minmax(0, 1.08fr) !important;
+  gap:12px !important;
+  background:rgba(255,255,255,.68) !important;
+  border:1px solid rgba(255,255,255,.52) !important;
+  box-shadow:0 10px 22px rgba(70,94,150,.07), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  cursor:default !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-label{
+  color:#0f2a73 !important;
+  font-size:21px !important;
+  font-weight:950 !important;
+  line-height:1.1 !important;
+  letter-spacing:-.045em !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-value,
+#detailModal.is-saved-card-detail .info-card .info-choice-value,
+#detailModal.is-saved-card-detail .info-card .info-edit-input{
+  color:#0f2a73 !important;
+  -webkit-text-fill-color:#0f2a73 !important;
+  font-size:17px !important;
+  font-weight:800 !important;
+  line-height:1.16 !important;
+  letter-spacing:-.035em !important;
+  text-align:right !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-choice-value.is-placeholder,
+#detailModal.is-saved-card-detail .info-card .info-edit-input::placeholder{
+  color:#7b89ad !important;
+  -webkit-text-fill-color:#7b89ad !important;
+  opacity:1 !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-choice-btn,
+#detailModal.is-saved-card-detail .info-card .info-edit-input{
+  pointer-events:none !important;
+  cursor:default !important;
+}
+#detailModal.is-saved-card-detail .origin-info-row::after,
+#detailModal.is-saved-card-detail .info-choice-arrow{
+  display:none !important;
+  content:none !important;
+}
+#detailModal.is-saved-card-detail .saved-location-pill{
+  width:min(100%, 310px) !important;
+  min-height:82px !important;
+  margin:0 auto !important;
+  padding:0 18px !important;
+  border-radius:24px !important;
+  display:grid !important;
+  grid-template-columns:36px minmax(0,1fr) 36px !important;
+  align-items:center !important;
+  justify-items:center !important;
+  gap:10px !important;
+  background:rgba(255,255,255,.74) !important;
+  border:1px solid rgba(255,255,255,.76) !important;
+  box-shadow:0 20px 38px rgba(66,89,152,.14), inset 0 1px 0 rgba(255,255,255,.94) !important;
+  backdrop-filter:blur(26px) saturate(150%) !important;
+  -webkit-backdrop-filter:blur(26px) saturate(150%) !important;
+  pointer-events:auto !important;
+}
+#detailModal.is-saved-card-detail .saved-location-copy{
+  min-width:0;
+  display:grid;
+  justify-items:center;
+  gap:6px;
+  line-height:1;
+  text-align:center;
+}
+#detailModal.is-saved-card-detail .saved-location-album{
+  color:#2f64ff;
+  font-size:20px;
+  font-weight:950;
+  letter-spacing:-.045em;
+  white-space:nowrap;
+}
+#detailModal.is-saved-card-detail .saved-location-page{
+  color:#65779f;
+  font-size:16px;
+  font-weight:850;
+  letter-spacing:-.035em;
+  white-space:nowrap;
+}
+#detailModal.is-saved-card-detail .saved-location-chevron{
+  width:30px !important;
+  height:30px !important;
+  color:#2f64ff !important;
+  stroke:currentColor !important;
+  fill:none !important;
+  stroke-width:2.6 !important;
+  stroke-linecap:round !important;
+  stroke-linejoin:round !important;
+  opacity:1 !important;
+  transform:none !important;
+}
+#detailModal.is-saved-card-detail .saved-location-chevron-left{
+  justify-self:start;
+}
+#detailModal.is-saved-card-detail .saved-location-chevron-right{
+  justify-self:end;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .card-sheet-container{
+    padding-left:16px !important;
+    padding-right:16px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price{
+    min-height:126px !important;
+    border-radius:32px !important;
+    padding-top:24px !important;
+    padding-bottom:22px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-value{
+    font-size:68px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-currency{
+    font-size:36px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card{
+    border-radius:30px !important;
+    padding:20px 14px 18px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card-title{
+    font-size:26px !important;
+    gap:14px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card-title::before{
+    width:44px;
+    height:44px;
+    flex-basis:44px;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-row,
+  #detailModal.is-saved-card-detail .info-card .editable-info-row{
+    min-height:68px !important;
+    padding:0 20px !important;
+    grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr) !important;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-label{
+    font-size:20px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-value,
+  #detailModal.is-saved-card-detail .info-card .info-choice-value,
+  #detailModal.is-saved-card-detail .info-card .info-edit-input{
+    font-size:16px !important;
+  }
+  #detailModal.is-saved-card-detail .saved-location-pill{
+    width:min(100%, 300px) !important;
+    min-height:80px !important;
+  }
+}
+
+
+
+/* === MOD 28/05/2026: dettaglio carta salvata più compatto e raffinato === */
+#detailModal.is-saved-card-detail .card-sheet-container{
+  max-width:430px !important;
+  padding:calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 18px) !important;
+}
+#detailModal.is-saved-card-detail .detail-content{
+  gap:14px !important;
+}
+#detailModal.is-saved-card-detail .detail-price{
+  min-height:104px !important;
+  padding:18px 16px 18px !important;
+  border-radius:28px !important;
+  gap:6px !important;
+}
+#detailModal.is-saved-card-detail .detail-price::before{
+  font-size:12px !important;
+  letter-spacing:.045em !important;
+}
+#detailModal.is-saved-card-detail .detail-price-line{
+  gap:7px !important;
+}
+#detailModal.is-saved-card-detail .detail-price-currency{
+  font-size:29px !important;
+  line-height:.95 !important;
+}
+#detailModal.is-saved-card-detail .detail-price-value{
+  font-size:56px !important;
+  line-height:.88 !important;
+  letter-spacing:-.07em !important;
+}
+#detailModal.is-saved-card-detail .detail-cards{
+  gap:12px !important;
+}
+#detailModal.is-saved-card-detail .info-card{
+  border-radius:28px !important;
+  padding:18px 14px 16px !important;
+}
+#detailModal.is-saved-card-detail .info-card-title{
+  min-height:36px !important;
+  padding:0 0 14px !important;
+  gap:12px !important;
+  font-size:23px !important;
+  letter-spacing:-.04em !important;
+}
+#detailModal.is-saved-card-detail .info-card-title::before{
+  width:38px !important;
+  height:38px !important;
+  flex:0 0 38px !important;
+}
+#detailModal.is-saved-card-detail .info-divider{
+  margin:0 2px 14px !important;
+  height:1px !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-list{
+  gap:10px !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-row,
+#detailModal.is-saved-card-detail .info-card .editable-info-row{
+  min-height:52px !important;
+  padding:0 16px !important;
+  border-radius:18px !important;
+  grid-template-columns:minmax(0,.98fr) minmax(0,1.22fr) !important;
+  gap:8px !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-label{
+  font-size:17px !important;
+  line-height:1.08 !important;
+  letter-spacing:-.035em !important;
+  white-space:normal !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+  hyphens:none !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-value,
+#detailModal.is-saved-card-detail .info-card .info-choice-value,
+#detailModal.is-saved-card-detail .info-card .info-edit-input{
+  font-size:13.5px !important;
+  line-height:1.12 !important;
+  font-weight:800 !important;
+  letter-spacing:-.03em !important;
+}
+#detailModal.is-saved-card-detail .saved-location-pill{
+  width:min(100%, 270px) !important;
+  min-height:66px !important;
+  padding:0 14px !important;
+  border-radius:22px !important;
+  grid-template-columns:30px minmax(0,1fr) 30px !important;
+  gap:8px !important;
+}
+#detailModal.is-saved-card-detail .saved-location-album{
+  font-size:17px !important;
+  letter-spacing:-.035em !important;
+}
+#detailModal.is-saved-card-detail .saved-location-page{
+  font-size:13px !important;
+  letter-spacing:-.025em !important;
+}
+#detailModal.is-saved-card-detail .saved-location-copy{
+  gap:4px !important;
+}
+#detailModal.is-saved-card-detail .saved-location-chevron{
+  width:24px !important;
+  height:24px !important;
+  stroke-width:2.5 !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .card-sheet-container{
+    padding-left:14px !important;
+    padding-right:14px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price{
+    min-height:104px !important;
+    border-radius:26px !important;
+    padding-top:17px !important;
+    padding-bottom:17px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-value{
+    font-size:54px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-currency{
+    font-size:28px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card{
+    border-radius:26px !important;
+    padding:16px 12px 15px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card-title{
+    font-size:22px !important;
+    gap:11px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card-title::before{
+    width:36px !important;
+    height:36px !important;
+    flex-basis:36px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-row,
+  #detailModal.is-saved-card-detail .info-card .editable-info-row{
+    min-height:52px !important;
+    padding:0 16px !important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) !important;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-label{
+    font-size:16.5px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-value,
+  #detailModal.is-saved-card-detail .info-card .info-choice-value,
+  #detailModal.is-saved-card-detail .info-card .info-edit-input{
+    font-size:13px !important;
+  }
+  #detailModal.is-saved-card-detail .saved-location-pill{
+    width:min(100%, 270px) !important;
+    min-height:64px !important;
+  }
+}
+
+
+
+/* === FIX 29/05/2026: Card carta salvata compatta/coerente UX ===
+   Obiettivo: niente più prezzo gigante, dettagli più leggibili,
+   gerarchia chiara tra titolo, etichetta e valore. */
+#detailModal.is-saved-card-detail .card-sheet-container{
+  max-width:420px !important;
+  padding:calc(var(--safe-top) + 8px) 14px calc(var(--safe-bottom) + 16px) !important;
+}
+#detailModal.is-saved-card-detail .card-sheet-topbar{
+  margin-bottom:2px !important;
+  padding-bottom:8px !important;
+}
+#detailModal.is-saved-card-detail .detail-content{
+  gap:10px !important;
+}
+#detailModal.is-saved-card-detail .detail-top-card-name{
+  font-size:18px !important;
+  line-height:1.12 !important;
+  font-weight:850 !important;
+  letter-spacing:-.035em !important;
+}
+#detailModal.is-saved-card-detail .detail-top-card-meta{
+  font-size:11px !important;
+  line-height:1.1 !important;
+  color:#7181a3 !important;
+}
+#detailModal.is-saved-card-detail .detail-image-wrap{
+  padding:10px !important;
+  border-radius:22px !important;
+  margin-bottom:0 !important;
+}
+#detailModal.is-saved-card-detail .detail-img{
+  max-width:238px !important;
+  border-radius:13px !important;
+}
+#detailModal.is-saved-card-detail .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+  max-width:238px !important;
+}
+#detailModal.is-saved-card-detail .detail-image-wrap > .image-loading-placeholder.card-back-loader img{
+  border-radius:13px !important;
+}
+
+/* Prezzo: compatto, leggibile, non più “cartellone autostradale”. */
+#detailModal.is-saved-card-detail .detail-price{
+  min-height:74px !important;
+  height:auto !important;
+  padding:12px 14px 13px !important;
+  border-radius:22px !important;
+  gap:4px !important;
+  background:rgba(255,255,255,.62) !important;
+  border:1px solid rgba(255,255,255,.70) !important;
+  box-shadow:0 12px 24px rgba(66,89,152,.09), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+#detailModal.is-saved-card-detail .detail-price::before{
+  content:"Valore attuale" !important;
+  color:#7382a2 !important;
+  font-size:10px !important;
+  font-weight:850 !important;
+  letter-spacing:.07em !important;
+  line-height:1 !important;
+  text-transform:uppercase !important;
+}
+#detailModal.is-saved-card-detail .detail-price-line{
+  gap:5px !important;
+  align-items:baseline !important;
+}
+#detailModal.is-saved-card-detail .detail-price-currency{
+  font-size:20px !important;
+  font-weight:750 !important;
+  line-height:.95 !important;
+  letter-spacing:-.04em !important;
+  color:#1c2e5a !important;
+}
+#detailModal.is-saved-card-detail .detail-price-value{
+  font-size:38px !important;
+  font-weight:950 !important;
+  line-height:.9 !important;
+  letter-spacing:-.065em !important;
+  color:#1c2e5a !important;
+}
+
+/* Card informazioni: titolo sobrio, icona carta Pokémon piccola, righe chiare. */
+#detailModal.is-saved-card-detail .detail-cards{
+  gap:10px !important;
+}
+#detailModal.is-saved-card-detail .info-card{
+  border-radius:22px !important;
+  padding:13px 11px 12px !important;
+  background:rgba(255,255,255,.62) !important;
+  border:1px solid rgba(255,255,255,.70) !important;
+  box-shadow:0 12px 24px rgba(66,89,152,.09), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+#detailModal.is-saved-card-detail .info-card-title{
+  min-height:28px !important;
+  padding:0 0 9px !important;
+  gap:8px !important;
+  color:#1c2e5a !important;
+  font-size:17px !important;
+  font-weight:900 !important;
+  line-height:1.05 !important;
+  letter-spacing:-.035em !important;
+}
+#detailModal.is-saved-card-detail .info-card-title::before{
+  width:28px !important;
+  height:28px !important;
+  flex:0 0 28px !important;
+  background-color:#2f64ff !important;
+}
+#detailModal.is-saved-card-detail .info-divider{
+  margin:0 2px 10px !important;
+  height:1px !important;
+  background:rgba(111,134,188,.16) !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-list{
+  padding:0 !important;
+  gap:7px !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-row,
+#detailModal.is-saved-card-detail .info-card .editable-info-row{
+  min-height:42px !important;
+  padding:7px 11px !important;
+  border-radius:15px !important;
+  display:grid !important;
+  grid-template-columns:minmax(94px,.85fr) minmax(0,1.15fr) !important;
+  align-items:center !important;
+  gap:8px !important;
+  background:rgba(248,251,255,.54) !important;
+  border:1px solid rgba(120,146,207,.10) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75) !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-label{
+  color:#65779f !important;
+  font-size:11px !important;
+  font-weight:900 !important;
+  line-height:1.05 !important;
+  letter-spacing:.055em !important;
+  text-transform:uppercase !important;
+  white-space:normal !important;
+  overflow-wrap:normal !important;
+  word-break:normal !important;
+  hyphens:none !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-value,
+#detailModal.is-saved-card-detail .info-card .info-choice-value,
+#detailModal.is-saved-card-detail .info-card .info-edit-input{
+  color:#20345f !important;
+  -webkit-text-fill-color:#20345f !important;
+  font-size:13px !important;
+  font-weight:800 !important;
+  line-height:1.15 !important;
+  letter-spacing:-.02em !important;
+  text-align:right !important;
+}
+#detailModal.is-saved-card-detail .info-card .info-choice-btn,
+#detailModal.is-saved-card-detail .info-card .info-edit-input{
+  min-height:0 !important;
+  height:auto !important;
+  padding:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  pointer-events:none !important;
+  cursor:default !important;
+}
+#detailModal.is-saved-card-detail .info-choice-arrow,
+#detailModal.is-saved-card-detail .origin-info-row::after{
+  display:none !important;
+  content:none !important;
+}
+
+/* Posizione album: pill più bassa, righe vicine, frecce centrate. */
+#detailModal.is-saved-card-detail .saved-location-pill{
+  width:min(100%,252px) !important;
+  min-height:54px !important;
+  margin:0 auto !important;
+  padding:0 12px !important;
+  border-radius:19px !important;
+  display:grid !important;
+  grid-template-columns:24px minmax(0,1fr) 24px !important;
+  align-items:center !important;
+  justify-items:center !important;
+  gap:6px !important;
+  background:rgba(255,255,255,.62) !important;
+  border:1px solid rgba(255,255,255,.70) !important;
+  box-shadow:0 12px 24px rgba(66,89,152,.09), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+#detailModal.is-saved-card-detail .saved-location-copy{
+  gap:1px !important;
+  line-height:1 !important;
+}
+#detailModal.is-saved-card-detail .saved-location-album{
+  color:#2f64ff !important;
+  font-size:15px !important;
+  font-weight:900 !important;
+  line-height:1.02 !important;
+  letter-spacing:-.03em !important;
+}
+#detailModal.is-saved-card-detail .saved-location-page{
+  color:#65779f !important;
+  font-size:11.5px !important;
+  font-weight:800 !important;
+  line-height:1.02 !important;
+  letter-spacing:-.01em !important;
+}
+#detailModal.is-saved-card-detail .saved-location-chevron{
+  width:20px !important;
+  height:20px !important;
+  stroke-width:2.4 !important;
+  align-self:center !important;
+  opacity:.95 !important;
+}
+
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .card-sheet-container{
+    padding-left:12px !important;
+    padding-right:12px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-img,
+  #detailModal.is-saved-card-detail .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+    max-width:226px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price{
+    min-height:70px !important;
+    padding:11px 12px 12px !important;
+    border-radius:20px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-value{
+    font-size:35px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-currency{
+    font-size:19px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card{
+    border-radius:20px !important;
+    padding:12px 10px 11px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card-title{
+    font-size:16px !important;
+    gap:7px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card-title::before{
+    width:26px !important;
+    height:26px !important;
+    flex-basis:26px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-row,
+  #detailModal.is-saved-card-detail .info-card .editable-info-row{
+    min-height:40px !important;
+    padding:6px 10px !important;
+    grid-template-columns:minmax(82px,.78fr) minmax(0,1.22fr) !important;
+    gap:7px !important;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-label{
+    font-size:10.5px !important;
+    letter-spacing:.045em !important;
+  }
+  #detailModal.is-saved-card-detail .info-card .info-value,
+  #detailModal.is-saved-card-detail .info-card .info-choice-value,
+  #detailModal.is-saved-card-detail .info-card .info-edit-input{
+    font-size:12.5px !important;
+  }
+  #detailModal.is-saved-card-detail .saved-location-pill{
+    width:min(100%,244px) !important;
+    min-height:52px !important;
+  }
+}
+
+
+
+/* === FIX 29/05/2026: ripristino card immagine carta salvata come vi287 + prezzo più compatto ===
+   La card immagine della carta salvata torna alle dimensioni/stile base di vi287.
+   La card prezzo viene resa bassa, senza altezza forzata inutile. */
+#detailModal.is-saved-card-detail .detail-image-wrap{
+  display:flex !important;
+  justify-content:center !important;
+  padding:14px !important;
+  border-radius:30px !important;
+  margin-bottom:0 !important;
+  background:rgba(255,255,255,.52) !important;
+  border:1px solid rgba(255,255,255,.64) !important;
+  box-shadow:0 20px 42px rgba(66,89,152,.14),inset 0 1px 0 rgba(255,255,255,.9) !important;
+  backdrop-filter:blur(22px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(145%) !important;
+}
+#detailModal.is-saved-card-detail .detail-img{
+  width:100% !important;
+  max-width:320px !important;
+  border-radius:16px !important;
+  display:block !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:0 12px 28px rgba(57,91,176,.16) !important;
+}
+#detailModal.is-saved-card-detail .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+  max-width:320px !important;
+}
+#detailModal.is-saved-card-detail .detail-image-wrap > .image-loading-placeholder.card-back-loader img{
+  border-radius:16px !important;
+  box-shadow:0 12px 28px rgba(57,91,176,.16) !important;
+}
+#detailModal.is-saved-card-detail .detail-price{
+  width:auto !important;
+  min-width:118px !important;
+  min-height:0 !important;
+  height:auto !important;
+  justify-self:center !important;
+  padding:7px 16px !important;
+  border-radius:999px !important;
+  gap:0 !important;
+  background:rgba(255,255,255,.50) !important;
+  border:1px solid rgba(255,255,255,.62) !important;
+  box-shadow:0 10px 22px rgba(66,89,152,.08),inset 0 1px 0 rgba(255,255,255,.86) !important;
+}
+#detailModal.is-saved-card-detail .detail-price::before{
+  content:none !important;
+  display:none !important;
+}
+#detailModal.is-saved-card-detail .detail-price-line{
+  justify-content:center !important;
+  margin:0 !important;
+  gap:3px !important;
+  align-items:baseline !important;
+}
+#detailModal.is-saved-card-detail .detail-price-currency{
+  font-size:17px !important;
+  font-weight:750 !important;
+  line-height:1 !important;
+}
+#detailModal.is-saved-card-detail .detail-price-value{
+  font-size:27px !important;
+  font-weight:900 !important;
+  line-height:.92 !important;
+  letter-spacing:-.055em !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .detail-img,
+  #detailModal.is-saved-card-detail .detail-image-wrap > .image-loading-placeholder.card-back-loader{
+    max-width:320px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price{
+    min-height:0 !important;
+    padding:7px 15px !important;
+    border-radius:999px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-value{
+    font-size:26px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-currency{
+    font-size:16px !important;
+  }
+}
+
+
+/* === FIX 29/05/2026: altezza da sopra dettaglio carta salvata come vi283 === */
+#detailModal.is-saved-card-detail .card-sheet-container{
+  padding:calc(var(--poke-page-top) + var(--poke-view-y)) var(--poke-page-x) calc(var(--safe-bottom) + 24px) !important;
+}
+#detailModal.is-saved-card-detail .card-sheet-topbar{
+  min-height:var(--topbar-control-size) !important;
+  padding:0 0 var(--poke-topbar-bottom) !important;
+  margin:0 0 6px !important;
+  align-items:flex-start !important;
+}
+
+
+
+/* === MOD 29/05/2026: card VALORE ATTUALE salvata da album === */
+#detailModal.is-saved-card-detail .detail-price{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  min-height:78px !important;
+  height:auto !important;
+  padding:12px 16px 14px !important;
+  border-radius:22px !important;
+  display:grid !important;
+  place-items:center !important;
+  align-content:center !important;
+  gap:5px !important;
+  text-align:center !important;
+  justify-self:stretch !important;
+  background:rgba(255,255,255,.62) !important;
+  border:1px solid rgba(255,255,255,.70) !important;
+  box-shadow:0 12px 24px rgba(66,89,152,.09), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  backdrop-filter:blur(24px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(24px) saturate(145%) !important;
+}
+#detailModal.is-saved-card-detail .detail-price::before{
+  content:"VALORE ATTUALE" !important;
+  display:block !important;
+  color:#a8b0c7 !important;
+  font-size:11px !important;
+  font-weight:850 !important;
+  letter-spacing:.08em !important;
+  line-height:1 !important;
+  text-transform:uppercase !important;
+}
+#detailModal.is-saved-card-detail .detail-price-line{
+  width:100% !important;
+  height:auto !important;
+  min-width:0 !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:baseline !important;
+  justify-content:center !important;
+  gap:4px !important;
+  white-space:nowrap !important;
+  line-height:1 !important;
+}
+#detailModal.is-saved-card-detail .detail-price-currency{
+  font-size:19px !important;
+  font-weight:750 !important;
+  line-height:.95 !important;
+  letter-spacing:-.04em !important;
+  color:#1c2e5a !important;
+}
+#detailModal.is-saved-card-detail .detail-price-value{
+  font-size:36px !important;
+  font-weight:950 !important;
+  line-height:.9 !important;
+  letter-spacing:-.06em !important;
+  color:#1c2e5a !important;
+}
+
+/* === FIX 29/05/2026: card VALORE ATTUALE più bassa === */
+#detailModal.is-saved-card-detail .detail-price{
+  width:100% !important;
+  max-width:none !important;
+  min-width:0 !important;
+  height:66px !important;
+  min-height:66px !important;
+  max-height:66px !important;
+  padding:8px 14px 9px !important;
+  border-radius:20px !important;
+  display:grid !important;
+  grid-template-rows:auto auto !important;
+  align-content:center !important;
+  justify-items:center !important;
+  gap:3px !important;
+  overflow:hidden !important;
+}
+#detailModal.is-saved-card-detail .detail-price::before{
+  content:"VALORE ATTUALE" !important;
+  display:block !important;
+  color:#a8b0c7 !important;
+  font-size:10px !important;
+  font-weight:850 !important;
+  letter-spacing:.08em !important;
+  line-height:1 !important;
+  text-transform:uppercase !important;
+}
+#detailModal.is-saved-card-detail .detail-price-line{
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  height:auto !important;
+  margin:0 !important;
+  padding:0 !important;
+  display:flex !important;
+  align-items:baseline !important;
+  justify-content:center !important;
+  gap:4px !important;
+  line-height:1 !important;
+}
+#detailModal.is-saved-card-detail .detail-price-currency{
+  font-size:17px !important;
+  font-weight:750 !important;
+  line-height:.95 !important;
+  letter-spacing:-.04em !important;
+}
+#detailModal.is-saved-card-detail .detail-price-value{
+  font-size:32px !important;
+  font-weight:950 !important;
+  line-height:.88 !important;
+  letter-spacing:-.06em !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .detail-price{
+    height:62px !important;
+    min-height:62px !important;
+    max-height:62px !important;
+    padding:7px 12px 8px !important;
+    border-radius:19px !important;
+    gap:2px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-value{
+    font-size:30px !important;
+  }
+  #detailModal.is-saved-card-detail .detail-price-currency{
+    font-size:16px !important;
+  }
+}
+
+/* === FIX 29/05/2026: campi vuoti grigi e provenienza sola lettura nella carta salvata === */
+#detailModal.is-saved-card-detail .info-card .info-value.is-empty-value,
+#detailModal.is-saved-card-detail .info-card .info-choice-value.is-empty-value,
+#detailModal.is-saved-card-detail .info-card .info-edit-input.is-empty-value{
+  color:#9aa6bf !important;
+  -webkit-text-fill-color:#9aa6bf !important;
+  font-weight:800 !important;
+  opacity:1 !important;
+}
+#detailModal.is-saved-card-detail .origin-info-row{
+  cursor:default !important;
+}
+#detailModal.is-saved-card-detail .origin-info-row .info-choice-btn{
+  pointer-events:none !important;
+  cursor:default !important;
+}
+#detailModal.is-saved-card-detail .origin-info-row .info-choice-arrow{
+  display:none !important;
+}
+
+
+/* === MOD 29/05/2026: icona Dettagli Carta sostituita === */
+#detailModal.is-saved-card-detail .info-card-title::before{
+  content:"" !important;
+  width:24px !important;
+  height:24px !important;
+  flex:0 0 24px !important;
+  display:block !important;
+  background-color:#6F7DA1 !important;
+  opacity:.78 !important;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2211%22%20y%3D%226%22%20width%3D%2226%22%20height%3D%2236%22%20rx%3D%225%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22M17%2024h14%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%222.2%22%20fill%3D%22black%22%20stroke%3D%22none%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat !important;
+  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2048%2048%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%2211%22%20y%3D%226%22%20width%3D%2226%22%20height%3D%2236%22%20rx%3D%225%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%227%22%2F%3E%3Cpath%20d%3D%22M17%2024h14%22%2F%3E%3Ccircle%20cx%3D%2224%22%20cy%3D%2224%22%20r%3D%222.2%22%20fill%3D%22black%22%20stroke%3D%22none%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat !important;
+}
+#detailModal.is-saved-card-detail .info-card-title{
+  gap:8px !important;
+}
+
+
+
+/* === MOD 29/05/2026: colori pill posizione carta salvata copiati dalle altre pill ===
+   Nome album: nero/blu scuro #243865
+   Pagina/slot: blu #2f64ff
+   Chevron: grigio #6f7f9f
+*/
+#detailModal.is-saved-card-detail .saved-location-album{
+  color:#243865 !important;
+}
+#detailModal.is-saved-card-detail .saved-location-page{
+  color:#2f64ff !important;
+}
+#detailModal.is-saved-card-detail .saved-location-chevron{
+  color:#6f7f9f !important;
+  stroke:currentColor !important;
+}
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -6630,24 +7839,6 @@ paint-order="stroke">
               <div class="album-detail-title-wrap">
                 <h2 class="album-detail-title" id="albumDetailTitle">Album</h2>
               </div>
-              <button
-                class="glass-icon-btn is-confirm"
-                id="albumDetailAddBtn"
-                type="button"
-                aria-label="Aggiungi carta"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M12 5v14"></path>
-                  <path d="M5 12h14"></path>
-                </svg>
-              </button>
             </div>
 
             <section class="album-detail-empty" id="albumDetailEmptyState">
@@ -7066,8 +8257,9 @@ paint-order="stroke">
               </label>
             </div>
             <div class="detail-cards">
-              <section class="info-card"><h3 class="info-card-title">Dettagli carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="collection-separator"><span>Dettagli collezione</span></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Artista</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div></div></section>
-              <section class="info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="info-divider"></div><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
+              <section class="info-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row static-info-row saved-only-row"><div class="info-label">Tipo Carta</div><div class="info-value" id="cardVariantsSummary"></div></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section>
+              <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="info-divider"></div><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
+              <div class="saved-location-pill" id="savedLocationPill" aria-label="Posizione carta salvata"></div>
             </div>
           </div>
         </div></div>
@@ -7267,6 +8459,8 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       cardRarity: document.getElementById('cardRarity'),
       cardSet: document.getElementById('cardSet'),
       cardVersion: document.getElementById('cardVersion'),
+      cardVariantsSummary: document.getElementById('cardVariantsSummary'),
+      savedLocationPill: document.getElementById('savedLocationPill'),
       cardTotalSetInput: document.getElementById('cardTotalSetInput'),
       cardArtistInput: document.getElementById('cardArtistInput'),
       cardDateInput: document.getElementById('cardDateInput'),
@@ -9323,9 +10517,28 @@ function finishUpdateTimer() {
     let pendingOriginInTransit = false;
 
     function resetCardDetailTemporaryFields() {
+      el.detailModal?.classList.remove('is-saved-card-detail');
       [el.cardTotalSetInput, el.cardArtistInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
-        if (input) input.value = '';
+        if (input) {
+          input.value = '';
+          input.classList.remove('is-empty-value');
+          input.readOnly = false;
+          input.disabled = false;
+          input.removeAttribute('tabindex');
+          input.removeAttribute('aria-readonly');
+        }
       });
+      [el.cardRarity, el.cardVariantsSummary, el.cardSet, el.cardVersion, el.cardOriginValue].forEach(node => {
+        if (node) node.classList.remove('is-empty-value');
+      });
+
+      if (el.cardOriginBtn) {
+        el.cardOriginBtn.disabled = false;
+        el.cardOriginBtn.setAttribute('aria-disabled', 'false');
+        el.cardOriginBtn.removeAttribute('tabindex');
+      }
+      if (el.cardVariantsSummary) el.cardVariantsSummary.textContent = '';
+      if (el.savedLocationPill) el.savedLocationPill.textContent = '';
 
       [el.variantHolo, el.variantReverse, el.variantIllustration].forEach(input => {
         if (input) input.checked = false;
@@ -9537,6 +10750,7 @@ document.querySelectorAll('[data-close]').forEach(btn => {
         el.cardOriginBtn.addEventListener('click', (event) => {
           event.preventDefault();
           event.stopPropagation();
+          if (el.detailModal?.classList.contains('is-saved-card-detail')) return;
           openOriginChoiceSheet();
         });
       }
@@ -9545,6 +10759,7 @@ document.querySelectorAll('[data-close]').forEach(btn => {
         originInfoRow.addEventListener('click', (event) => {
           event.preventDefault();
           event.stopPropagation();
+          if (el.detailModal?.classList.contains('is-saved-card-detail')) return;
           openOriginChoiceSheet();
         });
       }
@@ -10514,6 +11729,7 @@ document.addEventListener('error', (event) => {
           currentAlbum: null,
           albumDetailPage: 1,
           albumDetailCards: [],
+          albumPageSwipeSuppressClick: false,
           addCardReturnView: "home",
           renamingAlbum: null,
           deletingAlbum: null,
@@ -10939,6 +12155,145 @@ document.addEventListener('error', (event) => {
           ].filter(Boolean).join(" · ");
         }
 
+
+        function formatSavedCardVariantSummary(card = {}) {
+          const variants = card.variants || {};
+          return [
+            variants.holo ? 'Holo' : '',
+            variants.reverse ? 'Reverse' : '',
+            variants.illustration ? 'Illustration' : '',
+          ].filter(Boolean).join(' - ') || '-';
+        }
+
+        function getSavedCardOriginLabel(card = {}) {
+          const origin = card.origin || {};
+          if (origin.label) return String(origin.label).trim();
+          const type = String(origin.type || '').trim();
+          const detail = String(origin.detail || origin.value || '').trim();
+          if (!type) return '';
+          if (type === 'Acquisto Singolo') return `${type}${origin.inTransit ? ' (In arrivo)' : ''}${detail ? ` - € ${detail}` : ''}`;
+          return detail ? `${type} - ${detail}` : type;
+        }
+
+        function setReadonlyDetailImage(imageUrl = '', title = '') {
+          if (!el.detailImageWrap) return;
+          el.detailImageWrap.classList.remove('is-card-loaded');
+          el.detailImageWrap.querySelectorAll('.image-loading-placeholder').forEach(node => node.remove());
+          if (imageUrl && el.detailCardImage) {
+            el.detailImageWrap.insertAdjacentHTML('afterbegin', getCardBackLoaderHtml());
+            el.detailCardImage.style.display = 'none';
+            el.detailCardImage.dataset.loadingPlaceholder = 'true';
+            el.detailCardImage.alt = title || 'Carta Pokémon';
+            el.detailCardImage.src = imageUrl;
+          } else {
+            el.detailImageWrap.innerHTML = '<div class="thumb-fallback">Immagine non disponibile</div>';
+          }
+        }
+
+        function detailValueOrEmpty(value = '') {
+          const clean = String(value ?? '').trim();
+          return clean || '(Vuoto)';
+        }
+
+        function isDetailValueEmpty(value = '') {
+          return !String(value ?? '').trim();
+        }
+
+        function setReadonlyDetailText(node, value = '') {
+          if (!node) return;
+          const empty = isDetailValueEmpty(value);
+          node.textContent = detailValueOrEmpty(value);
+          node.classList.toggle('is-empty-value', empty);
+        }
+
+        function setReadonlyDetailInput(input, value = '') {
+          if (!input) return;
+          const empty = isDetailValueEmpty(value);
+          input.value = detailValueOrEmpty(value);
+          input.classList.toggle('is-empty-value', empty);
+          input.readOnly = true;
+          input.disabled = true;
+          input.setAttribute('tabindex', '-1');
+          input.setAttribute('aria-readonly', 'true');
+        }
+
+        function buildSavedLocationPillHtml(albumName = '', pageNumber = '', slotNumber = '') {
+          const safeAlbum = albumDetailEscapeHtml(detailValueOrEmpty(albumName));
+          const safePage = albumDetailEscapeHtml(detailValueOrEmpty(pageNumber));
+          const safeSlot = albumDetailEscapeHtml(detailValueOrEmpty(slotNumber));
+          return `
+            <svg class="saved-location-chevron saved-location-chevron-left" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+            <span class="saved-location-copy">
+              <span class="saved-location-album">${safeAlbum}</span>
+              <span class="saved-location-page">Pagina ${safePage} - Slot ${safeSlot}</span>
+            </span>
+            <svg class="saved-location-chevron saved-location-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg>
+          `;
+        }
+
+        async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
+          const id = String(savedCardId || '').trim();
+          if (!id) return;
+          let savedCard = (state.albumDetailCards || []).find(card => String(card.id || '') === id);
+          if (!savedCard) {
+            const allCards = await getAllCards();
+            savedCard = allCards.find(card => String(card.id || '') === id);
+          }
+          if (!savedCard) return;
+
+          const title = getAlbumCardTitle(savedCard);
+          const setCode = String(savedCard.set?.code || savedCard.rawCard?.code_set || '').trim();
+          const setName = String(savedCard.set?.name || savedCard.rawCard?.code_name || '').trim();
+          const number = String(savedCard.display?.version || savedCard.rawCard?.collector_number || savedCard.rawCard?.number || '').trim();
+          const setText = [setCode, setName ? `- ${setName}` : ''].filter(Boolean).join(' ');
+          const meta = [setCode ? setCode.toUpperCase() : '', number].filter(Boolean).join(' - ');
+          const priceText = String(savedCard.priceAtAdd?.valueText || '').replace(/^€\s*/i, '').trim() || '(Vuoto)';
+          const originLabel = getSavedCardOriginLabel(savedCard);
+
+          el.detailModal?.classList.add('is-saved-card-detail');
+          if (el.detailTopName) el.detailTopName.textContent = detailValueOrEmpty(title);
+          if (el.detailTopMeta) el.detailTopMeta.textContent = detailValueOrEmpty(meta);
+          setReadonlyDetailImage(getAlbumCardImage(savedCard), title);
+          setPriceResult(priceText, '', { source: '' });
+          if (el.detailOfferLabel) el.detailOfferLabel.textContent = '';
+          setReadonlyDetailText(el.cardRarity, savedCard.rarity);
+          setReadonlyDetailText(el.cardVariantsSummary, formatSavedCardVariantSummary(savedCard).replace(/^-$/, ''));
+          setReadonlyDetailText(el.cardSet, setText);
+          setReadonlyDetailText(el.cardVersion, number);
+          setReadonlyDetailInput(el.cardTotalSetInput, savedCard.set?.total);
+          setReadonlyDetailInput(el.cardDateInput, savedCard.releaseDate);
+          setReadonlyDetailInput(el.cardArtistInput, savedCard.artist);
+          if (el.cardOriginInput) {
+            el.cardOriginInput.value = detailValueOrEmpty(originLabel);
+            el.cardOriginInput.classList.toggle('is-empty-value', isDetailValueEmpty(originLabel));
+          }
+          if (el.cardOriginValue) {
+            const originEmpty = isDetailValueEmpty(originLabel);
+            el.cardOriginValue.textContent = detailValueOrEmpty(originLabel);
+            el.cardOriginValue.classList.toggle('is-placeholder', originEmpty);
+            el.cardOriginValue.classList.toggle('is-empty-value', originEmpty);
+          }
+          if (el.cardOriginBtn) {
+            el.cardOriginBtn.disabled = true;
+            el.cardOriginBtn.setAttribute('aria-disabled', 'true');
+            el.cardOriginBtn.setAttribute('tabindex', '-1');
+          }
+          [el.variantHolo, el.variantReverse, el.variantIllustration].forEach(input => {
+            if (input) input.checked = false;
+          });
+          if (el.detailRaw) el.detailRaw.textContent = JSON.stringify(savedCard, null, 2);
+          if (el.savedLocationPill) {
+            const albumName = getAlbumPublicName(state.currentAlbum?.albumData || {}) || '';
+            const pageNumber = state.albumDetailPage || '';
+            el.savedLocationPill.innerHTML = buildSavedLocationPillHtml(albumName, pageNumber, slotNumber);
+          }
+          if (el.collapsibleContent && el.collapsibleTrigger) {
+            el.collapsibleContent.classList.remove('open');
+            el.collapsibleTrigger.setAttribute('aria-expanded', 'false');
+          }
+          openModal(el.detailModal);
+        }
+
         function getAlbumCardCollectorNumber(card = {}) {
           const raw = card.rawCard || {};
           const candidates = [
@@ -10962,9 +12317,8 @@ document.addEventListener('error', (event) => {
         }
 
         function formatAlbumSlotNumber(value) {
-          const totalSlots = Math.max(1, Number(state.currentAlbum?.albumData?.totalSlots || 0) || 0);
-          const digits = Math.max(3, String(totalSlots || value || 0).length);
-          return String(value).padStart(digits, "0");
+          const slotNumber = Math.max(1, Number(value) || 1);
+          return `SLOT ${slotNumber}`;
         }
 
         function getAlbumDetailGridColumns(slotsPerPage) {
@@ -11131,11 +12485,191 @@ document.addEventListener('error', (event) => {
           if (els.albumPageNextBtn) els.albumPageNextBtn.disabled = currentPage >= totalPages;
         }
 
+        function animateAlbumPageEntry(delta = 0) {
+          const grid = els.albumDetailCardsGrid;
+          if (!grid || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+          grid.classList.remove("is-page-entering", "from-next", "from-prev", "is-page-swiping", "is-page-settling");
+          grid.style.transform = "";
+          grid.style.opacity = "";
+          grid.style.filter = "";
+          void grid.offsetWidth;
+          grid.classList.add("is-page-entering", delta >= 0 ? "from-next" : "from-prev");
+          window.setTimeout(() => {
+            grid.classList.remove("is-page-entering", "from-next", "from-prev");
+          }, 380);
+        }
+
         function changeAlbumDetailPage(delta) {
           const cards = Array.isArray(state.albumDetailCards) ? state.albumDetailCards : [];
           const { totalPages, currentPage } = getAlbumDetailPageConfig(cards);
-          state.albumDetailPage = Math.min(totalPages, Math.max(1, currentPage + delta));
+          const nextPage = Math.min(totalPages, Math.max(1, currentPage + delta));
+          if (nextPage === currentPage) return;
+          state.albumDetailPage = nextPage;
           renderAlbumDetailCards(cards);
+          animateAlbumPageEntry(delta);
+        }
+
+        function resetAlbumPageSwipeVisual(animateBack = true) {
+          const grid = els.albumDetailCardsGrid;
+          if (!grid) return;
+          grid.classList.remove("is-page-swiping");
+          if (animateBack) grid.classList.add("is-page-settling");
+          grid.style.transform = "";
+          grid.style.opacity = "";
+          grid.style.filter = "";
+          if (animateBack) {
+            window.setTimeout(() => grid.classList.remove("is-page-settling"), 240);
+          } else {
+            grid.classList.remove("is-page-settling");
+          }
+        }
+
+        function setAlbumPageSwipeVisual(deltaX = 0) {
+          const grid = els.albumDetailCardsGrid;
+          if (!grid) return;
+          const capped = Math.max(-96, Math.min(96, deltaX * 0.32));
+          const progress = Math.min(1, Math.abs(deltaX) / 190);
+          const opacity = Math.max(0.72, 1 - progress * 0.24);
+          const scale = 1 - progress * 0.018;
+          const blur = Math.min(3.5, progress * 3.5);
+          grid.classList.remove("is-page-settling", "is-page-entering", "from-next", "from-prev");
+          grid.classList.add("is-page-swiping");
+          grid.style.transform = `translate3d(${capped}px, 0, 0) scale(${scale})`;
+          grid.style.opacity = String(opacity);
+          grid.style.filter = `blur(${blur}px)`;
+        }
+
+        function getAlbumSwipePageDelta(deltaX) {
+          const cards = Array.isArray(state.albumDetailCards) ? state.albumDetailCards : [];
+          const { totalPages, currentPage } = getAlbumDetailPageConfig(cards);
+          if (deltaX < 0 && currentPage < totalPages) return 1;
+          if (deltaX > 0 && currentPage > 1) return -1;
+          return 0;
+        }
+
+        function enableAlbumPageSwipe() {
+          const swipeArea = els.albumDetailCardsView;
+          if (!swipeArea) return;
+          let swipe = null;
+          const MIN_SWIPE_DISTANCE = 48;
+          const MIN_SWIPE_VELOCITY = 0.34;
+          const HORIZONTAL_LOCK_DISTANCE = 10;
+          const VERTICAL_CANCEL_DISTANCE = 30;
+
+          const canStartSwipe = (target) => {
+            if (els.albumDetailCardsView?.classList.contains("is-hidden")) return false;
+            return !target?.closest?.("button, input, textarea, select, a, .album-page-nav, .album-page-controls");
+          };
+
+          const beginSwipe = (event, point, pointerId = "touch") => {
+            if (!canStartSwipe(event.target)) return;
+            swipe = {
+              pointerId,
+              startX: point.clientX,
+              startY: point.clientY,
+              lastX: point.clientX,
+              lastY: point.clientY,
+              startTime: performance.now(),
+              locked: false,
+              cancelled: false,
+              usedTouchFallback: pointerId === "touch",
+            };
+          };
+
+          const moveSwipe = (event, point, pointerId = "touch") => {
+            if (!swipe || swipe.pointerId !== pointerId || swipe.cancelled) return;
+            const deltaX = point.clientX - swipe.startX;
+            const deltaY = point.clientY - swipe.startY;
+            swipe.lastX = point.clientX;
+            swipe.lastY = point.clientY;
+
+            if (!swipe.locked) {
+              if (Math.abs(deltaY) > VERTICAL_CANCEL_DISTANCE && Math.abs(deltaY) > Math.abs(deltaX) * 1.08) {
+                swipe.cancelled = true;
+                resetAlbumPageSwipeVisual();
+                return;
+              }
+              if (Math.abs(deltaX) < HORIZONTAL_LOCK_DISTANCE || Math.abs(deltaX) <= Math.abs(deltaY) * 1.05) return;
+              swipe.locked = true;
+              state.albumPageSwipeSuppressClick = false;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            setAlbumPageSwipeVisual(deltaX);
+          };
+
+          const finishSwipe = (event, point, pointerId = "touch") => {
+            if (!swipe || swipe.pointerId !== pointerId) return;
+            const deltaX = (point?.clientX ?? swipe.lastX) - swipe.startX;
+            const elapsed = Math.max(1, performance.now() - swipe.startTime);
+            const velocity = Math.abs(deltaX) / elapsed;
+            const wasLocked = swipe.locked && !swipe.cancelled;
+            const pageDelta = wasLocked && (Math.abs(deltaX) >= MIN_SWIPE_DISTANCE || velocity >= MIN_SWIPE_VELOCITY)
+              ? getAlbumSwipePageDelta(deltaX)
+              : 0;
+
+            if (wasLocked) {
+              event.preventDefault?.();
+              event.stopPropagation?.();
+              state.albumPageSwipeSuppressClick = true;
+              window.setTimeout(() => { state.albumPageSwipeSuppressClick = false; }, 260);
+            }
+
+            swipe = null;
+            if (pageDelta) {
+              resetAlbumPageSwipeVisual(false);
+              changeAlbumDetailPage(pageDelta);
+            } else {
+              resetAlbumPageSwipeVisual(true);
+            }
+          };
+
+          swipeArea.addEventListener("pointerdown", (event) => {
+            if (event.pointerType === "touch") return;
+            if (event.pointerType === "mouse" && event.button !== 0) return;
+            beginSwipe(event, event, event.pointerId);
+            try { swipeArea.setPointerCapture?.(event.pointerId); } catch {}
+          }, { passive: true });
+
+          swipeArea.addEventListener("pointermove", (event) => {
+            if (event.pointerType === "touch") return;
+            moveSwipe(event, event, event.pointerId);
+          }, { passive: false });
+
+          swipeArea.addEventListener("pointerup", (event) => {
+            if (event.pointerType === "touch") return;
+            finishSwipe(event, event, event.pointerId);
+            try { swipeArea.releasePointerCapture?.(event.pointerId); } catch {}
+          }, { passive: false });
+
+          swipeArea.addEventListener("pointercancel", (event) => {
+            if (!swipe || swipe.pointerId !== event.pointerId) return;
+            swipe = null;
+            resetAlbumPageSwipeVisual(true);
+          }, { passive: true });
+
+          swipeArea.addEventListener("touchstart", (event) => {
+            if (event.touches.length !== 1) return;
+            beginSwipe(event, event.touches[0], "touch");
+          }, { passive: true });
+
+          swipeArea.addEventListener("touchmove", (event) => {
+            if (!swipe || swipe.pointerId !== "touch" || event.touches.length !== 1) return;
+            moveSwipe(event, event.touches[0], "touch");
+          }, { passive: false });
+
+          swipeArea.addEventListener("touchend", (event) => {
+            if (!swipe || swipe.pointerId !== "touch") return;
+            const point = event.changedTouches?.[0] || null;
+            finishSwipe(event, point, "touch");
+          }, { passive: false });
+
+          swipeArea.addEventListener("touchcancel", (event) => {
+            if (!swipe || swipe.pointerId !== "touch") return;
+            swipe = null;
+            resetAlbumPageSwipeVisual(true);
+          }, { passive: true });
         }
 
         function renderAlbumDetailCards(cards = []) {
@@ -12779,6 +14313,7 @@ document.addEventListener('error', (event) => {
           }
           openAddCardSearch(isInsideAlbumDetail ? "detail" : "home");
         });
+        enableAlbumPageSwipe();
         els.albumPagePrevBtn?.addEventListener("click", () => changeAlbumDetailPage(-1));
         els.albumPageNextBtn?.addEventListener("click", () => changeAlbumDetailPage(1));
 
@@ -12915,9 +14450,20 @@ document.addEventListener('error', (event) => {
         });
 
         els.albumDetailCardsGrid?.addEventListener("click", (event) => {
+          if (state.albumPageSwipeSuppressClick) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
           const albumCard = event.target.closest(".album-detail-card[data-blueprint-id], .album-detail-card[data-card-id]");
           if (!albumCard) return;
 
+          const savedCardId = albumCard.dataset.cardId;
+          if (savedCardId && typeof openSavedAlbumCardDetails === "function") {
+            event.preventDefault();
+            void openSavedAlbumCardDetails(savedCardId, albumCard.dataset.slotNumber || "");
+            return;
+          }
           const blueprintId = albumCard.dataset.blueprintId;
           if (blueprintId && typeof openCardDetails === "function") {
             event.preventDefault();
@@ -13151,7 +14697,7 @@ document.addEventListener('error', (event) => {
         });
 
         els.backToAlbumsBtn.addEventListener("click", closeAlbumDetail);
-        [els.albumDetailAddBtn, els.addFirstCardBtn].forEach((button) => {
+        [els.albumDetailAddBtn, els.addFirstCardBtn].filter(Boolean).forEach((button) => {
           button.addEventListener("click", () => openAddCardSearch("detail"));
         });
 
