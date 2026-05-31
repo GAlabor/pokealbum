@@ -11,6 +11,9 @@
     <link rel="dns-prefetch" href="//cardtrader.com">
     <link rel="preconnect" href="https://www.cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//www.cardtrader.com"><style>
+/* POST-IT: STILI BASE / RICERCA CARDTRADER
+   Componenti generici, autocomplete, card risultato e modal usati dalla ricerca carte.
+   Prima di toccare qui controlla le patch più in basso: parecchie regole finali usano !important. */
 .album-needed-toast{opacity:0;visibility:hidden;pointer-events:none;}
 .album-needed-toast.is-visible{visibility:visible;}
 .app{max-width:1400px;margin:0 auto;}
@@ -135,8 +138,14 @@ box-shadow:0 12px 28px rgba(57,91,176,.16);
 #detailModal .collapsible-content.open{display:block;}
 #detailModal .copy-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(20, 40, 25, 0.95);color:#87f5a3;padding:10px 16px;border-radius:12px;font-size:14px;border:1px solid #87f5a3;box-shadow:0 10px 30px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999;}
 #detailModal .copy-toast.show{opacity:1;}
+/* POST-IT: VARIABILI GLOBALI UI
+   Colori, safe-area, dimensioni topbar e tipografia dei form.
+   Una modifica qui si propaga su home, album, ricerca e scheda carta, quindi niente manovre da elefante nel negozio di vetri. */
 :root{--bg:#0b1220;--bg2:#dfe9fb;--panel:rgba(255, 255, 255, 0.54);--panel-2:rgba(255,255,255,0.06);--text:#14254f;--muted:#7080a3;--accent:#5aa6ff;--accent-2:#ffd84f;--danger:#ff7272;--ok:#73d78b;--border:rgba(255,255,255,0.1);--shadow:0 20px 50px rgba(64, 96, 170, 0.18);--radius:20px;--bg1:#edf2fb;--bg3:#dff4ff;--blue:#2f64ff;--blue2:#5d90ff;--panel-stroke:rgba(255, 255, 255, 0.7);--safe-top:max(16px, env(safe-area-inset-top));--safe-bottom:max(16px, env(safe-area-inset-bottom));--topbar-control-size:50px;--topbar-control-icon-size:23px;--topbar-control-offset-x:0px;--topbar-control-offset-y:0px;--field-title-size:14px;--field-title-weight:850;--field-title-line-height:1.05;--field-title-letter-spacing:-0.02em;--field-title-color:#243865;--field-subtitle-size:12px;--field-subtitle-weight:500;--field-subtitle-line-height:1.2;--field-subtitle-letter-spacing:0;--field-subtitle-color:#65779f;--field-title-subtitle-gap:2px;}
 *{box-sizing:border-box;}
+/* POST-IT: LAYOUT APP MOBILE
+   Imposta la cornice a schermo intero e blocca overflow orizzontali.
+   Se compaiono scroll laterali o tagli su mobile, questa zona e .screen sono i primi sospetti. */
 .phone-stage{width:100%;max-width:100vw;height:100%;display:block;padding:0;overflow:hidden;overflow-x:hidden;}
 .screen{width:100%;max-width:100vw;height:100dvh;min-height:100svh;position:relative;overflow:hidden;overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y;background:radial-gradient(
             circle at 18% 90%,
@@ -250,6 +259,8 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .album-title.is-auto-name{opacity:.72;font-size:var(--album-title-size, 14px);font-weight:560;letter-spacing:.01em;text-transform:none;text-shadow:0 1px 6px rgba(0,0,0,.16);}
 .album-meta{position:absolute;right:16px;bottom:16px;margin:0;min-width:42px;height:32px;padding:0 9px;border:1px solid rgba(255, 255, 255, 0.22);border-radius:999px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:rgba(255, 255, 255, 0.18);color:#ffffff;font-size:12px;font-weight:650;line-height:1;letter-spacing:-0.01em;box-shadow:0 6px 14px rgba(0, 0, 0, 0.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
 .album-name{display:none;}
+/* POST-IT: NAV/FAB INFERIORE
+   Shell inferiore con FAB centrale. Più avanti ci sono patch che la trasformano in pulsante flottante, quindi non fidarti solo di questa definizione iniziale. */
 .bottom-nav-shell{position:absolute;left:16px;right:16px;bottom:calc(var(--safe-bottom) + 10px);z-index:3;height:80px;border-radius:28px;background:rgba(255, 255, 255, 0.55);backdrop-filter:blur(24px) saturate(140%);box-shadow:0 16px 28px rgba(67, 83, 134, 0.15),
           inset 0 1px 0 rgba(255, 255, 255, 0.85);border:1px solid rgba(255, 255, 255, 0.45);display:grid;grid-template-columns:1fr auto 1fr;align-items:end;padding:10px 18px 10px;max-width:none;}
 .bottom-nav-shell.is-hidden{display:none;}
@@ -292,6 +303,8 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
           background-color 0.18s ease;}
 .text-input::placeholder, .number-input::placeholder{color:#9aa6bf;}
 .number-input{text-align:left;}
+/* POST-IT: COMPONENTE SCELTA RIUTILIZZABILE
+   Pulsante compatto usato nei form per aprire bottom sheet di selezione, per esempio slot/pagina/provenienza. */
 .choice-row-btn{
   width:100%;
   min-height:36px;
@@ -417,6 +430,8 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
   .choice-sheet{border-radius:28px;}
 }
 
+/* POST-IT: SCELTE NELLA SCHEDA CARTA
+   Variante dello stesso componente scelta, ma confinata al dettaglio carta. Utile per provenienza e campi modificabili. */
 #detailModal .info-choice-btn{
   width:100%;
   min-height:38px;
@@ -464,6 +479,9 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 
 
 /* Bottom sheet modifica prezzo manuale */
+/* POST-IT: PREZZO MANUALE
+   Bottom sheet e pagine interne per lingua/condizione/prezzo manuale.
+   È collegato al menu dei tre puntini prezzo nella scheda carta. */
 .price-edit-backdrop,
 .price-picker-page{
   position:fixed;
@@ -596,6 +614,8 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .image-picker-btn{background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);color:#fff;box-shadow:0 10px 22px rgba(47,100,255,.22),inset 0 1px 0 rgba(255,255,255,.28);}
 .image-picker-remove{background:rgba(255,114,114,.12);color:#c62828;box-shadow:inset 0 1px 0 rgba(255,255,255,.62);}
 .image-picker-remove.is-hidden{display:none;}
+/* POST-IT: ANTEPRIMA CREAZIONE ALBUM
+   Mini copertina e mini layout slot nel form album. Mantiene allineati nome, colore/immagine e configurazione pagine. */
 .album-form-preview{
   display:grid;
   grid-template-columns:minmax(0,1fr) minmax(0,1fr);
@@ -779,6 +799,8 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
 .field-line.no-help .form-label{align-self:center;}
 .field-line .form-help{grid-area:help;align-self:start;}
 .field-line .text-input, .field-line .number-input, .field-line .color-picker-row, .field-line .choice-row-btn{grid-area:input;align-self:center;min-width:0;width:100%;}
+/* POST-IT: MODALITÀ PAGINA ALBUM
+   Gestisce il toggle Fronte/Fronte-Retro e il calcolo visivo degli slot totali. */
 .page-mode-panel{display:grid;gap:6px;}
 .page-mode-header{display:flex;align-items:center;justify-content:space-between;gap:14px;}
 .page-mode-title{display:grid;gap:var(--field-title-subtitle-gap);}
@@ -850,6 +872,8 @@ body.album-reorder-active, body.album-reorder-active *{cursor:grabbing !importan
 .delete-sheet-btn.cancel{background:rgba(235,241,255,.68);color:#65779f;border:1px solid rgba(120,146,207,.16);}
 .delete-sheet-btn.confirm{color:#fff;background:linear-gradient(135deg,#ff8a8a 0%,#e34444 100%);box-shadow:0 10px 22px rgba(227,68,68,.22), inset 0 1px 0 rgba(255,255,255,.28);}
 @media (max-width:420px){.delete-sheet-backdrop{padding-left:12px;padding-right:12px;}.delete-sheet{border-radius:28px;padding:10px 12px 12px;}.delete-sheet-title{font-size:19px;}}
+/* POST-IT: BASE MODALI / OVERLAY
+   Backdrop generico. Alcuni pannelli lo riusano con classi dedicate, quindi verifica sempre z-index e classe .open. */
 .modal-backdrop{position:fixed;inset:0;background:transparent;display:none;align-items:center;justify-content:center;padding:0;z-index:50;backdrop-filter:none;-webkit-backdrop-filter:none;}
 .modal-backdrop.open{display:block;}
 .context-menu{position:fixed;left:16px;top:16px;width:max-content;min-width:168px;max-width:min(230px, calc(100vw - 32px));padding:6px;border-radius:16px;background:rgba(255, 255, 255, 0.6);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 34px rgba(25, 38, 82, 0.16),
@@ -868,6 +892,9 @@ svg{overflow:visible;}
 .empty-card-ring{position:absolute;top:50%;left:50%;width:78px;height:78px;border:6px solid #d0d0d5;border-radius:50%;transform:translate(-50%, -50%);}
 .empty-card-ring::after{content:"";position:absolute;top:50%;left:50%;width:28px;height:28px;border:6px solid #d0d0d5;border-radius:50%;transform:translate(-50%, -50%);}
 .album-detail-empty h1{max-width:300px;}
+/* POST-IT: SCHERMATA RICERCA CARTA
+   Versione mobile della ricerca: barra, autocomplete, risultati e progress.
+   Qui convivono layout app e motore CardTrader del primo script. Una convivenza civile, per una volta. */
 .add-card-search-view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:0;margin-top:-6px;}
 .card-search-title{position:absolute;left:56px;right:56px;top:50%;transform:translateY(-50%);text-align:center;pointer-events:none;}
 .card-search-actions{position:absolute;right:0;top:0;display:inline-flex;align-items:flex-start;justify-content:flex-end;gap:4px;padding:0;}
@@ -968,6 +995,9 @@ svg{overflow:visible;}
 #detailModal.modal-backdrop{background:rgba(220,230,248,.72);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);padding:0;}
 #detailModal.open{align-items:stretch;justify-content:center;}
 #detailModal .modal.card-sheet-modal{width:100%;max-height:100dvh;margin:0 auto;overflow:auto;padding:0;border-radius:0;background:transparent;border:0;max-width:100%;color:#20345f;box-shadow:none;}
+/* POST-IT: SCHEDA CARTA, LAYOUT PRINCIPALE
+   Struttura visuale della scheda carta aperta dalla ricerca o dall'album.
+   Le classi stato sul modal, tipo .is-saved-card-detail, cambiano molto il comportamento. */
 #detailModal .card-sheet-page{min-height:100dvh;color:#20345f;background:radial-gradient(circle at 18% 90%,rgba(154,170,255,.22),transparent 22%),radial-gradient(circle at 85% 10%,rgba(126,221,255,.34),transparent 22%),linear-gradient(180deg,rgba(241,246,255,.96),rgba(225,234,249,.95));}
 #detailModal .card-sheet-container{max-width:760px;margin:0 auto;padding:calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 24px);}
 #detailModal .card-sheet-panel{background:transparent;border:0;border-radius:16px;box-shadow:none;overflow:visible;}
@@ -2670,6 +2700,9 @@ button:focus, button:active, select:focus, select:active, a:focus, a:active{
 .home-profile-icon .profile-head,.home-profile-icon .profile-body{fill:#7f8fac;}
 @media (max-width:420px){.top-meta{padding-right:68px !important;}.home-profile-btn{width:52px;height:52px;min-width:52px;}.home-profile-icon{width:40px;height:40px;}}
 
+/* POST-IT: PATCH CSS STORICHE
+   Da qui inizia una lunga serie di correzioni progressive.
+   Non eliminarle solo perché sembrano duplicate: spesso vincono sulla cascata e tengono insieme l'interfaccia con lo scotch, come da tradizione web. */
 /* === FIX 20/05/2026: card prezzo stabile durante il caricamento === */
 #detailModal .detail-price{
   min-height:96px;
@@ -3570,6 +3603,9 @@ body.card-zoom-open{
 }
 
 
+/* POST-IT: PATCH HOME / FAB
+   Area delicata: spazi inferiori, tabbar, FAB e padding safe-area.
+   Se il pulsante aggiungi si sposta o sparisce, la causa è quasi sempre qui. */
 /* === FIX HOME: pulsante aggiungi carta libero, senza tabbar inferiore === */
 body .content:not(.is-form-open){
   padding-bottom:calc(var(--safe-bottom) + 26px) !important;
@@ -3885,6 +3921,9 @@ body .bottom-nav-shell .fab{
 }
 
 
+/* POST-IT: HEADER HOME E STATISTICHE
+   Rende leggibili nome proprietario, numero carte e valore raccolta.
+   Include anche posizionamento dell'icona profilo. */
 /* Home stats card stile riferimento */
 #homeView .top-meta{
   padding-right:0 !important;
@@ -4364,6 +4403,9 @@ body .bottom-nav-shell .fab{
 }
 
 
+/* POST-IT: PROFILO E RIPRISTINO DATI
+   Stili del menu laterale profilo e della conferma cancellazione IndexedDB.
+   Qui non c'entra la scheda carta, anche se il file fa di tutto per sembrare un romanzo russo. */
 /* === ADD 24/05/2026: menu profilo + ripristino IndexedDB === */
 .profile-menu-backdrop{position:fixed;inset:0;z-index:240;background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,background-color .22s ease,visibility .22s ease;}
 .profile-menu-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.18);}
@@ -4525,6 +4567,8 @@ body:not(.ui-booting) #bottomNav{
   opacity:1;
 }
 
+/* POST-IT: DETTAGLIO ALBUM / GRIGLIA CARTE
+   Controlla vista album aperto, slot pieni/vuoti, card salvate e collezione home. */
 /* Dettaglio album: griglia carte salvate */
 .album-detail-cards{
   flex:1 1 auto;
@@ -4754,6 +4798,9 @@ body:not(.ui-booting) #bottomNav{
 }
 
 
+/* POST-IT: ASPETTO RACCOGLITORE
+   Patch che trasformano gli slot in pagine stile raccoglitore.
+   Prima di cambiare dimensioni carte/slot guarda anche le patch responsive successive. */
 /* === TRASFORMAZIONE ALBUM RACCOGLITORE 26/05/2026 === */
 .album-detail-view{
   gap:0 !important;
@@ -5574,6 +5621,9 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 
 
 
+/* POST-IT: SWIPE PAGINE ALBUM
+   Regole CSS abbinate alla logica JS di cambio pagina tramite swipe.
+   Toccare transition/transform qui può rendere lo swipe gommoso, morto o teatralmente inutile. */
 /* Swipe pagine album */
 .album-detail-cards{
   touch-action:pan-y pinch-zoom;
@@ -5614,6 +5664,9 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 }
 
 
+/* POST-IT: SCHEDA CARTA SALVATA
+   Da qui iniziano le differenze tra carta vista dalla ricerca e carta già salvata in album.
+   Le regole dipendono da #detailModal.is-saved-card-detail. */
 /* === MOD 28/05/2026: dettaglio carta salvata dall'album, solo lettura === */
 #detailModal.is-saved-card-detail .detail-top-title-wrap{
   position:static !important;
@@ -6198,6 +6251,9 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 
 
 
+/* POST-IT: COMPATTAZIONE DETTAGLIO SALVATO
+   Blocco molto importante per altezza, prezzo, immagini e leggibilità della carta salvata.
+   È facile rompere la gerarchia visiva se lo si modifica a pezzi. */
 /* === FIX 29/05/2026: Card carta salvata compatta/coerente UX ===
    Obiettivo: niente più prezzo gigante, dettagli più leggibili,
    gerarchia chiara tra titolo, etichetta e valore. */
@@ -7090,6 +7146,9 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 }
 
 
+/* POST-IT: PILL POSIZIONE CARTA SALVATA
+   Zona finale dedicata alla pill Album/Pagina/Slot e ai chevron cliccabili.
+   È la parte da controllare quando vuoi renderla sempre visibile o più vetrosa. */
 /* === FIX 31/05/2026: pill Album / Pagina - Slot arrotondata come la pill pagina === */
 #detailModal.is-saved-card-detail .saved-location-pill{
   border-radius:999px !important;
@@ -7205,11 +7264,189 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   visibility:visible !important;
 }
 
+
+/* POST-IT: PILL POSIZIONE CARTA SALVATA SEMPRE VISIBILE + BLUR IOS
+   Tiene la pill Album/Pagina/Slot fuori dallo scroll naturale.
+   La pill torna piena; la zona bassa della scheda viene velata/sfocata in stile iOS, così la pill non sembra appoggiata a caso sul contenuto. */
+/* === MOD 31/05/2026: pill piena con velo blur inferiore iOS style === */
+#detailModal.is-saved-card-detail .card-sheet-container{
+  padding-bottom:calc(var(--safe-bottom) + 112px) !important;
+}
+#detailModal.is-saved-card-detail .card-sheet-page{
+  position:relative !important;
+}
+#detailModal.is-saved-card-detail .card-sheet-page::after{
+  content:"";
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  height:calc(var(--safe-bottom) + 118px);
+  z-index:10010;
+  pointer-events:none;
+  background:linear-gradient(
+    to top,
+    rgba(237,244,255,.82) 0%,
+    rgba(237,244,255,.62) 42%,
+    rgba(237,244,255,.30) 72%,
+    rgba(237,244,255,0) 100%
+  );
+  backdrop-filter:blur(18px) saturate(165%);
+  -webkit-backdrop-filter:blur(18px) saturate(165%);
+  mask-image:linear-gradient(
+    to top,
+    #000 0%,
+    #000 54%,
+    rgba(0,0,0,.72) 74%,
+    transparent 100%
+  );
+  -webkit-mask-image:linear-gradient(
+    to top,
+    #000 0%,
+    #000 54%,
+    rgba(0,0,0,.72) 74%,
+    transparent 100%
+  );
+}
+#detailModal.is-saved-card-detail .saved-location-pill{
+  position:fixed !important;
+  left:50% !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:calc(var(--safe-bottom) + 18px) !important;
+  transform:translateX(-50%) !important;
+  z-index:10015 !important;
+  margin:0 !important;
+  width:fit-content !important;
+  min-width:0 !important;
+  max-width:calc(100vw - 28px) !important;
+  display:inline-grid !important;
+  border-radius:999px !important;
+  background:linear-gradient(135deg, rgba(255,255,255,.94), rgba(255,255,255,.76)) !important;
+  border:1px solid rgba(255,255,255,.78) !important;
+  box-shadow:
+    0 14px 30px rgba(66,89,152,.16),
+    inset 0 1px 0 rgba(255,255,255,.98),
+    inset 0 -10px 18px rgba(220,230,250,.22) !important;
+  backdrop-filter:blur(22px) saturate(155%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(155%) !important;
+}
+#detailModal.is-saved-card-detail .saved-location-pill:hover{
+  background:linear-gradient(135deg, rgba(255,255,255,.98), rgba(255,255,255,.82)) !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .card-sheet-container{
+    padding-bottom:calc(var(--safe-bottom) + 104px) !important;
+  }
+  #detailModal.is-saved-card-detail .card-sheet-page::after{
+    height:calc(var(--safe-bottom) + 108px);
+  }
+  #detailModal.is-saved-card-detail .saved-location-pill{
+    bottom:calc(var(--safe-bottom) + 14px) !important;
+    max-width:calc(100vw - 22px) !important;
+  }
+}
+
+
+/* === MOD 31/05/2026: pill posizione salvata più bassa e meno alta ===
+   Micro-regolazione finale: la pill resta piena e leggibile, ma occupa meno altezza
+   e scende leggermente verso il bordo inferiore. */
+#detailModal.is-saved-card-detail .saved-location-pill{
+  min-height:48px !important;
+  padding:0 10px !important;
+  bottom:calc(var(--safe-bottom) + 10px) !important;
+}
+#detailModal.is-saved-card-detail .saved-location-nav{
+  width:28px !important;
+  height:28px !important;
+  min-width:28px !important;
+  min-height:28px !important;
+}
+#detailModal.is-saved-card-detail .saved-location-nav .saved-location-chevron{
+  width:18px !important;
+  height:18px !important;
+  flex:0 0 18px !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .saved-location-pill{
+    min-height:46px !important;
+    padding:0 9px !important;
+    bottom:calc(var(--safe-bottom) + 8px) !important;
+  }
+  #detailModal.is-saved-card-detail .saved-location-nav{
+    width:28px !important;
+    height:28px !important;
+    min-width:28px !important;
+    min-height:28px !important;
+  }
+}
+
+
+/* === MOD 31/05/2026: pill più bassa + meno spazio a fine scheda ===
+   La pill scende leggermente verso il bordo inferiore e il fondo scrollabile
+   viene ridotto, così a fine pagina resta meno vuoto tra ultima card e pill. */
+#detailModal.is-saved-card-detail .card-sheet-container{
+  padding-bottom:calc(var(--safe-bottom) + 88px) !important;
+}
+#detailModal.is-saved-card-detail .saved-location-pill{
+  bottom:calc(var(--safe-bottom) + 2px) !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .card-sheet-container{
+    padding-bottom:calc(var(--safe-bottom) + 82px) !important;
+  }
+  #detailModal.is-saved-card-detail .saved-location-pill{
+    bottom:calc(var(--safe-bottom) + 2px) !important;
+  }
+}
+
+
+/* === MOD 31/05/2026: blur inferiore più basso e meno aggressivo ===
+   Il velo iOS resta dietro la pill, ma non invade più la card Valore attuale.
+   Obiettivo: pill leggibile, prezzo ancora nitido. */
+#detailModal.is-saved-card-detail .card-sheet-page::after{
+  height:calc(var(--safe-bottom) + 84px) !important;
+  background:linear-gradient(
+    to top,
+    rgba(237,244,255,.76) 0%,
+    rgba(237,244,255,.52) 44%,
+    rgba(237,244,255,.18) 72%,
+    rgba(237,244,255,0) 100%
+  ) !important;
+  backdrop-filter:blur(12px) saturate(150%) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(150%) !important;
+  mask-image:linear-gradient(
+    to top,
+    #000 0%,
+    #000 46%,
+    rgba(0,0,0,.58) 68%,
+    transparent 100%
+  ) !important;
+  -webkit-mask-image:linear-gradient(
+    to top,
+    #000 0%,
+    #000 46%,
+    rgba(0,0,0,.58) 68%,
+    transparent 100%
+  ) !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .card-sheet-page::after{
+    height:calc(var(--safe-bottom) + 78px) !important;
+    backdrop-filter:blur(11px) saturate(148%) !important;
+    -webkit-backdrop-filter:blur(11px) saturate(148%) !important;
+  }
+}
+
 </style></head>
   <body class="ui-booting">
+    <!-- POST-IT: STRUTTURA APP
+     Tutta l'app vive dentro una singola schermata mobile. Le viste vengono mostrate/nascoste via classi JS, non con navigazione reale. -->
     <div class="phone-stage">
       <main class="screen">
         <section class="content">
+          <!-- POST-IT: HOME PRINCIPALE
+     Contiene intestazione, statistiche, menu Album/Collezione/Set/Duplicati/In arrivo e lista album. -->
           <div class="app-view" id="homeView">
             <button class="home-profile-btn" id="homeProfileBtn" type="button" aria-label="Profilo utente" title="Profilo">
               <svg class="home-profile-icon login-save-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -7354,6 +7591,8 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
                 </div>
               </div>
             </header>
+<!-- POST-IT: CONTROLLI HOME
+     Menu raccolta, aggiunta rapida album e ricerca interna della sezione corrente. -->
 <div class="home-top-controls">
 <div class="collection-actions">
 <div class="collection-menu-wrap" id="collectionMenuWrap">
@@ -7396,6 +7635,8 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   <input class="home-search-input" id="homeAlbumSearchInput" type="search" placeholder="Cerca nei tuoi album" autocomplete="off" />
 </div>
 
+<!-- POST-IT: STATO VUOTO HOME
+     Mostrato quando non ci sono album. La sincronizzazione visiva è gestita da syncEmptyState(). -->
 <section class="hero" id="emptyState">
               <div class="album-wrap" aria-hidden="true">
                 <div class="album"></div>
@@ -7409,14 +7650,18 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
               </button>
             </section>
 
-            <section
+            <!-- POST-IT: LISTA ALBUM
+     Griglia degli album salvati. Drag, long press, menu contestuale e ordine dipendono dal secondo script. -->
+              <section
               class="albums-view is-hidden"
               id="albumsView"
               aria-label="Album creati"
             >
               <div class="albums-grid" id="albumsGrid"></div>
             </section>
-            <section class="home-collection-view is-hidden" id="homeCollectionView" aria-label="Carte in collezione">
+            <!-- POST-IT: SEZIONI RACCOLTA HOME
+     Vista alternativa alla lista album: collezione globale, set, duplicati e carte in arrivo. -->
+              <section class="home-collection-view is-hidden" id="homeCollectionView" aria-label="Carte in collezione">
               <div class="home-collection-grid" id="homeCollectionGrid"></div>
             </section>
 <section class="home-section-placeholder is-hidden" id="homeSectionPlaceholder" aria-live="polite">
@@ -7430,7 +7675,9 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 
           </div>
 
-          <section
+          <!-- POST-IT: FORM CREA/MODIFICA ALBUM
+     Usato sia per nuovo album sia per modifica. Il contenuto viene popolato da resetFormDefaults() o fillFormFromAlbum(). -->
+            <section
             class="add-album-view is-hidden"
             id="addAlbumView"
             aria-label="Crea Album"
@@ -8297,7 +8544,9 @@ paint-order="stroke">
             </div>
           </section>
 
-          <section
+          <!-- POST-IT: DETTAGLIO ALBUM
+     Vista dell'album aperto: paginazione, slot, carte salvate e pulsante aggiungi carta. -->
+            <section
             class="album-detail-view is-hidden"
             id="albumDetailView"
             aria-label="Dettaglio album"
@@ -8351,7 +8600,9 @@ paint-order="stroke">
             </section>
           </section>
 
-          <section
+          <!-- POST-IT: RICERCA CARTA DA AGGIUNGERE
+     Questa schermata usa il motore del primo script e torna all'album tramite addCardReturnView. -->
+            <section
             class="add-card-search-view is-hidden"
             id="addCardSearchView"
             aria-label="Cerca carta da aggiungere"
@@ -8394,7 +8645,9 @@ paint-order="stroke">
           </section>
         </section>
 
-        <nav class="bottom-nav-shell" id="bottomNav" aria-label="Aggiunta rapida">
+        <!-- POST-IT: FAB AGGIUNTA RAPIDA
+     Formalmente è una nav, ma nella UI attuale lavora soprattutto come pulsante flottante di aggiunta. -->
+<nav class="bottom-nav-shell" id="bottomNav" aria-label="Aggiunta rapida">
           <div class="fab-wrap">
             <button
               class="fab"
@@ -8510,7 +8763,9 @@ paint-order="stroke">
           </span>
         </div>
 
-      <div class="choice-sheet-backdrop" id="slotsChoiceSheet" aria-hidden="true">
+      <!-- POST-IT: SHEET SCELTA SLOT
+     Opzioni 4/9/12/16 per pagina. Deve restare allineato a slotsPerPageInput e alle anteprime SVG. -->
+<div class="choice-sheet-backdrop" id="slotsChoiceSheet" aria-hidden="true">
         <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="slotsChoiceTitle">
           <div class="choice-sheet-handle"></div>
           <h2 class="choice-sheet-title" id="slotsChoiceTitle">Slot<span class="field-subtitle">Per pagina</span></h2>
@@ -8543,6 +8798,8 @@ paint-order="stroke">
         </div>
       </div>
 
+<!-- POST-IT: MENU CONTESTUALE ALBUM
+     Long press/click sull'album apre modifica, rinomina o elimina. La logica sta vicino alle funzioni openContextMenu/runContextAction. -->
 <div class="modal-backdrop" id="contextMenuBackdrop">
           <div
             class="context-menu"
@@ -8605,7 +8862,9 @@ paint-order="stroke">
           </div>
         </div>
 
-        <div class="profile-menu-backdrop" id="profileMenuBackdrop" aria-hidden="true">
+        <!-- POST-IT: MENU PROFILO E RIPRISTINO
+     Contiene il comando distruttivo di ripristino dati. Traduzione: qui si fa il botto, quindi cautela. -->
+<div class="profile-menu-backdrop" id="profileMenuBackdrop" aria-hidden="true">
           <aside class="profile-menu-panel" id="profileMenuPanel" role="dialog" aria-modal="true" aria-labelledby="profileMenuTitle">
             <h2 class="profile-menu-title" id="profileMenuTitle">POKÉALBUM</h2>
             <div class="profile-menu-divider" aria-hidden="true"></div>
@@ -8683,7 +8942,9 @@ paint-order="stroke">
 
     <div class="storage-toast" id="storageToast" aria-live="polite" aria-hidden="true"></div>
 
-    <template id="albumTemplate">
+    <!-- POST-IT: TEMPLATE ALBUM
+     Base DOM clonata da createAlbumNode(). Se aggiungi elementi alla card album, aggiorna anche renderAlbum(). -->
+<template id="albumTemplate">
       <article class="album-card">
         <div class="album-wrap" aria-hidden="true">
           <div class="album" data-album-cover></div>
@@ -8696,7 +8957,10 @@ paint-order="stroke">
       </article>
     </template>
 
-    <div id="detailModal" class="modal-backdrop">
+    <!-- POST-IT: MODAL SCHEDA CARTA
+     Un solo modal per due casi: carta da aggiungere e carta già salvata.
+     Le classi stato sul modal decidono cosa mostrare, quindi niente duplicazioni eroiche. -->
+<div id="detailModal" class="modal-backdrop">
     <div class="modal card-sheet-modal">
       <section id="detailPage" class="card-sheet-page">
         <div class="card-sheet-container"><div class="card-sheet-panel">
@@ -8743,18 +9007,20 @@ paint-order="stroke">
             <div class="detail-cards">
               <section class="info-card add-detail-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section><section class="info-card saved-detail-card" aria-hidden="true"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="savedCardRarity"></div></div><div class="info-row static-info-row"><div class="info-label">Tipo Carta</div><div class="info-value" id="savedCardVariantsSummary"></div></div><div class="info-row static-info-row"><div class="info-label">Provenienza</div><div class="info-value" id="savedCardOriginValue"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="savedCardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="savedCardVersion"></div></div><div class="info-row static-info-row"><div class="info-label">Totale Set</div><div class="info-value" id="savedCardTotalSet"></div></div><div class="info-row static-info-row"><div class="info-label">Uscita</div><div class="info-value" id="savedCardDate"></div></div><div class="info-row static-info-row"><div class="info-label">Illustratore</div><div class="info-value" id="savedCardArtist"></div></div></div></section>
               <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
-              <div class="saved-location-pill" id="savedLocationPill" aria-label="Posizione carta salvata"></div>
             </div>
           </div>
         </div></div>
       </section>
       <div id="copyToast" class="copy-toast">Copiato negli appunti</div>
     </div>
+    <div class="saved-location-pill" id="savedLocationPill" aria-label="Posizione carta salvata"></div>
   </div>
 
 
 
-  <div class="choice-sheet-backdrop" id="originChoiceSheet" aria-hidden="true">
+  <!-- POST-IT: PROVENIENZA CARTA
+     Sheet per Regalo/Acquisto/Scambio e dettaglio testuale, compreso stato In arrivo. -->
+<div class="choice-sheet-backdrop" id="originChoiceSheet" aria-hidden="true">
     <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="originChoiceTitle">
       <div class="choice-sheet-handle"></div>
       <h2 class="choice-sheet-title" id="originChoiceTitle">Provenienza<span class="field-subtitle">Scegli come hai ottenuto la carta</span></h2>
@@ -8793,7 +9059,9 @@ paint-order="stroke">
   </div>
 
 
-  <div class="price-edit-backdrop" id="priceEditSheet" aria-hidden="true">
+  <!-- POST-IT: MODIFICA PREZZO MANUALE
+     Sheet collegato al prezzo della scheda carta. Conferma, lingua e condizione aggiornano il payload salvato. -->
+<div class="price-edit-backdrop" id="priceEditSheet" aria-hidden="true">
     <div class="price-edit-sheet" role="dialog" aria-modal="true" aria-labelledby="priceEditTitle">
       <div class="price-edit-head">
         <button class="price-edit-icon-btn cancel" id="priceEditCancel" type="button" aria-label="Annulla">
@@ -8841,7 +9109,9 @@ paint-order="stroke">
   </div>
 
 
-  <div id="cardZoomOverlay" class="card-zoom-overlay" aria-hidden="true">
+  <!-- POST-IT: ZOOM CARTA
+     Overlay dedicato a pinch, pan, doppio tap e controlli +/- della carta. La logica è a fine primo script. -->
+<div id="cardZoomOverlay" class="card-zoom-overlay" aria-hidden="true">
     <button type="button" class="card-zoom-close" id="cardZoomClose" aria-label="Chiudi zoom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg></button>
     <div class="card-zoom-stage" id="cardZoomStage">
       <img class="card-zoom-img" id="cardZoomImage" src="" alt="Carta ingrandita" draggable="false">
@@ -8853,14 +9123,20 @@ paint-order="stroke">
     </div>
   </div>
 
+    <!-- POST-IT: SCRIPT 1 / MOTORE RICERCA E SCHEDA CARTA
+     Gestisce indice CardTrader, ricerca, prezzi marketplace/offline, dettaglio carta e zoom. -->
     <script>
+// POST-IT: endpoint e file dati locali della ricerca carte/prezzi.
+// Cambiarli impatta caricamento indice, fallback prezzi e badge offline.
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
     const INDEX_URL = 'data/pokemon-index.json';
     const META_URL = 'data/pokemon-index-meta.json';
     const PRICE_DB_URL = 'data/pokemon_price-db.json';
     const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
 
-    const state = {
+    // POST-IT: stato del motore ricerca/dettaglio carta.
+// Separato dallo stato album del secondo script; i due mondi parlano tramite funzioni globali e payload carta.
+const state = {
       cards: [],
       filtered: [],
       suggestions: [],
@@ -8900,7 +9176,9 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       },
     };
 
-    const el = {
+    // POST-IT: cache DOM della scheda ricerca/dettaglio.
+// Se cambi ID nell'HTML, aggiorna qui o preparati a cacciare null come se fossero Pokémon leggendari.
+const el = {
       reloadBtn: document.getElementById('reloadBtn'),
       searchInput: document.getElementById('searchInput'),
       searchBtn: document.getElementById('searchBtn'),
@@ -8981,7 +9259,9 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       copyToast: document.getElementById('copyToast'),
     };
 
-    function setStatus(msg, type = '') {
+    // POST-IT: feedback utente e progress ricerca.
+// Queste utility gestiscono messaggi, barra caricamento e micro-stati della ricerca.
+function setStatus(msg, type = '') {
   if (!msg) {
     el.statusText.textContent = '';
     return;
@@ -9277,7 +9557,9 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       }));
     }
 
-    function buildCardSearchIndex(card) {
+    // POST-IT: indicizzazione testuale carta.
+// Qui vengono normalizzati nome, numero, set e varianti per rendere la ricerca tollerante agli input sporchi.
+function buildCardSearchIndex(card) {
       const f = getDisplayFields(card);
       const tokenSet = new Set();
       const numericGroups = [];
@@ -9630,7 +9912,9 @@ function finishUpdateTimer() {
       return getLanguageKeyFromValue(getProductLanguage(product));
     }
 
-    function buildMarketRows(products) {
+    // POST-IT: normalizzazione marketplace.
+// Trasforma i prodotti CardTrader in righe confrontabili per lingua, condizione, CT Zero e prezzo.
+function buildMarketRows(products) {
       return (Array.isArray(products) ? products : [])
         .map(product => {
           const priceCents = getProductPriceCents(product);
@@ -9828,7 +10112,9 @@ function finishUpdateTimer() {
       });
     }
 
-    function renderMarketControls(selectedRow = null, options = {}) {
+    // POST-IT: controlli prezzo marketplace.
+// Aggiorna lingua, condizione e toggle CT Zero nella scheda carta. Tenere sincronizzato con applyMarketSelection().
+function renderMarketControls(selectedRow = null, options = {}) {
       if (!el.detailOfferLabel) return;
       const rows = state.market.rows || [];
       const selected = state.market.selected || { langKey: '', condKey: '', ctZero: false };
@@ -9992,7 +10278,9 @@ function finishUpdateTimer() {
       el.manualSetPill?.setAttribute('aria-expanded', 'true');
     }
 
-    async function restorePriceFromMarket() {
+    // POST-IT: ripristino prezzo automatico.
+// Cancella l'override manuale e ricalcola il valore dalla migliore offerta disponibile.
+async function restorePriceFromMarket() {
       closePriceActionMenu();
       closePriceEditSheet();
       state.manualPriceDraft = { langKey: '', condKey: '', priceText: '' };
@@ -10245,7 +10533,9 @@ function finishUpdateTimer() {
       el.detailPriceSource.tabIndex = source === 'database' ? 0 : -1;
     }
 
-    async function loadPriceDatabaseMeta(force = false) {
+    // POST-IT: fallback prezzi offline.
+// Usa il DB locale quando il marketplace non risponde o non ha offerte utili.
+async function loadPriceDatabaseMeta(force = false) {
       if (!force && state.priceDb.meta) return state.priceDb.meta;
       if (!force && state.priceDb.metaPromise) return state.priceDb.metaPromise;
 
@@ -10407,7 +10697,9 @@ function finishUpdateTimer() {
       }
     }
 
-    async function loadMarketSummary(card) {
+    // POST-IT: caricamento prezzo scheda.
+// Prima prova marketplace live, poi fallback DB offline. È il punto giusto per debug prezzo/lingua/condizione.
+async function loadMarketSummary(card) {
       if (!card) return;
       state.market.rows = [];
       state.market.selected = { langKey: '', condKey: '', ctZero: false, manualCustom: false };
@@ -10474,7 +10766,9 @@ function finishUpdateTimer() {
       return 6;
     }
 
-    function computeScore(card, query) {
+    // POST-IT: ranking risultati ricerca.
+// Cambiare pesi qui modifica l'ordine delle carte trovate, quindi può sembrare un bug anche quando è solo matematica dispettosa.
+function computeScore(card, query) {
       const parsed = typeof query === 'string' ? parseQuery(query) : query;
       if (!parsed.normalized || !parsed.rawTokens.length) return 0;
 
@@ -10590,7 +10884,9 @@ function finishUpdateTimer() {
       return [];
     }
 
-    async function fetchPokemonIndex(force = false, options = {}) {
+    // POST-IT: caricamento indice carte.
+// Tiene in memoria il JSON locale/remoto e aggiorna contatori/metadati visualizzati nella ricerca.
+async function fetchPokemonIndex(force = false, options = {}) {
       const silent = options?.silent === true;
 
       if (!force && state.indexLoadingPromise) {
@@ -10836,7 +11132,9 @@ function finishUpdateTimer() {
       `;
     }
 
-    function renderResults(cards, options = {}) {
+    // POST-IT: rendering risultati a batch.
+// Serve a non congelare la UI quando i risultati sono tanti. Se cambi card HTML, controlla anche getResultCardHtml().
+function renderResults(cards, options = {}) {
       cancelResultsRender();
       const list = cards || [];
       if (!list.length) {
@@ -10908,7 +11206,9 @@ function finishUpdateTimer() {
       }
     }
 
-    function buildSuggestions(query) {
+    // POST-IT: autocomplete ricerca.
+// Usa lo stesso indice della ricerca ma taglia e ordina suggerimenti rapidi sotto la barra.
+function buildSuggestions(query) {
       const parsed = parseQuery(query);
       if (!parsed.normalized || parsed.normalized.length <= 2) {
         state.lastSuggestionTotal = 0;
@@ -10963,7 +11263,9 @@ function finishUpdateTimer() {
       el.autocomplete.classList.add('open');
     }
 
-    function runSearch(rawQuery) {
+    // POST-IT: punto ingresso ricerca.
+// Dalla query utente passa a filtro, ordinamento, progress e risultati. Ottimo punto per debug della barra ricerca.
+function runSearch(rawQuery) {
       const parsed = parseQuery(rawQuery);
       if (!parsed.normalized) {
         clearResultsArea();
@@ -10994,7 +11296,9 @@ function finishUpdateTimer() {
       });
     }
 
-    async function openCardDetails(cardId) {
+    // POST-IT: apertura scheda carta da ricerca.
+// Popola immagine, dati, prezzo, varianti e JSON. È usata anche dal secondo script quando clicchi una carta salvata.
+async function openCardDetails(cardId) {
       const card = state.cards.find(c => Number(c.id) === Number(cardId));
       if (!card) return;
       state.selectedCard = card;
@@ -11040,7 +11344,9 @@ function finishUpdateTimer() {
     let pendingOriginType = '';
     let pendingOriginInTransit = false;
 
-    function resetCardDetailTemporaryFields() {
+    // POST-IT: reset campi temporanei scheda.
+// Evita che lingua, varianti, provenienza o prezzo della carta precedente restino appiccicati alla successiva.
+function resetCardDetailTemporaryFields() {
       state.savedDetailCardId = null;
       if (typeof resetSavedDetailSwipeVisual === 'function') resetSavedDetailSwipeVisual(false);
       el.detailModal?.classList.remove('is-saved-card-detail');
@@ -11172,7 +11478,9 @@ function finishUpdateTimer() {
       });
     }
 
-    function openOriginChoiceSheet() {
+    // POST-IT: provenienza carta da aggiungere.
+// Da qui partono scelta tipo, dettaglio e flag In arrivo prima del salvataggio nel payload.
+function openOriginChoiceSheet() {
       if (!el.originChoiceSheet) return;
       closeOriginInputSheet();
       el.originChoiceSheet.classList.add('open');
@@ -11216,7 +11524,9 @@ function finishUpdateTimer() {
       el.originInputSheet.setAttribute('aria-hidden', 'true');
     }
 
-    function attachEvents() {
+    // POST-IT: binding eventi ricerca/scheda.
+// Qui si collegano input, autocomplete, varianti, prezzo manuale, provenienza e JSON.
+function attachEvents() {
       const syncVariantSelection = (changedInput) => {
         if (!changedInput || !changedInput.checked) return;
         if (changedInput === el.variantIllustration) {
@@ -11642,7 +11952,9 @@ el.autocomplete.addEventListener('click', (e) => {
     }
 
 
-    function buildCollectionCardPayload() {
+    // POST-IT: payload carta salvata.
+// Traduce la scheda aperta in record persistibile per album/collezione. Se aggiungi campi, passa da qui.
+function buildCollectionCardPayload() {
       const card = state.selectedCard;
       if (!card) return null;
       const f = getDisplayFields(card);
@@ -11713,7 +12025,9 @@ el.autocomplete.addEventListener('click', (e) => {
       }
     });
 
-    async function init() {
+    // POST-IT: bootstrap ricerca.
+// Aggancia eventi e programma preload/warmup dell'indice senza bloccare l'avvio della home.
+async function init() {
       attachEvents();
       setTimerChip('00:00');
       scheduleInitialIndexPreload();
@@ -11751,7 +12065,9 @@ document.addEventListener('load', (event) => {
 
 /* === FIX 28/05/2026: viewer zoom carta stabile con pinch/pan reale === */
 (function initCardZoomViewer(){
-  const overlay = document.getElementById('cardZoomOverlay');
+  // POST-IT: zoom carta.
+// Modulo isolato per overlay, pan, pinch, doppio tap e controlli zoom. Non dipende da IndexedDB.
+const overlay = document.getElementById('cardZoomOverlay');
   const stage = document.getElementById('cardZoomStage');
   const zoomImg = document.getElementById('cardZoomImage');
   const closeBtn = document.getElementById('cardZoomClose');
@@ -12121,7 +12437,11 @@ document.addEventListener('error', (event) => {
 }, true);
 </script>
 
+    <!-- POST-IT: SCRIPT 2 / APP ALBUM E PERSISTENZA
+     Gestisce IndexedDB, album, carte salvate, home, drag, paginazione e collegamento con la scheda carta. -->
     <script>
+// POST-IT: utility DOM del modulo album.
+// Da qui parte l'IIFE che mantiene privato lo stato album e lascia il resto del mondo meno in disordine, almeno nelle intenzioni.
 (() => {
         const $ = (selector, root = document) => root.querySelector(selector);
         const $$ = (selector, root = document) => [
@@ -12134,7 +12454,9 @@ document.addEventListener('error', (event) => {
               target.addEventListener(event, handler, options),
             );
 
-        const els = {
+        // POST-IT: cache DOM dell'app album.
+// È la mappa degli ID principali della home, form album, dettaglio album e menu. Cambiare HTML senza aggiornare qui rompe tutto in silenzio, perché ovviamente.
+const els = {
           content: $(".content"),
           homeView: $("#homeView"),
           addAlbumView: $("#addAlbumView"),
@@ -12235,7 +12557,9 @@ document.addEventListener('error', (event) => {
           storageToast: $("#storageToast"),
         };
 
-        const DEFAULT_ALBUM = Object.freeze({
+        // POST-IT: default album e stato UI.
+// Valori iniziali per colore, copertina, pagine, slot e modalità fronte/fronte-retro.
+const DEFAULT_ALBUM = Object.freeze({
           color: "#4f83ff",
           appearance: "color",
           imageDataUrl: "",
@@ -12296,7 +12620,9 @@ document.addEventListener('error', (event) => {
            Viene abilitata solo dopo che l’app ha finito di leggere/sincronizzare i dati salvati. */
         let homeProfileSaveAnimationEnabled = false;
 
-        const albumStoreFields = Object.freeze({
+        // POST-IT: documentazione schema dati.
+// Questi oggetti non guidano il database: spiegano il significato dei campi salvati, utili per future sync Dropbox/Google.
+const albumStoreFields = Object.freeze({
           id: "ID stabile album",
           schemaVersion: "Versione struttura dati",
           name: "Nome album assegnato dall’utente, può essere vuoto",
@@ -12341,7 +12667,9 @@ document.addEventListener('error', (event) => {
           return cryptoId ? `${prefix}_${cryptoId}` : `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2)}`;
         }
 
-        function openDb() {
+        // POST-IT: IndexedDB locale.
+// Crea/aggiorna gli store album, carte e syncQueue. Ogni modifica strutturale richiede nuova versione DB.
+function openDb() {
           if (dbPromise) return dbPromise;
           dbPromise = new Promise((resolve, reject) => {
             const request = indexedDB.open(DB_NAME, DB_VERSION);
@@ -12530,7 +12858,9 @@ document.addEventListener('error', (event) => {
           return assignedName || autoName || getAlbumFallbackName(albumData?.createdAt);
         }
 
-        function normalizeAlbumRecord(data = {}, existing = null) {
+        // POST-IT: normalizzazione album.
+// Centralizza nome, colore, copertina, pagine, slot e metadati prima del salvataggio.
+function normalizeAlbumRecord(data = {}, existing = null) {
           const now = new Date().toISOString();
           const createdAt = existing?.createdAt || data.createdAt || now;
           const totalPages = Math.max(1, Number(data.totalPages || DEFAULT_ALBUM.totalPages));
@@ -12563,7 +12893,9 @@ document.addEventListener('error', (event) => {
           };
         }
 
-        function buildCardRecord(payload = {}, album = null) {
+        // POST-IT: normalizzazione carta salvata.
+// Traduce il payload proveniente dalla scheda carta in record IndexedDB con album, varianti, prezzo e raw JSON.
+function buildCardRecord(payload = {}, album = null) {
           const now = new Date().toISOString();
           const blueprintId = payload.blueprintId ?? payload.blueprint_id ?? payload.rawCard?.id ?? null;
           return {
@@ -12633,7 +12965,9 @@ document.addEventListener('error', (event) => {
           return normalized;
         }
 
-        async function loadSavedAlbums() {
+        // POST-IT: caricamento album salvati.
+// Ricostruisce la griglia home da IndexedDB e ricalcola contatori. È parte del boot iniziale.
+async function loadSavedAlbums() {
           const albums = await getAllStore("albums");
           albums
             .sort((a, b) => {
@@ -12763,7 +13097,9 @@ document.addEventListener('error', (event) => {
           input.setAttribute('aria-readonly', 'true');
         }
 
-        function buildSavedLocationPillHtml(albumName = '', pageNumber = '', slotNumber = '', options = {}) {
+        // POST-IT: pill Album/Pagina/Slot.
+// Genera HTML della posizione carta salvata con eventuali chevron. Se vuoi cambiare testo/ordine icone, parti da qui.
+function buildSavedLocationPillHtml(albumName = '', pageNumber = '', slotNumber = '', options = {}) {
           const safeAlbum = albumDetailEscapeHtml(detailValueOrEmpty(albumName));
           const safePage = albumDetailEscapeHtml(detailValueOrEmpty(pageNumber));
           const safeSlot = albumDetailEscapeHtml(detailValueOrEmpty(slotNumber));
@@ -12785,7 +13121,9 @@ document.addEventListener('error', (event) => {
           `;
         }
 
-        async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
+        // POST-IT: apertura carta salvata.
+// Riapre il modal scheda in modalità sola lettura, popolando dati salvati e posizione album.
+async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
           const id = String(savedCardId || '').trim();
           if (!id) return;
           state.savedDetailCardId = id;
@@ -12921,7 +13259,9 @@ document.addEventListener('error', (event) => {
           return true;
         }
 
-        function enableSavedCardDetailChevronNavigation() {
+        // POST-IT: navigazione tra carte salvate.
+// Chevron e swipe nella scheda salvata usano lo stesso cambio slot. Se tocchi uno, controlla anche l'altro.
+function enableSavedCardDetailChevronNavigation() {
           const pill = el.savedLocationPill;
           if (!pill || pill.dataset.savedDetailChevronEnabled === 'true') return;
           pill.dataset.savedDetailChevronEnabled = 'true';
@@ -13454,7 +13794,9 @@ document.addEventListener('error', (event) => {
           }, { passive: true });
         }
 
-        function renderAlbumDetailCards(cards = []) {
+        // POST-IT: rendering pagina album.
+// Costruisce slot pieni/vuoti della pagina corrente. Dipende da slotsPerPage, pageMode e ordine inserimento carte.
+function renderAlbumDetailCards(cards = []) {
           const uniqueCards = getAlbumCardsInInsertionOrder(cards);
           state.albumDetailCards = uniqueCards;
           els.albumDetailEmptyState?.classList.add("is-hidden");
@@ -13562,7 +13904,9 @@ document.addEventListener('error', (event) => {
           }, 80);
         }
 
-        async function renderHomeCollectionCards() {
+        // POST-IT: home sezione Collezione.
+// Mostra tutte le carte salvate fuori/dentro album come raccolta unica, con apertura dettaglio al click.
+async function renderHomeCollectionCards() {
           if (!els.homeCollectionView || !els.homeCollectionGrid) return [];
           if (state.currentHomeSection !== "Collezione") {
             els.homeCollectionView.classList.add("is-hidden");
@@ -13680,7 +14024,9 @@ document.addEventListener('error', (event) => {
           return cards;
         }
 
-        async function renderHomeSetGroups() {
+        // POST-IT: home sezione Set.
+// Raggruppa carte per espansione/set e crea anteprime compatte.
+async function renderHomeSetGroups() {
           if (!els.homeCollectionView || !els.homeCollectionGrid) return [];
           if (state.currentHomeSection !== 'Set') return [];
 
@@ -13747,7 +14093,9 @@ document.addEventListener('error', (event) => {
         }
 
 
-        async function renderHomeDuplicateCards() {
+        // POST-IT: home sezione Duplicati.
+// Usa una chiave normalizzata carta+versione+varianti per individuare copie multiple.
+async function renderHomeDuplicateCards() {
           if (!els.homeCollectionView || !els.homeCollectionGrid) return [];
           if (state.currentHomeSection !== "Duplicati") {
             els.homeCollectionView.classList.add("is-hidden");
@@ -13810,7 +14158,9 @@ document.addEventListener('error', (event) => {
           return cards;
         }
 
-        async function addCardToCurrentAlbum(payload) {
+        // POST-IT: salvataggio carta in album corrente.
+// Punto di collegamento tra scheda carta e IndexedDB album. Dopo salva, ricarica vista e totali.
+async function addCardToCurrentAlbum(payload) {
           const shouldSaveInsideAlbum = state.addCardReturnView === "detail" && Boolean(state.currentAlbum?.albumData);
 
           if (!shouldSaveInsideAlbum) {
@@ -13984,7 +14334,9 @@ document.addEventListener('error', (event) => {
           togglePageMode();
         }
 
-        function getAlbumDataFromForm(fallbackName) {
+        // POST-IT: lettura form album.
+// Raccoglie nome, copertina, colore, pagine, slot e modalità pagina prima di creare/modificare un album.
+function getAlbumDataFromForm(fallbackName) {
           return {
             name: els.albumNameInput.value.trim(),
             autoName: fallbackName,
@@ -14072,7 +14424,9 @@ document.addEventListener('error', (event) => {
           updateAlbumPreview();
         }
 
-        function renderAlbum(albumNode) {
+        // POST-IT: render singolo album.
+// Applica copertina, nome, contatore e dati DOM. Se cambia il template album, aggiorna anche questa funzione.
+function renderAlbum(albumNode) {
           const { name, color, appearance = "color", imageDataUrl = "", totalPages, slotsPerPage, pageMode = "front-back", cardCount = 0 } = albumNode.albumData;
           const totalSlots = getEffectiveTotalSlots(totalPages, slotsPerPage, pageMode);
           const cleanName = String(name || "").trim();
@@ -14130,7 +14484,9 @@ document.addEventListener('error', (event) => {
           );
         }
 
-        function setView(view) {
+        // POST-IT: navigazione viste interne.
+// Non cambia pagina: nasconde/mostra home, form, dettaglio album e ricerca carta con classi CSS.
+function setView(view) {
           const isForm = view === "form";
           const isDetail = view === "detail";
           const isCardSearch = view === "card-search";
@@ -14262,7 +14618,9 @@ document.addEventListener('error', (event) => {
           setView("home");
         }
 
-        async function saveAlbum() {
+        // POST-IT: crea/modifica album.
+// Decide se aggiornare un album esistente o crearne uno nuovo, poi persiste e torna alla home.
+async function saveAlbum() {
           try {
             if (state.editingAlbum) {
               Object.assign(
@@ -14296,7 +14654,9 @@ document.addEventListener('error', (event) => {
           }
         }
 
-        function parseCollectionPriceAmount(value) {
+        // POST-IT: valore economico raccolta.
+// Funzioni per leggere prezzo carta e sommare il totale visualizzato in home.
+function parseCollectionPriceAmount(value) {
           if (typeof value === "number") return Number.isFinite(value) ? value : 0;
           const raw = String(value ?? "").trim();
           if (!raw || raw === "-" || raw.includes("****")) return 0;
@@ -14461,7 +14821,9 @@ document.addEventListener('error', (event) => {
           closeOwnerNameSheet();
         }
 
-        function openProfileMenu() {
+        // POST-IT: profilo, nome proprietario e ripristino.
+// Blocco UI per menu profilo, modifica nome e cancellazione completa dati locali.
+function openProfileMenu() {
           els.profileMenuBackdrop?.classList.add("open");
           els.profileMenuBackdrop?.setAttribute("aria-hidden", "false");
         }
@@ -14504,7 +14866,9 @@ document.addEventListener('error', (event) => {
           openOwnerNameSheet();
         }
 
-        function positionContextMenu(albumNode) {
+        // POST-IT: menu contestuale album.
+// Gestisce posizione e azioni modifica/rinomina/elimina legate all'album selezionato.
+function positionContextMenu(albumNode) {
           const rect = $(".album-wrap", albumNode).getBoundingClientRect();
           const gap = 10;
           const margin = 12;
@@ -14630,7 +14994,9 @@ document.addEventListener('error', (event) => {
           delete: openDeleteSheet,
         };
 
-        function albumFromEvent(event) {
+        // POST-IT: drag & reorder album.
+// Long press, ghost, placeholder e auto-scroll per riordinare album. Fragile per natura, come tutti i drag custom mobile.
+function albumFromEvent(event) {
           return event.target.closest(".album-card");
         }
 
@@ -14984,7 +15350,9 @@ document.addEventListener('error', (event) => {
             event.target.closest(".album-wrap") && event.preventDefault(),
         );
 
-        function openNativeColorPicker(event) {
+        // POST-IT: colore e immagine copertina.
+// Binding per color picker mobile e upload immagine album. Mantiene aggiornata l'anteprima.
+function openNativeColorPicker(event) {
           if (event) {
             event.stopPropagation();
             if (event.cancelable) event.preventDefault();
@@ -15146,7 +15514,9 @@ document.addEventListener('error', (event) => {
           "In arrivo": "Cerca nelle carte in arrivo"
         };
 
-        function setHomeSection(section = "Album") {
+        // POST-IT: sezioni menu raccolta.
+// Cambia contenuto home tra Album, Collezione, Set, Duplicati e In arrivo.
+function setHomeSection(section = "Album") {
           const safeSection = section === "Album" || HOME_SECTION_EMPTY[section] ? section : "Album";
           state.currentHomeSection = safeSection;
           setHomeSearchOpen(false, { clear: true });
@@ -15297,7 +15667,9 @@ document.addEventListener('error', (event) => {
 
         const slotsChoiceValue = $("#slotsChoiceValue");
         const slotsChoiceSheet = $("#slotsChoiceSheet");
-        const slotChoiceOptions = Array.from(document.querySelectorAll("[data-slots-value]"));
+        // POST-IT: controlli slot e pagine.
+// Sincronizza stepper pagine, scelta slot 4/9/12/16, SVG anteprima e calcolo slot totali.
+const slotChoiceOptions = Array.from(document.querySelectorAll("[data-slots-value]"));
         const slotLayoutSvgs = Array.from(document.querySelectorAll("[data-slots-svg]"));
         const slotStepperValues = [4, 9, 12, 16];
 
@@ -15387,7 +15759,9 @@ document.addEventListener('error', (event) => {
         els.frontSlotCard.addEventListener("click", () => setPageMode("front"));
         els.closeAddAlbumBtn.addEventListener("click", closeAlbumForm);
         els.saveAlbumBtn.addEventListener("click", saveAlbum);
-        els.priceToggleBtn.addEventListener("click", () => {
+        // POST-IT: binding finali UI album.
+// Da qui in poi vengono collegati eventi principali della home, menu, form, rename/delete e visibilità prezzo.
+els.priceToggleBtn.addEventListener("click", () => {
           state.isPriceHidden = !state.isPriceHidden;
           updatePriceVisibility();
         });
@@ -15495,7 +15869,9 @@ document.addEventListener('error', (event) => {
         window.addEventListener("pageshow", () => scheduleAlbumImagesResumeRefresh(true), { passive: true });
         window.addEventListener("focus", () => scheduleAlbumImagesResumeRefresh(false), { passive: true });
 
-        (async () => {
+        // POST-IT: boot iniziale app album.
+// Apre IndexedDB, carica album/nome, aggiorna totali e solo dopo rimuove .ui-booting per evitare flash visivi.
+(async () => {
           try {
             await openDb();
             await loadSavedAlbums();
