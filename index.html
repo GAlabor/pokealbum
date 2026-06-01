@@ -4420,7 +4420,13 @@ body .bottom-nav-shell .fab{
 .profile-storage-note{margin:2px 0 0;color:#8b98b6;font-size:10.5px;font-weight:650;line-height:1.2;text-align:center;}
 .profile-menu-action{appearance:none;-webkit-appearance:none;width:100%;min-height:48px;border:0;border-radius:16px;background:transparent;color:#c62828;font-family:inherit;font-size:15px;font-weight:850;letter-spacing:-.02em;text-align:left;padding:0 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:flex-start;gap:10px;}
 .profile-menu-action:hover,.profile-menu-action:active{background:rgba(198,40,40,.08);}
+.profile-menu-action.cache-clean-action{color:#2f64ff;}
+.profile-menu-action.cache-clean-action:hover,.profile-menu-action.cache-clean-action:active{background:rgba(47,100,255,.08);}
 .profile-menu-action::after{content:none;display:none;}
+.openable-click-anim{transform-origin:center;will-change:transform;}
+.openable-click-anim.opening-press{animation:openablePressPop .32s cubic-bezier(.18,.9,.2,1);}
+@keyframes openablePressPop{0%{transform:scale(1);}38%{transform:scale(.94);}72%{transform:scale(1.035);}100%{transform:scale(1);}}
+@media (prefers-reduced-motion:reduce){.openable-click-anim.opening-press{animation:none !important;}}
 .restore-sheet-backdrop{position:fixed;inset:0;z-index:250;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,background-color .22s ease,visibility .22s ease;}
 .restore-sheet-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.28);}
 .restore-sheet{width:min(100%,430px);border-radius:30px;background:rgba(255,255,255,.80);border:1px solid rgba(255,255,255,.74);box-shadow:0 24px 54px rgba(25,38,82,.24),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);padding:10px 14px 14px;transform:translateY(calc(100% + 28px));transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f;}
@@ -9420,6 +9426,7 @@ paint-order="stroke">
               </div>
               <p class="profile-storage-note" id="profileStorageNote">Stima del browser</p>
             </div>
+            <button class="profile-menu-action cache-clean-action" id="clearCacheBtn" type="button">Pulisci cache</button>
             <button class="profile-menu-action" id="restoreDataBtn" type="button">Ripristina</button>
           </aside>
         </div>
@@ -9428,7 +9435,7 @@ paint-order="stroke">
           <section class="restore-sheet" id="restoreSheet" role="dialog" aria-modal="true" aria-labelledby="restoreSheetTitle">
             <div class="restore-sheet-handle" aria-hidden="true"></div>
             <h2 class="restore-sheet-title" id="restoreSheetTitle">Ripristinare PokéAlbum?</h2>
-            <p class="restore-sheet-text">Questa operazione cancella tutti gli album, le carte, le impostazioni e la coda sync salvati in IndexedDB.</p>
+            <p class="restore-sheet-text">Questa operazione cancella album, carte, impostazioni, cache dati, localStorage/sessionStorage e riporta l’app allo stato iniziale.</p>
             <div class="restore-sheet-actions">
               <button class="restore-sheet-btn cancel" id="restoreCancelBtn" type="button">Annulla</button>
               <button class="restore-sheet-btn confirm" id="restoreConfirmBtn" type="button">Cancella tutto</button>
@@ -9685,6 +9692,39 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     const META_URL = 'data/pokemon-index-meta.json';
     const PRICE_DB_URL = 'data/pokemon_price-db.json';
     const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
+    const APP_DATA_CACHE_NAME = 'pokealbum-data-cache-v1';
+
+    async function fetchJsonWithAppCache(url, options = {}) {
+      const force = Boolean(options.force);
+      const cacheKey = new URL(url, window.location.href).href;
+      const canUseCacheApi = Boolean(window.caches && typeof caches.open === 'function' && typeof caches.match === 'function');
+
+      if (!force && canUseCacheApi) {
+        try {
+          const cached = await caches.match(cacheKey);
+          if (cached) return cached.json();
+        } catch (error) {
+          console.warn('Cache dati non leggibile', error);
+        }
+      }
+
+      const fetchUrl = force ? `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}` : url;
+      const response = await fetch(fetchUrl, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`${url} non caricato: HTTP ${response.status}`);
+      }
+
+      if (canUseCacheApi) {
+        try {
+          const cache = await caches.open(APP_DATA_CACHE_NAME);
+          await cache.put(cacheKey, response.clone());
+        } catch (error) {
+          console.warn('Cache dati non salvata', error);
+        }
+      }
+
+      return response.json();
+    }
 
     // POST-IT: stato del motore ricerca/dettaglio carta.
 // Separato dallo stato album del secondo script; i due mondi parlano tramite funzioni globali e payload carta.
@@ -10981,6 +11021,28 @@ async function restorePriceFromMarket() {
       };
     }
 
+    // FIX 01/06/2026: quando apro una carta salvata, il prezzo LIVE deve usare
+    // lingua/condizione/CTZero memorizzati al momento dell'aggiunta.
+    // Prima sceglieva di nuovo "la migliore offerta" e quindi sembrava non aggiornarsi
+    // oppure aggiornarsi con filtri sbagliati. Il browser già fa abbastanza casino, evitiamo di aiutarlo.
+    function normalizeSavedMarketSelection(selection = {}) {
+      const langKey = getLanguageKeyFromValue(selection.langKey || selection.language || selection.lang || '');
+      const condKey = getConditionCode(selection.condKey || selection.condition || selection.cond || '');
+      const hasCtZero = Object.prototype.hasOwnProperty.call(selection, 'ctZero')
+        || Object.prototype.hasOwnProperty.call(selection, 'ctzero')
+        || Object.prototype.hasOwnProperty.call(selection, 'z');
+      return {
+        langKey,
+        condKey,
+        ctZero: hasCtZero ? Boolean(selection.ctZero ?? selection.ctzero ?? selection.z) : false,
+        manualCustom: false,
+      };
+    }
+
+    function hasUsefulSavedMarketSelection(selection = {}) {
+      return Boolean(selection.langKey || selection.condKey);
+    }
+
     function applyMarketSelection(changed = 'auto') {
       const rows = state.market.rows || [];
       const selected = state.market.selected || { langKey: '', condKey: '', ctZero: false };
@@ -11105,13 +11167,7 @@ async function loadPriceDatabaseMeta(force = false) {
       if (!force && state.priceDb.metaPromise) return state.priceDb.metaPromise;
 
       state.priceDb.metaPromise = (async () => {
-        const cacheBust = force ? `?t=${Date.now()}` : '';
-        const response = await fetch(`${PRICE_DB_META_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' });
-        if (!response.ok) {
-          throw new Error(`pokemon_price-db-meta.json non caricato: HTTP ${response.status}`);
-        }
-
-        const meta = await response.json();
+        const meta = await fetchJsonWithAppCache(PRICE_DB_META_URL, { force });
         if (!meta || typeof meta !== 'object' || Array.isArray(meta)) {
           throw new Error('pokemon_price-db-meta.json non è un oggetto valido');
         }
@@ -11157,13 +11213,7 @@ async function loadPriceDatabaseMeta(force = false) {
       if (!force && state.priceDb.promise) return state.priceDb.promise;
 
       state.priceDb.promise = (async () => {
-        const cacheBust = force ? `?t=${Date.now()}` : '';
-        const response = await fetch(`${PRICE_DB_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' });
-        if (!response.ok) {
-          throw new Error(`pokemon_price-db.json non caricato: HTTP ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await fetchJsonWithAppCache(PRICE_DB_URL, { force });
         if (!data || typeof data !== 'object' || Array.isArray(data)) {
           throw new Error('pokemon_price-db.json non è un oggetto valido');
         }
@@ -11286,6 +11336,62 @@ function isCurrentMarketRequest(card, requestSeq) {
 
 async function loadMarketSummary(card, options = {}) {
       if (!card) return;
+
+      const hasAdvancedPriceOptions = Boolean(options && (
+        options.preferredSelection
+        || options.marketSelection
+        || options.strictSelection === true
+        || options.forceRefresh === true
+        || options.force === true
+        || options.noCache === true
+        || options.retryOnEmpty === false
+      ));
+
+      // FIX 01/06/2026: la scheda carta da aggiungere deve tornare al comportamento di vi317.
+      // Quindi, quando non stiamo aprendo una carta salvata con filtri memorizzati,
+      // niente selezioni rigide, niente cache-bust e niente logica extra: carica LIVE e sceglie la migliore offerta come prima.
+      if (!hasAdvancedPriceOptions) {
+        state.market.rows = [];
+        state.market.selected = { langKey: '', condKey: '', ctZero: false, manualCustom: false };
+        state.market.priceSource = '';
+        state.market.lastCardId = card.id;
+        setPriceLoadingState();
+        try {
+          const data = await api(`/marketplace/products?blueprint_id=${encodeURIComponent(card.id)}`);
+          if (state.selectedCard && Number(state.selectedCard.id) !== Number(card.id)) return;
+          const products = extractArray(data, ['products']);
+          if (!products.length) { setPriceResult('-', 'Nessuna inserzione marketplace trovata'); return; }
+          const pricedProducts = products.map(product => ({ product, priceCents: getProductPriceCents(product) })).filter(row => Number.isFinite(row.priceCents));
+          if (!pricedProducts.length) { setPriceResult('-', 'Inserzioni trovate, ma nessun prezzo leggibile'); return; }
+          state.market.rows = buildMarketRows(products);
+          const selected = pickBestMarketplaceOffer(products) || pricedProducts.sort((a, b) => a.priceCents - b.priceCents)[0];
+          if (!selected) { setPriceResult('-', 'Offerta non disponibile'); return; }
+          setMarketSelectionFromProduct(selected.product);
+          setPriceResult(formatEuroFromCents(selected.priceCents), '', { source: 'live' });
+          renderMarketControls({ product: selected.product, priceCents: selected.priceCents });
+        } catch (error) {
+          try {
+            const usedDatabasePrice = await loadPriceFromDatabaseFallback(card, error);
+            if (!usedDatabasePrice) {
+              const message = error instanceof Error ? error.message : String(error);
+              setPriceResult('-', `Errore prezzo live e nessun prezzo nel database: ${message}`);
+            }
+          } catch (dbError) {
+            const liveMessage = error instanceof Error ? error.message : String(error);
+            const dbMessage = dbError instanceof Error ? dbError.message : String(dbError);
+            setPriceResult('-', `Errore prezzo live: ${liveMessage}. Database non disponibile: ${dbMessage}`);
+          }
+        } finally {
+          const usingDatabaseFallback = state.market.priceSource === 'database';
+          setMarketControlsDisabled(usingDatabaseFallback ? true : false);
+          if (el.refreshPriceBtn) {
+            el.refreshPriceBtn.disabled = false;
+            el.refreshPriceBtn.textContent = 'Aggiorna prezzo';
+          }
+        }
+        return;
+      }
+
       const requestSeq = (state.market.requestSeq || 0) + 1;
       state.market.requestSeq = requestSeq;
       state.market.rows = [];
@@ -11309,6 +11415,36 @@ async function loadMarketSummary(card, options = {}) {
         if (!products.length) { setPriceResult('-', 'Nessuna inserzione marketplace trovata'); return; }
         if (!pricedProducts.length) { setPriceResult('-', 'Inserzioni trovate, ma nessun prezzo leggibile'); return; }
         state.market.rows = buildMarketRows(products);
+
+        const preferredSelection = normalizeSavedMarketSelection(options.preferredSelection || options.marketSelection || {});
+        const strictSelection = options.strictSelection === true;
+        if (hasUsefulSavedMarketSelection(preferredSelection)) {
+          if (!isCurrentMarketRequest(card, requestSeq)) return;
+          state.market.selected = preferredSelection;
+          state.market.priceSource = 'live';
+
+          if (strictSelection) {
+            const exactCandidates = state.market.rows.filter(row => {
+              const sameLanguage = !preferredSelection.langKey || row.langKey === preferredSelection.langKey;
+              const sameCondition = !preferredSelection.condKey || row.condKey === preferredSelection.condKey;
+              const sameCtZero = Boolean(row.ctZero) === Boolean(preferredSelection.ctZero);
+              return sameLanguage && sameCondition && sameCtZero;
+            });
+            const exactChoice = getLowestRow(exactCandidates);
+            if (exactChoice) {
+              setPriceResult(formatEuroFromCents(exactChoice.priceCents), '', { source: 'live' });
+              renderMarketControls(exactChoice);
+              return;
+            }
+            setPriceResult('-', 'Nessuna offerta con lingua, condizione e CTZero salvati');
+            renderMarketControls(null, { noMatch: true });
+            return;
+          }
+
+          applyMarketSelection('saved-card');
+          return;
+        }
+
         const selected = pickBestMarketplaceOffer(products) || pricedProducts.sort((a, b) => a.priceCents - b.priceCents)[0];
         if (!selected) { setPriceResult('-', 'Offerta non disponibile'); return; }
         if (!isCurrentMarketRequest(card, requestSeq)) return;
@@ -11317,6 +11453,12 @@ async function loadMarketSummary(card, options = {}) {
         renderMarketControls({ product: selected.product, priceCents: selected.priceCents });
       } catch (error) {
         if (!isCurrentMarketRequest(card, requestSeq)) return;
+        if (options.strictSelection === true) {
+          const message = error instanceof Error ? error.message : String(error);
+          setPriceResult('-', `Prezzo live non disponibile: ${message}`);
+          renderMarketControls(null, { noMatch: true });
+          return;
+        }
         try {
           const usedDatabasePrice = await loadPriceFromDatabaseFallback(card, error);
           if (!isCurrentMarketRequest(card, requestSeq)) return;
@@ -11502,16 +11644,10 @@ async function fetchPokemonIndex(force = false, options = {}) {
             setProgress(0);
           }
 
-          const cacheBust = force ? `?t=${Date.now()}` : '';
-          const [cardsRes, metaRes] = await Promise.all([
-            fetch(`${INDEX_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' }),
-            fetch(`${META_URL}${cacheBust}`, { cache: force ? 'no-store' : 'default' }),
+          const [cards, meta] = await Promise.all([
+            fetchJsonWithAppCache(INDEX_URL, { force }),
+            fetchJsonWithAppCache(META_URL, { force }),
           ]);
-
-          if (!cardsRes.ok) throw new Error(`pokemon-index.json non caricato: HTTP ${cardsRes.status}`);
-          if (!metaRes.ok) throw new Error(`pokemon-index-meta.json non caricato: HTTP ${metaRes.status}`);
-
-          const [cards, meta] = await Promise.all([cardsRes.json(), metaRes.json()]);
 
           if (!Array.isArray(cards)) {
             throw new Error('pokemon-index.json non è un array di carte valido');
@@ -11668,7 +11804,7 @@ async function fetchPokemonIndex(force = false, options = {}) {
       state.filtered = [];
       state.resultsPager = null;
       state.hasSearched = false;
-      el.results.innerHTML = '';
+      el.results.replaceChildren();
       el.emptyState.style.display = 'none';
       setCardSearchScrollTopVisible(false);
     }
@@ -11693,7 +11829,7 @@ async function fetchPokemonIndex(force = false, options = {}) {
     function resetCardSearchViewForOpen() {
       prepareCardSearchViewForOpen();
       renderSuggestions([]);
-      el.results.innerHTML = '';
+      el.results.replaceChildren();
       el.results.scrollTop = 0;
       el.emptyState.textContent = '';
       el.emptyState.style.display = 'none';
@@ -13300,6 +13436,42 @@ document.addEventListener('error', (event) => {
     }
   }
 }, true);
+
+window.PokeAlbumCardSearchClearCache = function PokeAlbumCardSearchClearCache() {
+  try {
+    clearSearchProgressAnimation?.();
+    state.cards = [];
+    state.filtered = [];
+    state.suggestions = [];
+    state.activeSuggestion = -1;
+    state.meta = null;
+    state.selectedCard = null;
+    state.lastSuggestionTotal = 0;
+    state.hasSearched = false;
+    state.indexLoadingPromise = null;
+    state.searchWarmupStarted = false;
+    state.searchWarmupDone = false;
+    state.searchWarmupTimer = null;
+    state.priceDb = {
+      data: null, promise: null, error: null,
+      meta: null, metaPromise: null, metaError: null,
+    };
+    if (typeof MARKET_FLAG_SVG_CACHE !== 'undefined' && MARKET_FLAG_SVG_CACHE?.clear) {
+      MARKET_FLAG_SVG_CACHE.clear();
+    }
+    if (el?.searchInput) el.searchInput.value = '';
+    if (el?.autocomplete) {
+      el.autocomplete.innerHTML = '';
+      el.autocomplete.classList.remove('open');
+    }
+    if (typeof clearResultsArea === 'function') clearResultsArea();
+    if (typeof renderStatus === 'function') renderStatus('Cache ricerca pulita. La prossima ricerca ricarica l’indice.');
+    return true;
+  } catch (error) {
+    console.warn('Impossibile pulire la cache ricerca', error);
+    return false;
+  }
+};
 </script>
 
     <!-- POST-IT: SCRIPT 2 / APP ALBUM E PERSISTENZA
@@ -13383,6 +13555,7 @@ const els = {
           profileStorageUsage: $("#profileStorageUsage"),
           profileStorageRemaining: $("#profileStorageRemaining"),
           profileStorageNote: $("#profileStorageNote"),
+          clearCacheBtn: $("#clearCacheBtn"),
           restoreDataBtn: $("#restoreDataBtn"),
           restoreSheetBackdrop: $("#restoreSheetBackdrop"),
           restoreCancelBtn: $("#restoreCancelBtn"),
@@ -13565,7 +13738,14 @@ function openDb() {
                 syncQueue.createIndex("entity", "entity");
               }
             };
-            request.onsuccess = () => resolve(request.result);
+            request.onsuccess = () => {
+              const db = request.result;
+              db.onversionchange = () => {
+                db.close();
+                dbPromise = null;
+              };
+              resolve(db);
+            };
             request.onerror = () => reject(request.error);
           });
           return dbPromise;
@@ -13924,12 +14104,28 @@ async function loadSavedAlbums() {
           return /^€\s*/i.test(rawValue) ? rawValue : `€ ${cleanValue}`;
         }
 
+        function getSavedCardLastDisplayedPrice(card = {}) {
+          const rawValue = String(card.priceAtAdd?.valueText || card.initialValue || "").trim();
+          const cleanValue = rawValue.replace(/^€\s*/i, "").trim();
+          if (!cleanValue || cleanValue === "-" || /^nessun riscontro$/i.test(cleanValue)) return "";
+          return cleanValue;
+        }
+
         function getSavedCardLivePriceSource(card = {}) {
           const source = card.rawCard || card.raw || {};
           const fallbackId = card.blueprintId ?? source.id ?? source.blueprint_id ?? null;
           const numericId = Number(fallbackId);
           if (!Number.isFinite(numericId)) return null;
           return { ...source, id: numericId };
+        }
+
+        function getSavedCardPreferredMarketSelection(card = {}) {
+          const priceAtAdd = card.priceAtAdd || {};
+          return normalizeSavedMarketSelection({
+            langKey: priceAtAdd.language || priceAtAdd.langKey || card.language || card.lang || '',
+            condKey: priceAtAdd.condition || priceAtAdd.condKey || card.condition || card.cond || '',
+            ctZero: priceAtAdd.ctZero ?? priceAtAdd.ctzero ?? false,
+          });
         }
 
 
@@ -14038,6 +14234,7 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
           const setText = [setCode, setName ? `- ${setName}` : ''].filter(Boolean).join(' ');
           const meta = [setCode ? setCode.toUpperCase() : '', number].filter(Boolean).join(' - ');
           const livePriceCard = getSavedCardLivePriceSource(savedCard);
+          const savedMarketSelection = getSavedCardPreferredMarketSelection(savedCard);
           const originLabel = getSavedCardOriginLabel(savedCard);
 
           el.detailModal?.classList.add('is-saved-card-detail');
@@ -14116,9 +14313,40 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
           }
           openModal(el.detailModal);
           if (livePriceCard) {
-            await loadMarketSummary(livePriceCard, { forceRefresh: true, retryOnEmpty: true });
-            const livePriceText = String(el.detailPriceValue?.textContent || '').trim();
-            const hasNoLivePrice = !livePriceText || livePriceText === '-';
+            await loadMarketSummary(livePriceCard, {
+              forceRefresh: true,
+              retryOnEmpty: true,
+              preferredSelection: savedMarketSelection,
+              strictSelection: true,
+            });
+            let livePriceText = String(el.detailPriceValue?.textContent || '').trim();
+            let hasNoLivePrice = !livePriceText || livePriceText === '-';
+            if (hasNoLivePrice) {
+              const lastDisplayedPrice = getSavedCardLastDisplayedPrice(savedCard);
+              if (lastDisplayedPrice) {
+                setPriceResult(lastDisplayedPrice, '', { source: '' });
+                livePriceText = String(el.detailPriceValue?.textContent || '').trim();
+                hasNoLivePrice = false;
+              }
+            } else {
+              try {
+                await updateSavedCardDetails(id, {
+                  priceAtAdd: {
+                    ...(savedCard.priceAtAdd || {}),
+                    valueText: livePriceText,
+                    currency: 'EUR',
+                    source: 'live',
+                    offerLabel: el.detailOfferLabel?.textContent || '',
+                    language: savedMarketSelection.langKey || '',
+                    condition: savedMarketSelection.condKey || '',
+                    ctZero: Boolean(savedMarketSelection.ctZero),
+                    capturedAt: new Date().toISOString(),
+                  },
+                });
+              } catch (error) {
+                console.warn('Ultimo prezzo carta salvata non aggiornato', error);
+              }
+            }
             el.detailPriceValue?.classList.toggle('is-no-price', hasNoLivePrice);
             el.detailPriceValue?.closest('.detail-price-line')?.classList.toggle('has-no-price', hasNoLivePrice);
           }
@@ -15118,6 +15346,20 @@ async function updateSavedCardDetails(cardId = "", patch = {}) {
               inTransit: Boolean(patch.origin.inTransit),
             };
           }
+          if (patch.priceAtAdd && typeof patch.priceAtAdd === "object") {
+            record.priceAtAdd = {
+              ...(record.priceAtAdd || {}),
+              valueText: String(patch.priceAtAdd.valueText ?? record.priceAtAdd?.valueText ?? "").replace(/^€\s*/i, "").trim(),
+              currency: String(patch.priceAtAdd.currency ?? record.priceAtAdd?.currency ?? "EUR").trim() || "EUR",
+              source: String(patch.priceAtAdd.source ?? record.priceAtAdd?.source ?? "").trim(),
+              offerLabel: String(patch.priceAtAdd.offerLabel ?? record.priceAtAdd?.offerLabel ?? "").trim(),
+              language: String(patch.priceAtAdd.language ?? record.priceAtAdd?.language ?? "").trim(),
+              condition: String(patch.priceAtAdd.condition ?? record.priceAtAdd?.condition ?? "").trim(),
+              ctZero: Boolean(patch.priceAtAdd.ctZero ?? patch.priceAtAdd.ctzero ?? record.priceAtAdd?.ctZero),
+              manualCustom: Boolean(patch.priceAtAdd.manualCustom ?? record.priceAtAdd?.manualCustom),
+              capturedAt: String(patch.priceAtAdd.capturedAt ?? new Date().toISOString()).trim(),
+            };
+          }
 
           record.updatedAt = new Date().toISOString();
           await putStore("cards", record);
@@ -15544,24 +15786,32 @@ function setView(view) {
 
         function openAddCardSearch(returnView = null) {
           state.addCardReturnView = returnView || (state.currentAlbum ? "detail" : "home");
-          if (typeof prepareCardSearchViewForOpen === "function") {
-            prepareCardSearchViewForOpen();
-          }
+
+          // Mostra subito la schermata ricerca: niente reset pesanti prima del cambio vista.
+          // Prima il DOM dei vecchi risultati veniva svuotato prima di aprire la pagina,
+          // e sui telefoni bastava quello per dare l'effetto "premi e aspetta". Una piccola
+          // tragedia digitale, ma risolvibile.
           els.addCardSearchView?.classList.add("is-opening");
-          if (typeof bindCardSearchScrollTopButton === "function") {
-            bindCardSearchScrollTopButton();
-          }
           setView("card-search");
           focusCardSearchInputOnOpen();
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              if (typeof finishCardSearchOpenReset === "function") {
-                finishCardSearchOpenReset();
-              } else {
-                els.addCardSearchView?.classList.remove("is-opening");
-              }
-            });
-          });
+
+          const finishOpen = () => {
+            if (typeof bindCardSearchScrollTopButton === "function") {
+              bindCardSearchScrollTopButton();
+            }
+            if (typeof finishCardSearchOpenReset === "function") {
+              finishCardSearchOpenReset();
+            } else {
+              els.addCardSearchView?.classList.remove("is-opening");
+            }
+            focusCardSearchInputOnOpen();
+          };
+
+          const runAfterFirstPaint = window.requestIdleCallback
+            ? () => requestAnimationFrame(() => requestIdleCallback(finishOpen, { timeout: 120 }))
+            : () => requestAnimationFrame(() => setTimeout(finishOpen, 0));
+
+          runAfterFirstPaint();
         }
 
         function focusCardSearchInputOnOpen() {
@@ -15836,6 +16086,14 @@ function formatStorageBytes(bytes) {
           if (els.profileStorageNote) els.profileStorageNote.textContent = noteText;
         }
 
+        function formatStorageUsageDetails(details = {}) {
+          const entries = Object.entries(details || {})
+            .filter(([, value]) => Number(value) > 0)
+            .sort((a, b) => Number(b[1]) - Number(a[1]))
+            .map(([key, value]) => `${key}: ${formatStorageBytes(Number(value))}`);
+          return entries.length ? `Dettaglio: ${entries.join(" · ")}` : "Stima del browser";
+        }
+
         async function updateProfileStorageInfo() {
           if (!navigator.storage || typeof navigator.storage.estimate !== "function") {
             setProfileStorageValues("n/d", "n/d", "n/d", "Non supportato");
@@ -15854,7 +16112,7 @@ function formatStorageBytes(bytes) {
               formatStorageBytes(quota),
               formatStorageBytes(usage),
               formatStorageBytes(remaining),
-              "Stima del browser"
+              formatStorageUsageDetails(estimate.usageDetails)
             );
           } catch (error) {
             console.warn("Impossibile stimare lo spazio locale", error);
@@ -15890,16 +16148,162 @@ function formatStorageBytes(bytes) {
           window.setTimeout(openRestoreSheet, 40);
         }
 
+
+        async function deleteBrowserCaches() {
+          let deletedCaches = 0;
+          if (window.caches && typeof caches.keys === "function") {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map(async (cacheName) => {
+              const deleted = await caches.delete(cacheName);
+              if (deleted) deletedCaches += 1;
+            }));
+          }
+          return deletedCaches;
+        }
+
+        async function unregisterServiceWorkers() {
+          if (!navigator.serviceWorker || typeof navigator.serviceWorker.getRegistrations !== "function") {
+            return 0;
+          }
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          let removed = 0;
+          await Promise.all(registrations.map(async (registration) => {
+            const ok = await registration.unregister();
+            if (ok) removed += 1;
+          }));
+          return removed;
+        }
+
+        async function cleanupOrphanCardData() {
+          const db = await openDb();
+          const storeNames = Array.from(db.objectStoreNames);
+          if (!storeNames.includes("albums") || !storeNames.includes("cards")) {
+            return { cards: 0, sync: 0 };
+          }
+
+          const [albums, cards] = await Promise.all([
+            getAllStore("albums"),
+            getAllStore("cards"),
+          ]);
+          const albumIds = new Set((Array.isArray(albums) ? albums : []).map(album => album?.id).filter(Boolean));
+          const orphanCards = (Array.isArray(cards) ? cards : []).filter(card => !card?.albumId || !albumIds.has(card.albumId));
+          let deletedCards = 0;
+          let deletedSync = 0;
+
+          if (orphanCards.length) {
+            const tx = db.transaction("cards", "readwrite");
+            const store = tx.objectStore("cards");
+            orphanCards.forEach(card => {
+              if (card?.id) {
+                store.delete(card.id);
+                deletedCards += 1;
+              }
+            });
+            await txDone(tx);
+          }
+
+          if (storeNames.includes("syncQueue")) {
+            const syncItems = await getAllStore("syncQueue");
+            const orphanIds = new Set(orphanCards.map(card => card?.id).filter(Boolean));
+            const staleSync = (Array.isArray(syncItems) ? syncItems : []).filter(item => {
+              if (!item?.id) return false;
+              if (item.entity === "card" && item.entityId && orphanIds.has(item.entityId)) return true;
+              if (item.entity === "album" && item.entityId && !albumIds.has(item.entityId)) return true;
+              return false;
+            });
+            if (staleSync.length) {
+              const tx = db.transaction("syncQueue", "readwrite");
+              const store = tx.objectStore("syncQueue");
+              staleSync.forEach(item => {
+                store.delete(item.id);
+                deletedSync += 1;
+              });
+              await txDone(tx);
+            }
+          }
+
+          return { cards: deletedCards, sync: deletedSync };
+        }
+
+        async function deleteIndexedDatabaseByName(name) {
+          if (!name || !window.indexedDB || typeof indexedDB.deleteDatabase !== "function") return false;
+
+          try {
+            if (dbPromise) {
+              const db = await dbPromise.catch(() => null);
+              db?.close?.();
+              dbPromise = null;
+            }
+          } catch {
+            dbPromise = null;
+          }
+
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.deleteDatabase(name);
+            request.onsuccess = () => resolve(true);
+            request.onerror = () => reject(request.error || new Error(`Database ${name} non cancellato`));
+            request.onblocked = () => reject(new Error(`Database ${name} bloccato: chiudi altre schede dell’app e riprova`));
+          });
+        }
+
+        async function deleteAllOriginIndexedDatabases() {
+          let deleted = 0;
+
+          if (indexedDB.databases && typeof indexedDB.databases === "function") {
+            const dbs = await indexedDB.databases();
+            for (const info of dbs) {
+              if (!info?.name) continue;
+              await deleteIndexedDatabaseByName(info.name);
+              deleted += 1;
+            }
+            return deleted;
+          }
+
+          await deleteIndexedDatabaseByName(DB_NAME);
+          return 1;
+        }
+
+        async function clearTestCache(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+
+          try {
+            const deletedCaches = await deleteBrowserCaches();
+            const removedWorkers = await unregisterServiceWorkers();
+            const cleaned = await cleanupOrphanCardData();
+
+            await updateProfileStorageInfo();
+
+            const details = [];
+            if (deletedCaches) details.push(`${deletedCaches} cache dati`);
+            if (removedWorkers) details.push(`${removedWorkers} service worker`);
+            if (cleaned.cards) details.push(`${cleaned.cards} carte orfane`);
+            if (cleaned.sync) details.push(`${cleaned.sync} sync inutili`);
+
+            showStorageToast(details.length ? `Pulizia eseguita: ${details.join(" + ")}` : "Niente da pulire");
+            void refreshHomeCollectionTotals();
+          } catch (error) {
+            console.error(error);
+            showStorageToast(error?.message || "Errore pulizia cache", true);
+          }
+        }
+
         async function confirmRestoreData() {
           try {
-            await clearAllIndexedData();
+            await deleteBrowserCaches();
+            await unregisterServiceWorkers();
+            try { localStorage.clear(); } catch {}
+            try { sessionStorage.clear(); } catch {}
+            await deleteAllOriginIndexedDatabases();
+
             closeRestoreSheet();
             resetAppAfterRestore();
-            updateProfileStorageInfo();
+            setProfileStorageValues("…", "…", "…", "Ripristino completato");
+            window.setTimeout(() => void updateProfileStorageInfo(), 250);
             showStorageToast("PokéAlbum ripristinato");
           } catch (error) {
             console.error(error);
-            showStorageToast("Errore ripristino IndexedDB", true);
+            showStorageToast(error?.message || "Errore ripristino totale", true);
           }
         }
 
@@ -16815,6 +17219,35 @@ const slotChoiceOptions = Array.from(document.querySelectorAll("[data-slots-valu
         els.saveAlbumBtn.addEventListener("click", saveAlbum);
         // POST-IT: binding finali UI album.
 // Da qui in poi vengono collegati eventi principali della home, menu, form, rename/delete e visibilità prezzo.
+function replayOpenableClickAnimation(node) {
+          if (!node || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+          node.classList.add("openable-click-anim");
+          node.classList.remove("opening-press");
+          void node.offsetWidth;
+          node.classList.add("opening-press");
+          window.setTimeout(() => node.classList.remove("opening-press"), 360);
+        }
+
+        function bindOpenableClickAnimations() {
+          const selector = [
+            "#homeProfileBtn", "#quickAddAlbumBtn", "#ownerNameBtn",
+            "#restoreDataBtn", "#clearCacheBtn",
+            "#contextEditBtn", "#contextRenameBtn", "#contextDeleteBtn",
+            ".album-card", ".card", ".suggestion", ".choice-row-btn",
+            "#detailModal .info-choice-btn", "#detailModal .collapsible-trigger",
+            ".price-edit-row", ".price-picker-option", ".nav-item", ".fab", ".card-search-back"
+          ].join(",");
+
+          document.addEventListener("pointerdown", (event) => {
+            if (event.button != null && event.button !== 0) return;
+            const target = event.target?.closest?.(selector);
+            if (!target || target.disabled || target.getAttribute("aria-disabled") === "true") return;
+            replayOpenableClickAnimation(target);
+          }, { passive: true });
+        }
+
+        bindOpenableClickAnimations();
+
 els.priceToggleBtn.addEventListener("click", () => {
           state.isPriceHidden = !state.isPriceHidden;
           updatePriceVisibility();
@@ -16833,6 +17266,7 @@ els.priceToggleBtn.addEventListener("click", () => {
           event.stopPropagation();
           closeProfileMenu();
         });
+        els.clearCacheBtn?.addEventListener("click", clearTestCache);
         els.restoreDataBtn?.addEventListener("click", requestRestoreData);
         els.restoreCancelBtn?.addEventListener("click", closeRestoreSheet);
         els.restoreConfirmBtn?.addEventListener("click", confirmRestoreData);
