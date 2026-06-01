@@ -4545,6 +4545,7 @@ body .bottom-nav-shell .fab{
 
 
 
+
 /* === FIX 26/05/2026: niente lampeggio UI al refresh ===
    Durante il bootstrap IndexedDB la home viene tenuta stabile: niente transizioni,
    niente animazioni, niente comparsa momentanea di album/FAB/icone prima del render finale. */
@@ -7982,6 +7983,192 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
     flex-basis:auto !important;
   }
 }
+
+
+/* === MOD 01/06/2026: home stats card leggermente più bassa ===
+   Aumenta appena lo stacco tra titolo/login e riepilogo carte. */
+#homeView .sub-wrap.home-stats-card{
+  margin-top:22px !important;
+}
+@media (max-width:420px){
+  #homeView .sub-wrap.home-stats-card{
+    margin-top:20px !important;
+  }
+}
+
+
+
+/* === PATCH 02/06/2026: bottoni Modifica/Fine scheda salvata come riferimento allegato === */
+#detailModal.is-saved-card-detail .saved-detail-card-title{
+  display:flex !important;
+  align-items:center !important;
+  gap:12px !important;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle{
+  appearance:none !important;
+  -webkit-appearance:none !important;
+  height:31px !important;
+  min-height:31px !important;
+  min-width:102px !important;
+  padding:0 14px !important;
+  border-radius:999px !important;
+  border:1px solid rgba(122,159,255,.32) !important;
+  background:rgba(255,255,255,.78) !important;
+  color:#2f64ff !important;
+  box-shadow:0 8px 18px rgba(67,96,168,.10), inset 0 1px 0 rgba(255,255,255,.94) !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:7px !important;
+  font-family:inherit !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  letter-spacing:-.02em !important;
+  line-height:1 !important;
+  white-space:nowrap !important;
+  outline:none !important;
+  cursor:pointer !important;
+  transform:none !important;
+  transition:transform .16s ease, box-shadow .16s ease, background-color .16s ease, border-color .16s ease, color .16s ease, filter .16s ease !important;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle::before{
+  content:"" !important;
+  width:13px !important;
+  height:13px !important;
+  min-width:13px !important;
+  background:currentColor !important;
+  display:inline-block !important;
+  -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M4 17.25V20h2.75L17.81 8.94l-2.75-2.75L4 17.25Zm15.71-10.04a1 1 0 0 0 0-1.42l-1.5-1.5a1 1 0 0 0-1.42 0l-1.12 1.12 2.75 2.75 1.29-.95Z"/></svg>') center/contain no-repeat !important;
+  mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M4 17.25V20h2.75L17.81 8.94l-2.75-2.75L4 17.25Zm15.71-10.04a1 1 0 0 0 0-1.42l-1.5-1.5a1 1 0 0 0-1.42 0l-1.12 1.12 2.75 2.75 1.29-.95Z"/></svg>') center/contain no-repeat !important;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle:hover{
+  transform:translateY(-1px) !important;
+  background:rgba(255,255,255,.92) !important;
+  border-color:rgba(47,100,255,.42) !important;
+  box-shadow:0 10px 22px rgba(67,96,168,.14), inset 0 1px 0 rgba(255,255,255,1) !important;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle:active{
+  transform:scale(.98) !important;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle:focus-visible{
+  box-shadow:0 0 0 4px rgba(47,100,255,.12), 0 8px 18px rgba(67,96,168,.10), inset 0 1px 0 rgba(255,255,255,.94) !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle{
+  min-width:84px !important;
+  border:0 !important;
+  background:linear-gradient(180deg,#4f86ff 0%,#2f64ff 100%) !important;
+  color:#fff !important;
+  box-shadow:0 10px 20px rgba(47,100,255,.24), inset 0 1px 0 rgba(255,255,255,.34) !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle::before{
+  width:13px !important;
+  height:13px !important;
+  min-width:13px !important;
+  -webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M9.2 16.2 4.9 11.9 3.5 13.3l5.7 5.7L20.5 7.7 19.1 6.3 9.2 16.2Z"/></svg>') center/contain no-repeat !important;
+  mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M9.2 16.2 4.9 11.9 3.5 13.3l5.7 5.7L20.5 7.7 19.1 6.3 9.2 16.2Z"/></svg>') center/contain no-repeat !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle:hover{
+  filter:saturate(1.04) brightness(1.02) !important;
+  box-shadow:0 12px 24px rgba(47,100,255,.30), inset 0 1px 0 rgba(255,255,255,.38) !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .saved-card-edit-toggle{
+    height:30px !important;
+    min-height:30px !important;
+    min-width:101px !important;
+    padding:0 13px !important;
+    font-size:12px !important;
+  }
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle{
+    min-width:84px !important;
+  }
+}
+
+/* === MOD 02/06/2026: icone edit più grandi e pill più alta === */
+#detailModal.is-saved-card-detail .saved-card-edit-toggle{
+  height:34px !important;
+  min-height:34px !important;
+  min-width:106px !important;
+  padding:0 15px !important;
+  gap:8px !important;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle::before{
+  width:15px !important;
+  height:15px !important;
+  min-width:15px !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle{
+  min-width:88px !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle::before{
+  width:15px !important;
+  height:15px !important;
+  min-width:15px !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row{
+  min-height:46px !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row::after{
+  width:24px !important;
+  min-width:24px !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil::after{
+  font-size:22px !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron::after{
+  font-size:31px !important;
+  transform:translateY(-1px) !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .saved-card-edit-toggle{
+    height:33px !important;
+    min-height:33px !important;
+    min-width:105px !important;
+    padding:0 14px !important;
+  }
+  #detailModal.is-saved-card-detail .saved-card-edit-toggle::before,
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle::before{
+    width:15px !important;
+    height:15px !important;
+    min-width:15px !important;
+  }
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row::after{
+    width:23px !important;
+    min-width:23px !important;
+  }
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil::after{
+    font-size:21px !important;
+  }
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron::after{
+    font-size:30px !important;
+  }
+}
+
+
+/* === MOD 02/06/2026: SVG matita/check più grandi dentro pill Modifica/Fine === */
+#detailModal.is-saved-card-detail .saved-card-edit-toggle::before,
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle::before{
+  width:19px !important;
+  height:19px !important;
+  min-width:19px !important;
+  flex:0 0 19px !important;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle{
+  gap:9px !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .saved-card-edit-toggle::before,
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle::before{
+    width:18px !important;
+    height:18px !important;
+    min-width:18px !important;
+    flex-basis:18px !important;
+  }
+  #detailModal.is-saved-card-detail .saved-card-edit-toggle{
+    gap:8px !important;
+  }
+}
+
 </style></head>
   <body class="ui-booting">
     <!-- POST-IT: STRUTTURA APP
@@ -12376,7 +12563,7 @@ function openOriginChoiceSheet() {
         el.savedVariantReverse?.checked ? 'Reverse' : '',
         el.savedVariantIllustration?.checked ? 'Illustration' : '',
       ].filter(Boolean);
-      return labels.length ? labels.join(' - ') : '';
+      return labels.length ? labels.join(' - ') : 'Normale';
     }
 
     function syncSavedVariantSummaryFromControls(immediate = false) {
@@ -13661,6 +13848,8 @@ const DEFAULT_ALBUM = Object.freeze({
         /* L’animazione dell’omino profilo resta disarmata durante il caricamento iniziale.
            Viene abilitata solo dopo che l’app ha finito di leggere/sincronizzare i dati salvati. */
         let homeProfileSaveAnimationEnabled = false;
+        let homeProfileSaveAnimationTimer = null;
+        let homeProfilePendingChanges = false;
 
         // POST-IT: documentazione schema dati.
 // Questi oggetti non guidano il database: spiegano il significato dei campi salvati, utili per future sync Dropbox/Google.
@@ -13767,17 +13956,66 @@ function openDb() {
         }
 
 
+        function resetHomeProfileSaveAnimation(profileBtn) {
+          if (!profileBtn) return;
+          profileBtn.classList.remove("saving");
+
+          /* Forza il ricalcolo delle animazioni SVG senza cambiare la sequenza originale:
+             giro -> cerchio acceso completo -> spegnimento. */
+          const animatedParts = profileBtn.querySelectorAll(".cerchio-loader, .cerchio-base");
+          animatedParts.forEach((part) => {
+            part.style.animation = "none";
+          });
+          void profileBtn.offsetWidth;
+          animatedParts.forEach((part) => {
+            part.style.animation = "";
+          });
+        }
+
+        function markHomeProfilePendingChanges() {
+          if (!homeProfileSaveAnimationEnabled) return;
+          homeProfilePendingChanges = true;
+        }
+
+        function isHomeViewVisible() {
+          return Boolean(els.homeView && !els.homeView.classList.contains("is-hidden"));
+        }
+
+        function playPendingHomeProfileSaveAnimation() {
+          if (!homeProfileSaveAnimationEnabled || !homeProfilePendingChanges) return;
+          if (!isHomeViewVisible()) return;
+          homeProfilePendingChanges = false;
+          triggerHomeProfileSaveAnimation();
+        }
+
         function triggerHomeProfileSaveAnimation() {
           if (!homeProfileSaveAnimationEnabled) return;
           const profileBtn = document.getElementById("homeProfileBtn");
           if (!profileBtn) return;
-          profileBtn.classList.remove("saving");
-          void profileBtn.offsetWidth;
-          profileBtn.classList.add("saving");
+
+          if (homeProfileSaveAnimationTimer) {
+            window.clearTimeout(homeProfileSaveAnimationTimer);
+            homeProfileSaveAnimationTimer = null;
+          }
+
+          resetHomeProfileSaveAnimation(profileBtn);
+
+          window.requestAnimationFrame(() => {
+            profileBtn.classList.add("saving");
+
+            /* La CSS di vi336 fa già tutta la parte bella:
+               giro -> accensione completa -> spegnimento.
+               Qui puliamo solo dopo la fine, così il browser non può lasciare il loader
+               appeso a metà come una lumaca blu sul vetro. */
+            homeProfileSaveAnimationTimer = window.setTimeout(() => {
+              resetHomeProfileSaveAnimation(profileBtn);
+              homeProfileSaveAnimationTimer = null;
+            }, 3150);
+          });
         }
 
         async function putStore(storeName, value) {
-          triggerHomeProfileSaveAnimation();
+          markHomeProfilePendingChanges();
           const db = await openDb();
           const tx = db.transaction(storeName, "readwrite");
           tx.objectStore(storeName).put(value);
@@ -13786,7 +14024,7 @@ function openDb() {
         }
 
         async function deleteStore(storeName, key) {
-          triggerHomeProfileSaveAnimation();
+          markHomeProfilePendingChanges();
           const db = await openDb();
           const tx = db.transaction(storeName, "readwrite");
           tx.objectStore(storeName).delete(key);
@@ -13815,7 +14053,7 @@ function openDb() {
         }
 
         async function deleteCardsByAlbum(albumId) {
-          triggerHomeProfileSaveAnimation();
+          markHomeProfilePendingChanges();
           const cards = await getCardsByAlbum(albumId);
           const db = await openDb();
           const tx = db.transaction("cards", "readwrite");
@@ -13825,7 +14063,7 @@ function openDb() {
         }
 
         async function clearAllIndexedData() {
-          triggerHomeProfileSaveAnimation();
+          markHomeProfilePendingChanges();
           const db = await openDb();
           const stores = Array.from(db.objectStoreNames);
           if (!stores.length) return;
@@ -14135,7 +14373,7 @@ async function loadSavedAlbums() {
             variants.holo ? 'Holo' : '',
             variants.reverse ? 'Reverse' : '',
             variants.illustration ? 'Illustration' : '',
-          ].filter(Boolean).join(' - ') || '-';
+          ].filter(Boolean).join(' - ') || 'Normale';
         }
 
         function getSavedCardOriginLabel(card = {}) {
@@ -15722,6 +15960,9 @@ function setView(view) {
           // dove ha senso usarlo, ad esempio dettaglio album, Collezione, Set e Duplicati.
           els.bottomNav.classList.toggle("is-hidden", shouldHideGlobalAddButton);
           els.content.classList.toggle("is-form-open", isSecondaryView);
+          if (view === "home") {
+            requestAnimationFrame(playPendingHomeProfileSaveAnimation);
+          }
         }
 
         function setSelectedColor(color, triggerButton = null) {
@@ -16454,7 +16695,7 @@ function albumFromEvent(event) {
         }
 
         async function persistAlbumOrder(reason = "reorder") {
-          triggerHomeProfileSaveAnimation();
+          markHomeProfilePendingChanges();
           const nodes = getAlbumNodes();
           const now = new Date().toISOString();
           const db = await openDb();
