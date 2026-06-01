@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build:db": "node scripts/build-db.js",
+    "build:price-db": "node scripts/build_price-db.js",
     "test:r2": "node scripts/upload-r2-test.js"
   },
   "dependencies": {
