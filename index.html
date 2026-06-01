@@ -11668,7 +11668,7 @@ async function fetchPokemonIndex(force = false, options = {}) {
       state.filtered = [];
       state.resultsPager = null;
       state.hasSearched = false;
-      el.results.innerHTML = '';
+      el.results.replaceChildren();
       el.emptyState.style.display = 'none';
       setCardSearchScrollTopVisible(false);
     }
@@ -11693,7 +11693,7 @@ async function fetchPokemonIndex(force = false, options = {}) {
     function resetCardSearchViewForOpen() {
       prepareCardSearchViewForOpen();
       renderSuggestions([]);
-      el.results.innerHTML = '';
+      el.results.replaceChildren();
       el.results.scrollTop = 0;
       el.emptyState.textContent = '';
       el.emptyState.style.display = 'none';
@@ -15544,24 +15544,32 @@ function setView(view) {
 
         function openAddCardSearch(returnView = null) {
           state.addCardReturnView = returnView || (state.currentAlbum ? "detail" : "home");
-          if (typeof prepareCardSearchViewForOpen === "function") {
-            prepareCardSearchViewForOpen();
-          }
+
+          // Mostra subito la schermata ricerca: niente reset pesanti prima del cambio vista.
+          // Prima il DOM dei vecchi risultati veniva svuotato prima di aprire la pagina,
+          // e sui telefoni bastava quello per dare l'effetto "premi e aspetta". Una piccola
+          // tragedia digitale, ma risolvibile.
           els.addCardSearchView?.classList.add("is-opening");
-          if (typeof bindCardSearchScrollTopButton === "function") {
-            bindCardSearchScrollTopButton();
-          }
           setView("card-search");
           focusCardSearchInputOnOpen();
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              if (typeof finishCardSearchOpenReset === "function") {
-                finishCardSearchOpenReset();
-              } else {
-                els.addCardSearchView?.classList.remove("is-opening");
-              }
-            });
-          });
+
+          const finishOpen = () => {
+            if (typeof bindCardSearchScrollTopButton === "function") {
+              bindCardSearchScrollTopButton();
+            }
+            if (typeof finishCardSearchOpenReset === "function") {
+              finishCardSearchOpenReset();
+            } else {
+              els.addCardSearchView?.classList.remove("is-opening");
+            }
+            focusCardSearchInputOnOpen();
+          };
+
+          const runAfterFirstPaint = window.requestIdleCallback
+            ? () => requestAnimationFrame(() => requestIdleCallback(finishOpen, { timeout: 120 }))
+            : () => requestAnimationFrame(() => setTimeout(finishOpen, 0));
+
+          runAfterFirstPaint();
         }
 
         function focusCardSearchInputOnOpen() {
