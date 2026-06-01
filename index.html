@@ -4420,7 +4420,13 @@ body .bottom-nav-shell .fab{
 .profile-storage-note{margin:2px 0 0;color:#8b98b6;font-size:10.5px;font-weight:650;line-height:1.2;text-align:center;}
 .profile-menu-action{appearance:none;-webkit-appearance:none;width:100%;min-height:48px;border:0;border-radius:16px;background:transparent;color:#c62828;font-family:inherit;font-size:15px;font-weight:850;letter-spacing:-.02em;text-align:left;padding:0 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:flex-start;gap:10px;}
 .profile-menu-action:hover,.profile-menu-action:active{background:rgba(198,40,40,.08);}
+.profile-menu-action.cache-clean-action{color:#2f64ff;}
+.profile-menu-action.cache-clean-action:hover,.profile-menu-action.cache-clean-action:active{background:rgba(47,100,255,.08);}
 .profile-menu-action::after{content:none;display:none;}
+.openable-click-anim{transform-origin:center;will-change:transform;}
+.openable-click-anim.opening-press{animation:openablePressPop .32s cubic-bezier(.18,.9,.2,1);}
+@keyframes openablePressPop{0%{transform:scale(1);}38%{transform:scale(.94);}72%{transform:scale(1.035);}100%{transform:scale(1);}}
+@media (prefers-reduced-motion:reduce){.openable-click-anim.opening-press{animation:none !important;}}
 .restore-sheet-backdrop{position:fixed;inset:0;z-index:250;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,background-color .22s ease,visibility .22s ease;}
 .restore-sheet-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.28);}
 .restore-sheet{width:min(100%,430px);border-radius:30px;background:rgba(255,255,255,.80);border:1px solid rgba(255,255,255,.74);box-shadow:0 24px 54px rgba(25,38,82,.24),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);padding:10px 14px 14px;transform:translateY(calc(100% + 28px));transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f;}
@@ -9420,6 +9426,7 @@ paint-order="stroke">
               </div>
               <p class="profile-storage-note" id="profileStorageNote">Stima del browser</p>
             </div>
+            <button class="profile-menu-action cache-clean-action" id="clearCacheBtn" type="button">Pulisci cache</button>
             <button class="profile-menu-action" id="restoreDataBtn" type="button">Ripristina</button>
           </aside>
         </div>
@@ -9698,7 +9705,6 @@ const state = {
       lastSuggestionTotal: 0,
       hasSearched: false,
       indexLoadingPromise: null,
-      indexBackgroundRefreshPromise: null,
       searchWarmupStarted: false,
       searchWarmupDone: false,
       searchWarmupTimer: null,
@@ -11486,123 +11492,17 @@ function computeScore(card, query) {
       return [];
     }
 
-    // POST-IT: cache persistente indice carte.
-// IndexedDB evita che a ogni riapertura l'app debba riscaricare e riparsare tutto dal nulla,
-// perché evidentemente far aspettare l'utente era considerato sport olimpico.
-const INDEX_CACHE_DB_NAME = 'pokealbum-index-cache-v1';
-const INDEX_CACHE_STORE = 'files';
-const INDEX_CACHE_CARDS_KEY = 'pokemon-index';
-const INDEX_CACHE_META_KEY = 'pokemon-index-meta';
-
-function openPokemonIndexCacheDb() {
-      if (!('indexedDB' in window)) return Promise.resolve(null);
-      return new Promise((resolve) => {
-        const request = indexedDB.open(INDEX_CACHE_DB_NAME, 1);
-        request.onupgradeneeded = () => {
-          const db = request.result;
-          if (!db.objectStoreNames.contains(INDEX_CACHE_STORE)) db.createObjectStore(INDEX_CACHE_STORE);
-        };
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => resolve(null);
-        request.onblocked = () => resolve(null);
-      });
-    }
-
-async function readPokemonIndexCache() {
-      const db = await openPokemonIndexCacheDb();
-      if (!db) return null;
-
-      return new Promise((resolve) => {
-        try {
-          const tx = db.transaction(INDEX_CACHE_STORE, 'readonly');
-          const store = tx.objectStore(INDEX_CACHE_STORE);
-          const cardsReq = store.get(INDEX_CACHE_CARDS_KEY);
-          const metaReq = store.get(INDEX_CACHE_META_KEY);
-          let cards;
-          let meta;
-          cardsReq.onsuccess = () => { cards = cardsReq.result; };
-          metaReq.onsuccess = () => { meta = metaReq.result; };
-          tx.oncomplete = () => {
-            db.close();
-            resolve(Array.isArray(cards) && cards.length ? { cards, meta: meta || {} } : null);
-          };
-          tx.onerror = () => { db.close(); resolve(null); };
-          tx.onabort = () => { db.close(); resolve(null); };
-        } catch (_) {
-          try { db.close(); } catch (__) {}
-          resolve(null);
-        }
-      });
-    }
-
-async function writePokemonIndexCache(cards, meta) {
-      if (!Array.isArray(cards) || !cards.length) return;
-      const db = await openPokemonIndexCacheDb();
-      if (!db) return;
-
-      return new Promise((resolve) => {
-        try {
-          const tx = db.transaction(INDEX_CACHE_STORE, 'readwrite');
-          const store = tx.objectStore(INDEX_CACHE_STORE);
-          store.put(cards, INDEX_CACHE_CARDS_KEY);
-          store.put(meta || {}, INDEX_CACHE_META_KEY);
-          tx.oncomplete = () => { db.close(); resolve(); };
-          tx.onerror = () => { db.close(); resolve(); };
-          tx.onabort = () => { db.close(); resolve(); };
-        } catch (_) {
-          try { db.close(); } catch (__) {}
-          resolve();
-        }
-      });
-    }
-
-function applyPokemonIndex(cards, meta, options = {}) {
-      state.cards = Array.isArray(cards) ? cards : [];
-      state.meta = meta || {};
-      state.searchWarmupStarted = false;
-      state.searchWarmupDone = false;
-      hydrateStats();
-      if (options.clearResults !== false) clearResultsArea();
-      scheduleSearchWarmup();
-    }
-
-function refreshPokemonIndexInBackground() {
-      if (state.indexBackgroundRefreshPromise) return state.indexBackgroundRefreshPromise;
-      state.indexBackgroundRefreshPromise = fetchPokemonIndex(true, { silent: true })
-        .catch(error => console.error('Refresh indice in background non riuscito:', error))
-        .finally(() => { state.indexBackgroundRefreshPromise = null; });
-      return state.indexBackgroundRefreshPromise;
-    }
-
-// POST-IT: caricamento indice carte.
-// Prima prova la cache persistente, poi aggiorna da file/GitHub in silenzio.
+    // POST-IT: caricamento indice carte.
+// Tiene in memoria il JSON locale/remoto e aggiorna contatori/metadati visualizzati nella ricerca.
 async function fetchPokemonIndex(force = false, options = {}) {
       const silent = options?.silent === true;
-      const allowPersistentCache = !force && options?.persistentCache !== false;
-      const refreshCached = options?.refreshCached !== false;
 
       if (!force && state.indexLoadingPromise) {
         return state.indexLoadingPromise;
       }
 
       const loadTask = (async () => {
-        let loadedFromPersistentCache = false;
-
         try {
-          if (allowPersistentCache) {
-            const cached = await readPokemonIndexCache();
-            if (cached?.cards?.length) {
-              loadedFromPersistentCache = true;
-              applyPokemonIndex(cached.cards, cached.meta);
-              if (refreshCached) refreshPokemonIndexInBackground();
-              if (!silent) {
-                setStatus('');
-                setProgress(0);
-              }
-              return cached.cards;
-            }
-          }
-
           if (!silent) {
             startUpdateTimer();
             setStatus(force ? 'Aggiorno indice statico da GitHub...' : 'Carico indice statico da GitHub...');
@@ -11624,8 +11524,13 @@ async function fetchPokemonIndex(force = false, options = {}) {
             throw new Error('pokemon-index.json non è un array di carte valido');
           }
 
-          applyPokemonIndex(cards, meta);
-          writePokemonIndexCache(cards, meta).catch(error => console.error('Cache indice non salvata:', error));
+          state.cards = cards;
+          state.meta = meta || {};
+          state.searchWarmupStarted = false;
+          state.searchWarmupDone = false;
+          hydrateStats();
+          clearResultsArea();
+          scheduleSearchWarmup();
 
           if (!silent) {
             setStatus('');
@@ -11635,14 +11540,12 @@ async function fetchPokemonIndex(force = false, options = {}) {
           return cards;
         } catch (error) {
           console.error(error);
-          if (!loadedFromPersistentCache) {
-            state.cards = [];
-            state.meta = null;
-            state.searchWarmupStarted = false;
-            state.searchWarmupDone = false;
-            hydrateStats();
-            clearResultsArea();
-          }
+          state.cards = [];
+          state.meta = null;
+          state.searchWarmupStarted = false;
+          state.searchWarmupDone = false;
+          hydrateStats();
+          clearResultsArea();
           if (!silent) {
             setStatus(`Errore caricamento indice statico: ${error.message}`, 'error');
             setProgress(0);
@@ -11681,8 +11584,6 @@ async function fetchPokemonIndex(force = false, options = {}) {
         });
       };
 
-      // Parte subito: se c'è cache IndexedDB la ricerca è pronta prima del primo tap.
-      Promise.resolve().then(startPreload);
       requestAnimationFrame(() => requestAnimationFrame(startPreload));
     }
 
@@ -13406,6 +13307,42 @@ document.addEventListener('error', (event) => {
     }
   }
 }, true);
+
+window.PokeAlbumCardSearchClearCache = function PokeAlbumCardSearchClearCache() {
+  try {
+    clearSearchProgressAnimation?.();
+    state.cards = [];
+    state.filtered = [];
+    state.suggestions = [];
+    state.activeSuggestion = -1;
+    state.meta = null;
+    state.selectedCard = null;
+    state.lastSuggestionTotal = 0;
+    state.hasSearched = false;
+    state.indexLoadingPromise = null;
+    state.searchWarmupStarted = false;
+    state.searchWarmupDone = false;
+    state.searchWarmupTimer = null;
+    state.priceDb = {
+      data: null, promise: null, error: null,
+      meta: null, metaPromise: null, metaError: null,
+    };
+    if (typeof MARKET_FLAG_SVG_CACHE !== 'undefined' && MARKET_FLAG_SVG_CACHE?.clear) {
+      MARKET_FLAG_SVG_CACHE.clear();
+    }
+    if (el?.searchInput) el.searchInput.value = '';
+    if (el?.autocomplete) {
+      el.autocomplete.innerHTML = '';
+      el.autocomplete.classList.remove('open');
+    }
+    if (typeof clearResultsArea === 'function') clearResultsArea();
+    if (typeof renderStatus === 'function') renderStatus('Cache ricerca pulita. La prossima ricerca ricarica l’indice.');
+    return true;
+  } catch (error) {
+    console.warn('Impossibile pulire la cache ricerca', error);
+    return false;
+  }
+};
 </script>
 
     <!-- POST-IT: SCRIPT 2 / APP ALBUM E PERSISTENZA
@@ -13489,6 +13426,7 @@ const els = {
           profileStorageUsage: $("#profileStorageUsage"),
           profileStorageRemaining: $("#profileStorageRemaining"),
           profileStorageNote: $("#profileStorageNote"),
+          clearCacheBtn: $("#clearCacheBtn"),
           restoreDataBtn: $("#restoreDataBtn"),
           restoreSheetBackdrop: $("#restoreSheetBackdrop"),
           restoreCancelBtn: $("#restoreCancelBtn"),
@@ -15650,13 +15588,6 @@ function setView(view) {
 
         function openAddCardSearch(returnView = null) {
           state.addCardReturnView = returnView || (state.currentAlbum ? "detail" : "home");
-          if (typeof fetchPokemonIndex === "function" && !window.__pokeAlbumCardSearchOpenWarmup) {
-            window.__pokeAlbumCardSearchOpenWarmup = true;
-            fetchPokemonIndex(false, { silent: true }).catch(error => {
-              window.__pokeAlbumCardSearchOpenWarmup = false;
-              console.error('Warmup ricerca carte non riuscito:', error);
-            });
-          }
 
           // Mostra subito la schermata ricerca: niente reset pesanti prima del cambio vista.
           // Prima il DOM dei vecchi risultati veniva svuotato prima di aprire la pagina,
@@ -16009,6 +15940,38 @@ function formatStorageBytes(bytes) {
           event?.stopPropagation?.();
           closeProfileMenu();
           window.setTimeout(openRestoreSheet, 40);
+        }
+
+        async function clearTestCache(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+
+          try {
+            let deletedCaches = 0;
+
+            if (window.caches && typeof caches.keys === "function") {
+              const cacheNames = await caches.keys();
+              await Promise.all(cacheNames.map(async (cacheName) => {
+                const deleted = await caches.delete(cacheName);
+                if (deleted) deletedCaches += 1;
+              }));
+            }
+
+            const clearedSearchCache = window.PokeAlbumCardSearchClearCache?.() === true;
+            await updateProfileStorageInfo();
+
+            if (deletedCaches || clearedSearchCache) {
+              const details = [];
+              if (deletedCaches) details.push(`${deletedCaches} cache browser`);
+              if (clearedSearchCache) details.push("cache ricerca");
+              showStorageToast(`Cache pulita: ${details.join(" + ")}`);
+            } else {
+              showStorageToast("Nessuna cache da pulire");
+            }
+          } catch (error) {
+            console.error(error);
+            showStorageToast("Errore pulizia cache", true);
+          }
         }
 
         async function confirmRestoreData() {
@@ -16936,6 +16899,35 @@ const slotChoiceOptions = Array.from(document.querySelectorAll("[data-slots-valu
         els.saveAlbumBtn.addEventListener("click", saveAlbum);
         // POST-IT: binding finali UI album.
 // Da qui in poi vengono collegati eventi principali della home, menu, form, rename/delete e visibilità prezzo.
+function replayOpenableClickAnimation(node) {
+          if (!node || window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches) return;
+          node.classList.add("openable-click-anim");
+          node.classList.remove("opening-press");
+          void node.offsetWidth;
+          node.classList.add("opening-press");
+          window.setTimeout(() => node.classList.remove("opening-press"), 360);
+        }
+
+        function bindOpenableClickAnimations() {
+          const selector = [
+            "#homeProfileBtn", "#quickAddAlbumBtn", "#ownerNameBtn",
+            "#restoreDataBtn", "#clearCacheBtn",
+            "#contextEditBtn", "#contextRenameBtn", "#contextDeleteBtn",
+            ".album-card", ".card", ".suggestion", ".choice-row-btn",
+            "#detailModal .info-choice-btn", "#detailModal .collapsible-trigger",
+            ".price-edit-row", ".price-picker-option", ".nav-item", ".fab", ".card-search-back"
+          ].join(",");
+
+          document.addEventListener("pointerdown", (event) => {
+            if (event.button != null && event.button !== 0) return;
+            const target = event.target?.closest?.(selector);
+            if (!target || target.disabled || target.getAttribute("aria-disabled") === "true") return;
+            replayOpenableClickAnimation(target);
+          }, { passive: true });
+        }
+
+        bindOpenableClickAnimations();
+
 els.priceToggleBtn.addEventListener("click", () => {
           state.isPriceHidden = !state.isPriceHidden;
           updatePriceVisibility();
@@ -16954,6 +16946,7 @@ els.priceToggleBtn.addEventListener("click", () => {
           event.stopPropagation();
           closeProfileMenu();
         });
+        els.clearCacheBtn?.addEventListener("click", clearTestCache);
         els.restoreDataBtn?.addEventListener("click", requestRestoreData);
         els.restoreCancelBtn?.addEventListener("click", closeRestoreSheet);
         els.restoreConfirmBtn?.addEventListener("click", confirmRestoreData);
