@@ -9698,6 +9698,7 @@ const state = {
       lastSuggestionTotal: 0,
       hasSearched: false,
       indexLoadingPromise: null,
+      indexBackgroundRefreshPromise: null,
       searchWarmupStarted: false,
       searchWarmupDone: false,
       searchWarmupTimer: null,
@@ -11485,17 +11486,123 @@ function computeScore(card, query) {
       return [];
     }
 
-    // POST-IT: caricamento indice carte.
-// Tiene in memoria il JSON locale/remoto e aggiorna contatori/metadati visualizzati nella ricerca.
+    // POST-IT: cache persistente indice carte.
+// IndexedDB evita che a ogni riapertura l'app debba riscaricare e riparsare tutto dal nulla,
+// perché evidentemente far aspettare l'utente era considerato sport olimpico.
+const INDEX_CACHE_DB_NAME = 'pokealbum-index-cache-v1';
+const INDEX_CACHE_STORE = 'files';
+const INDEX_CACHE_CARDS_KEY = 'pokemon-index';
+const INDEX_CACHE_META_KEY = 'pokemon-index-meta';
+
+function openPokemonIndexCacheDb() {
+      if (!('indexedDB' in window)) return Promise.resolve(null);
+      return new Promise((resolve) => {
+        const request = indexedDB.open(INDEX_CACHE_DB_NAME, 1);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(INDEX_CACHE_STORE)) db.createObjectStore(INDEX_CACHE_STORE);
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => resolve(null);
+        request.onblocked = () => resolve(null);
+      });
+    }
+
+async function readPokemonIndexCache() {
+      const db = await openPokemonIndexCacheDb();
+      if (!db) return null;
+
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(INDEX_CACHE_STORE, 'readonly');
+          const store = tx.objectStore(INDEX_CACHE_STORE);
+          const cardsReq = store.get(INDEX_CACHE_CARDS_KEY);
+          const metaReq = store.get(INDEX_CACHE_META_KEY);
+          let cards;
+          let meta;
+          cardsReq.onsuccess = () => { cards = cardsReq.result; };
+          metaReq.onsuccess = () => { meta = metaReq.result; };
+          tx.oncomplete = () => {
+            db.close();
+            resolve(Array.isArray(cards) && cards.length ? { cards, meta: meta || {} } : null);
+          };
+          tx.onerror = () => { db.close(); resolve(null); };
+          tx.onabort = () => { db.close(); resolve(null); };
+        } catch (_) {
+          try { db.close(); } catch (__) {}
+          resolve(null);
+        }
+      });
+    }
+
+async function writePokemonIndexCache(cards, meta) {
+      if (!Array.isArray(cards) || !cards.length) return;
+      const db = await openPokemonIndexCacheDb();
+      if (!db) return;
+
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(INDEX_CACHE_STORE, 'readwrite');
+          const store = tx.objectStore(INDEX_CACHE_STORE);
+          store.put(cards, INDEX_CACHE_CARDS_KEY);
+          store.put(meta || {}, INDEX_CACHE_META_KEY);
+          tx.oncomplete = () => { db.close(); resolve(); };
+          tx.onerror = () => { db.close(); resolve(); };
+          tx.onabort = () => { db.close(); resolve(); };
+        } catch (_) {
+          try { db.close(); } catch (__) {}
+          resolve();
+        }
+      });
+    }
+
+function applyPokemonIndex(cards, meta, options = {}) {
+      state.cards = Array.isArray(cards) ? cards : [];
+      state.meta = meta || {};
+      state.searchWarmupStarted = false;
+      state.searchWarmupDone = false;
+      hydrateStats();
+      if (options.clearResults !== false) clearResultsArea();
+      scheduleSearchWarmup();
+    }
+
+function refreshPokemonIndexInBackground() {
+      if (state.indexBackgroundRefreshPromise) return state.indexBackgroundRefreshPromise;
+      state.indexBackgroundRefreshPromise = fetchPokemonIndex(true, { silent: true })
+        .catch(error => console.error('Refresh indice in background non riuscito:', error))
+        .finally(() => { state.indexBackgroundRefreshPromise = null; });
+      return state.indexBackgroundRefreshPromise;
+    }
+
+// POST-IT: caricamento indice carte.
+// Prima prova la cache persistente, poi aggiorna da file/GitHub in silenzio.
 async function fetchPokemonIndex(force = false, options = {}) {
       const silent = options?.silent === true;
+      const allowPersistentCache = !force && options?.persistentCache !== false;
+      const refreshCached = options?.refreshCached !== false;
 
       if (!force && state.indexLoadingPromise) {
         return state.indexLoadingPromise;
       }
 
       const loadTask = (async () => {
+        let loadedFromPersistentCache = false;
+
         try {
+          if (allowPersistentCache) {
+            const cached = await readPokemonIndexCache();
+            if (cached?.cards?.length) {
+              loadedFromPersistentCache = true;
+              applyPokemonIndex(cached.cards, cached.meta);
+              if (refreshCached) refreshPokemonIndexInBackground();
+              if (!silent) {
+                setStatus('');
+                setProgress(0);
+              }
+              return cached.cards;
+            }
+          }
+
           if (!silent) {
             startUpdateTimer();
             setStatus(force ? 'Aggiorno indice statico da GitHub...' : 'Carico indice statico da GitHub...');
@@ -11517,13 +11624,8 @@ async function fetchPokemonIndex(force = false, options = {}) {
             throw new Error('pokemon-index.json non è un array di carte valido');
           }
 
-          state.cards = cards;
-          state.meta = meta || {};
-          state.searchWarmupStarted = false;
-          state.searchWarmupDone = false;
-          hydrateStats();
-          clearResultsArea();
-          scheduleSearchWarmup();
+          applyPokemonIndex(cards, meta);
+          writePokemonIndexCache(cards, meta).catch(error => console.error('Cache indice non salvata:', error));
 
           if (!silent) {
             setStatus('');
@@ -11533,12 +11635,14 @@ async function fetchPokemonIndex(force = false, options = {}) {
           return cards;
         } catch (error) {
           console.error(error);
-          state.cards = [];
-          state.meta = null;
-          state.searchWarmupStarted = false;
-          state.searchWarmupDone = false;
-          hydrateStats();
-          clearResultsArea();
+          if (!loadedFromPersistentCache) {
+            state.cards = [];
+            state.meta = null;
+            state.searchWarmupStarted = false;
+            state.searchWarmupDone = false;
+            hydrateStats();
+            clearResultsArea();
+          }
           if (!silent) {
             setStatus(`Errore caricamento indice statico: ${error.message}`, 'error');
             setProgress(0);
@@ -11577,6 +11681,8 @@ async function fetchPokemonIndex(force = false, options = {}) {
         });
       };
 
+      // Parte subito: se c'è cache IndexedDB la ricerca è pronta prima del primo tap.
+      Promise.resolve().then(startPreload);
       requestAnimationFrame(() => requestAnimationFrame(startPreload));
     }
 
@@ -15544,6 +15650,13 @@ function setView(view) {
 
         function openAddCardSearch(returnView = null) {
           state.addCardReturnView = returnView || (state.currentAlbum ? "detail" : "home");
+          if (typeof fetchPokemonIndex === "function" && !window.__pokeAlbumCardSearchOpenWarmup) {
+            window.__pokeAlbumCardSearchOpenWarmup = true;
+            fetchPokemonIndex(false, { silent: true }).catch(error => {
+              window.__pokeAlbumCardSearchOpenWarmup = false;
+              console.error('Warmup ricerca carte non riuscito:', error);
+            });
+          }
 
           // Mostra subito la schermata ricerca: niente reset pesanti prima del cambio vista.
           // Prima il DOM dei vecchi risultati veniva svuotato prima di aprire la pagina,
