@@ -895,7 +895,7 @@ svg{overflow:visible;}
 /* POST-IT: SCHERMATA RICERCA CARTA
    Versione mobile della ricerca: barra, autocomplete, risultati e progress.
    Qui convivono layout app e motore CardTrader del primo script. Una convivenza civile, per una volta. */
-.add-card-search-view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:0;margin-top:-6px;}
+.add-card-search-view{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;padding:0;margin-top:-6px;}.add-card-search-view.is-opening #results,.add-card-search-view.is-opening #autocomplete,.add-card-search-view.is-opening #cardSearchEmptyState{display:none !important;}
 .card-search-title{position:absolute;left:56px;right:56px;top:50%;transform:translateY(-50%);text-align:center;pointer-events:none;}
 .card-search-actions{position:absolute;right:0;top:0;display:inline-flex;align-items:flex-start;justify-content:flex-end;gap:4px;padding:0;}
 .card-search-action{appearance:none;-webkit-appearance:none;width:50px;min-width:50px;border:0;background:transparent;color:#66779f;font-family:inherit;display:grid;justify-items:center;gap:6px;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform 0.18s ease, color 0.18s ease;}
@@ -4413,6 +4413,11 @@ body .bottom-nav-shell .fab{
 .profile-menu-backdrop.open .profile-menu-panel{transform:translateX(0);}
 .profile-menu-title{margin:0 0 18px;font-size:16px;font-weight:950;letter-spacing:.18em;text-transform:uppercase;text-align:center;line-height:1;background:linear-gradient(135deg,#2f64ff 0%,#7aa6ff 52%,#8f7cff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 8px 22px rgba(47,100,255,.18);position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent;}
 .profile-menu-divider{height:1px;background:rgba(111,134,188,.18);margin:0 0 10px;}
+.profile-storage-card{margin:0 0 12px;padding:12px 12px 11px;border-radius:18px;background:rgba(248,251,255,.54);border:1px solid rgba(120,146,207,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.76);display:grid;gap:7px;}
+.profile-storage-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:8px;color:#20345f;}
+.profile-storage-label{min-width:0;color:#65779f;font-size:11px;font-weight:850;letter-spacing:-.01em;line-height:1.12;}
+.profile-storage-value{color:#20345f;font-size:12px;font-weight:900;letter-spacing:-.02em;line-height:1.12;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;}
+.profile-storage-note{margin:2px 0 0;color:#8b98b6;font-size:10.5px;font-weight:650;line-height:1.2;text-align:center;}
 .profile-menu-action{appearance:none;-webkit-appearance:none;width:100%;min-height:48px;border:0;border-radius:16px;background:transparent;color:#c62828;font-family:inherit;font-size:15px;font-weight:850;letter-spacing:-.02em;text-align:left;padding:0 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:flex-start;gap:10px;}
 .profile-menu-action:hover,.profile-menu-action:active{background:rgba(198,40,40,.08);}
 .profile-menu-action::after{content:none;display:none;}
@@ -7438,6 +7443,539 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   }
 }
 
+
+
+/* === MOD 01/06/2026: modalità Modifica campi scheda carta salvata === */
+#detailModal.is-saved-card-detail .saved-detail-card-title{
+  align-items:center !important;
+  width:100% !important;
+}
+#detailModal.is-saved-card-detail .saved-detail-card-title .info-card-title-text{
+  min-width:0 !important;
+  flex:0 1 auto !important;
+}
+#detailModal .saved-card-edit-toggle{
+  display:none;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle{
+  margin-left:auto !important;
+  min-width:0 !important;
+  min-height:30px !important;
+  padding:0 12px !important;
+  border:1px solid rgba(47,100,255,.18) !important;
+  border-radius:999px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:rgba(248,251,255,.74) !important;
+  color:#2f64ff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.88), 0 8px 16px rgba(47,100,255,.08) !important;
+  font:inherit !important;
+  font-size:12px !important;
+  font-weight:900 !important;
+  letter-spacing:-.02em !important;
+  line-height:1 !important;
+  cursor:pointer !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+#detailModal.is-saved-card-detail .saved-card-edit-toggle:active{
+  transform:scale(.97) !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-card-edit-toggle{
+  background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%) !important;
+  color:#fff !important;
+  border-color:rgba(47,100,255,.16) !important;
+  box-shadow:0 10px 20px rgba(47,100,255,.20), inset 0 1px 0 rgba(255,255,255,.32) !important;
+}
+#detailModal.is-saved-card-detail .saved-detail-card .saved-editable-row{
+  transition:background-color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row{
+  grid-template-columns:minmax(94px,.85fr) minmax(0,1.15fr) 22px !important;
+  background:rgba(235,247,255,.76) !important;
+  border-color:rgba(47,100,255,.24) !important;
+  box-shadow:0 10px 22px rgba(47,100,255,.08), inset 0 1px 0 rgba(255,255,255,.88) !important;
+  cursor:pointer !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row:active{
+  transform:scale(.992) !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row::after{
+  grid-column:3 !important;
+  align-self:center !important;
+  justify-self:end !important;
+  color:#2f64ff !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:20px !important;
+  min-width:20px !important;
+  line-height:1 !important;
+  opacity:.95 !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil::after{
+  content:"✎" !important;
+  font-size:18px !important;
+  font-weight:900 !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron::after{
+  content:"›" !important;
+  font-size:25px !important;
+  font-weight:950 !important;
+  transform:translateY(-1px) !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row .info-value{
+  min-width:0 !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail .saved-card-edit-toggle{
+    min-height:28px !important;
+    padding:0 10px !important;
+    font-size:11.5px !important;
+  }
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row{
+    grid-template-columns:minmax(82px,.78fr) minmax(0,1.22fr) 20px !important;
+    gap:7px !important;
+  }
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-editable-row::after{
+    width:18px !important;
+    min-width:18px !important;
+  }
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil::after{
+    font-size:17px !important;
+  }
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron::after{
+    font-size:24px !important;
+  }
+}
+
+
+/* === MOD 01/06/2026: campi realmente editabili nella scheda carta salvata === */
+#detailModal .saved-edit-value-wrap{
+  min-width:0 !important;
+  width:100% !important;
+}
+#detailModal .saved-card-edit-input{
+  display:none !important;
+  width:100% !important;
+  height:34px !important;
+  min-height:34px !important;
+  border:1px solid rgba(47,100,255,.22) !important;
+  border-radius:13px !important;
+  background:rgba(255,255,255,.76) !important;
+  color:#20345f !important;
+  -webkit-text-fill-color:#20345f !important;
+  padding:0 10px !important;
+  font:inherit !important;
+  font-size:14px !important;
+  font-weight:850 !important;
+  letter-spacing:-.02em !important;
+  text-align:right !important;
+  outline:0 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.86) !important;
+}
+#detailModal .saved-card-edit-input:focus{
+  border-color:rgba(47,100,255,.42) !important;
+  box-shadow:0 0 0 4px rgba(47,100,255,.10), inset 0 1px 0 rgba(255,255,255,.9) !important;
+  background:rgba(255,255,255,.94) !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil .info-value{
+  display:none !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil .saved-card-edit-input{
+  display:block !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron-down::after{
+  content:"⌄" !important;
+  font-size:22px !important;
+  transform:translateY(-2px) !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron-down.is-open::after{
+  transform:rotate(180deg) translateY(1px) !important;
+}
+#detailModal .saved-variant-editor-row{
+  display:none !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-variant-editor-row.is-open{
+  display:grid !important;
+  grid-column:1 / -1 !important;
+  padding:0 0 2px !important;
+}
+#detailModal .saved-variant-editor-card{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:6px !important;
+  padding:8px !important;
+  border-radius:16px !important;
+  border:1px solid rgba(47,100,255,.16) !important;
+  background:rgba(235,247,255,.62) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.76) !important;
+}
+#detailModal .saved-variant-option{
+  min-width:0 !important;
+  min-height:38px !important;
+  border-radius:13px !important;
+  background:rgba(255,255,255,.66) !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+  padding:0 8px !important;
+  color:#20345f !important;
+  font-size:12px !important;
+  font-weight:850 !important;
+  letter-spacing:-.02em !important;
+  cursor:pointer !important;
+  -webkit-tap-highlight-color:transparent !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.80) !important;
+}
+#detailModal .saved-variant-radio{
+  width:17px !important;
+  height:17px !important;
+  flex:0 0 17px !important;
+  position:relative !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+}
+#detailModal .saved-variant-radio input{
+  position:absolute !important;
+  inset:0 !important;
+  opacity:0 !important;
+  cursor:pointer !important;
+}
+#detailModal .saved-variant-circle{
+  width:17px !important;
+  height:17px !important;
+  border-radius:50% !important;
+  border:2px solid rgba(113,129,163,.42) !important;
+  background:rgba(255,255,255,.72) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.82) !important;
+}
+#detailModal .saved-variant-radio input:checked + .saved-variant-circle{
+  border-color:#2f64ff !important;
+  background:radial-gradient(circle at center,#2f64ff 0 42%,rgba(255,255,255,.9) 45% 100%) !important;
+}
+#detailModal .saved-variant-text{
+  min-width:0 !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+  white-space:nowrap !important;
+}
+@media (max-width:420px){
+  #detailModal .saved-card-edit-input{
+    height:32px !important;
+    min-height:32px !important;
+    font-size:13px !important;
+    padding:0 8px !important;
+  }
+  #detailModal .saved-variant-editor-card{
+    gap:5px !important;
+    padding:7px !important;
+  }
+  #detailModal .saved-variant-option{
+    min-height:36px !important;
+    font-size:11.5px !important;
+    gap:4px !important;
+    padding:0 6px !important;
+  }
+}
+
+
+
+/* === MOD 01/06/2026: niente pill interne nei campi modificabili salvati ===
+   Le righe modificabili restano evidenziate, ma input e opzioni non creano più
+   un secondo contenitore bianco dentro la riga. La UI respira, miracolo. */
+#detailModal.is-saved-card-detail .saved-detail-card .saved-edit-value-wrap{
+  display:flex !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil .saved-card-edit-input{
+  width:100% !important;
+  height:auto !important;
+  min-height:28px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(47,100,255,.28) !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  padding:0 0 2px !important;
+  color:#20345f !important;
+  -webkit-text-fill-color:#20345f !important;
+  text-align:right !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil .saved-card-edit-input:focus{
+  border-color:#2f64ff !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  outline:0 !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil .saved-card-edit-input::placeholder{
+  color:#9aa6bf !important;
+  -webkit-text-fill-color:#9aa6bf !important;
+}
+#detailModal .saved-variant-editor-card{
+  background:rgba(235,247,255,.48) !important;
+  border:1px solid rgba(47,100,255,.16) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.62) !important;
+}
+#detailModal .saved-variant-option{
+  background:transparent !important;
+  box-shadow:none !important;
+  border:0 !important;
+  border-radius:10px !important;
+}
+#detailModal .saved-variant-option:active{
+  background:rgba(47,100,255,.07) !important;
+}
+#detailModal .saved-variant-option:has(input:checked){
+  background:transparent !important;
+  color:#2f64ff !important;
+}
+#detailModal .saved-variant-radio input:checked + .saved-variant-circle{
+  box-shadow:none !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-pencil .saved-card-edit-input{
+    min-height:26px !important;
+    padding:0 0 2px !important;
+  }
+}
+
+
+
+/* === MOD 01/06/2026: Tipo carta salvata usa le proporzioni della scheda da aggiungere ===
+   Le opzioni Holo/Reverse/Illustration riprendono il layout già centrato di .detail-variant-card:
+   griglia a contenuto, testo intero e niente fuga verso destra. */
+#detailModal.is-saved-card-detail .saved-variant-editor-row{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+  box-sizing:border-box !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-variant-editor-row.is-open{
+  display:block !important;
+  width:100% !important;
+  max-width:100% !important;
+  padding:0 0 2px !important;
+  box-sizing:border-box !important;
+}
+#detailModal.is-saved-card-detail .saved-variant-editor-card{
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  display:grid !important;
+  grid-template-columns:max-content max-content max-content !important;
+  justify-content:center !important;
+  align-items:center !important;
+  column-gap:18px !important;
+  row-gap:0 !important;
+  padding:8px !important;
+  overflow:visible !important;
+}
+#detailModal.is-saved-card-detail .saved-variant-option{
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  min-height:40px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:5px !important;
+  padding:0 !important;
+  font-size:13px !important;
+  line-height:1 !important;
+}
+#detailModal.is-saved-card-detail .saved-variant-radio{
+  width:20px !important;
+  height:20px !important;
+  flex:0 0 20px !important;
+}
+#detailModal.is-saved-card-detail .saved-variant-circle{
+  width:20px !important;
+  height:20px !important;
+}
+#detailModal.is-saved-card-detail .saved-variant-text{
+  display:inline-block !important;
+  width:auto !important;
+  min-width:0 !important;
+  max-width:none !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+  white-space:nowrap !important;
+  font-size:13px !important;
+}
+@media (max-width:380px){
+  #detailModal.is-saved-card-detail .saved-variant-editor-card{
+    grid-template-columns:max-content max-content max-content !important;
+    column-gap:14px !important;
+    padding-left:6px !important;
+    padding-right:6px !important;
+  }
+  #detailModal.is-saved-card-detail .saved-variant-option{
+    gap:4px !important;
+    font-size:12px !important;
+  }
+  #detailModal.is-saved-card-detail .saved-variant-radio,
+  #detailModal.is-saved-card-detail .saved-variant-circle{
+    width:18px !important;
+    height:18px !important;
+    flex-basis:18px !important;
+  }
+  #detailModal.is-saved-card-detail .saved-variant-text{
+    font-size:12px !important;
+  }
+}
+
+
+
+/* === MOD 01/06/2026: chevron più pulite in modifica scheda salvata ===
+   Sostituisce i caratteri testuali con icone SVG mascherate, stile più morbido e centrato. */
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron::after{
+  content:"" !important;
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  background-color:#6f7f9f !important;
+  opacity:.96 !important;
+  transform:none !important;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 18px 18px no-repeat !important;
+  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 18px 18px no-repeat !important;
+  transition:background-color .18s ease, opacity .18s ease, transform .18s ease !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron-down::after{
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 18px 18px no-repeat !important;
+  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 18px 18px no-repeat !important;
+  transform:none !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron-down.is-open::after{
+  transform:rotate(180deg) !important;
+}
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron:hover::after,
+#detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron:active::after{
+  background-color:#2f64ff !important;
+  opacity:1 !important;
+}
+@media (max-width:420px){
+  #detailModal.is-saved-card-detail.is-saved-card-editing .saved-detail-card .saved-edit-chevron::after{
+    width:20px !important;
+    height:20px !important;
+    min-width:20px !important;
+    -webkit-mask-size:17px 17px !important;
+    mask-size:17px 17px !important;
+  }
+}
+
+
+/* === MOD 01/06/2026: chevron belle anche nella scheda carta da aggiungere ===
+   Allinea Provenienza e JSON della scheda da aggiungere alle icone SVG mascherate usate nella scheda salvata. */
+#detailModal:not(.is-saved-card-detail) .add-detail-card .info-choice-arrow{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  flex:0 0 22px !important;
+  font-size:0 !important;
+  line-height:0 !important;
+  color:transparent !important;
+  background-color:#6f7f9f !important;
+  opacity:.96 !important;
+  transform:none !important;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 18px 18px no-repeat !important;
+  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 18px 18px no-repeat !important;
+  transition:background-color .18s ease, opacity .18s ease, transform .18s ease !important;
+}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .info-choice-btn:hover .info-choice-arrow,
+#detailModal:not(.is-saved-card-detail) .add-detail-card .info-choice-btn:active .info-choice-arrow{
+  background-color:#2f64ff !important;
+  opacity:1 !important;
+}
+#detailModal:not(.is-saved-card-detail) .collapsible-arrow{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  flex:0 0 22px !important;
+  font-size:0 !important;
+  line-height:0 !important;
+  color:transparent !important;
+  background-color:#6f7f9f !important;
+  opacity:.96 !important;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 18px 18px no-repeat !important;
+  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 18px 18px no-repeat !important;
+  transition:background-color .18s ease, opacity .18s ease, transform .2s ease !important;
+}
+#detailModal:not(.is-saved-card-detail) .collapsible-trigger:hover .collapsible-arrow,
+#detailModal:not(.is-saved-card-detail) .collapsible-trigger:active .collapsible-arrow{
+  background-color:#2f64ff !important;
+  opacity:1 !important;
+}
+#detailModal:not(.is-saved-card-detail) .collapsible-trigger[aria-expanded="true"] .collapsible-arrow{
+  transform:rotate(180deg) !important;
+}
+@media (max-width:420px){
+  #detailModal:not(.is-saved-card-detail) .add-detail-card .info-choice-arrow,
+  #detailModal:not(.is-saved-card-detail) .collapsible-arrow{
+    width:20px !important;
+    height:20px !important;
+    min-width:20px !important;
+    flex-basis:20px !important;
+    -webkit-mask-size:17px 17px !important;
+    mask-size:17px 17px !important;
+  }
+}
+
+
+/* === MOD 01/06/2026: home, totale carte senza chevron e prezzo stabile ===
+   Blocca le micro-variazioni di layout quando il totale viene nascosto/mostrato. */
+#homeView .home-cards-chevron{
+  display:none !important;
+}
+#homeView .home-stats-card{
+  height:82px !important;
+  min-height:82px !important;
+}
+#homeView .home-price-control{
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:4px !important;
+  width:auto !important;
+  min-width:0 !important;
+  flex:0 0 auto !important;
+}
+#homeView .home-value-line .price-value{
+  display:inline-block !important;
+  width:auto !important;
+  min-width:0 !important;
+  line-height:1 !important;
+  text-align:left !important;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap !important;
+}
+#homeView .home-value-line .price-toggle,
+#homeView .home-value-line .price-toggle:hover,
+#homeView .home-value-line .price-toggle:active{
+  transform:none !important;
+}
+@media (max-width:420px){
+  #homeView .home-stats-card{
+    height:78px !important;
+    min-height:78px !important;
+  }
+  #homeView .home-price-control{
+    width:auto !important;
+    min-width:0 !important;
+    flex-basis:auto !important;
+  }
+}
 </style></head>
   <body class="ui-booting">
     <!-- POST-IT: STRUTTURA APP
@@ -7474,7 +8012,6 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
                   <p class="home-cards-line">
                     <strong class="home-cards-count" id="homeCardsCount">0</strong>
                     <span>Carte</span>
-                    <span class="home-cards-chevron" aria-hidden="true">›</span>
                   </p>
                   <div class="home-value-line">
                     <span>Valore collezione</span>
@@ -8868,6 +9405,21 @@ paint-order="stroke">
           <aside class="profile-menu-panel" id="profileMenuPanel" role="dialog" aria-modal="true" aria-labelledby="profileMenuTitle">
             <h2 class="profile-menu-title" id="profileMenuTitle">POKÉALBUM</h2>
             <div class="profile-menu-divider" aria-hidden="true"></div>
+            <div class="profile-storage-card" id="profileStorageCard" aria-live="polite">
+              <div class="profile-storage-row">
+                <span class="profile-storage-label">Spazio disponibile:</span>
+                <span class="profile-storage-value" id="profileStorageQuota">—</span>
+              </div>
+              <div class="profile-storage-row">
+                <span class="profile-storage-label">Spazio utilizzato:</span>
+                <span class="profile-storage-value" id="profileStorageUsage">—</span>
+              </div>
+              <div class="profile-storage-row">
+                <span class="profile-storage-label">Spazio rimanente:</span>
+                <span class="profile-storage-value" id="profileStorageRemaining">—</span>
+              </div>
+              <p class="profile-storage-note" id="profileStorageNote">Stima del browser</p>
+            </div>
             <button class="profile-menu-action" id="restoreDataBtn" type="button">Ripristina</button>
           </aside>
         </div>
@@ -9005,7 +9557,7 @@ paint-order="stroke">
               </label>
             </div>
             <div class="detail-cards">
-              <section class="info-card add-detail-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section><section class="info-card saved-detail-card" aria-hidden="true"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="savedCardRarity"></div></div><div class="info-row static-info-row"><div class="info-label">Tipo Carta</div><div class="info-value" id="savedCardVariantsSummary"></div></div><div class="info-row static-info-row"><div class="info-label">Provenienza</div><div class="info-value" id="savedCardOriginValue"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="savedCardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="savedCardVersion"></div></div><div class="info-row static-info-row"><div class="info-label">Totale Set</div><div class="info-value" id="savedCardTotalSet"></div></div><div class="info-row static-info-row"><div class="info-label">Uscita</div><div class="info-value" id="savedCardDate"></div></div><div class="info-row static-info-row"><div class="info-label">Illustratore</div><div class="info-value" id="savedCardArtist"></div></div></div></section>
+              <section class="info-card add-detail-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section><section class="info-card saved-detail-card" aria-hidden="true"><h3 class="info-card-title saved-detail-card-title"><span class="info-card-title-text">Dettagli Carta</span><button class="saved-card-edit-toggle" id="savedCardEditToggleBtn" type="button" aria-pressed="false">Modifica</button></h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Nome</div><div class="info-value" id="savedCardName"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="savedCardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="savedCardVersion"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="total-set"><div class="info-label">Totale Carte Set</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardTotalSet"></div><input class="saved-card-edit-input" id="savedCardTotalSetInput" data-saved-edit-input="total-set" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 94"></div></div><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="savedCardRarity"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron saved-edit-chevron-down" id="savedCardTypeEditRow" data-saved-edit-field="card-type"><div class="info-label">Tipo carta</div><div class="info-value" id="savedCardVariantsSummary"></div></div><div class="saved-variant-editor-row" id="savedVariantEditorRow" aria-hidden="true"><div class="saved-variant-editor-card" aria-label="Selezione tipo carta salvata"><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantHolo" data-saved-variant="holo" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Holo</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantReverse" data-saved-variant="reverse" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Reverse</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantIllustration" data-saved-variant="illustration" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Illustration</span></label></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="release-date"><div class="info-label">Uscita</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardDate"></div><input class="saved-card-edit-input" id="savedCardDateInput" data-saved-edit-input="release-date" type="text" autocomplete="off" placeholder="es. 2026"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="artist"><div class="info-label">Illustratore</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardArtist"></div><input class="saved-card-edit-input" id="savedCardArtistInput" data-saved-edit-input="artist" type="text" autocomplete="off" placeholder="es. Mitsuhiro Arita"></div></div><div class="info-row static-info-row"><div class="info-label">Data inserimento</div><div class="info-value" id="savedCardInsertedAt"></div></div><div class="info-row static-info-row"><div class="info-label">Valore iniziale</div><div class="info-value" id="savedCardInitialValue"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron" data-saved-edit-field="origin"><div class="info-label">Provenienza</div><div class="info-value" id="savedCardOriginValue"></div></div></div></section>
               <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
             </div>
           </div>
@@ -9164,6 +9716,7 @@ const state = {
         loading: false,
         lastCardId: null,
         priceSource: '',
+        requestSeq: 0,
       },
       manualPriceDraft: { langKey: '', condKey: '', priceText: '' },
       priceDb: {
@@ -9222,14 +9775,26 @@ const el = {
       cardSet: document.getElementById('cardSet'),
       cardVersion: document.getElementById('cardVersion'),
       cardVariantsSummary: document.getElementById('cardVariantsSummary'),
+      savedCardName: document.getElementById('savedCardName'),
+      savedCardEditToggleBtn: document.getElementById('savedCardEditToggleBtn'),
+      savedCardInsertedAt: document.getElementById('savedCardInsertedAt'),
+      savedCardInitialValue: document.getElementById('savedCardInitialValue'),
       savedCardRarity: document.getElementById('savedCardRarity'),
       savedCardVariantsSummary: document.getElementById('savedCardVariantsSummary'),
       savedCardOriginValue: document.getElementById('savedCardOriginValue'),
       savedCardSet: document.getElementById('savedCardSet'),
       savedCardVersion: document.getElementById('savedCardVersion'),
       savedCardTotalSet: document.getElementById('savedCardTotalSet'),
+      savedCardTotalSetInput: document.getElementById('savedCardTotalSetInput'),
       savedCardDate: document.getElementById('savedCardDate'),
+      savedCardDateInput: document.getElementById('savedCardDateInput'),
       savedCardArtist: document.getElementById('savedCardArtist'),
+      savedCardArtistInput: document.getElementById('savedCardArtistInput'),
+      savedCardTypeEditRow: document.getElementById('savedCardTypeEditRow'),
+      savedVariantEditorRow: document.getElementById('savedVariantEditorRow'),
+      savedVariantHolo: document.getElementById('savedVariantHolo'),
+      savedVariantReverse: document.getElementById('savedVariantReverse'),
+      savedVariantIllustration: document.getElementById('savedVariantIllustration'),
       savedLocationPill: document.getElementById('savedLocationPill'),
       cardTotalSetInput: document.getElementById('cardTotalSetInput'),
       cardArtistInput: document.getElementById('cardArtistInput'),
@@ -10699,38 +11264,74 @@ async function loadPriceDatabaseMeta(force = false) {
 
     // POST-IT: caricamento prezzo scheda.
 // Prima prova marketplace live, poi fallback DB offline. È il punto giusto per debug prezzo/lingua/condizione.
-async function loadMarketSummary(card) {
+// Con forceRefresh=true aggiunge cache-bust e impedisce a vecchie chiamate di sovrascrivere il prezzo corrente.
+function isCurrentMarketRequest(card, requestSeq) {
+      return state.market.requestSeq === requestSeq
+        && (!state.selectedCard || Number(state.selectedCard.id) === Number(card?.id));
+    }
+
+    function buildMarketplaceProductsPath(card, options = {}) {
+      const params = new URLSearchParams();
+      params.set('blueprint_id', String(card?.id || ''));
+      if (options.forceRefresh) {
+        params.set('_', `${Date.now()}-${Math.random().toString(36).slice(2)}`);
+      }
+      return `/marketplace/products?${params.toString()}`;
+    }
+
+    async function fetchMarketplaceProductsForCard(card, options = {}) {
+      const data = await api(buildMarketplaceProductsPath(card, options));
+      return extractArray(data, ['products']);
+    }
+
+async function loadMarketSummary(card, options = {}) {
       if (!card) return;
+      const requestSeq = (state.market.requestSeq || 0) + 1;
+      state.market.requestSeq = requestSeq;
       state.market.rows = [];
       state.market.selected = { langKey: '', condKey: '', ctZero: false, manualCustom: false };
       state.market.priceSource = '';
       state.market.lastCardId = card.id;
       setPriceLoadingState();
       try {
-        const data = await api(`/marketplace/products?blueprint_id=${encodeURIComponent(card.id)}`);
-        if (state.selectedCard && Number(state.selectedCard.id) !== Number(card.id)) return;
-        const products = extractArray(data, ['products']);
+        const forceRefresh = options.forceRefresh === true || options.force === true || options.noCache === true;
+        const retryOnEmpty = options.retryOnEmpty !== false;
+        let products = await fetchMarketplaceProductsForCard(card, { forceRefresh });
+        if (!isCurrentMarketRequest(card, requestSeq)) return;
+
+        let pricedProducts = products.map(product => ({ product, priceCents: getProductPriceCents(product) })).filter(row => Number.isFinite(row.priceCents));
+        if (retryOnEmpty && (!products.length || !pricedProducts.length)) {
+          products = await fetchMarketplaceProductsForCard(card, { forceRefresh: true });
+          if (!isCurrentMarketRequest(card, requestSeq)) return;
+          pricedProducts = products.map(product => ({ product, priceCents: getProductPriceCents(product) })).filter(row => Number.isFinite(row.priceCents));
+        }
+
         if (!products.length) { setPriceResult('-', 'Nessuna inserzione marketplace trovata'); return; }
-        const pricedProducts = products.map(product => ({ product, priceCents: getProductPriceCents(product) })).filter(row => Number.isFinite(row.priceCents));
         if (!pricedProducts.length) { setPriceResult('-', 'Inserzioni trovate, ma nessun prezzo leggibile'); return; }
         state.market.rows = buildMarketRows(products);
         const selected = pickBestMarketplaceOffer(products) || pricedProducts.sort((a, b) => a.priceCents - b.priceCents)[0];
         if (!selected) { setPriceResult('-', 'Offerta non disponibile'); return; }
+        if (!isCurrentMarketRequest(card, requestSeq)) return;
         setMarketSelectionFromProduct(selected.product);
         setPriceResult(formatEuroFromCents(selected.priceCents), '', { source: 'live' });
         renderMarketControls({ product: selected.product, priceCents: selected.priceCents });
       } catch (error) {
+        if (!isCurrentMarketRequest(card, requestSeq)) return;
         try {
           const usedDatabasePrice = await loadPriceFromDatabaseFallback(card, error);
+          if (!isCurrentMarketRequest(card, requestSeq)) return;
           if (!usedDatabasePrice) {
-            setPriceResult('-', `Errore prezzo live e nessun prezzo nel database: ${error.message}`);
+            const message = error instanceof Error ? error.message : String(error);
+            setPriceResult('-', `Errore prezzo live e nessun prezzo nel database: ${message}`);
           }
         } catch (dbError) {
+          if (!isCurrentMarketRequest(card, requestSeq)) return;
           const liveMessage = error instanceof Error ? error.message : String(error);
           const dbMessage = dbError instanceof Error ? dbError.message : String(dbError);
           setPriceResult('-', `Errore prezzo live: ${liveMessage}. Database non disponibile: ${dbMessage}`);
         }
       } finally {
+        if (!isCurrentMarketRequest(card, requestSeq)) return;
         const usingDatabaseFallback = state.market.priceSource === 'database';
         setMarketControlsDisabled(usingDatabaseFallback ? true : false);
         if (el.refreshPriceBtn) {
@@ -11072,7 +11673,7 @@ async function fetchPokemonIndex(force = false, options = {}) {
       setCardSearchScrollTopVisible(false);
     }
 
-    function resetCardSearchViewForOpen() {
+    function prepareCardSearchViewForOpen() {
       cancelResultsRender();
       clearSearchProgressAnimation();
       state.filtered = [];
@@ -11082,14 +11683,25 @@ async function fetchPokemonIndex(force = false, options = {}) {
       state.lastSuggestionTotal = 0;
       state.hasSearched = false;
       if (el.searchInput) el.searchInput.value = '';
+      el.autocomplete?.classList.remove('open');
+      setCardSearchScrollTopVisible(false);
+      if (el.emptyState) el.emptyState.style.display = 'none';
+      setStatus('');
+      setProgress(0);
+    }
+
+    function resetCardSearchViewForOpen() {
+      prepareCardSearchViewForOpen();
       renderSuggestions([]);
       el.results.innerHTML = '';
       el.results.scrollTop = 0;
-      setCardSearchScrollTopVisible(false);
       el.emptyState.textContent = '';
       el.emptyState.style.display = 'none';
-      setStatus('');
-      setProgress(0);
+    }
+
+    function finishCardSearchOpenReset() {
+      resetCardSearchViewForOpen();
+      document.getElementById('addCardSearchView')?.classList.remove('is-opening');
     }
 
     function renderEmptySearchState(message) {
@@ -11349,6 +11961,8 @@ async function openCardDetails(cardId) {
 function resetCardDetailTemporaryFields() {
       state.savedDetailCardId = null;
       if (typeof resetSavedDetailSwipeVisual === 'function') resetSavedDetailSwipeVisual(false);
+      setSavedCardEditMode(false);
+      if (el.detailModal) delete el.detailModal.dataset.savedCardId;
       el.detailModal?.classList.remove('is-saved-card-detail');
       el.detailModal?.querySelector('.saved-detail-card')?.setAttribute('aria-hidden', 'true');
       el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'false');
@@ -11476,6 +12090,7 @@ function resetCardDetailTemporaryFields() {
       document.querySelectorAll('[data-origin-type]').forEach((button) => {
         button.classList.toggle('is-selected', button.dataset.originType === cleanType);
       });
+      syncSavedOriginFromOriginSheet(label, cleanType, cleanDetail, originInTransit);
     }
 
     // POST-IT: provenienza carta da aggiungere.
@@ -11526,6 +12141,181 @@ function openOriginChoiceSheet() {
 
     // POST-IT: binding eventi ricerca/scheda.
 // Qui si collegano input, autocomplete, varianti, prezzo manuale, provenienza e JSON.
+
+    let savedCardEditSaveTimer = 0;
+    let savedCardEditPendingPatch = {};
+
+    function getSavedCardEditCardId() {
+      return String(el.detailModal?.dataset?.savedCardId || '').trim();
+    }
+
+    function cleanSavedDetailValue(value = '') {
+      const clean = String(value ?? '').trim();
+      return clean === '(Vuoto)' ? '' : clean;
+    }
+
+    function setSavedDetailText(node, value = '') {
+      if (!node) return;
+      const clean = cleanSavedDetailValue(value);
+      const empty = !clean;
+      node.textContent = empty ? '(Vuoto)' : clean;
+      node.classList.toggle('is-empty-value', empty);
+    }
+
+    function mergeSavedCardPatch(target = {}, patch = {}) {
+      Object.entries(patch || {}).forEach(([key, value]) => {
+        const isObject = value && typeof value === 'object' && !Array.isArray(value);
+        if (isObject) {
+          target[key] = mergeSavedCardPatch({ ...(target[key] || {}) }, value);
+        } else {
+          target[key] = value;
+        }
+      });
+      return target;
+    }
+
+    async function flushSavedCardEditPatch() {
+      clearTimeout(savedCardEditSaveTimer);
+      savedCardEditSaveTimer = 0;
+      const patch = savedCardEditPendingPatch;
+      savedCardEditPendingPatch = {};
+      if (!patch || !Object.keys(patch).length) return null;
+      const cardId = getSavedCardEditCardId();
+      if (!cardId || typeof window.PokeAlbumStorage?.updateSavedCardDetails !== 'function') return null;
+      try {
+        const updatedCard = await window.PokeAlbumStorage.updateSavedCardDetails(cardId, patch);
+        if (updatedCard && el.detailRaw) el.detailRaw.textContent = JSON.stringify(updatedCard, null, 2);
+        return updatedCard;
+      } catch (error) {
+        console.error('Errore aggiornamento carta salvata', error);
+        window.PokeAlbumStorage?.showToast?.('Modifica non salvata', true);
+        return null;
+      }
+    }
+
+    function queueSavedCardEditPatch(patch = {}, immediate = false) {
+      savedCardEditPendingPatch = mergeSavedCardPatch(savedCardEditPendingPatch, patch);
+      if (immediate) {
+        void flushSavedCardEditPatch();
+        return;
+      }
+      clearTimeout(savedCardEditSaveTimer);
+      savedCardEditSaveTimer = window.setTimeout(() => {
+        void flushSavedCardEditPatch();
+      }, 320);
+    }
+
+    function syncSavedDetailInputsFromText() {
+      if (el.savedCardTotalSetInput) el.savedCardTotalSetInput.value = cleanSavedDetailValue(el.savedCardTotalSet?.textContent || '');
+      if (el.savedCardDateInput) el.savedCardDateInput.value = cleanSavedDetailValue(el.savedCardDate?.textContent || '');
+      if (el.savedCardArtistInput) el.savedCardArtistInput.value = cleanSavedDetailValue(el.savedCardArtist?.textContent || '');
+    }
+
+    function updateSavedDetailFromInput(input, immediate = false) {
+      if (!input) return;
+      const field = input.dataset?.savedEditInput || '';
+      const value = input.value.trim();
+      if (field === 'total-set') {
+        setSavedDetailText(el.savedCardTotalSet, value);
+        queueSavedCardEditPatch({ set: { total: value } }, immediate);
+      } else if (field === 'release-date') {
+        setSavedDetailText(el.savedCardDate, value);
+        queueSavedCardEditPatch({ releaseDate: value }, immediate);
+      } else if (field === 'artist') {
+        setSavedDetailText(el.savedCardArtist, value);
+        queueSavedCardEditPatch({ artist: value }, immediate);
+      }
+    }
+
+    function setSavedVariantEditorOpen(open = false) {
+      const active = Boolean(open && el.detailModal?.classList.contains('is-saved-card-editing'));
+      el.savedVariantEditorRow?.classList.toggle('is-open', active);
+      el.savedVariantEditorRow?.setAttribute('aria-hidden', active ? 'false' : 'true');
+      el.savedCardTypeEditRow?.classList.toggle('is-open', active);
+    }
+
+    function formatSavedVariantSummaryFromControls() {
+      const labels = [
+        el.savedVariantHolo?.checked ? 'Holo' : '',
+        el.savedVariantReverse?.checked ? 'Reverse' : '',
+        el.savedVariantIllustration?.checked ? 'Illustration' : '',
+      ].filter(Boolean);
+      return labels.length ? labels.join(' - ') : '';
+    }
+
+    function syncSavedVariantSummaryFromControls(immediate = false) {
+      const summary = formatSavedVariantSummaryFromControls();
+      setSavedDetailText(el.savedCardVariantsSummary, summary);
+      queueSavedCardEditPatch({
+        variants: {
+          holo: Boolean(el.savedVariantHolo?.checked),
+          reverse: Boolean(el.savedVariantReverse?.checked),
+          illustration: Boolean(el.savedVariantIllustration?.checked),
+        },
+      }, immediate);
+    }
+
+    function syncSavedOriginFromOriginSheet(label = '', type = '', detail = '', inTransit = false) {
+      const isSavedEditing = Boolean(
+        el.detailModal?.classList.contains('is-saved-card-detail')
+        && el.detailModal?.classList.contains('is-saved-card-editing')
+      );
+      if (!isSavedEditing) return;
+      const cleanLabel = String(label || '').trim();
+      setSavedDetailText(el.savedCardOriginValue, cleanLabel);
+      queueSavedCardEditPatch({
+        origin: {
+          label: cleanLabel,
+          type: String(type || '').trim(),
+          detail: String(detail || '').trim(),
+          inTransit: Boolean(inTransit),
+        },
+      }, true);
+    }
+
+    function primeOriginSheetFromSavedValue() {
+      const value = cleanSavedDetailValue(el.savedCardOriginValue?.textContent || '');
+      const type = value.startsWith('Acquisto Singolo')
+        ? 'Acquisto Singolo'
+        : value.startsWith('Regalo')
+          ? 'Regalo'
+          : value.startsWith('Bustina')
+            ? 'Bustina'
+            : '';
+      pendingOriginType = type;
+      pendingOriginInTransit = /in arrivo/i.test(value);
+      document.querySelectorAll('[data-origin-type]').forEach((button) => {
+        button.classList.toggle('is-selected', Boolean(type && button.dataset.originType === type));
+      });
+    }
+
+    function setSavedCardEditMode(enabled = false) {
+      const modal = el.detailModal;
+      const wasEditing = Boolean(modal?.classList.contains('is-saved-card-editing'));
+      const active = Boolean(enabled && modal?.classList.contains('is-saved-card-detail'));
+      if (!active) {
+        if (wasEditing) {
+          [el.savedCardTotalSetInput, el.savedCardDateInput, el.savedCardArtistInput].forEach(input => {
+            if (input) updateSavedDetailFromInput(input, true);
+          });
+          void flushSavedCardEditPatch();
+        }
+        setSavedVariantEditorOpen(false);
+      } else {
+        syncSavedDetailInputsFromText();
+      }
+      modal?.classList.toggle('is-saved-card-editing', active);
+      if (el.savedCardEditToggleBtn) {
+        el.savedCardEditToggleBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+        el.savedCardEditToggleBtn.textContent = active ? 'Fine' : 'Modifica';
+      }
+    }
+
+    function toggleSavedCardEditMode() {
+      const active = Boolean(el.detailModal?.classList.contains('is-saved-card-editing'));
+      setSavedCardEditMode(!active);
+    }
+
 function attachEvents() {
       const syncVariantSelection = (changedInput) => {
         if (!changedInput || !changedInput.checked) return;
@@ -11541,6 +12331,81 @@ function attachEvents() {
       [el.variantHolo, el.variantReverse, el.variantIllustration].forEach(input => {
         if (input) input.addEventListener('change', () => syncVariantSelection(input));
       });
+      if (el.savedCardEditToggleBtn) {
+        el.savedCardEditToggleBtn.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (!el.detailModal?.classList.contains('is-saved-card-detail')) return;
+          toggleSavedCardEditMode();
+        });
+      }
+
+      [el.savedCardTotalSetInput, el.savedCardDateInput, el.savedCardArtistInput].forEach(input => {
+        if (!input) return;
+        input.addEventListener('click', event => event.stopPropagation());
+        input.addEventListener('input', () => updateSavedDetailFromInput(input, false));
+        input.addEventListener('blur', () => updateSavedDetailFromInput(input, true));
+        input.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            input.blur();
+          }
+          if (event.key === 'Escape') {
+            event.preventDefault();
+            syncSavedDetailInputsFromText();
+            input.blur();
+          }
+        });
+      });
+
+      const savedDetailCard = document.querySelector('#detailModal .saved-detail-card');
+      if (savedDetailCard) {
+        savedDetailCard.addEventListener('click', (event) => {
+          if (!el.detailModal?.classList.contains('is-saved-card-detail')) return;
+          if (!el.detailModal?.classList.contains('is-saved-card-editing')) return;
+          const row = event.target.closest('.saved-editable-row');
+          if (!row || !savedDetailCard.contains(row)) return;
+          const field = row.dataset.savedEditField || '';
+          if (field === 'card-type') {
+            event.preventDefault();
+            event.stopPropagation();
+            setSavedVariantEditorOpen(!el.savedVariantEditorRow?.classList.contains('is-open'));
+            return;
+          }
+          if (field === 'origin') {
+            event.preventDefault();
+            event.stopPropagation();
+            primeOriginSheetFromSavedValue();
+            openOriginChoiceSheet();
+            return;
+          }
+          const input = row.querySelector('.saved-card-edit-input');
+          if (input) {
+            event.preventDefault();
+            event.stopPropagation();
+            input.focus();
+            input.select?.();
+          }
+        });
+      }
+
+      const syncSavedVariantSelection = (changedInput) => {
+        if (!changedInput) return;
+        if (changedInput.checked && changedInput === el.savedVariantIllustration) {
+          if (el.savedVariantHolo) el.savedVariantHolo.checked = false;
+          if (el.savedVariantReverse) el.savedVariantReverse.checked = false;
+        }
+        if (changedInput.checked && (changedInput === el.savedVariantHolo || changedInput === el.savedVariantReverse) && el.savedVariantIllustration) {
+          el.savedVariantIllustration.checked = false;
+        }
+        syncSavedVariantSummaryFromControls(false);
+      };
+      [el.savedVariantHolo, el.savedVariantReverse, el.savedVariantIllustration].forEach(input => {
+        if (!input) return;
+        input.addEventListener('click', event => event.stopPropagation());
+        input.addEventListener('change', () => syncSavedVariantSelection(input));
+      });
+
       document.querySelectorAll('[data-close]').forEach(btn => {
         btn.addEventListener('click', () => closeModal(document.getElementById(btn.dataset.close)));
       });
@@ -11946,7 +12811,7 @@ el.autocomplete.addEventListener('click', (e) => {
       if (el.refreshPriceBtn) {
         el.refreshPriceBtn.addEventListener('click', async () => {
           if (!state.selectedCard) return;
-          await loadMarketSummary(state.selectedCard);
+          await loadMarketSummary(state.selectedCard, { forceRefresh: true, retryOnEmpty: true });
         });
       }
     }
@@ -12514,6 +13379,10 @@ const els = {
           profileMenuBackdrop: $("#profileMenuBackdrop"),
           profileMenuPanel: $("#profileMenuPanel"),
           profileMenuTitle: $("#profileMenuTitle"),
+          profileStorageQuota: $("#profileStorageQuota"),
+          profileStorageUsage: $("#profileStorageUsage"),
+          profileStorageRemaining: $("#profileStorageRemaining"),
+          profileStorageNote: $("#profileStorageNote"),
           restoreDataBtn: $("#restoreDataBtn"),
           restoreSheetBackdrop: $("#restoreSheetBackdrop"),
           restoreCancelBtn: $("#restoreCancelBtn"),
@@ -12573,7 +13442,7 @@ const DEFAULT_ALBUM = Object.freeze({
         const AUTO_SCROLL_EDGE_PX = 82;
         const AUTO_SCROLL_MAX_SPEED = 16;
         let visibleTotalPrice = els.totalPriceValue.textContent.trim();
-        const hiddenTotalPrice = "€ ****";
+        const hiddenTotalPrice = "€ *****";
         const OWNER_NAME_STORAGE_KEY = "pokealbumOwnerName";
         const defaultOwnerName = els.ownerNameBtn.textContent.trim();
 
@@ -13035,6 +13904,34 @@ async function loadSavedAlbums() {
           ].filter(Boolean).join(" · ");
         }
 
+        function formatSavedCardDate(value = "") {
+          const clean = String(value || "").trim();
+          if (!clean) return "";
+          const date = new Date(clean);
+          if (Number.isNaN(date.getTime())) return clean.split(/[T\s]/)[0] || clean;
+          const pad = (number) => String(number).padStart(2, "0");
+          return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}`;
+        }
+
+        function formatSavedCardInsertedAt(card = {}) {
+          return formatSavedCardDate(card.addedAt || card.insertedAt || card.createdAt || card.priceAtAdd?.capturedAt || "");
+        }
+
+        function formatSavedCardInitialValue(card = {}) {
+          const rawValue = String(card.priceAtAdd?.valueText || card.initialValue || "").trim();
+          const cleanValue = rawValue.replace(/^€\s*/i, "").trim();
+          if (!cleanValue || cleanValue === "-" || /^nessun riscontro$/i.test(cleanValue)) return "Nessun riscontro";
+          return /^€\s*/i.test(rawValue) ? rawValue : `€ ${cleanValue}`;
+        }
+
+        function getSavedCardLivePriceSource(card = {}) {
+          const source = card.rawCard || card.raw || {};
+          const fallbackId = card.blueprintId ?? source.id ?? source.blueprint_id ?? null;
+          const numericId = Number(fallbackId);
+          if (!Number.isFinite(numericId)) return null;
+          return { ...source, id: numericId };
+        }
+
 
         function formatSavedCardVariantSummary(card = {}) {
           const variants = card.variants || {};
@@ -13140,23 +14037,42 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
           const number = String(savedCard.display?.version || savedCard.rawCard?.collector_number || savedCard.rawCard?.number || '').trim();
           const setText = [setCode, setName ? `- ${setName}` : ''].filter(Boolean).join(' ');
           const meta = [setCode ? setCode.toUpperCase() : '', number].filter(Boolean).join(' - ');
-          const savedPriceText = String(savedCard.priceAtAdd?.valueText || '').replace(/^€\s*/i, '').trim();
-          const priceText = savedPriceText || 'Nessun riscontro';
-          const hasNoPrice = !savedPriceText;
+          const livePriceCard = getSavedCardLivePriceSource(savedCard);
           const originLabel = getSavedCardOriginLabel(savedCard);
 
           el.detailModal?.classList.add('is-saved-card-detail');
+          setSavedCardEditMode(false);
+          if (el.detailModal) el.detailModal.dataset.savedCardId = id;
           el.detailModal?.querySelector('.saved-detail-card')?.setAttribute('aria-hidden', 'false');
           el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'true');
           if (el.detailTopName) el.detailTopName.textContent = detailValueOrEmpty(title);
           if (el.detailTopMeta) el.detailTopMeta.textContent = detailValueOrEmpty(meta);
           setReadonlyDetailImage(getAlbumCardImage(savedCard), title);
-          setPriceResult(priceText, '', { source: '' });
-          el.detailPriceValue?.classList.toggle('is-no-price', hasNoPrice);
-          el.detailPriceValue?.closest('.detail-price-line')?.classList.toggle('has-no-price', hasNoPrice);
+          state.selectedCard = livePriceCard;
+          if (livePriceCard) {
+            setPriceLoadingState('Carico prezzo live...');
+          } else {
+            setPriceResult('Nessun riscontro', '', { source: '' });
+            el.detailPriceValue?.classList.add('is-no-price');
+            el.detailPriceValue?.closest('.detail-price-line')?.classList.add('has-no-price');
+          }
           if (el.detailOfferLabel) el.detailOfferLabel.textContent = '';
+          setReadonlyDetailText(el.savedCardName, title);
+          setReadonlyDetailText(el.savedCardInsertedAt, formatSavedCardInsertedAt(savedCard));
+          setReadonlyDetailText(el.savedCardInitialValue, formatSavedCardInitialValue(savedCard));
           setReadonlyDetailText(el.savedCardRarity, savedCard.rarity);
           setReadonlyDetailText(el.savedCardVariantsSummary, formatSavedCardVariantSummary(savedCard).replace(/^-$/, ''));
+          {
+            const variants = savedCard.variants || {};
+            const savedVariantHolo = document.getElementById('savedVariantHolo');
+            const savedVariantReverse = document.getElementById('savedVariantReverse');
+            const savedVariantIllustration = document.getElementById('savedVariantIllustration');
+            if (savedVariantHolo) savedVariantHolo.checked = Boolean(variants.holo);
+            if (savedVariantReverse) savedVariantReverse.checked = Boolean(variants.reverse);
+            if (savedVariantIllustration) savedVariantIllustration.checked = Boolean(variants.illustration);
+            document.getElementById('savedVariantEditorRow')?.classList.remove('is-open');
+            document.getElementById('savedCardTypeEditRow')?.classList.remove('is-open');
+          }
           setReadonlyDetailText(el.savedCardSet, setText);
           setReadonlyDetailText(el.savedCardVersion, number);
           setReadonlyDetailText(el.savedCardTotalSet, savedCard.set?.total);
@@ -13199,6 +14115,13 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
             el.collapsibleTrigger.setAttribute('aria-expanded', 'false');
           }
           openModal(el.detailModal);
+          if (livePriceCard) {
+            await loadMarketSummary(livePriceCard, { forceRefresh: true, retryOnEmpty: true });
+            const livePriceText = String(el.detailPriceValue?.textContent || '').trim();
+            const hasNoLivePrice = !livePriceText || livePriceText === '-';
+            el.detailPriceValue?.classList.toggle('is-no-price', hasNoLivePrice);
+            el.detailPriceValue?.closest('.detail-price-line')?.classList.toggle('has-no-price', hasNoLivePrice);
+          }
         }
 
         function getSavedDetailSlotInfo(savedCardId = '') {
@@ -14158,6 +15081,62 @@ async function renderHomeDuplicateCards() {
           return cards;
         }
 
+
+        // POST-IT: aggiornamento dettagli carta salvata.
+// Applica modifiche leggere dalla scheda carta salvata e riallinea IndexedDB/home/album.
+async function updateSavedCardDetails(cardId = "", patch = {}) {
+          const id = String(cardId || "").trim();
+          if (!id || !patch || typeof patch !== "object") return null;
+
+          const cards = await getAllCards();
+          const record = cards.find((card) => String(card.id || "") === id);
+          if (!record) return null;
+
+          if (patch.set && Object.prototype.hasOwnProperty.call(patch.set, "total")) {
+            record.set = { ...(record.set || {}), total: String(patch.set.total ?? "").trim() };
+          }
+          if (Object.prototype.hasOwnProperty.call(patch, "releaseDate")) {
+            record.releaseDate = String(patch.releaseDate ?? "").trim();
+          }
+          if (Object.prototype.hasOwnProperty.call(patch, "artist")) {
+            record.artist = String(patch.artist ?? "").trim();
+          }
+          if (patch.variants && typeof patch.variants === "object") {
+            record.variants = {
+              ...(record.variants || {}),
+              holo: Boolean(patch.variants.holo),
+              reverse: Boolean(patch.variants.reverse),
+              illustration: Boolean(patch.variants.illustration),
+            };
+          }
+          if (patch.origin && typeof patch.origin === "object") {
+            record.origin = {
+              ...(record.origin || {}),
+              label: String(patch.origin.label ?? "").trim(),
+              type: String(patch.origin.type ?? "").trim(),
+              detail: String(patch.origin.detail ?? "").trim(),
+              inTransit: Boolean(patch.origin.inTransit),
+            };
+          }
+
+          record.updatedAt = new Date().toISOString();
+          await putStore("cards", record);
+          await queueSync("card", record.id, "update", record);
+
+          const detailIndex = state.albumDetailCards.findIndex((card) => String(card.id || "") === id);
+          if (detailIndex >= 0) state.albumDetailCards[detailIndex] = record;
+
+          await refreshDuplicateCountCache();
+          if (record.albumId && state.currentAlbum?.albumData?.id === record.albumId) {
+            const albumCards = await getCardsByAlbum(record.albumId);
+            state.albumDetailCards = albumCards;
+            renderAlbumDetailCards(albumCards);
+          }
+          await refreshHomeSectionContent();
+          await refreshHomeCollectionTotals();
+          return record;
+        }
+
         // POST-IT: salvataggio carta in album corrente.
 // Punto di collegamento tra scheda carta e IndexedDB album. Dopo salva, ricarica vista e totali.
 async function addCardToCurrentAlbum(payload) {
@@ -14208,6 +15187,7 @@ async function addCardToCurrentAlbum(payload) {
         window.PokeAlbumStorage = {
           openDb,
           addCardToCurrentAlbum,
+          updateSavedCardDetails,
           returnToCurrentAlbum,
           showToast: showStorageToast,
           schema: { albumStoreFields, cardStoreFields, version: STORAGE_SCHEMA_VERSION },
@@ -14564,14 +15544,24 @@ function setView(view) {
 
         function openAddCardSearch(returnView = null) {
           state.addCardReturnView = returnView || (state.currentAlbum ? "detail" : "home");
-          if (typeof resetCardSearchViewForOpen === "function") {
-            resetCardSearchViewForOpen();
+          if (typeof prepareCardSearchViewForOpen === "function") {
+            prepareCardSearchViewForOpen();
           }
+          els.addCardSearchView?.classList.add("is-opening");
           if (typeof bindCardSearchScrollTopButton === "function") {
             bindCardSearchScrollTopButton();
           }
           setView("card-search");
           focusCardSearchInputOnOpen();
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              if (typeof finishCardSearchOpenReset === "function") {
+                finishCardSearchOpenReset();
+              } else {
+                els.addCardSearchView?.classList.remove("is-opening");
+              }
+            });
+          });
         }
 
         function focusCardSearchInputOnOpen() {
@@ -14823,7 +15813,57 @@ function parseCollectionPriceAmount(value) {
 
         // POST-IT: profilo, nome proprietario e ripristino.
 // Blocco UI per menu profilo, modifica nome e cancellazione completa dati locali.
-function openProfileMenu() {
+function formatStorageBytes(bytes) {
+          if (!Number.isFinite(bytes) || bytes < 0) return "—";
+          const units = ["B", "KB", "MB", "GB", "TB"];
+          let value = bytes;
+          let unitIndex = 0;
+          while (value >= 1024 && unitIndex < units.length - 1) {
+            value /= 1024;
+            unitIndex += 1;
+          }
+          const decimals = unitIndex >= 2 ? 2 : unitIndex === 1 ? 1 : 0;
+          return `${value.toLocaleString("it-IT", {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals,
+          })} ${units[unitIndex]}`;
+        }
+
+        function setProfileStorageValues(quotaText = "—", usageText = "—", remainingText = "—", noteText = "Stima del browser") {
+          if (els.profileStorageQuota) els.profileStorageQuota.textContent = quotaText;
+          if (els.profileStorageUsage) els.profileStorageUsage.textContent = usageText;
+          if (els.profileStorageRemaining) els.profileStorageRemaining.textContent = remainingText;
+          if (els.profileStorageNote) els.profileStorageNote.textContent = noteText;
+        }
+
+        async function updateProfileStorageInfo() {
+          if (!navigator.storage || typeof navigator.storage.estimate !== "function") {
+            setProfileStorageValues("n/d", "n/d", "n/d", "Non supportato");
+            return;
+          }
+
+          setProfileStorageValues("…", "…", "…", "Calcolo in corso");
+
+          try {
+            const estimate = await navigator.storage.estimate();
+            const quota = Number(estimate.quota) || 0;
+            const usage = Number(estimate.usage) || 0;
+            const remaining = Math.max(quota - usage, 0);
+
+            setProfileStorageValues(
+              formatStorageBytes(quota),
+              formatStorageBytes(usage),
+              formatStorageBytes(remaining),
+              "Stima del browser"
+            );
+          } catch (error) {
+            console.warn("Impossibile stimare lo spazio locale", error);
+            setProfileStorageValues("n/d", "n/d", "n/d", "Stima non disponibile");
+          }
+        }
+
+        function openProfileMenu() {
+          updateProfileStorageInfo();
           els.profileMenuBackdrop?.classList.add("open");
           els.profileMenuBackdrop?.setAttribute("aria-hidden", "false");
         }
@@ -14855,6 +15895,7 @@ function openProfileMenu() {
             await clearAllIndexedData();
             closeRestoreSheet();
             resetAppAfterRestore();
+            updateProfileStorageInfo();
             showStorageToast("PokéAlbum ripristinato");
           } catch (error) {
             console.error(error);
@@ -15438,19 +16479,9 @@ function openNativeColorPicker(event) {
           els.addAlbumBtn.classList.toggle("is-touching", isPressed);
         }
 
-        els.addAlbumBtn.addEventListener("pointerdown", (event) => {
-          event.preventDefault();
-          setFabPressed(true);
-          try {
-            els.addAlbumBtn.setPointerCapture?.(event.pointerId);
-          } catch {}
-        });
-        on(els.addAlbumBtn, "pointerup pointercancel lostpointercapture pointerleave", () => {
-          setFabPressed(false);
-          els.addAlbumBtn.blur();
-        });
-        els.addAlbumBtn.addEventListener("click", (event) => {
-          event.preventDefault();
+        let addCardFabOpenedFromPointer = false;
+        function openAddCardFromGlobalFab(event = null) {
+          event?.preventDefault?.();
           els.addAlbumBtn.blur();
           if (els.addAlbumBtn.classList.contains("is-locked")) {
             showAlbumNeededToast();
@@ -15462,6 +16493,29 @@ function openNativeColorPicker(event) {
             state.currentAlbum = null;
           }
           openAddCardSearch(isInsideAlbumDetail ? "detail" : "home");
+        }
+
+        els.addAlbumBtn.addEventListener("pointerdown", (event) => {
+          event.preventDefault();
+          setFabPressed(true);
+          addCardFabOpenedFromPointer = true;
+          try {
+            els.addAlbumBtn.setPointerCapture?.(event.pointerId);
+          } catch {}
+          openAddCardFromGlobalFab(event);
+        });
+        on(els.addAlbumBtn, "pointerup pointercancel lostpointercapture pointerleave", () => {
+          setFabPressed(false);
+          els.addAlbumBtn.blur();
+        });
+        els.addAlbumBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (addCardFabOpenedFromPointer) {
+            addCardFabOpenedFromPointer = false;
+            els.addAlbumBtn.blur();
+            return;
+          }
+          openAddCardFromGlobalFab(event);
         });
         enableAlbumPageSwipe();
         enableSavedCardDetailSwipe();
