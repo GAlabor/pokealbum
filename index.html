@@ -6,7 +6,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
-    <title>PokéAlbum Home</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="pokealbum-build" content="vi344-cachefix-20260601-231829" />
+    <title>PokéAlbum</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
     <link rel="preconnect" href="https://www.cardtrader.com" crossorigin>
@@ -8169,6 +8173,25 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
   }
 }
 
+
+
+/* PATCH: swipe scheda carta salvata più stabile.
+   Blocca il rimbalzo verticale quando il gesto è chiaramente orizzontale,
+   perché altrimenti il browser fa il solito numero da circo e scrolla. */
+#detailModal.is-saved-card-detail{
+  overscroll-behavior:contain;
+}
+#detailModal.is-saved-card-detail .card-sheet-page,
+#detailModal.is-saved-card-detail .card-sheet-panel,
+#detailModal.is-saved-card-detail .detail-image-wrap{
+  touch-action:pan-y;
+}
+#detailModal.is-saved-card-detail.is-saved-detail-gesture-lock .modal.card-sheet-modal{
+  overscroll-behavior:contain;
+}
+#detailModal.is-saved-card-detail.is-saved-detail-horizontal-lock .modal.card-sheet-modal{
+  overflow:hidden;
+}
 </style></head>
   <body class="ui-booting">
     <!-- POST-IT: STRUTTURA APP
@@ -9875,11 +9898,99 @@ paint-order="stroke">
 // POST-IT: endpoint e file dati locali della ricerca carte/prezzi.
 // Cambiarli impatta caricamento indice, fallback prezzi e badge offline.
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
+    const POKEALBUM_BUILD_VERSION = 'vi344-cachefix-20260601-231829';
+    const POKEALBUM_BUILD_PARAM = 'pa_build';
+    const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const INDEX_URL = 'data/pokemon-index.json';
     const META_URL = 'data/pokemon-index-meta.json';
     const PRICE_DB_URL = 'data/pokemon_price-db.json';
     const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
-    const APP_DATA_CACHE_NAME = 'pokealbum-data-cache-v1';
+    const APP_DATA_CACHE_NAME = `pokealbum-data-cache-${POKEALBUM_BUILD_VERSION}`;
+
+    // POST-IT: anti-cache shell app iOS/Edge/GitHub Pages.
+    // Forza una URL versionata e pulisce solo cache dati/service worker quando cambia build, senza toccare album e carte.
+    (function ensureFreshAppShell() {
+      const reloadKey = `pokealbum:reload-attempt:${POKEALBUM_BUILD_VERSION}`;
+      const buildRegex = /POKEALBUM_BUILD_VERSION\s*=\s*['"]([^'"]+)['"]/;
+
+      async function clearOldRuntimeCaches() {
+        try {
+          if (window.caches && typeof caches.keys === 'function') {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames
+              .filter((name) => /^pokealbum-|^app-|workbox-|precache-/i.test(name) && name !== APP_DATA_CACHE_NAME)
+              .map((name) => caches.delete(name)));
+          }
+        } catch (error) {
+          console.warn('Pulizia cache versione precedente non riuscita', error);
+        }
+
+        try {
+          if (navigator.serviceWorker && typeof navigator.serviceWorker.getRegistrations === 'function') {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map((registration) => registration.unregister()));
+          }
+        } catch (error) {
+          console.warn('Rimozione service worker non riuscita', error);
+        }
+      }
+
+      try {
+        const previousBuild = localStorage.getItem(POKEALBUM_BUILD_STORAGE_KEY);
+        if (previousBuild !== POKEALBUM_BUILD_VERSION) {
+          localStorage.setItem(POKEALBUM_BUILD_STORAGE_KEY, POKEALBUM_BUILD_VERSION);
+          void clearOldRuntimeCaches();
+        }
+      } catch (error) {
+        console.warn('Versione app non salvabile', error);
+      }
+
+      try {
+        const url = new URL(window.location.href);
+        if (url.searchParams.get(POKEALBUM_BUILD_PARAM) !== POKEALBUM_BUILD_VERSION) {
+          url.searchParams.set(POKEALBUM_BUILD_PARAM, POKEALBUM_BUILD_VERSION);
+          url.searchParams.set('_', Date.now().toString(36));
+          window.location.replace(url.toString());
+          return;
+        }
+      } catch (error) {
+        console.warn('URL versionata non applicabile', error);
+      }
+
+      window.addEventListener('pageshow', (event) => {
+        if (event.persisted && !sessionStorage.getItem(reloadKey)) {
+          sessionStorage.setItem(reloadKey, 'pageshow');
+          window.location.reload();
+        }
+      });
+
+      window.setTimeout(async () => {
+        try {
+          if (sessionStorage.getItem(reloadKey) === 'network') return;
+          const checkUrl = new URL(window.location.href);
+          checkUrl.searchParams.set('_fresh_check', Date.now().toString(36));
+          const response = await fetch(checkUrl.toString(), {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+              'Pragma': 'no-cache'
+            }
+          });
+          if (!response.ok) return;
+          const remoteHtml = await response.text();
+          const remoteBuild = remoteHtml.match(buildRegex)?.[1];
+          if (remoteBuild && remoteBuild !== POKEALBUM_BUILD_VERSION) {
+            sessionStorage.setItem(reloadKey, 'network');
+            const freshUrl = new URL(window.location.href);
+            freshUrl.searchParams.set(POKEALBUM_BUILD_PARAM, remoteBuild);
+            freshUrl.searchParams.set('_', Date.now().toString(36));
+            window.location.replace(freshUrl.toString());
+          }
+        } catch (error) {
+          console.warn('Controllo aggiornamento app non riuscito', error);
+        }
+      }, 1200);
+    })();
 
     async function fetchJsonWithAppCache(url, options = {}) {
       const force = Boolean(options.force);
@@ -14606,6 +14717,7 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
           if (!panel) return;
           const capped = Math.max(-70, Math.min(70, deltaX * 0.24));
           const progress = Math.min(1, Math.abs(deltaX) / 180);
+          el.detailModal?.classList.add('is-saved-detail-horizontal-lock');
           panel.classList.remove('is-saved-detail-settling');
           panel.classList.add('is-saved-detail-swiping');
           panel.style.transform = `translate3d(${capped}px,0,0) scale(${1 - progress * 0.012})`;
@@ -14615,6 +14727,7 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
 
         function resetSavedDetailSwipeVisual(animateBack = true) {
           const panel = el.detailModal?.querySelector('.card-sheet-panel');
+          el.detailModal?.classList.remove('is-saved-detail-gesture-lock', 'is-saved-detail-horizontal-lock');
           if (!panel) return;
           panel.classList.remove('is-saved-detail-swiping');
           if (animateBack) panel.classList.add('is-saved-detail-settling');
@@ -14679,10 +14792,12 @@ function enableSavedCardDetailChevronNavigation() {
           swipeArea.dataset.savedDetailSwipeEnabled = 'true';
 
           let swipe = null;
-          const MIN_SWIPE_DISTANCE = 46;
-          const MIN_SWIPE_VELOCITY = 0.32;
-          const HORIZONTAL_LOCK_DISTANCE = 10;
-          const VERTICAL_CANCEL_DISTANCE = 32;
+          const MIN_SWIPE_DISTANCE = 42;
+          const MIN_SWIPE_VELOCITY = 0.28;
+          const HORIZONTAL_LOCK_DISTANCE = 7;
+          const HORIZONTAL_INTENT_RATIO = 0.72;
+          const VERTICAL_CANCEL_DISTANCE = 44;
+          const VERTICAL_CANCEL_RATIO = 1.65;
 
           const canStartSwipe = (target) => {
             if (!el.detailModal?.classList.contains('open')) return false;
@@ -14715,14 +14830,20 @@ function enableSavedCardDetailChevronNavigation() {
             swipe.lastY = point.clientY;
 
             if (!swipe.locked) {
-              if (Math.abs(deltaY) > VERTICAL_CANCEL_DISTANCE && Math.abs(deltaY) > Math.abs(deltaX) * 1.08) {
+              const absX = Math.abs(deltaX);
+              const absY = Math.abs(deltaY);
+
+              if (absY > VERTICAL_CANCEL_DISTANCE && absY > absX * VERTICAL_CANCEL_RATIO) {
                 swipe.cancelled = true;
                 resetSavedDetailSwipeVisual();
                 return;
               }
-              if (Math.abs(deltaX) < HORIZONTAL_LOCK_DISTANCE || Math.abs(deltaX) <= Math.abs(deltaY) * 1.05) return;
+
+              if (absX < HORIZONTAL_LOCK_DISTANCE || absX < absY * HORIZONTAL_INTENT_RATIO) return;
+
               swipe.locked = true;
               state.savedDetailSwipeSuppressClick = false;
+              el.detailModal?.classList.add('is-saved-detail-gesture-lock');
             }
 
             event.preventDefault();
