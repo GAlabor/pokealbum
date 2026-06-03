@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi345-saved-card-field-20260602" />
+    <meta name="pokealbum-build" content="vi362-card-menu-opening-release-guard-20260603" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -142,6 +142,132 @@ box-shadow:0 12px 28px rgba(57,91,176,.16);
 #detailModal .collapsible-content.open{display:block;}
 #detailModal .copy-toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:rgba(20, 40, 25, 0.95);color:#87f5a3;padding:10px 16px;border-radius:12px;font-size:14px;border:1px solid #87f5a3;box-shadow:0 10px 30px rgba(0,0,0,.28);opacity:0;pointer-events:none;transition:opacity .25s ease;z-index:999;}
 #detailModal .copy-toast.show{opacity:1;}
+
+/* POST-IT: SELEZIONE CARTE IN ALBUM
+   Modalità selezione stile iOS: seleziona, menu azioni, spostamento album/slot e cancellazione. */
+.album-select-actions{position:absolute;right:0;top:var(--topbar-control-offset-y);display:inline-flex;align-items:center;gap:8px;z-index:4;}
+.album-select-btn,.album-select-close,.album-select-more{appearance:none;-webkit-appearance:none;border:0;background:rgba(255,255,255,.58);color:#3157c9;border-radius:999px;min-width:44px;height:40px;padding:0 13px;font-family:inherit;font-size:14px;font-weight:850;letter-spacing:-.03em;box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.album-select-close{width:40px;min-width:40px;padding:0;font-size:22px;line-height:1;color:#5c6f99;display:none;align-items:center;justify-content:center;}
+.album-select-more{width:40px;min-width:40px;padding:0;font-size:22px;line-height:1;letter-spacing:1px;color:#8f9bb5;display:none;align-items:center;justify-content:center;}
+.album-select-more.is-enabled{color:#3157c9;}
+.album-select-more:disabled{opacity:.48;cursor:default;}
+.album-detail-view.is-selecting .album-select-btn{display:none;}
+.album-detail-view.is-selecting .album-select-close,.album-detail-view.is-selecting .album-select-more{display:inline-flex;}
+.album-detail-view.is-selecting .album-detail-card{position:relative;}
+.album-detail-view.is-selecting .album-detail-card::after{content:"";position:absolute;inset:0;border-radius:inherit;background:rgba(245,248,255,.18);opacity:0;pointer-events:none;transition:opacity .16s ease;}
+.album-detail-view.is-selecting .album-detail-card.is-selected{box-shadow:0 16px 30px rgba(47,100,255,.20),0 0 0 2px rgba(47,100,255,.42);transform:translateY(-1px) scale(.985);}
+.album-detail-view.is-selecting .album-detail-card.is-selected::after{opacity:1;}
+.album-card-select-check{position:absolute;top:7px;right:7px;width:24px;height:24px;border-radius:50%;z-index:5;border:1px solid rgba(93,112,153,.22);background:rgba(255,255,255,.72);box-shadow:0 8px 18px rgba(30,50,100,.18),inset 0 1px 0 rgba(255,255,255,.95);display:none;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;line-height:1;backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);}
+.album-detail-view.is-selecting .album-card-select-check{display:flex;}
+.album-detail-card.is-selected .album-card-select-check{background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);border-color:rgba(255,255,255,.70);}
+.album-detail-card.is-selected .album-card-select-check::before{content:"✓";transform:translateY(-1px);}
+.album-action-menu-backdrop{position:fixed;inset:0;z-index:210;background:rgba(34,48,86,.18);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .18s ease,visibility .18s ease;}
+.album-action-menu-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;}
+.album-action-menu{position:absolute;right:16px;top:calc(var(--safe-top) + 54px);width:min(250px,calc(100vw - 32px));border-radius:22px;background:rgba(255,255,255,.84);border:1px solid rgba(255,255,255,.72);box-shadow:0 22px 46px rgba(25,38,82,.22),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);padding:8px;color:#20345f;}
+.album-action-menu button{width:100%;min-height:46px;border:0;background:transparent;color:#20345f;border-radius:15px;font-family:inherit;font-size:15px;font-weight:850;text-align:left;padding:0 12px;cursor:pointer;}
+.album-action-menu button:hover,.album-action-menu button:active{background:rgba(47,100,255,.08);}
+.album-action-menu button:disabled,.album-action-menu button[aria-disabled="true"]{opacity:.42;color:#8f9bb5!important;cursor:default;background:transparent!important;}
+ .album-action-menu button.danger{color:#c62828;}
+.album-action-menu button.is-hidden{display:none!important;}
+.album-action-menu .menu-chevron{margin-left:auto;color:#8f9bb5;font-size:18px;font-weight:900;line-height:1;}
+.album-action-menu.is-card-context{position:absolute;}
+.album-detail-card.is-context-pressing{transform:translateY(1px) scale(.985);filter:saturate(1.03);}
+.album-fullscreen-picker{position:fixed;inset:0;z-index:220;background:linear-gradient(180deg,rgba(241,246,255,.98),rgba(225,234,249,.98));padding:calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 16px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease;color:#20345f;}
+.album-fullscreen-picker.open{opacity:1;visibility:visible;pointer-events:auto;}
+.album-picker-head{height:var(--topbar-control-size);position:relative;display:flex;align-items:flex-start;justify-content:center;margin-bottom:14px;}
+.album-picker-back{position:absolute;left:0;top:0;width:var(--topbar-control-size);height:var(--topbar-control-size);border:1px solid rgba(255,255,255,.56);border-radius:50%;background:rgba(255,255,255,.58);color:#5c6f99;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);cursor:pointer;}
+.album-picker-back svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round;}
+.album-picker-title{margin:13px 58px 0;color:#1c2e5a;font-size:19px;font-weight:900;letter-spacing:-.04em;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.album-picker-list{display:grid;gap:8px;max-height:calc(100dvh - 112px);overflow:auto;-webkit-overflow-scrolling:touch;padding-bottom:12px;}
+.album-picker-list.album-picker-albums-grid{
+  grid-template-columns:repeat(2,minmax(0,190px));
+  gap:24px 18px;
+  align-content:start;
+  justify-content:center;
+  justify-items:center;
+  padding:clamp(18px,2.8vh,28px) 8px 18px;
+}
+.album-picker-list.album-picker-albums-grid .album-card{
+  width:100%;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.album-picker-list.album-picker-albums-grid .album-wrap{
+  width:100%;
+  max-width:190px;
+  margin:0;
+}
+.album-picker-list.album-picker-albums-grid .album-card:active .album-wrap{
+  transform:scale(.985);
+}
+.album-picker-list.album-picker-albums-grid .album-card.is-capacity-warning .album-wrap{
+  opacity:.72;
+  filter:grayscale(.08) drop-shadow(0 12px 18px rgba(57,91,176,.10));
+}
+.album-picker-list.album-picker-albums-grid .album-card.is-capacity-warning .album-meta{
+  background:rgba(255,255,255,.22);
+}
+.album-picker-list.album-picker-albums-grid .album-move-note{
+  margin:3px 0 0;
+  color:#7382a2;
+  font-size:11px;
+  font-weight:800;
+  line-height:1.15;
+  text-align:center;
+  letter-spacing:-.02em;
+}
+.album-picker-list.album-picker-albums-grid .album-card.is-capacity-warning .album-move-note{
+  color:#c06a2a;
+}
+
+
+
+.album-picker-option.is-selected{
+  color:#fff;
+  background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);
+  box-shadow:0 12px 24px rgba(47,100,255,.24),inset 0 1px 0 rgba(255,255,255,.30);
+}
+.album-picker-option.is-selected .album-picker-option-title{
+  color:#fff;
+}
+.album-picker-option-check{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:15px;
+  font-weight:950;
+  line-height:1;
+  margin-left:auto;
+  flex:0 0 auto;
+}
+.album-picker-option{width:100%;min-height:58px;border:0;border-radius:20px;background:rgba(255,255,255,.58);color:#20345f;font-family:inherit;text-align:left;padding:10px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8);display:grid;gap:2px;cursor:pointer;}
+.album-picker-option-title{font-size:16px;font-weight:900;letter-spacing:-.03em;color:#243865;}
+.album-picker-option-sub{font-size:12px;font-weight:700;color:#7382a2;}
+.album-picker-empty{padding:28px 16px;text-align:center;color:#7382a2;font-size:14px;font-weight:750;}
+.album-delete-confirm-backdrop{position:fixed;inset:0;z-index:230;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,background-color .22s ease,visibility .22s ease;}
+.album-delete-confirm-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.30);}
+.album-delete-confirm-sheet{width:min(100%,430px);border-radius:30px;background:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.72);box-shadow:0 24px 54px rgba(25,38,82,.24),inset 0 1px 0 rgba(255,255,255,.88);backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);padding:12px 14px 14px;transform:translateY(calc(100% + 28px));transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f;}
+.album-delete-confirm-backdrop.open .album-delete-confirm-sheet{transform:translateY(0);}
+.album-delete-confirm-handle{width:42px;height:5px;border-radius:999px;background:rgba(113,129,163,.34);margin:2px auto 14px;}
+.album-delete-confirm-title{margin:0;color:#1c2e5a;font-size:20px;font-weight:900;line-height:1.08;letter-spacing:-.04em;text-align:center;}
+.album-delete-confirm-text{margin:7px auto 14px;color:#7382a2;font-size:14px;line-height:1.35;text-align:center;max-width:330px;}
+.album-delete-quantity{display:none;margin:0 auto 14px;max-width:330px;padding:10px 12px;border-radius:22px;background:rgba(248,251,255,.64);border:1px solid rgba(120,146,207,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.76);}
+.album-delete-quantity.is-visible{display:grid;gap:8px;}
+.album-delete-quantity-title{margin:0;color:#243865;font-size:13px;font-weight:900;letter-spacing:-.03em;text-align:center;}
+.album-delete-quantity-row{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:8px;}
+.album-delete-quantity-btn{width:42px;height:38px;border:0;border-radius:999px;background:rgba(235,241,255,.82);color:#3157c9;font-family:inherit;font-size:22px;font-weight:900;line-height:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.82);cursor:pointer;}
+.album-delete-quantity-btn:disabled{opacity:.38;cursor:default;color:#8f9bb5;}
+.album-delete-quantity-value{min-height:38px;border-radius:999px;background:rgba(255,255,255,.72);display:flex;align-items:center;justify-content:center;color:#1c2e5a;font-size:14px;font-weight:900;letter-spacing:-.03em;box-shadow:inset 0 1px 0 rgba(255,255,255,.86);}
+.album-delete-quantity-help{margin:0;color:#7382a2;font-size:12px;font-weight:700;line-height:1.25;text-align:center;}
+.album-delete-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.album-delete-confirm-actions button{height:48px;border:0;border-radius:999px;font-family:inherit;font-size:14px;font-weight:900;letter-spacing:-.02em;cursor:pointer;}
+.album-delete-cancel{background:rgba(235,241,255,.72);color:#65779f;border:1px solid rgba(120,146,207,.16)!important;}
+.album-delete-confirm{background:linear-gradient(135deg,#ff8b8b 0%,#e53935 100%);color:#fff;box-shadow:0 10px 22px rgba(229,57,53,.22),inset 0 1px 0 rgba(255,255,255,.28);}
+
 /* POST-IT: VARIABILI GLOBALI UI
    Colori, safe-area, dimensioni topbar e tipografia dei form.
    Una modifica qui si propaga su home, album, ricerca e scheda carta, quindi niente manovre da elefante nel negozio di vetri. */
@@ -8192,6 +8318,531 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell .fab{
 #detailModal.is-saved-card-detail.is-saved-detail-horizontal-lock .modal.card-sheet-modal{
   overflow:hidden;
 }
+
+
+/* === PATCH 03/06/2026: badge doppioni stile iOS, piccolo e integrato === */
+.card-duplicate-badge,
+.album-detail-card-image-wrap .card-duplicate-badge{
+  position:absolute !important;
+  right:7px !important;
+  bottom:7px !important;
+  z-index:4 !important;
+  width:22px !important;
+  min-width:22px !important;
+  height:22px !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  background:rgba(248,251,255,.78) !important;
+  color:#2f3b56 !important;
+  border:1px solid rgba(255,255,255,.72) !important;
+  box-shadow:0 6px 14px rgba(31,45,82,.18), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  backdrop-filter:blur(14px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(145%) !important;
+  font-size:11px !important;
+  font-weight:650 !important;
+  line-height:1 !important;
+  letter-spacing:-.035em !important;
+  pointer-events:none !important;
+}
+
+.album-detail-card-image-wrap .card-duplicate-badge{
+  right:8px !important;
+  bottom:8px !important;
+}
+
+/* POST-IT: PATCH UX TOPBAR SELEZIONE ALBUM
+   Integra Seleziona / X / menu nella topbar esistente, senza pulsanti buttati lì come coriandoli tristi. */
+.album-detail-topbar{
+  display:grid !important;
+  grid-template-columns:var(--topbar-control-size) minmax(0,1fr) auto !important;
+  align-items:start !important;
+  gap:8px !important;
+  padding:var(--topbar-control-offset-y) var(--topbar-control-offset-x) 10px !important;
+}
+.album-detail-topbar > .glass-icon-btn{
+  grid-column:1 !important;
+  grid-row:1 !important;
+}
+.album-detail-topbar .album-detail-title-wrap{
+  position:static !important;
+  left:auto !important;
+  right:auto !important;
+  top:auto !important;
+  transform:none !important;
+  grid-column:2 !important;
+  grid-row:1 !important;
+  min-width:0 !important;
+  align-self:center !important;
+  padding:0 2px !important;
+  text-align:center !important;
+  pointer-events:none !important;
+}
+.album-detail-topbar .album-detail-title{
+  max-width:100% !important;
+  line-height:var(--topbar-control-size) !important;
+  font-size:clamp(16px,2vh,19px) !important;
+}
+.album-select-actions{
+  position:static !important;
+  right:auto !important;
+  top:auto !important;
+  grid-column:3 !important;
+  grid-row:1 !important;
+  min-width:var(--topbar-control-size) !important;
+  min-height:var(--topbar-control-size) !important;
+  display:inline-flex !important;
+  align-items:flex-start !important;
+  justify-content:flex-end !important;
+  gap:7px !important;
+  z-index:5 !important;
+}
+.album-select-btn,
+.album-select-close,
+.album-select-more{
+  -webkit-appearance:none !important;
+  appearance:none !important;
+  margin:0 !important;
+  border:1px solid rgba(255,255,255,.56) !important;
+  background:rgba(255,255,255,.58) !important;
+  color:#3157c9 !important;
+  box-shadow:0 12px 24px rgba(73,96,157,.14), inset 0 1px 0 rgba(255,255,255,.92) !important;
+  backdrop-filter:blur(20px) saturate(145%) !important;
+  -webkit-backdrop-filter:blur(20px) saturate(145%) !important;
+  cursor:pointer !important;
+  -webkit-tap-highlight-color:transparent !important;
+  transition:transform .18s ease, background-color .18s ease, color .18s ease, box-shadow .18s ease, opacity .18s ease !important;
+}
+.album-select-btn{
+  height:var(--topbar-control-size) !important;
+  min-width:auto !important;
+  padding:0 15px !important;
+  border-radius:999px !important;
+  font-size:14px !important;
+  font-weight:850 !important;
+  letter-spacing:-.03em !important;
+  line-height:1 !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+}
+.album-select-close,
+.album-select-more{
+  width:var(--topbar-control-size) !important;
+  height:var(--topbar-control-size) !important;
+  min-width:var(--topbar-control-size) !important;
+  min-height:var(--topbar-control-size) !important;
+  padding:0 !important;
+  border-radius:50% !important;
+  display:none;
+  align-items:center !important;
+  justify-content:center !important;
+  font-size:0 !important;
+  line-height:1 !important;
+  letter-spacing:0 !important;
+}
+.album-select-btn:hover,
+.album-select-close:hover,
+.album-select-more:hover{
+  transform:translateY(-1px) !important;
+  color:#3157c9 !important;
+  background:rgba(255,255,255,.68) !important;
+  box-shadow:0 16px 28px rgba(73,96,157,.18), inset 0 1px 0 rgba(255,255,255,.96) !important;
+}
+.album-select-btn:active,
+.album-select-close:active,
+.album-select-more:active{
+  transform:scale(.97) !important;
+}
+.album-select-close::before,
+.album-select-close::after{
+  content:"" !important;
+  position:absolute !important;
+  width:18px !important;
+  height:2.25px !important;
+  border-radius:999px !important;
+  background:currentColor !important;
+}
+.album-select-close::before{transform:rotate(45deg) !important;}
+.album-select-close::after{transform:rotate(-45deg) !important;}
+.album-select-more::before{
+  content:"•••" !important;
+  display:block !important;
+  transform:translateY(-2px) !important;
+  color:currentColor !important;
+  font-size:19px !important;
+  font-weight:900 !important;
+  letter-spacing:1.4px !important;
+  line-height:1 !important;
+}
+.album-select-more:disabled,
+.album-select-more[aria-disabled="true"]{
+  opacity:.38 !important;
+  color:#8f9bb5 !important;
+  cursor:default !important;
+  transform:none !important;
+}
+.album-select-more:disabled:hover,
+.album-select-more[aria-disabled="true"]:hover{
+  background:rgba(255,255,255,.58) !important;
+  box-shadow:0 12px 24px rgba(73,96,157,.14), inset 0 1px 0 rgba(255,255,255,.92) !important;
+}
+.album-select-more.is-enabled{
+  opacity:1 !important;
+  color:#3157c9 !important;
+}
+.album-detail-view.is-selecting .album-select-btn{
+  display:none !important;
+}
+.album-detail-view.is-selecting .album-select-close,
+.album-detail-view.is-selecting .album-select-more{
+  display:inline-flex !important;
+}
+.album-action-menu{
+  right:16px !important;
+  top:calc(var(--safe-top) + var(--topbar-control-size) + 12px) !important;
+  border-radius:24px !important;
+  background:rgba(255,255,255,.86) !important;
+}
+@media (max-width:360px){
+  .album-detail-topbar{
+    gap:6px !important;
+    grid-template-columns:var(--topbar-control-size) minmax(0,1fr) auto !important;
+  }
+  .album-select-actions{
+    gap:5px !important;
+  }
+  .album-select-btn{
+    padding:0 11px !important;
+    font-size:13px !important;
+  }
+}
+
+
+/* === FIX FINALE TOPBAR SELEZIONE: X e menu più integrati nella UX === */
+.album-detail-topbar{
+  grid-template-columns:var(--topbar-control-size) minmax(0,1fr) auto !important;
+  column-gap:8px !important;
+  align-items:start !important;
+}
+.album-detail-topbar .album-detail-title-wrap{
+  padding:0 4px !important;
+}
+.album-detail-view.is-selecting .album-detail-title-wrap{
+  text-align:center !important;
+}
+.album-select-actions{
+  min-width:0 !important;
+  min-height:var(--topbar-control-size) !important;
+  height:var(--topbar-control-size) !important;
+  align-items:center !important;
+  justify-content:flex-end !important;
+  gap:0 !important;
+}
+.album-detail-view.is-selecting .album-select-actions{
+  padding:4px !important;
+  border:1px solid rgba(255,255,255,.58) !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.48) !important;
+  box-shadow:0 12px 24px rgba(73,96,157,.12), inset 0 1px 0 rgba(255,255,255,.86) !important;
+  backdrop-filter:blur(22px) saturate(150%) !important;
+  -webkit-backdrop-filter:blur(22px) saturate(150%) !important;
+}
+.album-detail-view.is-selecting .album-select-close,
+.album-detail-view.is-selecting .album-select-more{
+  width:38px !important;
+  height:38px !important;
+  min-width:38px !important;
+  min-height:38px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:#3157c9 !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  position:relative !important;
+}
+.album-detail-view.is-selecting .album-select-close{
+  margin-right:2px !important;
+}
+.album-detail-view.is-selecting .album-select-more{
+  margin-left:2px !important;
+}
+.album-detail-view.is-selecting .album-select-close::before,
+.album-detail-view.is-selecting .album-select-close::after{
+  width:17px !important;
+  height:2.1px !important;
+}
+.album-detail-view.is-selecting .album-select-more::before{
+  content:"" !important;
+  width:22px !important;
+  height:5px !important;
+  display:block !important;
+  background:
+    radial-gradient(circle, currentColor 0 2.2px, transparent 2.35px) left center/7px 5px no-repeat,
+    radial-gradient(circle, currentColor 0 2.2px, transparent 2.35px) center center/7px 5px no-repeat,
+    radial-gradient(circle, currentColor 0 2.2px, transparent 2.35px) right center/7px 5px no-repeat !important;
+  transform:none !important;
+}
+.album-detail-view.is-selecting .album-select-close::after{
+  box-shadow:none !important;
+}
+.album-detail-view.is-selecting .album-select-more::after{
+  content:"" !important;
+  position:absolute !important;
+  left:-2px !important;
+  top:8px !important;
+  bottom:8px !important;
+  width:1px !important;
+  border-radius:999px !important;
+  background:rgba(110,128,170,.18) !important;
+}
+.album-detail-view.is-selecting .album-select-close:hover,
+.album-detail-view.is-selecting .album-select-more:hover{
+  background:rgba(47,100,255,.08) !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+.album-detail-view.is-selecting .album-select-close:active,
+.album-detail-view.is-selecting .album-select-more:active{
+  background:rgba(47,100,255,.12) !important;
+  transform:scale(.96) !important;
+}
+.album-detail-view.is-selecting .album-select-more:disabled,
+.album-detail-view.is-selecting .album-select-more[aria-disabled="true"]{
+  opacity:1 !important;
+  color:rgba(92,111,153,.34) !important;
+}
+.album-detail-view.is-selecting .album-select-more.is-enabled{
+  color:#3157c9 !important;
+}
+.album-detail-view.is-selecting .album-select-more:disabled:hover,
+.album-detail-view.is-selecting .album-select-more[aria-disabled="true"]:hover{
+  background:transparent !important;
+}
+.album-select-btn{
+  height:40px !important;
+  min-height:40px !important;
+  align-self:center !important;
+  padding:0 14px !important;
+  background:rgba(255,255,255,.50) !important;
+}
+@media (max-width:380px){
+  .album-detail-topbar{
+    column-gap:6px !important;
+  }
+  .album-detail-view.is-selecting .album-select-actions{
+    padding:3px !important;
+  }
+  .album-detail-view.is-selecting .album-select-close,
+  .album-detail-view.is-selecting .album-select-more{
+    width:36px !important;
+    height:36px !important;
+    min-width:36px !important;
+    min-height:36px !important;
+  }
+}
+
+
+
+/* PATCH vi355: menu slot compatto, unica card con separatori */
+#moveSlotPicker .album-picker-list{
+  display:block;
+  gap:0 !important;
+  padding:4px 0 16px !important;
+  border-radius:24px;
+  overflow:hidden;
+  background:rgba(255,255,255,.66);
+  border:1px solid rgba(255,255,255,.66);
+  box-shadow:0 18px 38px rgba(66,89,152,.12), inset 0 1px 0 rgba(255,255,255,.86);
+  backdrop-filter:blur(22px) saturate(145%);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+}
+#moveSlotPicker .album-picker-option{
+  position:relative;
+  width:100%;
+  min-height:46px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  padding:0 18px !important;
+  display:flex !important;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:#20345f;
+  overflow:hidden;
+}
+#moveSlotPicker .album-picker-option + .album-picker-option::before{
+  content:"";
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:0;
+  height:1px;
+  background:rgba(111,134,188,.14);
+}
+#moveSlotPicker .album-picker-option:active{
+  background:rgba(47,100,255,.06) !important;
+  transform:none !important;
+}
+#moveSlotPicker .album-picker-option-title{
+  font-size:14px !important;
+  font-weight:800 !important;
+  letter-spacing:-.02em !important;
+  color:#243865;
+}
+#moveSlotPicker .album-picker-option.is-selected{
+  background:transparent !important;
+  color:#2f64ff !important;
+  border-color:transparent !important;
+}
+#moveSlotPicker .album-picker-option.is-selected .album-picker-option-title{
+  color:#2f64ff !important;
+}
+#moveSlotPicker .album-picker-option-check{
+  width:auto !important;
+  height:auto !important;
+  border-radius:0 !important;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  color:#2f64ff !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  font-size:17px !important;
+  font-weight:900 !important;
+  line-height:1;
+  margin-left:auto;
+  flex:0 0 auto;
+}
+#moveSlotPicker .album-picker-empty{
+  background:transparent;
+}
+
+
+/* PATCH: ripristino titolo album a sinistra come vi346 */
+.album-detail-topbar{
+  position:relative !important;
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:space-between !important;
+  grid-template-columns:none !important;
+  gap:0 !important;
+}
+.album-detail-topbar > .glass-icon-btn{
+  grid-column:auto !important;
+  grid-row:auto !important;
+  flex:0 0 var(--topbar-control-size) !important;
+}
+.album-detail-topbar .album-detail-title-wrap{
+  position:absolute !important;
+  left:58px !important;
+  right:126px !important;
+  top:5px !important;
+  transform:none !important;
+  grid-column:auto !important;
+  grid-row:auto !important;
+  min-width:0 !important;
+  align-self:auto !important;
+  padding:0 !important;
+  text-align:left !important;
+  display:flex !important;
+  flex-direction:column !important;
+  justify-content:center !important;
+  min-height:44px !important;
+  pointer-events:none !important;
+}
+.album-detail-topbar .album-detail-title{
+  margin:0 !important;
+  max-width:100% !important;
+  color:#1c2e5a !important;
+  font-size:18px !important;
+  font-weight:850 !important;
+  line-height:1.05 !important;
+  letter-spacing:-.035em !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.album-detail-topbar .album-detail-title-wrap::after{
+  content:attr(data-album-subtitle) !important;
+  display:block !important;
+  margin-top:2px !important;
+  color:#7d8ba9 !important;
+  font-size:11px !important;
+  font-weight:700 !important;
+  line-height:1.1 !important;
+  letter-spacing:-.015em !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+.album-detail-topbar .album-select-actions{
+  position:absolute !important;
+  right:0 !important;
+  top:4px !important;
+  grid-column:auto !important;
+  grid-row:auto !important;
+  z-index:5 !important;
+}
+@media (max-width:380px){
+  .album-detail-topbar .album-detail-title-wrap{right:112px !important;}
+  .album-detail-topbar .album-detail-title{font-size:17px !important;}
+}
+
+/* PATCH: selezione album - titolo fermo e contatore tra X e menu */
+.album-select-count{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  height:32px;
+  padding:0 9px;
+  color:#3157c9;
+  font-size:12px;
+  font-weight:850;
+  letter-spacing:-.025em;
+  line-height:1;
+  white-space:nowrap;
+  pointer-events:none;
+}
+.album-detail-view.is-selecting .album-select-count.is-visible{
+  display:inline-flex;
+}
+.album-detail-view.is-selecting .album-detail-topbar .album-detail-title-wrap{
+  left:58px !important;
+  right:198px !important;
+  top:5px !important;
+  transform:none !important;
+  text-align:left !important;
+  align-self:auto !important;
+  padding:0 !important;
+}
+.album-detail-view.is-selecting .album-detail-topbar .album-detail-title{
+  line-height:1.05 !important;
+  text-align:left !important;
+}
+.album-detail-view.is-selecting .album-detail-topbar .album-detail-title-wrap::after{
+  text-align:left !important;
+}
+.album-detail-view.is-selecting .album-select-actions{
+  gap:2px !important;
+}
+@media (max-width:380px){
+  .album-detail-view.is-selecting .album-detail-topbar .album-detail-title-wrap{
+    right:186px !important;
+  }
+  .album-select-count{
+    font-size:11px;
+    padding:0 7px;
+  }
+}
+
 </style></head>
   <body class="ui-booting">
     <!-- POST-IT: STRUTTURA APP
@@ -9325,6 +9976,12 @@ paint-order="stroke">
               <div class="album-detail-title-wrap">
                 <h2 class="album-detail-title" id="albumDetailTitle">Album</h2>
               </div>
+              <div class="album-select-actions" id="albumSelectActions" aria-label="Azioni selezione carte">
+                <button class="album-select-btn" id="albumSelectBtn" type="button">Seleziona</button>
+                <button class="album-select-close" id="albumSelectCloseBtn" type="button" aria-label="Annulla selezione">×</button>
+                <span class="album-select-count" id="albumSelectCount" aria-live="polite"></span>
+                <button class="album-select-more" id="albumSelectMoreBtn" type="button" aria-label="Azioni carta selezionata" disabled>...</button>
+              </div>
             </div>
 
             <section class="album-detail-empty" id="albumDetailEmptyState">
@@ -9352,6 +10009,58 @@ paint-order="stroke">
               <div class="album-detail-cards-grid" id="albumDetailCardsGrid"></div>
             </section>
           </section>
+
+          <div class="album-action-menu-backdrop" id="albumActionMenuBackdrop" aria-hidden="true">
+            <div class="album-action-menu" id="albumActionMenu" role="menu" aria-label="Azioni carta selezionata">
+              <button type="button" id="selectCardContextBtn" class="is-hidden" role="menuitem">Seleziona</button>
+              <button type="button" id="moveCardContextBtn" class="is-hidden" role="menuitem">Sposta <span class="menu-chevron" aria-hidden="true">›</span></button>
+              <button type="button" class="danger is-hidden" id="deleteCardContextBtn" role="menuitem">Elimina</button>
+              <button type="button" id="moveSelectedToAlbumBtn" role="menuitem">Sposta in album</button>
+              <button type="button" id="moveSelectedToSlotBtn" role="menuitem">Sposta in slot</button>
+              <button type="button" class="danger" id="deleteSelectedCardBtn" role="menuitem">Elimina</button>
+            </div>
+          </div>
+
+          <section class="album-fullscreen-picker" id="moveAlbumPicker" aria-label="Sposta in album" aria-hidden="true">
+            <div class="album-picker-head">
+              <button class="album-picker-back" id="moveAlbumPickerBack" type="button" aria-label="Indietro">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+              </button>
+              <h2 class="album-picker-title">Sposta in album</h2>
+            </div>
+            <div class="album-picker-list" id="moveAlbumPickerList"></div>
+          </section>
+
+          <section class="album-fullscreen-picker" id="moveSlotPicker" aria-label="Sposta in slot" aria-hidden="true">
+            <div class="album-picker-head">
+              <button class="album-picker-back" id="moveSlotPickerBack" type="button" aria-label="Indietro">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+              </button>
+              <h2 class="album-picker-title">Sposta in slot</h2>
+            </div>
+            <div class="album-picker-list" id="moveSlotPickerList"></div>
+          </section>
+
+          <div class="album-delete-confirm-backdrop" id="albumDeleteCardConfirmBackdrop" aria-hidden="true">
+            <div class="album-delete-confirm-sheet" role="dialog" aria-modal="true" aria-labelledby="albumDeleteCardConfirmTitle">
+              <div class="album-delete-confirm-handle"></div>
+              <h2 class="album-delete-confirm-title" id="albumDeleteCardConfirmTitle">Eliminare la carta?</h2>
+              <p class="album-delete-confirm-text">La carta selezionata verrà rimossa dall’album e dalla collezione. Questa azione non può essere annullata.</p>
+              <div class="album-delete-quantity" id="albumDeleteQuantityPicker" aria-hidden="true">
+                <p class="album-delete-quantity-title">Seleziona quantità</p>
+                <div class="album-delete-quantity-row">
+                  <button class="album-delete-quantity-btn" id="albumDeleteQuantityMinusBtn" type="button" aria-label="Diminuisci quantità">−</button>
+                  <div class="album-delete-quantity-value" id="albumDeleteQuantityValue">1 copia</div>
+                  <button class="album-delete-quantity-btn" id="albumDeleteQuantityPlusBtn" type="button" aria-label="Aumenta quantità">+</button>
+                </div>
+                <p class="album-delete-quantity-help" id="albumDeleteQuantityHelp">Puoi eliminare una o più copie uguali.</p>
+              </div>
+              <div class="album-delete-confirm-actions">
+                <button class="album-delete-cancel" id="albumDeleteCardCancelBtn" type="button">Annulla</button>
+                <button class="album-delete-confirm" id="albumDeleteCardConfirmBtn" type="button">Elimina</button>
+              </div>
+            </div>
+          </div>
 
           <!-- POST-IT: RICERCA CARTA DA AGGIUNGERE
      Questa schermata usa il motore del primo script e torna all'album tramite addCardReturnView. -->
@@ -13892,6 +14601,34 @@ const els = {
           albumDetailCardsGrid: $("#albumDetailCardsGrid"),
           backToAlbumsBtn: $("#backToAlbumsBtn"),
           albumDetailAddBtn: $("#albumDetailAddBtn"),
+          albumSelectBtn: $("#albumSelectBtn"),
+          albumSelectCloseBtn: $("#albumSelectCloseBtn"),
+          albumSelectCount: $("#albumSelectCount"),
+          albumSelectMoreBtn: $("#albumSelectMoreBtn"),
+          albumActionMenuBackdrop: $("#albumActionMenuBackdrop"),
+          albumActionMenu: $("#albumActionMenu"),
+          selectCardContextBtn: $("#selectCardContextBtn"),
+          moveCardContextBtn: $("#moveCardContextBtn"),
+          deleteCardContextBtn: $("#deleteCardContextBtn"),
+          moveSelectedToAlbumBtn: $("#moveSelectedToAlbumBtn"),
+          moveSelectedToSlotBtn: $("#moveSelectedToSlotBtn"),
+          deleteSelectedCardBtn: $("#deleteSelectedCardBtn"),
+          moveAlbumPicker: $("#moveAlbumPicker"),
+          moveAlbumPickerList: $("#moveAlbumPickerList"),
+          moveAlbumPickerBack: $("#moveAlbumPickerBack"),
+          moveSlotPicker: $("#moveSlotPicker"),
+          moveSlotPickerList: $("#moveSlotPickerList"),
+          moveSlotPickerBack: $("#moveSlotPickerBack"),
+          albumDeleteCardConfirmBackdrop: $("#albumDeleteCardConfirmBackdrop"),
+          albumDeleteCardConfirmTitle: $("#albumDeleteCardConfirmTitle"),
+          albumDeleteCardConfirmText: $("#albumDeleteCardConfirmBackdrop .album-delete-confirm-text"),
+          albumDeleteQuantityPicker: $("#albumDeleteQuantityPicker"),
+          albumDeleteQuantityMinusBtn: $("#albumDeleteQuantityMinusBtn"),
+          albumDeleteQuantityPlusBtn: $("#albumDeleteQuantityPlusBtn"),
+          albumDeleteQuantityValue: $("#albumDeleteQuantityValue"),
+          albumDeleteQuantityHelp: $("#albumDeleteQuantityHelp"),
+          albumDeleteCardCancelBtn: $("#albumDeleteCardCancelBtn"),
+          albumDeleteCardConfirmBtn: $("#albumDeleteCardConfirmBtn"),
           addFirstCardBtn: $("#addFirstCardBtn"),
           addCardSearchView: $("#addCardSearchView"),
           backFromCardSearchBtn: $("#backFromCardSearchBtn"),
@@ -13948,6 +14685,18 @@ const DEFAULT_ALBUM = Object.freeze({
           currentSetGroupKey: null,
           isHomeSearchOpen: false,
           cardDuplicateCounts: new Map(),
+          albumSelectMode: false,
+          selectedAlbumCardIds: new Set(),
+          albumActionMenuMode: "selection",
+          albumActionMenuOpenedAt: 0,
+          albumActionMenuOpeningPointerId: null,
+          albumActionMenuIgnoreOpeningRelease: false,
+          cardContextCardId: "",
+          cardPress: null,
+          cardContextSuppressClick: false,
+          deleteDuplicateQuantity: 1,
+          deleteDuplicateMaxQuantity: 1,
+          deleteDuplicateRecordIds: [],
         };
 
 
@@ -14736,7 +15485,8 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
           const index = cards.findIndex(card => String(card.id || '') === id);
           if (index < 0) return null;
           const { slotsPerPage } = getAlbumDetailPageConfig(cards);
-          const slotNumber = index + 1;
+          const card = cards[index] || {};
+          const slotNumber = getAlbumCardDisplaySlot(card, index);
           const pageNumber = Math.max(1, Math.ceil(slotNumber / Math.max(1, slotsPerPage || 1)));
           return { cards, index, slotNumber, pageNumber, slotsPerPage };
         }
@@ -15036,15 +15786,32 @@ function enableSavedCardDetailChevronNavigation() {
             .replace(/\s+/g, " ");
         }
 
+        function normalizeDuplicateVariantFlag(value = false) {
+          return value === true || value === 1 || value === "1" || /^true|yes|si|sì|holo|reverse$/i.test(String(value ?? "").trim());
+        }
+
+        function getCardDuplicateVariantKey(card = {}) {
+          const raw = card.rawCard || {};
+          const variants = card.variants || {};
+          const holo = normalizeDuplicateVariantFlag(
+            variants.holo ?? card.holo ?? raw.holo ?? raw.is_holo ?? raw.isHolo ?? raw.card_holo
+          );
+          const reverse = normalizeDuplicateVariantFlag(
+            variants.reverse ?? card.reverse ?? raw.reverse ?? raw.is_reverse ?? raw.isReverse ?? raw.card_reverse
+          );
+          return `h:${holo ? 1 : 0}|r:${reverse ? 1 : 0}`;
+        }
+
         function getCardDuplicateKey(card = {}) {
           const raw = card.rawCard || {};
+          const variantKey = getCardDuplicateVariantKey(card);
           const blueprintId = card.blueprintId || raw.id || raw.blueprint_id || raw.card_id || "";
-          if (blueprintId) return `bp:${String(blueprintId)}`;
+          if (blueprintId) return `bp:${String(blueprintId)}|${variantKey}`;
           const setCode = normalizeDuplicatePart(card.set?.code || raw.set_code || raw.code_set || raw.expansion?.code || raw.set?.code || "");
           const setName = normalizeDuplicatePart(card.set?.name || raw.set_name || raw.expansion_name || raw.code_name || raw.expansion?.name || raw.set?.name || "");
           const number = normalizeDuplicatePart(card.display?.number || raw.collector_number || raw.number || raw.card_number || raw.num || "");
           const title = normalizeDuplicatePart(getAlbumCardTitle(card));
-          return `fallback:${setCode}|${setName}|${number}|${title}`;
+          return `fallback:${setCode}|${setName}|${number}|${title}|${variantKey}`;
         }
 
         function buildDuplicateCountMap(cards = []) {
@@ -15070,7 +15837,7 @@ function enableSavedCardDetailChevronNavigation() {
 
         function getDuplicateBadgeHtml(card = {}) {
           const count = getCardDuplicateCount(card);
-          return count > 1 ? `<span class="card-duplicate-badge" aria-label="${count} copie">x${count}</span>` : "";
+          return count > 1 ? `<span class="card-duplicate-badge" aria-label="${count} copie">${count}</span>` : "";
         }
 
         function getDuplicateCards(cards = []) {
@@ -15107,6 +15874,11 @@ function enableSavedCardDetailChevronNavigation() {
           return getUniqueCardsByDuplicateKey(Array.isArray(cards) ? cards : [])
             .slice()
             .sort((a, b) => {
+              const slotA = Number(a.albumSlotNumber || a.slotNumber || 0);
+              const slotB = Number(b.albumSlotNumber || b.slotNumber || 0);
+              if (slotA > 0 || slotB > 0) {
+                if (slotA !== slotB) return (slotA || Number.MAX_SAFE_INTEGER) - (slotB || Number.MAX_SAFE_INTEGER);
+              }
               const dateCompare = String(a.addedAt || "").localeCompare(String(b.addedAt || ""));
               if (dateCompare !== 0) return dateCompare;
               return String(a.id || "").localeCompare(String(b.id || ""));
@@ -15127,13 +15899,22 @@ function enableSavedCardDetailChevronNavigation() {
           return { slotsPerPage, totalPages, currentPage, totalSlots };
         }
 
+        function getAlbumCardDisplaySlot(card = {}, fallbackIndex = 0) {
+          const directSlot = Number(card.albumSlotNumber || card.slotNumber || 0);
+          return directSlot > 0 ? directSlot : fallbackIndex + 1;
+        }
+
         function renderAlbumDetailPageControls(cards = []) {
           const orderedCards = Array.isArray(cards) ? cards : [];
           const { slotsPerPage, totalPages, currentPage, totalSlots } = getAlbumDetailPageConfig(orderedCards);
           state.albumDetailPage = currentPage;
           if (els.albumPageLabel) els.albumPageLabel.innerHTML = `Pagina <span class="album-page-count">${currentPage}/${totalPages}</span>`;
-          const pageStartIndex = (currentPage - 1) * slotsPerPage;
-          const filled = orderedCards.slice(pageStartIndex, pageStartIndex + slotsPerPage).length;
+          const pageStart = (currentPage - 1) * slotsPerPage + 1;
+          const pageEnd = pageStart + slotsPerPage - 1;
+          const filled = orderedCards.filter((card, index) => {
+            const slot = getAlbumCardDisplaySlot(card, index);
+            return slot >= pageStart && slot <= pageEnd;
+          }).length;
           if (els.albumPageSubtitle) {
             els.albumPageSubtitle.textContent = `${filled}/${slotsPerPage} di ${totalSlots} totali`;
           }
@@ -15345,11 +16126,11 @@ function renderAlbumDetailCards(cards = []) {
           updateAlbumDetailGridMetrics(slotsPerPage);
 
           const pageStart = (currentPage - 1) * slotsPerPage + 1;
-          const pageStartIndex = pageStart - 1;
-          const pageCards = uniqueCards.slice(pageStartIndex, pageStartIndex + slotsPerPage);
+          const pageEnd = pageStart + slotsPerPage - 1;
           const bySlot = new Map();
-          pageCards.forEach((card, index) => {
-            bySlot.set(pageStart + index, card);
+          uniqueCards.forEach((card, index) => {
+            const slot = getAlbumCardDisplaySlot(card, index);
+            if (slot >= pageStart && slot <= pageEnd) bySlot.set(slot, card);
           });
           renderAlbumDetailPageControls(uniqueCards);
 
@@ -15367,6 +16148,7 @@ function renderAlbumDetailCards(cards = []) {
               const duplicateBadge = getDuplicateBadgeHtml(card);
               return `
                 <article class="album-detail-card" data-card-id="${albumDetailEscapeHtml(card.id || "")}" data-blueprint-id="${albumDetailEscapeHtml(card.blueprintId || card.rawCard?.id || "")}" data-slot-number="${slotNumber}">
+                  <span class="album-card-select-check" aria-hidden="true"></span>
                   <div class="album-detail-card-image-wrap">${imageHtml}${duplicateBadge}</div>
                   <div class="album-detail-card-body">
                     <p class="album-detail-card-title">${title}</p>
@@ -15383,6 +16165,7 @@ function renderAlbumDetailCards(cards = []) {
             `;
           }).join("");
           els.albumDetailCardsGrid.innerHTML = slotsHtml;
+          refreshAlbumSelectionVisualState();
           refreshVisibleAlbumImages({ force: false });
           scheduleAlbumDetailGridMetricsUpdate();
         }
@@ -15686,6 +16469,460 @@ async function renderHomeDuplicateCards() {
           return [];
         }
 
+        function getSelectedAlbumCardId() {
+          return Array.from(state.selectedAlbumCardIds || [])[0] || "";
+        }
+
+        function getSelectedAlbumCardIds() {
+          return Array.from(state.selectedAlbumCardIds || []).filter(Boolean);
+        }
+
+        function getSelectedAlbumCardCount() {
+          return getSelectedAlbumCardIds().length;
+        }
+
+        function refreshAlbumSelectionVisualState() {
+          const selecting = Boolean(state.albumSelectMode);
+          els.albumDetailView?.classList.toggle("is-selecting", selecting);
+          const selectedIds = state.selectedAlbumCardIds || new Set();
+          els.albumDetailCardsGrid?.querySelectorAll(".album-detail-card[data-card-id]").forEach((node) => {
+            const selected = selectedIds.has(String(node.dataset.cardId || ""));
+            node.classList.toggle("is-selected", selecting && selected);
+            node.setAttribute("aria-selected", selecting && selected ? "true" : "false");
+          });
+          const hasSelection = selectedIds.size > 0;
+          const hasMultipleSelection = selectedIds.size > 1;
+          if (els.albumSelectCount) {
+            const count = selectedIds.size;
+            els.albumSelectCount.textContent = hasSelection ? `Selezionate ${count}` : "";
+            els.albumSelectCount.classList.toggle("is-visible", selecting && hasSelection);
+          }
+          if (els.albumSelectMoreBtn) {
+            els.albumSelectMoreBtn.disabled = !hasSelection;
+            els.albumSelectMoreBtn.classList.toggle("is-enabled", hasSelection);
+            els.albumSelectMoreBtn.setAttribute("aria-disabled", hasSelection ? "false" : "true");
+          }
+          if (els.moveSelectedToSlotBtn) {
+            els.moveSelectedToSlotBtn.disabled = !hasSelection || hasMultipleSelection;
+            els.moveSelectedToSlotBtn.setAttribute("aria-disabled", (!hasSelection || hasMultipleSelection) ? "true" : "false");
+            els.moveSelectedToSlotBtn.title = hasMultipleSelection ? "Disponibile solo con una carta selezionata" : "";
+          }
+        }
+
+        function setAlbumSelectMode(active = false) {
+          state.albumSelectMode = Boolean(active);
+          state.selectedAlbumCardIds = new Set();
+          closeAlbumActionMenu();
+          refreshAlbumSelectionVisualState();
+        }
+
+        function setAlbumActionMenuMode(mode = "selection") {
+          state.albumActionMenuMode = mode;
+          const isCardMain = mode === "card-main";
+          const isCardMove = mode === "card-move";
+          const isSelection = mode === "selection" || isCardMove;
+          els.selectCardContextBtn?.classList.toggle("is-hidden", !isCardMain);
+          els.moveCardContextBtn?.classList.toggle("is-hidden", !isCardMain);
+          els.deleteCardContextBtn?.classList.toggle("is-hidden", !isCardMain);
+          els.moveSelectedToAlbumBtn?.classList.toggle("is-hidden", !isSelection);
+          els.moveSelectedToSlotBtn?.classList.toggle("is-hidden", !isSelection);
+          els.deleteSelectedCardBtn?.classList.toggle("is-hidden", mode !== "selection");
+          els.albumActionMenu?.classList.toggle("is-card-context", isCardMain || isCardMove);
+        }
+
+        function resetAlbumActionMenuPosition() {
+          if (!els.albumActionMenu) return;
+          els.albumActionMenu.style.left = "";
+          els.albumActionMenu.style.top = "";
+          els.albumActionMenu.style.right = "";
+        }
+
+        function positionAlbumActionMenuNearCard(cardNode) {
+          if (!els.albumActionMenu || !cardNode) return;
+          const rect = cardNode.getBoundingClientRect();
+          const gap = 10;
+          const margin = 12;
+          els.albumActionMenu.style.left = "0px";
+          els.albumActionMenu.style.top = "0px";
+          els.albumActionMenu.style.right = "auto";
+          const menuRect = els.albumActionMenu.getBoundingClientRect();
+          const safeLeft = window.innerWidth - menuRect.width - margin;
+          const safeTop = window.innerHeight - menuRect.height - margin;
+          const preferredLeft = rect.left + rect.width / 2 - menuRect.width / 2;
+          const preferredTop = rect.top - menuRect.height - gap;
+          els.albumActionMenu.style.left = `${Math.max(margin, Math.min(preferredLeft, safeLeft))}px`;
+          els.albumActionMenu.style.top = `${Math.max(margin, Math.min(preferredTop < margin ? rect.bottom + gap : preferredTop, safeTop))}px`;
+        }
+
+        function markAlbumActionMenuOpened(openingPointerId = null) {
+          state.albumActionMenuOpenedAt = performance.now();
+          state.albumActionMenuOpeningPointerId = openingPointerId;
+          state.albumActionMenuIgnoreOpeningRelease = openingPointerId !== null;
+        }
+
+        function closeAlbumActionMenu() {
+          els.albumActionMenuBackdrop?.classList.remove("open");
+          els.albumActionMenuBackdrop?.setAttribute("aria-hidden", "true");
+          state.albumActionMenuOpenedAt = 0;
+          state.albumActionMenuOpeningPointerId = null;
+          state.albumActionMenuIgnoreOpeningRelease = false;
+          state.cardContextCardId = "";
+          resetAlbumActionMenuPosition();
+        }
+
+        function shouldIgnoreAlbumActionMenuActionEvent(event) {
+          const now = performance.now();
+          if (state.albumActionMenuIgnoreOpeningRelease) {
+            const samePointer =
+              event?.type === "click" ||
+              state.albumActionMenuOpeningPointerId === null ||
+              event?.pointerId === state.albumActionMenuOpeningPointerId;
+            if (samePointer) {
+              state.albumActionMenuIgnoreOpeningRelease = false;
+              state.albumActionMenuOpeningPointerId = null;
+              return true;
+            }
+          }
+          return Boolean(state.albumActionMenuOpenedAt && now - state.albumActionMenuOpenedAt < 320);
+        }
+
+        function guardAlbumActionMenuAction(event) {
+          if (!shouldIgnoreAlbumActionMenuActionEvent(event)) return false;
+          stopEvent(event);
+          return true;
+        }
+
+        function openAlbumActionMenu() {
+          if (!getSelectedAlbumCardCount()) return;
+          setAlbumActionMenuMode("selection");
+          resetAlbumActionMenuPosition();
+          refreshAlbumSelectionVisualState();
+          els.albumActionMenuBackdrop?.classList.add("open");
+          els.albumActionMenuBackdrop?.setAttribute("aria-hidden", "false");
+          markAlbumActionMenuOpened(null);
+        }
+
+        function openCardContextActionMenu(cardNode, openingPointerId = null) {
+          const cardId = String(cardNode?.dataset?.cardId || "");
+          if (!cardId) return;
+          state.cardContextCardId = cardId;
+          state.selectedAlbumCardIds = new Set([cardId]);
+          setAlbumActionMenuMode("card-main");
+          refreshAlbumSelectionVisualState();
+          els.albumActionMenuBackdrop?.classList.add("open");
+          els.albumActionMenuBackdrop?.setAttribute("aria-hidden", "false");
+          markAlbumActionMenuOpened(openingPointerId);
+          positionAlbumActionMenuNearCard(cardNode);
+        }
+
+        function openAlbumFullscreenPicker(panel) {
+          panel?.classList.add("open");
+          panel?.setAttribute("aria-hidden", "false");
+        }
+
+        function closeAlbumFullscreenPickers() {
+          [els.moveAlbumPicker, els.moveSlotPicker].forEach((panel) => {
+            panel?.classList.remove("open");
+            panel?.setAttribute("aria-hidden", "true");
+          });
+          els.moveAlbumPickerList?.classList.remove("album-picker-albums-grid");
+        }
+
+        function getDuplicateRecordsForSelectedDelete(cards = [], selectedId = "") {
+          const selected = (Array.isArray(cards) ? cards : []).find((card) => String(card.id || "") === String(selectedId || ""));
+          if (!selected) return [];
+          const duplicateKey = getCardDuplicateKey(selected);
+          return (Array.isArray(cards) ? cards : [])
+            .filter((card) => getCardDuplicateKey(card) === duplicateKey)
+            .sort((a, b) => {
+              if (String(a.id || "") === String(selectedId || "")) return -1;
+              if (String(b.id || "") === String(selectedId || "")) return 1;
+              const slotA = Number(a.albumSlotNumber || a.slotNumber || 0);
+              const slotB = Number(b.albumSlotNumber || b.slotNumber || 0);
+              if (slotA || slotB) {
+                if (slotA !== slotB) return (slotA || Number.MAX_SAFE_INTEGER) - (slotB || Number.MAX_SAFE_INTEGER);
+              }
+              const dateCompare = String(a.addedAt || "").localeCompare(String(b.addedAt || ""));
+              if (dateCompare !== 0) return dateCompare;
+              return String(a.id || "").localeCompare(String(b.id || ""));
+            });
+        }
+
+        function updateAlbumDeleteQuantityUI() {
+          const max = Math.max(1, Number(state.deleteDuplicateMaxQuantity || 1));
+          const quantity = Math.min(max, Math.max(1, Number(state.deleteDuplicateQuantity || 1)));
+          state.deleteDuplicateQuantity = quantity;
+          if (els.albumDeleteQuantityPicker) {
+            const visible = max > 1 && getSelectedAlbumCardCount() === 1;
+            els.albumDeleteQuantityPicker.classList.toggle("is-visible", visible);
+            els.albumDeleteQuantityPicker.setAttribute("aria-hidden", visible ? "false" : "true");
+          }
+          if (els.albumDeleteQuantityValue) {
+            els.albumDeleteQuantityValue.textContent = `${quantity} ${quantity === 1 ? "copia" : "copie"}`;
+          }
+          if (els.albumDeleteQuantityHelp) {
+            els.albumDeleteQuantityHelp.textContent = `Disponibili ${max} copie uguali.`;
+          }
+          if (els.albumDeleteQuantityMinusBtn) els.albumDeleteQuantityMinusBtn.disabled = quantity <= 1;
+          if (els.albumDeleteQuantityPlusBtn) els.albumDeleteQuantityPlusBtn.disabled = quantity >= max;
+          if (els.albumDeleteCardConfirmBtn) {
+            els.albumDeleteCardConfirmBtn.textContent = quantity > 1 ? `Elimina ${quantity}` : "Elimina";
+          }
+        }
+
+        async function openAlbumDeleteConfirm() {
+          if (!getSelectedAlbumCardCount()) return;
+          const count = getSelectedAlbumCardCount();
+          state.deleteDuplicateQuantity = 1;
+          state.deleteDuplicateMaxQuantity = 1;
+          state.deleteDuplicateRecordIds = [];
+
+          if (count === 1) {
+            const selectedId = getSelectedAlbumCardId();
+            const allCards = await getAllCards();
+            const duplicateRecords = getDuplicateRecordsForSelectedDelete(allCards, selectedId);
+            state.deleteDuplicateRecordIds = duplicateRecords.map((record) => String(record.id || "")).filter(Boolean);
+            state.deleteDuplicateMaxQuantity = Math.max(1, state.deleteDuplicateRecordIds.length || 1);
+          }
+
+          if (els.albumDeleteCardConfirmTitle) {
+            els.albumDeleteCardConfirmTitle.textContent = count > 1 ? "Eliminare le carte?" : "Eliminare la carta?";
+          }
+          if (els.albumDeleteCardConfirmText) {
+            if (count > 1) {
+              els.albumDeleteCardConfirmText.textContent = `${count} carte selezionate verranno rimosse dall’album e dalla collezione. Questa azione non può essere annullata.`;
+            } else if (state.deleteDuplicateMaxQuantity > 1) {
+              els.albumDeleteCardConfirmText.textContent = "Sono presenti più copie uguali. Scegli quante copie eliminare dall’album e dalla collezione.";
+            } else {
+              els.albumDeleteCardConfirmText.textContent = "La carta selezionata verrà rimossa dall’album e dalla collezione. Questa azione non può essere annullata.";
+            }
+          }
+          updateAlbumDeleteQuantityUI();
+          els.albumDeleteCardConfirmBackdrop?.classList.add("open");
+          els.albumDeleteCardConfirmBackdrop?.setAttribute("aria-hidden", "false");
+        }
+
+        function closeAlbumDeleteConfirm() {
+          els.albumDeleteCardConfirmBackdrop?.classList.remove("open");
+          els.albumDeleteCardConfirmBackdrop?.setAttribute("aria-hidden", "true");
+          state.deleteDuplicateQuantity = 1;
+          state.deleteDuplicateMaxQuantity = 1;
+          state.deleteDuplicateRecordIds = [];
+          updateAlbumDeleteQuantityUI();
+        }
+
+        function getAlbumNodesList() {
+          return Array.from(els.albumsGrid?.children || []).filter((node) => node?.albumData?.id);
+        }
+
+        function getAlbumCapacity(albumData = {}) {
+          const pages = Math.max(1, Number(albumData.totalPages || DEFAULT_ALBUM.totalPages) || 1);
+          const slotsPerPage = Math.max(1, Number(albumData.slotsPerPage || DEFAULT_ALBUM.slotsPerPage) || 1);
+          return pages * slotsPerPage;
+        }
+
+        async function getFreeSlotNumbersForAlbum(albumId = "") {
+          const node = getAlbumNodesList().find((item) => item.albumData?.id === albumId);
+          const capacity = getAlbumCapacity(node?.albumData || {});
+          const cards = getAlbumCardsInInsertionOrder(await getCardsByAlbum(albumId));
+          const used = new Set(cards.map((card, index) => Number(card.albumSlotNumber || card.slotNumber || index + 1)).filter((num) => num > 0));
+          const slots = [];
+          for (let slot = 1; slot <= capacity; slot += 1) {
+            if (!used.has(slot)) slots.push(slot);
+          }
+          return slots;
+        }
+
+        async function getFirstFreeSlotNumberForAlbum(albumId = "") {
+          const freeSlots = await getFreeSlotNumbersForAlbum(albumId);
+          return freeSlots[0] || 0;
+        }
+
+        async function refreshAlbumCountsAfterMove(albumIds = []) {
+          const uniqueAlbumIds = Array.from(new Set(albumIds.filter(Boolean)));
+          for (const albumId of uniqueAlbumIds) {
+            const node = getAlbumNodesList().find((item) => item.albumData?.id === albumId);
+            if (!node?.albumData) continue;
+            const cards = await getCardsByAlbum(albumId);
+            node.albumData.cardCount = getUniqueCardsByDuplicateKey(cards).length;
+            node.albumData.updatedAt = new Date().toISOString();
+            await putStore("albums", node.albumData);
+            renderAlbum(node);
+          }
+        }
+
+        async function openMoveAlbumPicker() {
+          closeAlbumActionMenu();
+          const selectedIds = getSelectedAlbumCardIds();
+          if (!selectedIds.length || !els.moveAlbumPickerList) return;
+          const selectedCount = selectedIds.length;
+          const currentId = state.currentAlbum?.albumData?.id || "";
+          const nodes = getAlbumNodesList().filter((node) => node.albumData?.id !== currentId);
+          els.moveAlbumPickerList.classList.add("album-picker-albums-grid");
+          els.moveAlbumPickerList.innerHTML = "";
+          if (!nodes.length) {
+            els.moveAlbumPickerList.classList.remove("album-picker-albums-grid");
+            els.moveAlbumPickerList.innerHTML = `<div class="album-picker-empty">Nessun altro album disponibile. Triste, ma ordinato.</div>`;
+          } else {
+            for (const sourceNode of nodes) {
+              const albumId = sourceNode.albumData.id;
+              const freeSlots = await getFreeSlotNumbersForAlbum(albumId);
+              const freeCount = freeSlots.length;
+              const firstFree = freeSlots[0] || 0;
+              const notEnough = freeCount < selectedCount;
+              const pickerNode = createAlbumNode({
+                ...sourceNode.albumData,
+                cardCount: Number(sourceNode.albumData.cardCount || 0),
+              });
+              pickerNode.dataset.targetAlbumId = albumId;
+              pickerNode.tabIndex = 0;
+              pickerNode.setAttribute("role", "button");
+              pickerNode.setAttribute("aria-label", `${getAlbumPublicName(sourceNode.albumData)} · ${notEnough ? "slot liberi insufficienti" : "sposta qui"}`);
+              pickerNode.classList.toggle("is-capacity-warning", notEnough);
+              els.moveAlbumPickerList.appendChild(pickerNode);
+            }
+          }
+          openAlbumFullscreenPicker(els.moveAlbumPicker);
+        }
+
+        async function openMoveSlotPicker() {
+          closeAlbumActionMenu();
+          if (getSelectedAlbumCardCount() !== 1) {
+            showStorageToast("Sposta in slot è disponibile con una sola carta selezionata", true);
+            return;
+          }
+          const selectedId = getSelectedAlbumCardId();
+          if (!selectedId || !els.moveSlotPickerList || !state.currentAlbum?.albumData) return;
+          const cards = getAlbumCardsInInsertionOrder(await getCardsByAlbum(state.currentAlbum.albumData.id));
+          const selectedIndex = cards.findIndex((card) => String(card.id || "") === selectedId);
+          const selectedCard = selectedIndex >= 0 ? cards[selectedIndex] : null;
+          const capacity = getAlbumCapacity(state.currentAlbum.albumData);
+          const currentSlot = selectedCard ? getAlbumCardDisplaySlot(selectedCard, selectedIndex) : 0;
+          const options = [];
+          for (let slot = 1; slot <= capacity; slot += 1) {
+            const occupied = cards.some((card, index) => String(card.id || "") !== selectedId && getAlbumCardDisplaySlot(card, index) === slot);
+            if (occupied) continue;
+            const isCurrentSlot = slot === currentSlot;
+            options.push(`
+              <button class="album-picker-option${isCurrentSlot ? ' is-selected' : ''}" type="button" data-target-slot-number="${slot}"${isCurrentSlot ? ' aria-current="true"' : ''}>
+                <span class="album-picker-option-title">Slot ${slot}</span>
+                ${isCurrentSlot ? '<span class="album-picker-option-check" aria-hidden="true">✓</span>' : ''}
+              </button>
+            `);
+          }
+          els.moveSlotPickerList.innerHTML = options.length ? options.join("") : `<div class="album-picker-empty">Nessuno slot libero in questo album.</div>`;
+          openAlbumFullscreenPicker(els.moveSlotPicker);
+        }
+
+        async function moveSelectedCardToAlbum(targetAlbumId = "") {
+          const selectedIds = getSelectedAlbumCardIds();
+          if (!selectedIds.length || !targetAlbumId) return;
+          const cards = await getAllCards();
+          const selectedSet = new Set(selectedIds.map(String));
+          const records = selectedIds
+            .map((id) => cards.find((card) => String(card.id || "") === String(id)))
+            .filter(Boolean);
+          if (!records.length) return;
+          const sourceAlbumIds = Array.from(new Set(records.map((record) => record.albumId || state.currentAlbum?.albumData?.id || "").filter(Boolean)));
+          const targetNode = getAlbumNodesList().find((node) => node.albumData?.id === targetAlbumId);
+          if (!targetNode?.albumData) return;
+          const freeSlots = await getFreeSlotNumbersForAlbum(targetAlbumId);
+          if (freeSlots.length < records.length) {
+            showStorageToast("Slot liberi insufficienti", true);
+            return;
+          }
+          records.forEach((record, index) => {
+            record.albumId = targetAlbumId;
+            record.collectionScope = "album";
+            record.albumSlotNumber = freeSlots[index];
+            record.slotNumber = freeSlots[index];
+            record.updatedAt = new Date().toISOString();
+          });
+          for (const record of records) {
+            await putStore("cards", record);
+            await queueSync("card", record.id, "move", record);
+          }
+          await refreshAlbumCountsAfterMove([...sourceAlbumIds, targetAlbumId]);
+          closeAlbumFullscreenPickers();
+          setAlbumSelectMode(false);
+          await refreshCurrentAlbumDetailCards();
+          await refreshHomeSectionContent();
+          await refreshHomeCollectionTotals();
+          const albumName = getAlbumPublicName(targetNode.albumData);
+          if (records.length > 1) {
+            const slotsText = freeSlots.slice(0, records.length).join(", ");
+            showStorageToast(`Spostate ${records.length} carte in ${albumName} · slot ${slotsText}`);
+          } else {
+            showStorageToast(`Spostata in ${albumName} · slot ${freeSlots[0]}`);
+          }
+        }
+
+        async function moveSelectedCardToSlot(targetSlot = 0) {
+          if (getSelectedAlbumCardCount() !== 1) {
+            showStorageToast("Sposta in slot è disponibile con una sola carta selezionata", true);
+            return;
+          }
+          const selectedId = getSelectedAlbumCardId();
+          const slotNumber = Math.max(1, Number(targetSlot) || 0);
+          if (!selectedId || !slotNumber || !state.currentAlbum?.albumData?.id) return;
+          const albumId = state.currentAlbum.albumData.id;
+          const cards = getAlbumCardsInInsertionOrder(await getCardsByAlbum(albumId));
+          const selected = cards.find((card) => String(card.id || "") === selectedId);
+          if (!selected) return;
+          const occupied = cards.find((card, index) => String(card.id || "") !== selectedId && getAlbumCardDisplaySlot(card, index) === slotNumber);
+          if (occupied) {
+            showStorageToast("Slot occupato", true);
+            return;
+          }
+          selected.albumSlotNumber = slotNumber;
+          selected.slotNumber = slotNumber;
+          selected.updatedAt = new Date().toISOString();
+          await putStore("cards", selected);
+          await queueSync("card", selected.id, "move-slot", selected);
+          closeAlbumFullscreenPickers();
+          setAlbumSelectMode(false);
+          const { slotsPerPage } = getAlbumDetailPageConfig(cards);
+          state.albumDetailPage = Math.max(1, Math.ceil(slotNumber / Math.max(1, slotsPerPage || 1)));
+          await refreshCurrentAlbumDetailCards();
+          await refreshHomeSectionContent();
+          await refreshHomeCollectionTotals();
+          showStorageToast(`Spostato in slot ${slotNumber}`);
+        }
+
+        async function deleteSelectedAlbumCard() {
+          const selectedIds = getSelectedAlbumCardIds();
+          if (!selectedIds.length) return;
+          const cards = await getAllCards();
+          let idsToDelete = selectedIds.map(String).filter(Boolean);
+
+          if (selectedIds.length === 1) {
+            const duplicateIds = Array.isArray(state.deleteDuplicateRecordIds) && state.deleteDuplicateRecordIds.length
+              ? state.deleteDuplicateRecordIds.map(String).filter(Boolean)
+              : getDuplicateRecordsForSelectedDelete(cards, selectedIds[0]).map((record) => String(record.id || "")).filter(Boolean);
+            const quantity = Math.min(
+              Math.max(1, Number(state.deleteDuplicateQuantity || 1)),
+              Math.max(1, duplicateIds.length || 1),
+            );
+            idsToDelete = duplicateIds.slice(0, quantity);
+          }
+
+          const deleteSet = new Set(idsToDelete.map(String));
+          const records = cards.filter((card) => deleteSet.has(String(card.id || "")));
+          const albumIds = Array.from(new Set(records.map((record) => record.albumId || state.currentAlbum?.albumData?.id || "").filter(Boolean)));
+          for (const selectedId of idsToDelete) {
+            await deleteStore("cards", selectedId);
+            await queueSync("card", selectedId, "delete", { id: selectedId });
+          }
+          await refreshAlbumCountsAfterMove(albumIds);
+          closeAlbumDeleteConfirm();
+          setAlbumSelectMode(false);
+          await refreshDuplicateCountCache();
+          await refreshCurrentAlbumDetailCards();
+          await refreshHomeSectionContent();
+          await refreshHomeCollectionTotals();
+          showStorageToast(idsToDelete.length > 1 ? `${idsToDelete.length} copie eliminate` : "Carta eliminata");
+        }
+
         async function refreshCurrentAlbumDetailCards() {
           if (!state.currentAlbum?.albumData?.id) {
             renderAlbumDetailCards([]);
@@ -15788,6 +17025,8 @@ async function addCardToCurrentAlbum(payload) {
           const albumNode = state.currentAlbum;
           const record = buildCardRecord(payload, albumNode.albumData);
           record.collectionScope = "album";
+          const existingAlbumCards = await getCardsByAlbum(albumNode.albumData.id);
+          record.albumSlotNumber = getAlbumCardsInInsertionOrder(existingAlbumCards).length + 1;
           await putStore("cards", record);
           await queueSync("card", record.id, "add", record);
           await refreshDuplicateCountCache();
@@ -16162,6 +17401,7 @@ function setView(view) {
           state.currentAlbum = albumNode;
           state.albumDetailPage = 1;
           state.albumDetailCards = [];
+          setAlbumSelectMode(false);
           els.albumDetailTitle.textContent = getAlbumPublicName(albumNode.albumData);
           renderAlbumDetailCards([]);
           void refreshCurrentAlbumDetailCards();
@@ -16172,6 +17412,9 @@ function setView(view) {
           state.currentAlbum = null;
           state.albumDetailPage = 1;
           state.albumDetailCards = [];
+          setAlbumSelectMode(false);
+          closeAlbumFullscreenPickers();
+          closeAlbumDeleteConfirm();
           setView("home");
         }
 
@@ -17452,7 +18695,115 @@ function setHomeSection(section = "Album") {
           }
         });
 
+        function resetCardPressState(blockNextClick = false) {
+          const press = state.cardPress;
+          if (!press) return;
+          clearTimeout(press.timer);
+          press.cardNode?.classList.remove("is-context-pressing");
+          if (blockNextClick) {
+            state.cardContextSuppressClick = true;
+            window.setTimeout(() => { state.cardContextSuppressClick = false; }, 420);
+          }
+          state.cardPress = null;
+        }
+
+        function openAlbumCardNode(cardNode, event = null) {
+          if (!cardNode) return;
+          const savedCardId = cardNode.dataset.cardId;
+          if (state.albumSelectMode) {
+            if (!savedCardId) return;
+            const nextSelectedIds = new Set(state.selectedAlbumCardIds || []);
+            if (nextSelectedIds.has(savedCardId)) nextSelectedIds.delete(savedCardId);
+            else nextSelectedIds.add(savedCardId);
+            state.selectedAlbumCardIds = nextSelectedIds;
+            refreshAlbumSelectionVisualState();
+            return;
+          }
+          if (savedCardId && typeof openSavedAlbumCardDetails === "function") {
+            void openSavedAlbumCardDetails(savedCardId, cardNode.dataset.slotNumber || "");
+            return;
+          }
+          const blueprintId = cardNode.dataset.blueprintId;
+          if (blueprintId && typeof openCardDetails === "function") {
+            openCardDetails(blueprintId);
+          }
+        }
+
+        on(els.albumDetailCardsGrid, "pointerdown", (event) => {
+          const cardNode = event.target.closest(".album-detail-card[data-card-id]");
+          if (!cardNode || state.albumSelectMode || state.albumPageSwipeSuppressClick) return;
+          if (event.pointerType === "mouse" && event.button !== 0) return;
+          const cardId = String(cardNode.dataset.cardId || "");
+          if (!cardId) return;
+
+          resetCardPressState(true);
+          state.cardPress = {
+            cardNode,
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            moved: false,
+            triggered: false,
+            timer: window.setTimeout(() => {
+              const press = state.cardPress;
+              if (!press || press.pointerId !== event.pointerId || press.moved) return;
+              press.triggered = true;
+              toggleSelectionSuppressed(true);
+              clearTextSelection();
+              openCardContextActionMenu(cardNode, event.pointerId);
+            }, LONG_PRESS_MS),
+          };
+
+          if (event.cancelable) event.preventDefault();
+          cardNode.classList.add("is-context-pressing");
+          toggleSelectionSuppressed(true);
+          clearTextSelection();
+          try { cardNode.setPointerCapture?.(event.pointerId); } catch {}
+        });
+
+        on(els.albumDetailCardsGrid, "pointermove", (event) => {
+          const press = state.cardPress;
+          if (!press || press.pointerId !== event.pointerId) return;
+          const distance = Math.hypot(event.clientX - press.startX, event.clientY - press.startY);
+          if (distance <= MOVE_TOLERANCE_PX) return;
+          press.moved = true;
+          if (event.cancelable) event.preventDefault();
+          try { press.cardNode?.releasePointerCapture?.(event.pointerId); } catch {}
+          resetCardPressState(false);
+          if (!els.albumActionMenuBackdrop?.classList.contains("open")) toggleSelectionSuppressed(false);
+          clearTextSelection();
+        });
+
+        on(els.albumDetailCardsGrid, "pointerup pointercancel lostpointercapture", (event) => {
+          const press = state.cardPress;
+          if (!press || (event.pointerId && press.pointerId !== event.pointerId)) return;
+          try { press.cardNode?.releasePointerCapture?.(event.pointerId); } catch {}
+          const blockClick = press.triggered || press.moved || event.type !== "pointerup";
+          const cardNode = press.cardNode;
+          resetCardPressState(true);
+          if (!els.albumActionMenuBackdrop?.classList.contains("open")) toggleSelectionSuppressed(false);
+          clearTextSelection();
+          if (blockClick) {
+            if (event.cancelable) event.preventDefault();
+            event.stopPropagation?.();
+            return;
+          }
+          if (event.cancelable) event.preventDefault();
+          event.stopPropagation?.();
+          openAlbumCardNode(cardNode, event);
+        });
+
+        els.albumDetailCardsGrid?.addEventListener("contextmenu", (event) => {
+          if (event.target.closest(".album-detail-card[data-card-id]")) event.preventDefault();
+        });
+
         els.albumDetailCardsGrid?.addEventListener("click", (event) => {
+          if (state.cardContextSuppressClick) {
+            event.preventDefault();
+            event.stopPropagation();
+            state.cardContextSuppressClick = false;
+            return;
+          }
           if (state.albumPageSwipeSuppressClick) {
             event.preventDefault();
             event.stopPropagation();
@@ -17460,18 +18811,156 @@ function setHomeSection(section = "Album") {
           }
           const albumCard = event.target.closest(".album-detail-card[data-blueprint-id], .album-detail-card[data-card-id]");
           if (!albumCard) return;
+          event.preventDefault();
+          openAlbumCardNode(albumCard, event);
+        });
 
-          const savedCardId = albumCard.dataset.cardId;
-          if (savedCardId && typeof openSavedAlbumCardDetails === "function") {
-            event.preventDefault();
-            void openSavedAlbumCardDetails(savedCardId, albumCard.dataset.slotNumber || "");
+        els.albumSelectBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          setAlbumSelectMode(true);
+        });
+
+        els.albumSelectCloseBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          setAlbumSelectMode(false);
+        });
+
+        els.albumSelectMoreBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          if (els.albumSelectMoreBtn.disabled) return;
+          openAlbumActionMenu();
+        });
+
+        els.albumActionMenu?.addEventListener("pointerup", (event) => {
+          if (shouldIgnoreAlbumActionMenuActionEvent(event)) {
+            stopEvent(event);
             return;
           }
-          const blueprintId = albumCard.dataset.blueprintId;
-          if (blueprintId && typeof openCardDetails === "function") {
-            event.preventDefault();
-            openCardDetails(blueprintId);
+          event.stopPropagation();
+        });
+        els.albumActionMenu?.addEventListener("click", (event) => event.stopPropagation());
+        on(els.albumActionMenuBackdrop, "pointerup click", (event) => {
+          if (event.target !== els.albumActionMenuBackdrop) return;
+
+          if (state.albumActionMenuIgnoreOpeningRelease) {
+            const samePointer =
+              event.type === "click" ||
+              state.albumActionMenuOpeningPointerId === null ||
+              event.pointerId === state.albumActionMenuOpeningPointerId;
+            if (samePointer) {
+              state.albumActionMenuIgnoreOpeningRelease = false;
+              state.albumActionMenuOpeningPointerId = null;
+              return stopEvent(event);
+            }
           }
+
+          if (performance.now() - state.albumActionMenuOpenedAt < 320) return stopEvent(event);
+          closeAlbumActionMenu();
+        });
+
+        els.selectCardContextBtn?.addEventListener("click", (event) => {
+          if (guardAlbumActionMenuAction(event)) return;
+          event.preventDefault();
+          const cardId = state.cardContextCardId || getSelectedAlbumCardId();
+          closeAlbumActionMenu();
+          state.albumSelectMode = true;
+          state.selectedAlbumCardIds = new Set(cardId ? [cardId] : []);
+          refreshAlbumSelectionVisualState();
+        });
+
+        els.moveCardContextBtn?.addEventListener("click", (event) => {
+          if (guardAlbumActionMenuAction(event)) return;
+          event.preventDefault();
+          if (!getSelectedAlbumCardCount()) return;
+          setAlbumActionMenuMode("card-move");
+          refreshAlbumSelectionVisualState();
+        });
+
+        els.deleteCardContextBtn?.addEventListener("click", (event) => {
+          if (guardAlbumActionMenuAction(event)) return;
+          event.preventDefault();
+          closeAlbumActionMenu();
+          openAlbumDeleteConfirm();
+        });
+
+        els.moveSelectedToAlbumBtn?.addEventListener("click", (event) => {
+          if (guardAlbumActionMenuAction(event)) return;
+          event.preventDefault();
+          void openMoveAlbumPicker();
+        });
+
+        els.moveSelectedToSlotBtn?.addEventListener("click", (event) => {
+          if (guardAlbumActionMenuAction(event)) return;
+          event.preventDefault();
+          if (els.moveSelectedToSlotBtn.disabled || getSelectedAlbumCardCount() !== 1) return;
+          void openMoveSlotPicker();
+        });
+
+        els.deleteSelectedCardBtn?.addEventListener("click", (event) => {
+          if (guardAlbumActionMenuAction(event)) return;
+          event.preventDefault();
+          closeAlbumActionMenu();
+          openAlbumDeleteConfirm();
+        });
+
+        els.moveAlbumPickerBack?.addEventListener("click", (event) => {
+          event.preventDefault();
+          closeAlbumFullscreenPickers();
+        });
+        els.moveSlotPickerBack?.addEventListener("click", (event) => {
+          event.preventDefault();
+          closeAlbumFullscreenPickers();
+        });
+
+        els.moveAlbumPickerList?.addEventListener("click", (event) => {
+          const item = event.target.closest("[data-target-album-id]");
+          if (!item) return;
+          event.preventDefault();
+          void moveSelectedCardToAlbum(item.dataset.targetAlbumId || "");
+        });
+
+        els.moveAlbumPickerList?.addEventListener("keydown", (event) => {
+          if (event.key !== "Enter" && event.key !== " ") return;
+          const item = event.target.closest("[data-target-album-id]");
+          if (!item) return;
+          event.preventDefault();
+          void moveSelectedCardToAlbum(item.dataset.targetAlbumId || "");
+        });
+
+        els.moveSlotPickerList?.addEventListener("click", (event) => {
+          const item = event.target.closest("[data-target-slot-number]");
+          if (!item) return;
+          event.preventDefault();
+          void moveSelectedCardToSlot(item.dataset.targetSlotNumber || 0);
+        });
+
+        els.albumDeleteCardCancelBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          closeAlbumDeleteConfirm();
+        });
+
+        els.albumDeleteQuantityMinusBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          state.deleteDuplicateQuantity = Math.max(1, Number(state.deleteDuplicateQuantity || 1) - 1);
+          updateAlbumDeleteQuantityUI();
+        });
+
+        els.albumDeleteQuantityPlusBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          state.deleteDuplicateQuantity = Math.min(
+            Math.max(1, Number(state.deleteDuplicateMaxQuantity || 1)),
+            Number(state.deleteDuplicateQuantity || 1) + 1,
+          );
+          updateAlbumDeleteQuantityUI();
+        });
+
+        els.albumDeleteCardConfirmBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          void deleteSelectedAlbumCard();
+        });
+
+        els.albumDeleteCardConfirmBackdrop?.addEventListener("click", (event) => {
+          if (event.target === els.albumDeleteCardConfirmBackdrop) closeAlbumDeleteConfirm();
         });
 
         collectionDropdown?.addEventListener("click", (event) => {
@@ -17501,6 +18990,10 @@ function setHomeSection(section = "Album") {
             closeRenameSheet();
             closeProfileMenu();
             closeRestoreSheet();
+            closeAlbumActionMenu();
+            closeAlbumFullscreenPickers();
+            closeAlbumDeleteConfirm();
+            if (state.albumSelectMode) setAlbumSelectMode(false);
             if (typeof closeOriginChoiceSheet === 'function') closeOriginChoiceSheet();
             if (typeof closeOriginInputSheet === 'function') closeOriginInputSheet();
           }
