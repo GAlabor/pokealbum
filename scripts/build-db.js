@@ -68,6 +68,16 @@ function buildSearchText(...values) {
     .join(' ');
 }
 
+function normalizeReleaseDate(value) {
+  const clean = String(value ?? '').trim();
+  if (!clean) return '';
+
+  const date = new Date(clean);
+  if (Number.isNaN(date.getTime())) return clean.split(/[T\s]/)[0] || clean;
+
+  return date.toISOString().slice(0, 10);
+}
+
 function cleanImageUrl(value) {
   return String(value ?? '').trim();
 }
@@ -203,6 +213,14 @@ async function main() {
         expansion_id: bp.expansion_id,
         set_name: exp.name || '',
         set_code: exp.code || '',
+        release_date: normalizeReleaseDate(
+          bp.released_at
+          || bp.release_date
+          || bp.expansion?.released_at
+          || bp.expansion?.release_date
+          || exp.released_at
+          || exp.release_date
+        ),
         images
       };
 
@@ -214,7 +232,8 @@ async function main() {
           baseCard.rarity,
           baseCard.version,
           baseCard.set_name,
-          baseCard.set_code
+          baseCard.set_code,
+          baseCard.release_date
         )
       };
 
@@ -234,7 +253,7 @@ async function main() {
     expansionsCount: pokemonExpansions.length,
     skippedExpansionsCount: skippedExpansions.length,
     skippedExpansions,
-    indexVersion: 4,
+    indexVersion: 5,
     imageSchema: {
       version: 1,
       fields: [
