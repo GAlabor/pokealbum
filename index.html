@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi362-card-menu-opening-release-guard-20260603" />
+    <meta name="pokealbum-build" content="vi372-card-drag-edge-page-20260605" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -960,13 +960,32 @@ h1{margin:0;font-size:clamp(30px, 5.2vh, 42px);max-width:290px;line-height:0.94;
         );background-size:cover;background-position:center;background-repeat:no-repeat;}
 .album-card .album.has-cover-image::before{background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(255,255,255,.06));}
 .album-card.is-pressed .album-wrap{transform:translateY(1px) scale(0.98);filter:drop-shadow(0 16px 20px rgba(57, 91, 176, 0.18)) saturate(1.04);}
+.album-card.is-album-drag-pressed .album-wrap{transform:translateY(-2px) scale(1.015);filter:drop-shadow(0 20px 26px rgba(57,91,176,.22)) saturate(1.05);transition:transform .18s cubic-bezier(.22,.9,.24,1),filter .18s ease;}
+.album-card.is-album-drag-armed .album-wrap{transform:translateY(-6px) scale(1.04);filter:drop-shadow(0 26px 34px rgba(57,91,176,.28)) saturate(1.06);}
 .album-card.is-drag-source{display:none !important;opacity:0;transform:none;pointer-events:none;}
 .album-card.album-drag-placeholder{min-height:0;border-radius:32px;background:rgba(47,100,255,.08);border:1px dashed rgba(47,100,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.72);}
 .album-drag-ghost{position:fixed;left:0;top:0;z-index:260;pointer-events:none;transform:translate3d(0,0,0) scale(1.04);filter:drop-shadow(0 22px 32px rgba(57,91,176,.24));opacity:.96;}
 .album-drag-ghost .album-wrap{width:100%;max-width:none;margin:0;}
 body.album-reorder-active, body.album-reorder-active *{cursor:grabbing !important;}
-.album-card .album-wrap{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
-.album-card.is-pressed .album-wrap{touch-action:none;}
+.album-card .album-wrap{touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
+.album-card.is-pressed .album-wrap{touch-action:pan-y;}
+body.album-reorder-active .album-card .album-wrap,
+.album-drag-ghost .album-wrap{touch-action:none;}
+
+/* POST-IT: DRAG CARTE TRA SLOT
+   Riusa il modello ghost/placeholder degli album per spostare le carte solo nella pagina aperta. */
+.album-detail-card.is-drag-source{display:none !important;opacity:0;transform:none;pointer-events:none;}
+.album-detail-card.is-card-drag-pressed{transform:translateY(1px) scale(.985);filter:saturate(1.04);}
+.album-detail-card.is-card-drag-armed{animation:cardLiftForMove .22s cubic-bezier(.18,.9,.2,1) forwards;box-shadow:0 18px 30px rgba(47,100,255,.18);}
+@keyframes cardLiftForMove{0%{transform:translateY(1px) scale(.985);}65%{transform:translateY(-7px) scale(1.035);}100%{transform:translateY(-5px) scale(1.025);}}
+@media (prefers-reduced-motion:reduce){.album-detail-card.is-card-drag-armed{animation:none;transform:translateY(-5px) scale(1.025);}}
+.album-card-drag-placeholder{min-height:0;border-radius:18px;background:rgba(47,100,255,.08);border:1px dashed rgba(47,100,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.72);}
+.album-card-drag-ghost{position:fixed;left:0;top:0;z-index:265;pointer-events:none;transform:translate3d(0,0,0) scale(1.04);filter:drop-shadow(0 22px 32px rgba(57,91,176,.24));opacity:.96;}
+.album-card-drag-ghost .album-detail-card-image-wrap{pointer-events:none;}
+body.card-slot-reorder-active, body.card-slot-reorder-active *{cursor:grabbing !important;}
+body.card-slot-reorder-active .album-detail-cards-grid{touch-action:none;}
+/* MOD 05/06/2026: permette lo swipe pagina anche partendo dalla carta, senza aprire accidentalmente il dettaglio. */
+.album-detail-card[data-card-id]{touch-action:pan-y pinch-zoom;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;}
 
 .rename-sheet-backdrop{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34, 48, 86, 0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease, background-color .22s ease, visibility .22s ease;}
 .rename-sheet-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34, 48, 86, 0.22);}
@@ -14648,6 +14667,11 @@ const DEFAULT_ALBUM = Object.freeze({
         });
         const LONG_PRESS_MS = 500;
         const MOVE_TOLERANCE_PX = 12;
+        const ALBUM_TAP_OPEN_TOLERANCE_PX = 7;
+        const ALBUM_TAP_SCROLL_TOLERANCE_PX = 2;
+        const ALBUM_TAP_MAX_MS = 420;
+        const CARD_SLOT_DRAG_ARM_MS = 380;
+        const ALBUM_REORDER_ARM_MS = 380;
         const AUTO_SCROLL_EDGE_PX = 82;
         const AUTO_SCROLL_MAX_SPEED = 16;
         let visibleTotalPrice = els.totalPriceValue.textContent.trim();
@@ -14693,6 +14717,7 @@ const DEFAULT_ALBUM = Object.freeze({
           albumActionMenuIgnoreOpeningRelease: false,
           cardContextCardId: "",
           cardPress: null,
+          cardDrag: null,
           cardContextSuppressClick: false,
           deleteDuplicateQuantity: 1,
           deleteDuplicateMaxQuantity: 1,
@@ -15997,6 +16022,8 @@ function enableSavedCardDetailChevronNavigation() {
 
           const canStartSwipe = (target) => {
             if (els.albumDetailCardsView?.classList.contains("is-hidden")) return false;
+            if (state.cardDrag || document.body.classList.contains("card-slot-reorder-active")) return false;
+            if (state.cardPress?.triggered || state.cardPress?.dragArmed) return false;
             return !target?.closest?.("button, input, textarea, select, a, .album-page-nav, .album-page-controls");
           };
 
@@ -16016,6 +16043,11 @@ function enableSavedCardDetailChevronNavigation() {
           };
 
           const moveSwipe = (event, point, pointerId = "touch") => {
+            if (state.cardDrag || document.body.classList.contains("card-slot-reorder-active") || state.cardPress?.triggered || state.cardPress?.dragArmed) {
+              swipe = null;
+              resetAlbumPageSwipeVisual(true);
+              return;
+            }
             if (!swipe || swipe.pointerId !== pointerId || swipe.cancelled) return;
             const deltaX = point.clientX - swipe.startX;
             const deltaY = point.clientY - swipe.startY;
@@ -16030,7 +16062,12 @@ function enableSavedCardDetailChevronNavigation() {
               }
               if (Math.abs(deltaX) < HORIZONTAL_LOCK_DISTANCE || Math.abs(deltaX) <= Math.abs(deltaY) * 1.05) return;
               swipe.locked = true;
-              state.albumPageSwipeSuppressClick = false;
+              state.albumPageSwipeSuppressClick = true;
+              if (state.cardPress && !state.cardPress.triggered && !state.cardPress.dragArmed) {
+                resetCardPressState(true);
+                toggleSelectionSuppressed(false);
+                clearTextSelection();
+              }
             }
 
             event.preventDefault();
@@ -16052,7 +16089,7 @@ function enableSavedCardDetailChevronNavigation() {
               event.preventDefault?.();
               event.stopPropagation?.();
               state.albumPageSwipeSuppressClick = true;
-              window.setTimeout(() => { state.albumPageSwipeSuppressClick = false; }, 260);
+              window.setTimeout(() => { state.albumPageSwipeSuppressClick = false; }, 360);
             }
 
             swipe = null;
@@ -18111,7 +18148,8 @@ function albumFromEvent(event) {
           const press = state.press;
           if (!press) return;
           clearTimeout(press.timer);
-          press.albumNode.classList.remove("is-pressed");
+          clearTimeout(press.armTimer);
+          press.albumNode.classList.remove("is-pressed", "is-album-drag-pressed", "is-album-drag-armed");
           if (
             !forceSelection &&
             !state.drag &&
@@ -18130,26 +18168,97 @@ function albumFromEvent(event) {
           drag.ghost.style.top = `${y}px`;
         }
 
+        function getAlbumDragLiveNodes(drag) {
+          const grid = els.albumsGrid;
+          if (!grid || !drag?.placeholder) return [];
+          return Array.from(grid.children || []).filter((node) =>
+            node.classList?.contains("album-card") &&
+            node !== drag.placeholder &&
+            node !== drag.albumNode &&
+            !node.classList.contains("album-drag-ghost") &&
+            !node.classList.contains("is-drag-source")
+          );
+        }
+
+        function refreshAlbumDragTargetRects(drag) {
+          const grid = els.albumsGrid;
+          if (!grid || !drag?.placeholder) return [];
+          const nodes = Array.from(grid.children || []).filter((node) =>
+            node.classList?.contains("album-card") &&
+            node !== drag.albumNode &&
+            !node.classList.contains("album-drag-ghost") &&
+            !node.classList.contains("is-drag-source")
+          );
+
+          drag.targetRects = nodes
+            .map((node, index) => {
+              const rect = node.getBoundingClientRect();
+              return {
+                index,
+                left: rect.left,
+                right: rect.right,
+                top: rect.top,
+                bottom: rect.bottom,
+                width: rect.width,
+                height: rect.height,
+                centerX: rect.left + rect.width / 2,
+                centerY: rect.top + rect.height / 2,
+              };
+            })
+            .filter((item) => item.width > 1 && item.height > 1);
+          return drag.targetRects;
+        }
+
+        function getAlbumDragTargetIndexFromPoint(event, drag) {
+          let rects = drag?.targetRects || [];
+          if (!rects.length) rects = refreshAlbumDragTargetRects(drag);
+          if (!rects.length) return null;
+
+          const stickyRect = Number.isInteger(drag.lastTargetIndex)
+            ? rects.find((item) => item.index === drag.lastTargetIndex)
+            : null;
+          if (
+            stickyRect &&
+            event.clientX >= stickyRect.left &&
+            event.clientX <= stickyRect.right &&
+            event.clientY >= stickyRect.top &&
+            event.clientY <= stickyRect.bottom
+          ) {
+            return stickyRect.index;
+          }
+
+          let best = null;
+          let bestScore = Number.POSITIVE_INFINITY;
+          for (const item of rects) {
+            const insideX = event.clientX >= item.left && event.clientX <= item.right;
+            const insideY = event.clientY >= item.top && event.clientY <= item.bottom;
+            const outsideX = insideX ? 0 : event.clientX < item.left ? item.left - event.clientX : event.clientX - item.right;
+            const outsideY = insideY ? 0 : event.clientY < item.top ? item.top - event.clientY : event.clientY - item.bottom;
+            const centerDx = (event.clientX - item.centerX) / Math.max(item.width, 1);
+            const centerDy = (event.clientY - item.centerY) / Math.max(item.height, 1);
+            const insideBonus = insideX && insideY ? -100000 : 0;
+            const score = insideBonus + (outsideX * outsideX) + (outsideY * outsideY) + ((centerDx * centerDx + centerDy * centerDy) * 12);
+            if (score < bestScore) {
+              bestScore = score;
+              best = item;
+            }
+          }
+          return Number.isInteger(best?.index) ? best.index : null;
+        }
+
         function moveAlbumPlaceholder(event) {
           const drag = state.drag;
-          if (!drag?.placeholder) return;
-          const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".album-card");
-          if (
-            !target ||
-            target === drag.placeholder ||
-            target === drag.albumNode ||
-            target.classList.contains("album-drag-ghost") ||
-            target.classList.contains("is-drag-source") ||
-            !els.albumsGrid.contains(target)
-          ) return;
+          const grid = els.albumsGrid;
+          if (!drag?.placeholder || !grid) return;
 
-          const rect = target.getBoundingClientRect();
-          const verticalSide = event.clientY > rect.top + rect.height / 2;
-          const horizontalSide = event.clientX > rect.left + rect.width / 2;
-          const insertAfter = Math.abs(event.clientY - (rect.top + rect.height / 2)) > rect.height * 0.22
-            ? verticalSide
-            : horizontalSide;
-          els.albumsGrid.insertBefore(drag.placeholder, insertAfter ? target.nextSibling : target);
+          const targetIndex = getAlbumDragTargetIndexFromPoint(event, drag);
+          if (!Number.isInteger(targetIndex)) return;
+          if (drag.lastTargetIndex === targetIndex) return;
+
+          const liveNodes = getAlbumDragLiveNodes(drag);
+          const referenceNode = liveNodes[targetIndex] || null;
+          grid.insertBefore(drag.placeholder, referenceNode);
+          drag.lastTargetIndex = targetIndex;
         }
 
         function stopAlbumAutoScroll() {
@@ -18172,6 +18281,7 @@ function albumFromEvent(event) {
           const before = scrollBox.scrollTop;
           scrollBox.scrollTop += auto.speed;
           if (scrollBox.scrollTop !== before && Number.isFinite(drag.lastClientX) && Number.isFinite(drag.lastClientY)) {
+            refreshAlbumDragTargetRects(drag);
             moveAlbumPlaceholder({ clientX: drag.lastClientX, clientY: drag.lastClientY });
           }
 
@@ -18212,6 +18322,7 @@ function albumFromEvent(event) {
         function startAlbumDrag(press, event) {
           if (!press || state.drag) return;
           clearTimeout(press.timer);
+          clearTimeout(press.armTimer);
           if (els.contextMenuBackdrop.classList.contains("open")) closeContextMenu();
 
           const albumNode = press.albumNode;
@@ -18223,7 +18334,7 @@ function albumFromEvent(event) {
 
           const ghost = albumNode.cloneNode(true);
           ghost.classList.add("album-drag-ghost");
-          ghost.classList.remove("is-pressed", "is-drag-source");
+          ghost.classList.remove("is-pressed", "is-album-drag-pressed", "is-album-drag-armed", "is-drag-source");
           ghost.style.width = `${rect.width}px`;
           ghost.style.height = `${rect.height}px`;
           ghost.style.left = `${rect.left}px`;
@@ -18232,7 +18343,7 @@ function albumFromEvent(event) {
 
           albumNode.parentNode.insertBefore(placeholder, albumNode);
           albumNode.classList.add("is-drag-source");
-          albumNode.classList.remove("is-pressed");
+          albumNode.classList.remove("is-pressed", "is-album-drag-pressed", "is-album-drag-armed");
 
           state.drag = {
             albumNode,
@@ -18244,12 +18355,16 @@ function albumFromEvent(event) {
             lastClientX: event.clientX,
             lastClientY: event.clientY,
             startIndex: getAlbumNodes().indexOf(albumNode),
+            lastTargetIndex: null,
+            targetRects: [],
           };
+          refreshAlbumDragTargetRects(state.drag);
 
           document.body.classList.add("album-reorder-active");
           toggleSelectionSuppressed(true);
           clearTextSelection();
           setAlbumGhostPosition(event);
+          moveAlbumPlaceholder(event);
           updateAlbumAutoScroll(event);
         }
 
@@ -18260,7 +18375,7 @@ function albumFromEvent(event) {
           state.drag = null;
           stopAlbumAutoScroll();
 
-          albumNode.classList.remove("is-drag-source", "is-pressed");
+          albumNode.classList.remove("is-drag-source", "is-pressed", "is-album-drag-pressed", "is-album-drag-armed");
           if (placeholder?.parentNode) placeholder.parentNode.insertBefore(albumNode, placeholder);
           placeholder?.remove();
           ghost?.remove();
@@ -18299,18 +18414,30 @@ function albumFromEvent(event) {
             pointerId: event.pointerId,
             startX: event.clientX,
             startY: event.clientY,
+            startScrollTop: els.albumsView?.scrollTop || 0,
+            startedAt: performance.now(),
             moved: false,
             triggered: false,
+            dragArmed: false,
+            armTimer: 0,
             timer: setTimeout(() => {
-              if (!state.press || state.drag) return;
-              state.press.triggered = true;
+              const currentPress = state.press;
+              if (!currentPress || currentPress.pointerId !== event.pointerId || currentPress.moved || state.drag) return;
+              currentPress.triggered = true;
               toggleSelectionSuppressed(true);
               clearTextSelection();
               openContextMenu(albumNode, event.pointerId);
+              currentPress.albumNode?.classList.add("is-album-drag-pressed");
+              currentPress.armTimer = window.setTimeout(() => {
+                const armedPress = state.press;
+                if (!armedPress || armedPress.pointerId !== event.pointerId || armedPress.moved || !armedPress.triggered || state.drag) return;
+                armedPress.dragArmed = true;
+                armedPress.albumNode?.classList.add("is-album-drag-armed");
+              }, ALBUM_REORDER_ARM_MS);
             }, LONG_PRESS_MS),
           };
 
-          if (event.cancelable) event.preventDefault();
+          if (event.pointerType !== "touch" && event.cancelable) event.preventDefault();
           albumNode.classList.add("is-pressed");
           toggleSelectionSuppressed(true);
           clearTextSelection();
@@ -18335,10 +18462,41 @@ function albumFromEvent(event) {
             event.clientX - press.startX,
             event.clientY - press.startY,
           );
+          const verticalDistance = Math.abs(event.clientY - press.startY);
+          const horizontalDistance = Math.abs(event.clientX - press.startX);
+          const scrollDelta = Math.abs((els.albumsView?.scrollTop || 0) - (press.startScrollTop || 0));
+
+          if (
+            !press.triggered &&
+            (verticalDistance > ALBUM_TAP_OPEN_TOLERANCE_PX || scrollDelta > ALBUM_TAP_SCROLL_TOLERANCE_PX) &&
+            verticalDistance >= horizontalDistance
+          ) {
+            press.moved = true;
+            resetPressState(true);
+            toggleSelectionSuppressed(false);
+            return;
+          }
+
           if (distance <= MOVE_TOLERANCE_PX) return;
 
+          if (!press.triggered) {
+            press.moved = true;
+            resetPressState(true);
+            toggleSelectionSuppressed(false);
+            return;
+          }
+
+          if (!press.dragArmed) {
+            press.moved = true;
+            if (event.cancelable) event.preventDefault();
+            if (els.contextMenuBackdrop.classList.contains("open")) closeContextMenu();
+            resetPressState(true);
+            toggleSelectionSuppressed(false);
+            return;
+          }
+
           press.moved = true;
-          event.preventDefault();
+          if (event.cancelable) event.preventDefault();
           startAlbumDrag(press, event);
         });
 
@@ -18368,7 +18526,18 @@ function albumFromEvent(event) {
               if (press.cover.hasPointerCapture?.(event.pointerId))
                 press.cover.releasePointerCapture?.(event.pointerId);
             } catch {}
-            const blockClick = press.triggered || press.moved;
+            const endDistance = Math.hypot(
+              event.clientX - press.startX,
+              event.clientY - press.startY,
+            );
+            const scrollDelta = Math.abs((els.albumsView?.scrollTop || 0) - (press.startScrollTop || 0));
+            const pressDuration = performance.now() - (press.startedAt || performance.now());
+            const blockClick =
+              press.triggered ||
+              press.moved ||
+              scrollDelta > ALBUM_TAP_SCROLL_TOLERANCE_PX ||
+              endDistance > ALBUM_TAP_OPEN_TOLERANCE_PX ||
+              pressDuration > ALBUM_TAP_MAX_MS;
             const albumNode = press.albumNode;
             resetPressState();
             if (blockClick) {
@@ -18393,6 +18562,18 @@ function albumFromEvent(event) {
             resetPressState();
         });
 
+        els.albumsView?.addEventListener("scroll", () => {
+          const press = state.press;
+          if (!press || press.triggered || state.drag) return;
+          const scrollDelta = Math.abs((els.albumsView?.scrollTop || 0) - (press.startScrollTop || 0));
+          if (scrollDelta > ALBUM_TAP_SCROLL_TOLERANCE_PX) {
+            press.moved = true;
+            resetPressState(true);
+            toggleSelectionSuppressed(false);
+            clearTextSelection();
+          }
+        }, { passive: true });
+
         on(
           els.albumsGrid,
           "touchstart",
@@ -18405,7 +18586,12 @@ function albumFromEvent(event) {
         els.albumsGrid.addEventListener(
           "touchmove",
           (event) => {
-            if ((state.press || state.drag) && event.target.closest(".album-wrap")) {
+            const press = state.press;
+            const shouldBlockNativeScroll = Boolean(
+              state.drag ||
+              (press && press.triggered)
+            );
+            if (shouldBlockNativeScroll && event.target.closest(".album-wrap")) {
               event.preventDefault();
               clearTextSelection();
             }
@@ -18695,11 +18881,365 @@ function setHomeSection(section = "Album") {
           }
         });
 
+        // POST-IT: drag carte tra slot della stessa pagina.
+        // Il gesto è gemello del reorder album: long press fermo = menu, movimento = ghost e placeholder.
+        function getAlbumDetailSlotNodes() {
+          return Array.from(els.albumDetailCardsGrid?.children || []).filter((node) =>
+            (node.classList?.contains("album-detail-card") || node.classList?.contains("album-slot-empty")) &&
+            !node.classList.contains("album-card-drag-placeholder") &&
+            !node.classList.contains("album-card-drag-ghost")
+          );
+        }
+
+        function getAlbumDetailCardNodeById(cardId = "") {
+          const safeId = String(cardId || "").replace(/"/g, '\\"');
+          return safeId ? els.albumDetailCardsGrid?.querySelector(`.album-detail-card[data-card-id="${safeId}"]`) : null;
+        }
+
+        function setCardGhostPosition(event) {
+          const drag = state.cardDrag;
+          if (!drag?.ghost) return;
+          drag.ghost.style.left = `${event.clientX - drag.offsetX}px`;
+          drag.ghost.style.top = `${event.clientY - drag.offsetY}px`;
+        }
+
+        function getCardDragLiveNodes(drag) {
+          const grid = els.albumDetailCardsGrid;
+          if (!grid || !drag?.placeholder) return [];
+          return Array.from(grid.children || []).filter((node) =>
+            (node.classList?.contains("album-detail-card") || node.classList?.contains("album-slot-empty")) &&
+            node !== drag.placeholder &&
+            node !== drag.cardNode &&
+            !node.classList.contains("album-card-drag-ghost") &&
+            !node.classList.contains("is-drag-source")
+          );
+        }
+
+        function refreshCardDragSlotRects(drag) {
+          const grid = els.albumDetailCardsGrid;
+          if (!grid || !drag?.placeholder) return [];
+          const nodes = Array.from(grid.children || []).filter((node) =>
+            (node.classList?.contains("album-detail-card") || node.classList?.contains("album-slot-empty") || node === drag.placeholder) &&
+            node !== drag.cardNode &&
+            !node.classList.contains("album-card-drag-ghost") &&
+            !node.classList.contains("is-drag-source")
+          );
+
+          drag.slotRects = nodes
+            .map((node, index) => {
+              const rect = node.getBoundingClientRect();
+              return {
+                index,
+                left: rect.left,
+                right: rect.right,
+                top: rect.top,
+                bottom: rect.bottom,
+                width: rect.width,
+                height: rect.height,
+                centerX: rect.left + rect.width / 2,
+                centerY: rect.top + rect.height / 2,
+              };
+            })
+            .filter((item) => item.width > 1 && item.height > 1);
+          return drag.slotRects;
+        }
+
+        function getCardDragSlotIndexFromPoint(event, drag) {
+          let rects = drag?.slotRects || [];
+          if (!rects.length) rects = refreshCardDragSlotRects(drag);
+          if (!rects.length) return null;
+
+          const stickyRect = Number.isInteger(drag.lastSlotIndex)
+            ? rects.find((item) => item.index === drag.lastSlotIndex)
+            : null;
+          if (
+            stickyRect &&
+            event.clientX >= stickyRect.left &&
+            event.clientX <= stickyRect.right &&
+            event.clientY >= stickyRect.top &&
+            event.clientY <= stickyRect.bottom
+          ) {
+            return stickyRect.index;
+          }
+
+          let best = null;
+          let bestScore = Number.POSITIVE_INFINITY;
+          for (const item of rects) {
+            const insideX = event.clientX >= item.left && event.clientX <= item.right;
+            const insideY = event.clientY >= item.top && event.clientY <= item.bottom;
+            const outsideX = insideX ? 0 : event.clientX < item.left ? item.left - event.clientX : event.clientX - item.right;
+            const outsideY = insideY ? 0 : event.clientY < item.top ? item.top - event.clientY : event.clientY - item.bottom;
+            const centerDx = (event.clientX - item.centerX) / Math.max(item.width, 1);
+            const centerDy = (event.clientY - item.centerY) / Math.max(item.height, 1);
+            const insideBonus = insideX && insideY ? -100000 : 0;
+            const score = insideBonus + (outsideX * outsideX) + (outsideY * outsideY) + ((centerDx * centerDx + centerDy * centerDy) * 12);
+            if (score < bestScore) {
+              bestScore = score;
+              best = item;
+            }
+          }
+          return Number.isInteger(best?.index) ? best.index : null;
+        }
+
+        function moveCardPlaceholder(event) {
+          const drag = state.cardDrag;
+          const grid = els.albumDetailCardsGrid;
+          if (!drag?.placeholder || !grid) return;
+
+          const slotIndex = getCardDragSlotIndexFromPoint(event, drag);
+          if (!Number.isInteger(slotIndex)) return;
+          if (drag.lastSlotIndex === slotIndex) return;
+
+          const liveNodes = getCardDragLiveNodes(drag);
+          const referenceNode = liveNodes[slotIndex] || null;
+          grid.insertBefore(drag.placeholder, referenceNode);
+          drag.lastSlotIndex = slotIndex;
+        }
+
+        function getCardDragEdgePageDelta(event, drag) {
+          const view = els.albumDetailCardsView || els.albumDetailCardsGrid;
+          if (!event || !drag || !view) return 0;
+
+          const cards = Array.isArray(state.albumDetailCards) ? state.albumDetailCards : [];
+          const { totalPages, currentPage } = getAlbumDetailPageConfig(cards);
+          if (totalPages <= 1) return 0;
+
+          const rect = view.getBoundingClientRect();
+          if (!rect.width || !rect.height) return 0;
+
+          const EDGE_ZONE = Math.min(74, Math.max(46, rect.width * 0.16));
+          const verticalSafeTop = rect.top - 18;
+          const verticalSafeBottom = rect.bottom + 18;
+          if (event.clientY < verticalSafeTop || event.clientY > verticalSafeBottom) return 0;
+
+          if (event.clientX <= rect.left + EDGE_ZONE && currentPage > 1) return -1;
+          if (event.clientX >= rect.right - EDGE_ZONE && currentPage < totalPages) return 1;
+          return 0;
+        }
+
+        function prepareCardDragPlaceholderAfterPageChange(drag, event) {
+          const grid = els.albumDetailCardsGrid;
+          if (!grid || !drag?.placeholder) return;
+
+          const sourceId = String(drag.cardNode?.dataset?.cardId || "");
+          if (sourceId) {
+            const safeId = sourceId.replace(/"/g, '\\"');
+            const renderedSource = grid.querySelector(`.album-detail-card[data-card-id="${safeId}"]`);
+            if (renderedSource && renderedSource !== drag.cardNode) {
+              renderedSource.parentNode?.insertBefore(drag.placeholder, renderedSource);
+              renderedSource.remove();
+            }
+          }
+
+          if (!drag.placeholder.parentNode) {
+            const nodes = Array.from(grid.children || []).filter((node) =>
+              node.classList?.contains("album-detail-card") || node.classList?.contains("album-slot-empty")
+            );
+            const fallbackNode = event?.clientX < (window.innerWidth || 0) / 2 ? nodes[0] : null;
+            grid.insertBefore(drag.placeholder, fallbackNode || null);
+          }
+
+          drag.slotRects = [];
+          drag.lastSlotIndex = null;
+          refreshCardDragSlotRects(drag);
+          if (event) moveCardPlaceholder(event);
+        }
+
+        function handleCardDragEdgePageChange(event) {
+          const drag = state.cardDrag;
+          if (!drag || !event) return false;
+
+          const now = performance.now();
+          if (drag.edgePageLockUntil && now < drag.edgePageLockUntil) return false;
+
+          const pageDelta = getCardDragEdgePageDelta(event, drag);
+          if (!pageDelta) {
+            drag.edgePageHoldDelta = 0;
+            drag.edgePageHoldStartedAt = 0;
+            return false;
+          }
+
+          if (drag.edgePageHoldDelta !== pageDelta) {
+            drag.edgePageHoldDelta = pageDelta;
+            drag.edgePageHoldStartedAt = now;
+            return false;
+          }
+
+          const EDGE_HOLD_MS = 260;
+          if (now - (drag.edgePageHoldStartedAt || now) < EDGE_HOLD_MS) return false;
+
+          const cards = Array.isArray(state.albumDetailCards) ? state.albumDetailCards : [];
+          const { totalPages, currentPage } = getAlbumDetailPageConfig(cards);
+          const nextPage = Math.min(totalPages, Math.max(1, currentPage + pageDelta));
+          if (nextPage === currentPage) return false;
+
+          drag.edgePageLockUntil = now + 620;
+          drag.edgePageHoldDelta = 0;
+          drag.edgePageHoldStartedAt = 0;
+          state.albumDetailPage = nextPage;
+          renderAlbumDetailCards(cards);
+          animateAlbumPageEntry(pageDelta);
+          prepareCardDragPlaceholderAfterPageChange(drag, event);
+          return true;
+        }
+
+        function startCardSlotDrag(press, event) {
+          if (!press || state.cardDrag) return;
+          clearTimeout(press.timer);
+          clearTimeout(press.armTimer);
+          if (els.albumActionMenuBackdrop?.classList.contains("open")) closeAlbumActionMenu();
+
+          const cardNode = press.cardNode;
+          const rect = cardNode.getBoundingClientRect();
+          const placeholder = document.createElement("article");
+          placeholder.className = "album-card-drag-placeholder";
+          placeholder.setAttribute("aria-hidden", "true");
+          placeholder.style.width = `${rect.width}px`;
+          placeholder.style.height = `${rect.height}px`;
+
+          const ghost = cardNode.cloneNode(true);
+          ghost.classList.add("album-card-drag-ghost");
+          ghost.classList.remove("is-context-pressing", "is-card-drag-pressed", "is-card-drag-armed", "is-drag-source", "is-selected");
+          ghost.style.width = `${rect.width}px`;
+          ghost.style.height = `${rect.height}px`;
+          ghost.style.left = `${rect.left}px`;
+          ghost.style.top = `${rect.top}px`;
+          document.body.appendChild(ghost);
+
+          cardNode.parentNode.insertBefore(placeholder, cardNode);
+          cardNode.classList.add("is-drag-source");
+          cardNode.classList.remove("is-context-pressing", "is-card-drag-pressed", "is-card-drag-armed");
+
+          state.cardDrag = {
+            cardNode,
+            placeholder,
+            ghost,
+            pointerId: press.pointerId,
+            offsetX: event.clientX - rect.left,
+            offsetY: event.clientY - rect.top,
+            startSlotNumber: Number(cardNode.dataset.slotNumber || 0),
+            lastSlotIndex: null,
+            slotRects: [],
+            edgePageHoldDelta: 0,
+            edgePageHoldStartedAt: 0,
+            edgePageLockUntil: 0,
+            windowMoveHandler: null,
+            windowEndHandler: null,
+          };
+
+          const activeDrag = state.cardDrag;
+          activeDrag.windowMoveHandler = (moveEvent) => {
+            const currentDrag = state.cardDrag;
+            if (!currentDrag || currentDrag !== activeDrag || currentDrag.pointerId !== moveEvent.pointerId) return;
+            if (moveEvent.__paCardDragHandled) return;
+            moveEvent.__paCardDragHandled = true;
+            if (moveEvent.cancelable) moveEvent.preventDefault();
+            moveEvent.stopPropagation?.();
+            setCardGhostPosition(moveEvent);
+            handleCardDragEdgePageChange(moveEvent);
+            moveCardPlaceholder(moveEvent);
+          };
+          activeDrag.windowEndHandler = async (endEvent) => {
+            const currentDrag = state.cardDrag;
+            if (!currentDrag || currentDrag !== activeDrag || (endEvent.pointerId && currentDrag.pointerId !== endEvent.pointerId)) return;
+            if (endEvent.__paCardDragEndHandled) return;
+            endEvent.__paCardDragEndHandled = true;
+            if (endEvent.cancelable) endEvent.preventDefault();
+            endEvent.stopPropagation?.();
+            try { currentDrag.cardNode?.releasePointerCapture?.(endEvent.pointerId); } catch {}
+            await finishCardSlotDrag(endEvent.type === "pointerup");
+            resetCardPressState(true);
+          };
+          window.addEventListener("pointermove", activeDrag.windowMoveHandler, { passive: false, capture: true });
+          window.addEventListener("pointerup", activeDrag.windowEndHandler, { passive: false, capture: true });
+          window.addEventListener("pointercancel", activeDrag.windowEndHandler, { passive: false, capture: true });
+
+          refreshCardDragSlotRects(state.cardDrag);
+
+          document.body.classList.add("card-slot-reorder-active");
+          state.albumPageSwipeSuppressClick = true;
+          toggleSelectionSuppressed(true);
+          clearTextSelection();
+          setCardGhostPosition(event);
+          moveCardPlaceholder(event);
+        }
+
+        async function persistVisibleAlbumCardSlotOrder() {
+          if (!state.currentAlbum?.albumData?.id) return false;
+          const albumId = state.currentAlbum.albumData.id;
+          const cards = getAlbumCardsInInsertionOrder(await getCardsByAlbum(albumId));
+          const byId = new Map(cards.map((card) => [String(card.id || ""), card]));
+          const { slotsPerPage, currentPage } = getAlbumDetailPageConfig(cards);
+          const pageStart = (currentPage - 1) * slotsPerPage + 1;
+          const nodes = getAlbumDetailSlotNodes();
+          const now = new Date().toISOString();
+          let changed = false;
+
+          for (let index = 0; index < nodes.length; index += 1) {
+            const node = nodes[index];
+            if (!node.classList.contains("album-detail-card")) continue;
+            const cardId = String(node.dataset.cardId || "");
+            const record = byId.get(cardId);
+            if (!record) continue;
+            const nextSlot = pageStart + index;
+            const currentSlot = Number(record.albumSlotNumber || record.slotNumber || 0);
+            if (currentSlot === nextSlot) continue;
+            record.albumSlotNumber = nextSlot;
+            record.slotNumber = nextSlot;
+            record.updatedAt = now;
+            changed = true;
+            await putStore("cards", record);
+            await queueSync("card", record.id, "move-slot", record);
+          }
+
+          if (changed) {
+            await refreshCurrentAlbumDetailCards();
+            await refreshHomeSectionContent();
+            await refreshHomeCollectionTotals();
+          }
+          return changed;
+        }
+
+        async function finishCardSlotDrag(save = true) {
+          const drag = state.cardDrag;
+          if (!drag) return false;
+          const { cardNode, placeholder, ghost, startSlotNumber } = drag;
+          if (drag.windowMoveHandler) window.removeEventListener("pointermove", drag.windowMoveHandler, { capture: true });
+          if (drag.windowEndHandler) {
+            window.removeEventListener("pointerup", drag.windowEndHandler, { capture: true });
+            window.removeEventListener("pointercancel", drag.windowEndHandler, { capture: true });
+          }
+          state.cardDrag = null;
+
+          cardNode.classList.remove("is-drag-source", "is-context-pressing", "is-card-drag-pressed", "is-card-drag-armed");
+          if (placeholder?.parentNode) placeholder.parentNode.insertBefore(cardNode, placeholder);
+          placeholder?.remove();
+          ghost?.remove();
+          document.body.classList.remove("card-slot-reorder-active");
+          toggleSelectionSuppressed(false);
+          clearTextSelection();
+          window.setTimeout(() => { state.albumPageSwipeSuppressClick = false; }, 260);
+
+          let moved = false;
+          if (save) {
+            try {
+              moved = await persistVisibleAlbumCardSlotOrder();
+              if (moved) showStorageToast("Carta spostata");
+            } catch (error) {
+              console.error(error);
+              showStorageToast("Errore spostamento carta", true);
+              await refreshCurrentAlbumDetailCards();
+            }
+          }
+          return moved || Number(cardNode.dataset.slotNumber || 0) !== startSlotNumber;
+        }
+
         function resetCardPressState(blockNextClick = false) {
           const press = state.cardPress;
           if (!press) return;
           clearTimeout(press.timer);
-          press.cardNode?.classList.remove("is-context-pressing");
+          clearTimeout(press.armTimer);
+          press.cardNode?.classList.remove("is-context-pressing", "is-card-drag-pressed", "is-card-drag-armed");
           if (blockNextClick) {
             state.cardContextSuppressClick = true;
             window.setTimeout(() => { state.cardContextSuppressClick = false; }, 420);
@@ -18742,8 +19282,12 @@ function setHomeSection(section = "Album") {
             pointerId: event.pointerId,
             startX: event.clientX,
             startY: event.clientY,
+            lastX: event.clientX,
+            lastY: event.clientY,
             moved: false,
             triggered: false,
+            dragArmed: false,
+            armTimer: 0,
             timer: window.setTimeout(() => {
               const press = state.cardPress;
               if (!press || press.pointerId !== event.pointerId || press.moved) return;
@@ -18751,6 +19295,13 @@ function setHomeSection(section = "Album") {
               toggleSelectionSuppressed(true);
               clearTextSelection();
               openCardContextActionMenu(cardNode, event.pointerId);
+              clearTimeout(press.armTimer);
+              press.armTimer = window.setTimeout(() => {
+                const currentPress = state.cardPress;
+                if (!currentPress || currentPress.pointerId !== event.pointerId || currentPress.moved || !currentPress.triggered) return;
+                currentPress.dragArmed = true;
+                currentPress.cardNode?.classList.add("is-card-drag-pressed", "is-card-drag-armed");
+              }, CARD_SLOT_DRAG_ARM_MS);
             }, LONG_PRESS_MS),
           };
 
@@ -18762,19 +19313,60 @@ function setHomeSection(section = "Album") {
         });
 
         on(els.albumDetailCardsGrid, "pointermove", (event) => {
+          const drag = state.cardDrag;
+          if (drag && drag.pointerId === event.pointerId) {
+            event.__paCardDragHandled = true;
+            if (event.cancelable) event.preventDefault();
+            event.stopPropagation?.();
+            setCardGhostPosition(event);
+            handleCardDragEdgePageChange(event);
+            moveCardPlaceholder(event);
+            return;
+          }
+
           const press = state.cardPress;
           if (!press || press.pointerId !== event.pointerId) return;
+          press.lastX = event.clientX;
+          press.lastY = event.clientY;
           const distance = Math.hypot(event.clientX - press.startX, event.clientY - press.startY);
           if (distance <= MOVE_TOLERANCE_PX) return;
+
+          if (!press.triggered) {
+            if (event.cancelable) event.preventDefault();
+            event.stopPropagation?.();
+            resetCardPressState(true);
+            if (!els.albumActionMenuBackdrop?.classList.contains("open")) toggleSelectionSuppressed(false);
+            return;
+          }
+
+          if (!press.dragArmed) {
+            if (event.cancelable) event.preventDefault();
+            event.stopPropagation?.();
+            press.moved = true;
+            closeAlbumActionMenu();
+            resetCardPressState(true);
+            toggleSelectionSuppressed(false);
+            return;
+          }
+
           press.moved = true;
           if (event.cancelable) event.preventDefault();
-          try { press.cardNode?.releasePointerCapture?.(event.pointerId); } catch {}
-          resetCardPressState(false);
-          if (!els.albumActionMenuBackdrop?.classList.contains("open")) toggleSelectionSuppressed(false);
-          clearTextSelection();
+          event.stopPropagation?.();
+          startCardSlotDrag(press, event);
         });
 
-        on(els.albumDetailCardsGrid, "pointerup pointercancel lostpointercapture", (event) => {
+        on(els.albumDetailCardsGrid, "pointerup pointercancel lostpointercapture", async (event) => {
+          const drag = state.cardDrag;
+          if (drag && (!event.pointerId || drag.pointerId === event.pointerId)) {
+            event.__paCardDragEndHandled = true;
+            if (event.cancelable) event.preventDefault();
+            event.stopPropagation?.();
+            try { drag.cardNode?.releasePointerCapture?.(event.pointerId); } catch {}
+            await finishCardSlotDrag(event.type === "pointerup");
+            resetCardPressState(true);
+            return;
+          }
+
           const press = state.cardPress;
           if (!press || (event.pointerId && press.pointerId !== event.pointerId)) return;
           try { press.cardNode?.releasePointerCapture?.(event.pointerId); } catch {}
@@ -18798,6 +19390,11 @@ function setHomeSection(section = "Album") {
         });
 
         els.albumDetailCardsGrid?.addEventListener("click", (event) => {
+          if (state.cardDrag || document.body.classList.contains("card-slot-reorder-active")) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+          }
           if (state.cardContextSuppressClick) {
             event.preventDefault();
             event.stopPropagation();
