@@ -1156,6 +1156,108 @@ svg{overflow:visible;}
 #detailModal .detail-top-name{font-size:clamp(18px,2.4vh,24px);line-height:1.1;font-weight:850;color:#1c2e5a;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}
 #detailModal .card-sheet-actions{margin-left:auto;display:inline-flex;align-items:center;gap:6px;position:relative;}
 #detailModal .detail-content{padding:0;display:grid;gap:12px;}
+/* POST-IT: PILL PRESENZA IN COLLEZIONE
+   Badge nella scheda carta da aggiungere. Stile pill/card come riferimento: verde soft full-width se assente, arancio soft compatto se presente. */
+#detailModal .collection-status-wrap{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:-2px 0 0;
+  width:100%;
+}
+#detailModal .collection-status-pill{
+  appearance:none;
+  -webkit-appearance:none;
+  min-height:34px;
+  max-width:100%;
+  border-radius:999px;
+  padding:0 12px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  font-family:inherit;
+  font-size:10.5px;
+  font-weight:900;
+  letter-spacing:.01em;
+  line-height:1;
+  text-transform:uppercase;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:transform .16s ease, box-shadow .16s ease, background-color .16s ease, border-color .16s ease;
+}
+#detailModal .collection-status-pill:active{transform:scale(.985);}
+#detailModal .collection-status-pill.is-present{
+  width:auto;
+  min-width:0;
+  min-height:34px;
+  padding:0 9px 0 7px;
+  border:1px solid rgba(255,122,0,.38);
+  background:rgba(255,122,0,.065);
+  color:#f26b00;
+  box-shadow:0 8px 18px rgba(255,122,0,.08), inset 0 1px 0 rgba(255,255,255,.82);
+}
+#detailModal .collection-status-pill.is-missing{
+  width:min(100%, 350px);
+  min-height:32px;
+  border:1px solid rgba(34,197,94,.34);
+  background:rgba(34,197,94,.055);
+  color:#16a34a;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.82);
+}
+#detailModal .collection-status-icon{
+  width:17px;
+  height:17px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+}
+#detailModal .collection-status-pill.is-present .collection-status-icon{
+  background:#ff7a00;
+  color:#fff;
+  box-shadow:0 2px 5px rgba(255,122,0,.22);
+}
+#detailModal .collection-status-pill.is-missing .collection-status-icon{
+  width:15px;
+  height:15px;
+  background:transparent;
+  color:#16a34a;
+}
+#detailModal .collection-status-icon svg{
+  width:11px;
+  height:11px;
+  display:block;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2.6;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+#detailModal .collection-status-pill.is-missing .collection-status-icon svg{
+  width:12px;
+  height:12px;
+  stroke-width:2.8;
+}
+#detailModal .collection-status-text{
+  min-width:0;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#detailModal .collection-status-chevron{
+  font-size:15px;
+  font-weight:950;
+  line-height:1;
+  opacity:.72;
+  color:currentColor;
+  transform:translateY(-.5px);
+  flex:0 0 auto;
+}
+#detailModal .collection-status-pill.is-missing .collection-status-chevron{display:none;}
+#detailModal.is-saved-card-detail .collection-status-wrap{display:none;}
+
 #detailModal .detail-image-wrap{display:flex;justify-content:center;padding:14px;border-radius:30px;background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.64);box-shadow:0 20px 42px rgba(66,89,152,.14),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);}
 #detailModal .detail-img{width:100%;max-width:320px;border-radius:16px;display:block;background:transparent;border:0;box-shadow:0 12px 28px rgba(57,91,176,.16);}
 #detailModal .detail-price{text-align:center;margin-top:10px;margin:0;padding:7px 14px;border-radius:24px;background:rgba(255,255,255,.50);border:1px solid rgba(255,255,255,.62);box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.86);}
@@ -10476,6 +10578,14 @@ paint-order="stroke">
             </div>
           </div>
           <div class="detail-content">
+            <div class="collection-status-wrap">
+              <button class="collection-status-pill is-missing" id="collectionStatusPill" type="button" aria-expanded="false" aria-controls="collectionStatusDetails">
+                <span class="collection-status-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg></span>
+                <span class="collection-status-text" id="collectionStatusText">NON PRESENTE NELLA COLLEZIONE</span>
+                <span class="collection-status-chevron" aria-hidden="true">&gt;</span>
+              </button>
+              <div class="collection-status-details" id="collectionStatusDetails" hidden></div>
+            </div>
             <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Retro carta Pokémon"></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""><button type="button" class="card-zoom-btn" id="cardZoomBtn" aria-label="Ingrandisci carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"></path><path d="M3 3l7 7"></path><path d="M16 3h5v5"></path><path d="M21 3l-7 7"></path><path d="M8 21H3v-5"></path><path d="M3 21l7-7"></path><path d="M16 21h5v-5"></path><path d="M21 21l-7-7"></path></svg></button></div>
             <div class="detail-price"><span class="detail-price-label">Prezzo</span><button type="button" class="price-dots-btn" id="manualSetPill" aria-label="Opzioni prezzo" aria-haspopup="menu" aria-expanded="false"><span aria-hidden="true"></span></button><div class="price-action-menu" id="priceActionMenu" role="menu" aria-hidden="true"><button type="button" class="price-action-item" id="priceActionEdit" role="menuitem">Modifica</button><button type="button" class="price-action-item danger" id="priceActionRestore" role="menuitem">Ripristina</button></div><span class="detail-price-source" id="detailPriceSource" aria-live="polite"></span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-variant-card" aria-label="Varianti carta">
@@ -10818,6 +10928,9 @@ const el = {
       detailPriceValue: document.getElementById('detailPriceValue'),
       detailPriceSource: document.getElementById('detailPriceSource'),
       detailOfferLabel: document.getElementById('detailOfferLabel'),
+      collectionStatusPill: document.getElementById('collectionStatusPill'),
+      collectionStatusText: document.getElementById('collectionStatusText'),
+      collectionStatusDetails: document.getElementById('collectionStatusDetails'),
       manualSetPill: document.getElementById('manualSetPill'),
       priceActionMenu: document.getElementById('priceActionMenu'),
       priceActionEdit: document.getElementById('priceActionEdit'),
@@ -13071,6 +13184,40 @@ function runSearch(rawQuery) {
       });
     }
 
+    
+function getCollectionStatusBlueprintId(card = {}) {
+      const raw = card.rawCard || card;
+      const value = card.blueprintId ?? card.blueprint_id ?? raw.id ?? raw.blueprint_id ?? raw.card_id ?? card.id ?? '';
+      return String(value ?? '').trim();
+    }
+
+    function setCollectionStatusPill(isPresent = false) {
+      if (!el.collectionStatusPill || !el.collectionStatusText) return;
+      el.collectionStatusPill.classList.toggle('is-present', Boolean(isPresent));
+      el.collectionStatusPill.classList.toggle('is-missing', !isPresent);
+      el.collectionStatusText.textContent = isPresent ? 'PRESENTE NELLA COLLEZIONE' : 'NON PRESENTE NELLA COLLEZIONE';
+      el.collectionStatusPill.setAttribute('aria-label', el.collectionStatusText.textContent);
+      el.collectionStatusPill.setAttribute('aria-expanded', 'false');
+      if (el.collectionStatusDetails) {
+        el.collectionStatusDetails.hidden = true;
+        el.collectionStatusDetails.textContent = '';
+      }
+    }
+
+    async function updateCollectionStatusForCard(card = {}) {
+      setCollectionStatusPill(false);
+      const currentId = getCollectionStatusBlueprintId(card);
+      if (!currentId || !window.PokeAlbumStorage || typeof window.PokeAlbumStorage.exportAll !== 'function') return;
+      try {
+        const data = await window.PokeAlbumStorage.exportAll();
+        const cards = Array.isArray(data?.cards) ? data.cards : [];
+        const isPresent = cards.some(saved => getCollectionStatusBlueprintId(saved) === currentId);
+        setCollectionStatusPill(isPresent);
+      } catch (error) {
+        console.warn('Impossibile verificare presenza in collezione', error);
+      }
+    }
+
     // POST-IT: apertura scheda carta da ricerca.
 // Popola immagine, dati, prezzo, varianti e JSON. È usata anche dal secondo script quando clicchi una carta salvata.
 async function openCardDetails(cardId) {
@@ -13078,6 +13225,7 @@ async function openCardDetails(cardId) {
       if (!card) return;
       state.selectedCard = card;
       resetCardDetailTemporaryFields();
+      void updateCollectionStatusForCard(card);
       const f = getDisplayFields(card);
       const displayName = toTitleCase(f.name || 'Dettaglio carta');
       const detailImageUrl = getCardFullUrl(card);
@@ -13117,6 +13265,7 @@ async function openCardDetails(cardId) {
 
 
     let pendingOriginType = '';
+    let pendingOriginDetail = '';
     let pendingOriginInTransit = false;
 
     // POST-IT: reset campi temporanei scheda.
@@ -13127,6 +13276,7 @@ function resetCardDetailTemporaryFields() {
       setSavedCardEditMode(false);
       if (el.detailModal) delete el.detailModal.dataset.savedCardId;
       el.detailModal?.classList.remove('is-saved-card-detail');
+      setCollectionStatusPill(false);
       el.detailModal?.querySelector('.saved-detail-card')?.setAttribute('aria-hidden', 'true');
       el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'false');
       [el.cardTotalSetInput, el.cardArtistInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
@@ -13158,6 +13308,7 @@ function resetCardDetailTemporaryFields() {
       });
 
       pendingOriginType = '';
+      pendingOriginDetail = '';
       pendingOriginInTransit = false;
       if (el.originInTransitToggle) el.originInTransitToggle.checked = false;
       setCardOrigin('', '', false);
@@ -13248,6 +13399,7 @@ function resetCardDetailTemporaryFields() {
         el.cardOriginValue.classList.toggle('is-placeholder', !label);
       }
       pendingOriginType = cleanType;
+      pendingOriginDetail = cleanDetail;
       pendingOriginInTransit = originInTransit;
       if (el.originInTransitToggle) el.originInTransitToggle.checked = originInTransit;
       document.querySelectorAll('[data-origin-type]').forEach((button) => {
@@ -13446,6 +13598,10 @@ function openOriginChoiceSheet() {
             ? 'Bustina'
             : '';
       pendingOriginType = type;
+      pendingOriginDetail = (() => {
+        const match = value.match(/-\s*€?\s*(.+)$/i);
+        return type === 'Acquisto Singolo' && match ? formatEuroAmount(match[1]) : '';
+      })();
       pendingOriginInTransit = /in arrivo/i.test(value);
       document.querySelectorAll('[data-origin-type]').forEach((button) => {
         button.classList.toggle('is-selected', Boolean(type && button.dataset.originType === type));
@@ -13989,6 +14145,14 @@ function buildCollectionCardPayload() {
       const marketSelected = state.market?.selected || {};
       const priceValue = String(el.detailPriceValue?.textContent || '').trim();
       const priceSource = String(el.detailPriceSource?.textContent || '').trim();
+      const originType = String(pendingOriginType || '').trim();
+      const originDetail = String(pendingOriginDetail || '').trim();
+      const initialValueText = originType === 'Acquisto Singolo' && originDetail
+        ? `€ ${originDetail}`
+        : (priceValue && priceValue !== '-' ? priceValue : '');
+      const initialValueSource = originType === 'Acquisto Singolo' && originDetail
+        ? 'Acquisto Singolo'
+        : priceSource;
       return {
         blueprintId: card.id ?? card.blueprint_id ?? null,
         images: {
@@ -14015,13 +14179,14 @@ function buildCollectionCardPayload() {
         releaseDate: el.cardDateInput?.value?.trim() || '',
         origin: {
           label: el.cardOriginInput?.value || '',
-          type: pendingOriginType || '',
+          type: originType,
+          detail: originDetail,
           inTransit: Boolean(pendingOriginInTransit),
         },
         priceAtAdd: {
-          valueText: priceValue && priceValue !== '-' ? priceValue : '',
+          valueText: initialValueText,
           currency: 'EUR',
-          source: priceSource,
+          source: initialValueSource,
           offerLabel: el.detailOfferLabel?.textContent || '',
           language: marketSelected.langKey || '',
           condition: marketSelected.condKey || '',
@@ -15221,8 +15386,20 @@ async function loadSavedAlbums() {
           return formatSavedCardDate(card.addedAt || card.insertedAt || card.createdAt || card.priceAtAdd?.capturedAt || "");
         }
 
+        function getSavedCardSinglePurchasePrice(card = {}) {
+          const origin = card.origin || {};
+          const type = String(origin.type || '').trim();
+          const label = String(origin.label || '').trim();
+          if (type !== 'Acquisto Singolo' && !label.startsWith('Acquisto Singolo')) return '';
+          const detail = String(origin.detail || origin.value || '').trim();
+          if (detail) return detail;
+          const match = label.match(/-\s*€?\s*(.+)$/i);
+          return match ? match[1].trim() : '';
+        }
+
         function formatSavedCardInitialValue(card = {}) {
-          const rawValue = String(card.priceAtAdd?.valueText || card.initialValue || "").trim();
+          const purchasePrice = getSavedCardSinglePurchasePrice(card);
+          const rawValue = String(purchasePrice || card.priceAtAdd?.valueText || card.initialValue || "").trim();
           const cleanValue = rawValue.replace(/^€\s*/i, "").trim();
           if (!cleanValue || cleanValue === "-" || /^nessun riscontro$/i.test(cleanValue)) return "Nessun riscontro";
           return /^€\s*/i.test(rawValue) ? rawValue : `€ ${cleanValue}`;
