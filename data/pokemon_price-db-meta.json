@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-01T19:54:40.068Z",
+  "updatedAt": "2026-06-06T17:08:33.782Z",
   "appName": "Giuseppe Aquilano App 20260427200222",
   "appId": 21034,
   "gameId": 5,
@@ -10,8 +10,8 @@
   "cardsCount": null,
   "maxRequestsPerSecond": 8,
   "concurrency": 3,
-  "pricesCount": 59277,
-  "offersReadCount": 2614683,
+  "pricesCount": 58831,
+  "offersReadCount": 2595687,
   "skippedExpansionsCount": 0,
   "skippedExpansions": [],
   "source": "cardtrader-marketplace-products-by-expansion",
