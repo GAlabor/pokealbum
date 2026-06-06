@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi403-album-count-dot-search-font-20260606" />
+    <meta name="pokealbum-build" content="vi404-no-text-selection-on-card-longpress-20260606" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -2167,6 +2167,8 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{bottom:calc(var(--s
 .album-card-drag-ghost .album-detail-card{width:100% !important;height:100% !important;max-width:none !important;aspect-ratio:2.5/3.5 !important}
 .album-card-drag-ghost .album-detail-card-image-wrap{width:100% !important;height:100% !important;overflow:hidden !important;border-radius:13px !important;clip-path:inset(0 round 13px) !important;box-shadow:0 18px 35px rgba(15,32,68,.28) !important}
 body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-behavior:none}
+.album-detail-cards,.album-detail-cards *,.album-detail-card,.album-detail-card *,.album-slot-empty,.album-slot-empty *,.album-card-touch-shade,.album-card-touch-preview,.album-card-touch-preview *,.album-card-touch-menu,.album-card-touch-menu *,.album-card-drag-ghost,.album-card-drag-ghost *{user-select:none !important;-webkit-user-select:none !important;-webkit-touch-callout:none !important}
+.album-detail-card,.album-detail-card-image-wrap,.album-detail-card-image,.album-slot-empty{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
 
 /* Drag target border: the blue border replaces the native white slot border. No pseudo-overlay, no double border, no weird shape-shifting circus. */
@@ -11167,6 +11169,8 @@ function setHomeSection(section = "Album") {
             if (!preview.classList.contains("show")) preview.innerHTML = "";
           }, 180);
           if (!albumCardTouch.dragging) albumCardTouch.longActive = false;
+          if (!albumCardTouch.dragging) toggleSelectionSuppressed(false);
+          clearTextSelection();
           albumCardTouch.sourceNode?.classList.remove("album-touch-pressed");
         }
         function showAlbumCardTouchPreview(sourceNode) {
@@ -11177,6 +11181,8 @@ function setHomeSection(section = "Album") {
           menu.classList.add("show");
           albumCardTouch.longActive = true;
           albumCardTouch.menuOpenedAt = performance.now();
+          toggleSelectionSuppressed(true);
+          clearTextSelection();
           sourceNode.classList.add("album-touch-pressed");
           if (navigator.vibrate) navigator.vibrate(12);
         }
@@ -11294,6 +11300,8 @@ function setHomeSection(section = "Album") {
         function cancelAlbumCardTouchPress() {
           if (albumCardTouch.timer) window.clearTimeout(albumCardTouch.timer);
           albumCardTouch.timer = null;
+          if (!albumCardTouch.longActive && !albumCardTouch.dragging) toggleSelectionSuppressed(false);
+          clearTextSelection();
           albumCardTouch.sourceNode?.classList.remove("album-touch-pressed");
         }
         function resetAlbumCardTouchState() {
@@ -11306,6 +11314,8 @@ function setHomeSection(section = "Album") {
           els.albumDetailCardsGrid?.querySelectorAll(".album-touch-source").forEach((node) => node.classList.remove("album-touch-source"));
           albumCardTouch.ghost?.remove();
           document.body.classList.remove("album-card-dragging");
+          toggleSelectionSuppressed(false);
+          clearTextSelection();
           albumCardTouch.pointerId = null;
           albumCardTouch.sourceNode = null;
           albumCardTouch.sourceSlot = 0;
@@ -11368,6 +11378,8 @@ function setHomeSection(section = "Album") {
             albumCardTouch.swipeCandidate = true;
             albumCardTouch.movedAfterLong = false;
             cardNode.classList.add("album-touch-pressed");
+            toggleSelectionSuppressed(true);
+            clearTextSelection();
             try { cardNode.setPointerCapture?.(event.pointerId); } catch {}
             cancelAlbumCardTouchPress();
             albumCardTouch.timer = window.setTimeout(() => {
@@ -11440,6 +11452,22 @@ function setHomeSection(section = "Album") {
         }
         enableAlbumDetailTouchLogic();
         enableAlbumDetailPageSwipe();
+
+        els.albumDetailCardsGrid?.addEventListener("selectstart", (event) => {
+          if (event.target.closest(".album-detail-card, .album-slot-empty")) {
+            event.preventDefault();
+            clearTextSelection();
+          }
+        });
+        els.albumDetailCardsGrid?.addEventListener("dragstart", (event) => {
+          if (event.target.closest(".album-detail-card, .album-slot-empty")) event.preventDefault();
+        });
+        els.albumDetailCardsGrid?.addEventListener("contextmenu", (event) => {
+          if (event.target.closest(".album-detail-card[data-card-id]")) {
+            event.preventDefault();
+            clearTextSelection();
+          }
+        });
 
         els.albumDetailCardsGrid?.addEventListener("click", (event) => {
           if (Date.now() < Number(albumCardTouch?.suppressClickUntil || 0)) {
