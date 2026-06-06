@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi404-no-text-selection-on-card-longpress-20260606" />
+    <meta name="pokealbum-build" content="vi407-add-card-suggestions-ux-20260607" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -2184,6 +2184,40 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 
 .add-card-search-view .card-search-title{left:58px!important;right:16px!important;text-align:left!important;justify-self:start!important;pointer-events:none}
 .storage-toast{width:max-content!important;max-width:calc(100vw - 16px)!important;overflow:hidden!important;text-overflow:clip!important}
+
+/* vi407 - Aggiungi carte: elenco suggerimenti allineato alla barra di ricerca */
+.add-card-search-view .card-search-panel-ux .suggestion-title,
+.add-card-search-view .card-search-panel-ux .suggestion-meta{
+  font-family:inherit !important;
+  font-size:14px !important;
+  font-weight:650 !important;
+  line-height:1.22 !important;
+  letter-spacing:-0.02em !important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-title{
+  color:#1c2e5a !important;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-meta{
+  margin-top:2px !important;
+  color:#7f8fac !important;
+}
+.add-card-search-view .card-search-panel-ux .suggestion-highlight{
+  background:transparent !important;
+  color:var(--blue,#2f64ff) !important;
+  font-weight:inherit !important;
+  border-radius:0 !important;
+  padding:0 !important;
+}
+.add-card-search-view .card-search-panel-ux .suggestion[data-show-all="1"] .suggestion-title{
+  font-family:inherit !important;
+  font-size:14px !important;
+  font-weight:650 !important;
+  line-height:1.22 !important;
+  letter-spacing:-0.02em !important;
+}
+
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -3282,7 +3316,7 @@ paint-order="stroke">
               <button class="card-search-back" id="backFromCardSearchBtn" type="button" aria-label="Torna al dettaglio album">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
               </button>
-              <h2 class="card-search-title">Ricerca carte</h2>
+              <h2 class="card-search-title">Aggiungi carte</h2>
               <div class="card-search-actions" aria-label="Azioni ricerca carte">
               </div>
             </div>
@@ -3773,7 +3807,7 @@ paint-order="stroke">
   </div>
     <script>
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi344-cachefix-20260601-231829';
+    const POKEALBUM_BUILD_VERSION = 'vi405-index-meta-cache-refresh-20260607';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const INDEX_URL = 'data/pokemon-index.json';
@@ -3859,30 +3893,52 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     })();
     async function fetchJsonWithAppCache(url, options = {}) {
       const force = Boolean(options.force);
+      const cacheFirst = options.cacheFirst === true;
       const cacheKey = new URL(url, window.location.href).href;
       const canUseCacheApi = Boolean(window.caches && typeof caches.open === 'function' && typeof caches.match === 'function');
-      if (!force && canUseCacheApi) {
+      async function readCachedJson() {
+        if (!canUseCacheApi) return null;
         try {
           const cached = await caches.match(cacheKey);
-          if (cached) return cached.json();
+          return cached ? cached.json() : null;
         } catch (error) {
           console.warn('Cache dati non leggibile', error);
+          return null;
         }
       }
-      const fetchUrl = force ? `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}` : url;
-      const response = await fetch(fetchUrl, { cache: 'no-store' });
-      if (!response.ok) {
-        throw new Error(`${url} non caricato: HTTP ${response.status}`);
+      if (!force && cacheFirst) {
+        const cached = await readCachedJson();
+        if (cached) return cached;
       }
-      if (canUseCacheApi) {
-        try {
-          const cache = await caches.open(APP_DATA_CACHE_NAME);
-          await cache.put(cacheKey, response.clone());
-        } catch (error) {
-          console.warn('Cache dati non salvata', error);
+      const fetchUrl = `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
+      try {
+        const response = await fetch(fetchUrl, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`${url} non caricato: HTTP ${response.status}`);
         }
+        if (canUseCacheApi) {
+          try {
+            const cache = await caches.open(APP_DATA_CACHE_NAME);
+            await cache.put(cacheKey, response.clone());
+          } catch (error) {
+            console.warn('Cache dati non salvata', error);
+          }
+        }
+        return response.json();
+      } catch (error) {
+        const cached = await readCachedJson();
+        if (cached) {
+          console.warn(`${url} non raggiungibile, uso la copia cache`, error);
+          return cached;
+        }
+        throw error;
       }
-      return response.json();
     }
 const state = {
       cards: [],
@@ -5579,12 +5635,38 @@ async function fetchPokemonIndex(force = false, options = {}) {
       if (!Number.isFinite(number)) return '0';
       return number.toLocaleString('it-IT');
     }
+    function getIndexUpdatedValue(meta) {
+      if (!meta || typeof meta !== 'object') return '';
+      return meta.updatedAt
+        || meta.updated_at
+        || meta.lastUpdated
+        || meta.last_updated
+        || meta.generatedAt
+        || meta.generated_at
+        || meta.builtAt
+        || meta.built_at
+        || meta.createdAt
+        || meta.created_at
+        || meta.timestamp
+        || meta.date
+        || '';
+    }
+    function getIndexExpansionsCount(meta) {
+      if (!meta || typeof meta !== 'object') return 0;
+      return meta.expansionsCount
+        || meta.expansionCount
+        || meta.expansions_count
+        || meta.setsCount
+        || meta.setCount
+        || meta.sets_count
+        || 0;
+    }
     function hydrateStats() {
       const count = formatItalianNumber(state.cards.length);
       const meta = state.meta;
-      const updatedAtValue = meta?.updatedAt || meta?.createdAt || '';
+      const updatedAtValue = getIndexUpdatedValue(meta);
       const updatedAt = updatedAtValue ? formatIndexDate(updatedAtValue) : '-';
-      const expansions = formatItalianNumber(meta?.expansionsCount || 0);
+      const expansions = formatItalianNumber(getIndexExpansionsCount(meta));
       el.updatedText.textContent = updatedAt && updatedAt !== '-'
         ? `Indice ${updatedAt} - ${expansions} espansioni ${count} carte`
         : `Indice - ${expansions} espansioni ${count} carte`;
