@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi407-add-card-suggestions-ux-20260607" />
+    <meta name="pokealbum-build" content="vi417-card-search-clear-near-lens-20260607" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -135,6 +135,13 @@ button,input{font:inherit}
 .album-picker-cancel:active{transform:scale(.97)}
 .album-picker-cancel svg{display:block}
 .album-picker-title{margin:13px 58px 0;color:#1c2e5a;font-size:19px;font-weight:900;letter-spacing:-.04em;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#moveAlbumPicker .album-picker-title{position:absolute;left:58px;right:154px;top:0;margin:13px 0 0;text-align:left}
+#moveAlbumPicker #moveAlbumAddAlbumBtn{position:absolute;right:0;top:4px}
+#moveSlotPicker .album-picker-title{position:absolute;left:58px;right:58px;top:0;margin:13px 0 0;text-align:left}
+#moveAlbumPicker .album-picker-title,#moveSlotPicker .album-picker-title{font-size:clamp(16px,2vh,20px);font-weight:750;letter-spacing:-0.03em;line-height:1.25}
+#moveAlbumPicker .album-card.is-current-album{cursor:default;pointer-events:none;opacity:.50;filter:grayscale(.12) saturate(.78)}
+#moveAlbumPicker .album-card.is-current-album .album-wrap{transform:none!important;filter:drop-shadow(0 8px 14px rgba(57,91,176,.06))}
+#moveAlbumPicker .album-card.is-current-album .album-move-note{color:#8f9bb5}
 .album-picker-list{display:grid;gap:8px;max-height:calc(100dvh - 112px);overflow:auto;-webkit-overflow-scrolling:touch;padding-bottom:12px}
 .album-picker-list.album-picker-albums-grid{grid-template-columns:repeat(2,minmax(0,190px));gap:24px 18px;align-content:start;justify-content:center;justify-items:center;padding:clamp(18px,2.8vh,28px) 8px 18px}
 .album-picker-list.album-picker-albums-grid .album-card{width:100%;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -497,6 +504,11 @@ svg{overflow:visible}
 .card-search-shell{width:100%;padding:0}
 .card-search-bar{width:100%;min-height:50px;border-radius:999px;display:grid;grid-template-columns:minmax(0,1fr) 76px;overflow:hidden;background:rgba(255,255,255,0.50);border:1px solid rgba(90,166,255,0.22);box-shadow:0 10px 24px rgba(66,89,152,0.08),inset 0 1px 0 rgba(255,255,255,0.88);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
 .card-search-input{width:100%;min-width:0;height:50px;border:0;outline:none;background:rgba(255,255,255,0.12);padding:0 20px;color:#20345f;font-family:inherit;font-size:14px;font-weight:650;letter-spacing:-0.02em}
+.card-search-clear-btn{position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:0;background:transparent;color:#7d8aa6;display:none;align-items:center;justify-content:center;font-family:inherit;font-size:31px;font-weight:450;line-height:1;cursor:pointer;z-index:3;-webkit-tap-highlight-color:transparent;transition:color .16s ease,transform .16s ease,opacity .16s ease}
+.card-search-clear-btn:hover{background:transparent;color:#3157c9}
+.card-search-clear-btn:active{transform:translateY(-50%) scale(.94)}
+.card-search-clear-btn.is-visible{display:flex}
+.search-wrap.has-clear .card-search-input{padding-right:58px}
 .card-search-input::placeholder{color:#8491ad;font-weight:600}
 .card-search-button{appearance:none;-webkit-appearance:none;width:76px;height:50px;border:0;border-left:1px solid rgba(90,112,168,0.14);border-radius:0;background:rgba(255,255,255,0.32);color:#2f64ff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background-color 0.18s ease,color 0.18s ease,transform 0.18s ease}
 .card-search-button:hover{background:rgba(255,255,255,0.52);color:#3157c9}
@@ -755,7 +767,7 @@ h1{font-size:clamp(24px,4.2vh,31px);max-width:230px}
 .add-card-search-view #results.grid{flex:0 0 auto !important}
 .add-card-search-view .card-search-panel-ux .card-search-bar{grid-template-columns:minmax(0,1fr) 58px !important;border:1.5px solid rgba(255,255,255,.64);transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease}
 .add-card-search-view .card-search-panel-ux .card-search-bar:focus-within{border-color:rgba(90,166,255,0.42);box-shadow:0 0 0 3px rgba(90,166,255,0.10),0 10px 24px rgba(66,89,152,0.10),inset 0 1px 0 rgba(255,255,255,0.90)}
-.add-card-search-view .card-search-panel-ux .card-search-input,.add-card-search-view .card-search-panel-ux .card-search-input:focus{border:0 !important;box-shadow:none !important;outline:none !important;background:rgba(255,255,255,.14);border-radius:999px 0 0 999px} .add-card-search-view .card-search-panel-ux .card-search-input,.add-card-search-view .card-search-panel-ux .card-search-input:focus{font-size:14px !important;font-weight:650 !important;font-family:inherit !important;letter-spacing:-.02em !important}
+.add-card-search-view .card-search-panel-ux .card-search-input,.add-card-search-view .card-search-panel-ux .card-search-input:focus{border:0 !important;box-shadow:none !important;outline:none !important;background:rgba(255,255,255,.14);border-radius:999px 0 0 999px} .add-card-search-view .card-search-panel-ux .card-search-input,.add-card-search-view .card-search-panel-ux .card-search-input:focus{font-size:14px !important;font-weight:650 !important;font-family:inherit !important;letter-spacing:-.02em !important} .add-card-search-view .card-search-panel-ux .search-wrap.has-clear .card-search-input,.add-card-search-view .card-search-panel-ux .search-wrap.has-clear .card-search-input:focus{padding-right:44px !important}
 .add-card-search-view .card-search-panel-ux .card-search-button{width:58px !important;min-width:58px !important;border-left:0 !important;border-radius:0 999px 999px 0;background:rgba(255,255,255,.24)}
 .add-card-search-view .card-search-panel-ux .card-search-button svg{width:25px;height:25px}
 .add-card-search-view .card-search-panel-ux .autocomplete{left:0 !important;right:auto !important;width:calc(100% + 58px) !important;top:calc(100% + 8px)}
@@ -2112,6 +2124,19 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{bottom:calc(var(--s
 #moveSlotPicker .album-picker-option.is-selected .album-picker-option-title{color:#2f64ff !important}
 #moveSlotPicker .album-picker-option-check{width:auto !important;height:auto !important;border-radius:0 !important;display:inline-flex;align-items:center;justify-content:center;color:#2f64ff !important;background:transparent !important;box-shadow:none !important;font-size:17px !important;font-weight:900 !important;line-height:1;margin-left:auto;flex:0 0 auto}
 #moveSlotPicker .album-picker-empty{background:transparent}
+#moveAlbumPicker .album-picker-cancel,#moveSlotPicker .album-picker-cancel{left:0 !important;right:auto !important}
+.move-slot-filter-btn{position:absolute;right:0;top:0;height:var(--topbar-control-size);border:1px solid rgba(255,255,255,.56);border-radius:999px;background:rgba(255,255,255,.58);color:#3157c9;box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);font-family:inherit;font-size:13px;font-weight:850;letter-spacing:-.03em;display:inline-flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0 13px}
+.move-slot-filter-btn{width:var(--topbar-control-size);min-width:var(--topbar-control-size);padding:0;border-radius:50%;color:#5c6f99}
+.move-slot-filter-btn svg{width:22px;height:22px;display:block;stroke:currentColor;fill:none;stroke-width:2.25;stroke-linecap:round;stroke-linejoin:round}
+.move-slot-filter-btn:hover{transform:translateY(-1px);color:#3157c9;background:rgba(255,255,255,.68);box-shadow:0 16px 28px rgba(73,96,157,.18),inset 0 1px 0 rgba(255,255,255,.96)}
+.move-slot-filter-btn:active{transform:scale(.97)}
+.move-slot-filter-menu{position:absolute;right:0;top:calc(var(--topbar-control-size) + 8px);z-index:235;width:min(230px,calc(100vw - 32px));padding:7px;border-radius:20px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.72);box-shadow:0 22px 46px rgba(25,38,82,.20),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);display:none}
+.move-slot-filter-menu.open{display:block}
+.move-slot-filter-menu button{width:100%;min-height:42px;border:0;border-radius:14px;background:transparent;color:#20345f;font-family:inherit;font-size:14px;font-weight:850;text-align:left;padding:0 11px;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
+.move-slot-filter-menu button:hover,.move-slot-filter-menu button:active{background:rgba(47,100,255,.08)}
+.move-slot-filter-menu button.is-selected{color:#2f64ff;background:rgba(47,100,255,.10)}
+.move-slot-filter-menu button.is-selected::after{content:"✓";font-size:15px;font-weight:950}
+#moveSlotPicker .album-picker-option.is-hidden-by-filter{display:none !important}
 .album-detail-topbar{position:relative !important;display:flex !important;align-items:flex-start !important;justify-content:space-between !important;grid-template-columns:none !important;gap:0 !important}
 .album-detail-topbar>.glass-icon-btn{grid-column:auto !important;grid-row:auto !important;flex:0 0 var(--topbar-control-size) !important}
 .album-detail-topbar .album-detail-title-wrap{position:absolute !important;left:58px !important;right:126px !important;top:5px !important;transform:none !important;grid-column:auto !important;grid-row:auto !important;min-width:0 !important;align-self:auto !important;padding:0 !important;text-align:left !important;display:flex !important;flex-direction:column !important;justify-content:center !important;min-height:44px !important;pointer-events:none !important}
@@ -2189,19 +2214,21 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .add-card-search-view .card-search-panel-ux .suggestion-title,
 .add-card-search-view .card-search-panel-ux .suggestion-meta{
   font-family:inherit !important;
-  font-size:14px !important;
   font-weight:650 !important;
-  line-height:1.22 !important;
   letter-spacing:-0.02em !important;
   -webkit-font-smoothing:antialiased;
   text-rendering:optimizeLegibility;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-title{
   color:#1c2e5a !important;
+  font-size:14px !important;
+  line-height:1.22 !important;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-meta{
   margin-top:2px !important;
   color:#7f8fac !important;
+  font-size:13px !important;
+  line-height:1.18 !important;
 }
 .add-card-search-view .card-search-panel-ux .suggestion-highlight{
   background:transparent !important;
@@ -3271,19 +3298,31 @@ paint-order="stroke">
           </div>
           <section class="album-fullscreen-picker" id="moveAlbumPicker" aria-label="Cambia album" aria-hidden="true">
             <div class="album-picker-head">
-              <h2 class="album-picker-title">Cambia Album</h2>
               <button class="album-picker-back album-picker-cancel" id="moveAlbumPickerBack" type="button" aria-label="Annulla">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
+              </button>
+              <h2 class="album-picker-title">Cambia Album</h2>
+              <button class="home-add-album-btn" id="moveAlbumAddAlbumBtn" type="button" aria-label="Crea Album" title="Crea Album">
+                <span aria-hidden="true">+</span>
+                <span>Crea Album</span>
               </button>
             </div>
             <div class="album-picker-list" id="moveAlbumPickerList"></div>
           </section>
           <section class="album-fullscreen-picker" id="moveSlotPicker" aria-label="Cambia slot" aria-hidden="true">
             <div class="album-picker-head">
-              <h2 class="album-picker-title">Cambia Slot</h2>
               <button class="album-picker-back album-picker-cancel" id="moveSlotPickerBack" type="button" aria-label="Annulla">
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>
               </button>
+              <h2 class="album-picker-title">Cambia Slot</h2>
+              <button class="move-slot-filter-btn" id="moveSlotFilterBtn" type="button" aria-label="Filtra slot" aria-haspopup="menu" aria-expanded="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M7 12h10"></path><path d="M10 18h4"></path></svg>
+              </button>
+              <div class="move-slot-filter-menu" id="moveSlotFilterMenu" role="menu" aria-label="Filtro slot">
+                <button type="button" role="menuitemradio" data-slot-filter="available">Visualizza disponibili</button>
+                <button type="button" role="menuitemradio" data-slot-filter="occupied">Visualizza occupati</button>
+                <button type="button" role="menuitemradio" data-slot-filter="all">Visualizza tutti</button>
+              </div>
             </div>
             <div class="album-picker-list" id="moveSlotPickerList"></div>
           </section>
@@ -3325,6 +3364,7 @@ paint-order="stroke">
 <div class="search-panel card-search-panel-ux">
       <div class="card-search-bar search-row">
         <div class="search-wrap">
+          <button id="searchClearBtn" class="card-search-clear-btn" type="button" aria-label="Cancella testo" title="Cancella testo">×</button>
           <input id="searchInput" class="card-search-input search-input" type="text" placeholder="Cerca carta, numero, set..." autocomplete="off" />
           <div id="autocomplete" class="autocomplete"></div>
         </div>
@@ -3983,6 +4023,7 @@ const state = {
 const el = {
       reloadBtn: document.getElementById('reloadBtn'),
       searchInput: document.getElementById('searchInput'),
+      searchClearBtn: document.getElementById('searchClearBtn'),
       searchBtn: document.getElementById('searchBtn'),
       autocomplete: document.getElementById('autocomplete'),
       results: document.getElementById('results'),
@@ -5702,6 +5743,36 @@ async function fetchPokemonIndex(force = false, options = {}) {
       el.emptyState.style.display = 'none';
       setCardSearchScrollTopVisible(false);
     }
+    function updateSearchClearButton() {
+      if (!el.searchInput || !el.searchClearBtn) return;
+      const hasValue = Boolean(el.searchInput.value);
+      el.searchClearBtn.classList.toggle('is-visible', hasValue);
+      el.searchInput.closest('.search-wrap')?.classList.toggle('has-clear', hasValue);
+    }
+    function clearCardSearchInput() {
+      if (!el.searchInput) return;
+      el.searchInput.value = '';
+      state.suggestions = [];
+      state.activeSuggestion = -1;
+      state.lastSuggestionTotal = 0;
+      renderSuggestions([]);
+      clearResultsArea();
+      setStatus('');
+      updateSearchClearButton();
+      requestAnimationFrame(() => {
+        try { el.searchInput.focus({ preventScroll: true }); } catch (_) { el.searchInput.focus(); }
+      });
+    }
+    function selectSearchInputWordAtCaret(input) {
+      if (!input || !input.value) return;
+      const value = input.value;
+      let start = input.selectionStart ?? 0;
+      let end = input.selectionEnd ?? start;
+      if (start !== end) return;
+      while (start > 0 && /[^\s]/.test(value.charAt(start - 1))) start -= 1;
+      while (end < value.length && /[^\s]/.test(value.charAt(end))) end += 1;
+      try { input.setSelectionRange(start, end); } catch (_) {}
+    }
     function prepareCardSearchViewForOpen() {
       cancelResultsRender();
       clearSearchProgressAnimation();
@@ -5712,6 +5783,7 @@ async function fetchPokemonIndex(force = false, options = {}) {
       state.lastSuggestionTotal = 0;
       state.hasSearched = false;
       if (el.searchInput) el.searchInput.value = '';
+      updateSearchClearButton();
       el.autocomplete?.classList.remove('open');
       setCardSearchScrollTopVisible(false);
       if (el.emptyState) el.emptyState.style.display = 'none';
@@ -6619,6 +6691,7 @@ if (el.reloadBtn) {
         runSearch(el.searchInput.value);
       });
       el.searchInput.addEventListener('input', () => {
+        updateSearchClearButton();
         const query = el.searchInput.value;
         if (!state.cards.length) {
           fetchPokemonIndex(false, { silent: true }).catch(() => {});
@@ -6659,8 +6732,25 @@ if (el.reloadBtn) {
         state.suggestions = buildSuggestions(query);
         renderSuggestions(state.suggestions);
       });
-      el.searchInput.addEventListener('click', moveSearchCaretToEnd);
-      el.searchInput.addEventListener('touchend', moveSearchCaretToEnd);
+      if (el.searchClearBtn) {
+        el.searchClearBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          clearCardSearchInput();
+        });
+      }
+      el.searchInput.addEventListener('click', (e) => {
+        if (e.detail >= 3) {
+          e.preventDefault();
+          requestAnimationFrame(() => {
+            try { el.searchInput.select(); } catch (_) {}
+          });
+          return;
+        }
+        if (e.detail === 2) {
+          requestAnimationFrame(() => selectSearchInputWordAtCaret(el.searchInput));
+        }
+      });
       el.searchInput.addEventListener('keydown', (e) => {
         if (!state.suggestions.length) {
           if (e.key === 'Enter') {
@@ -6689,6 +6779,7 @@ if (el.reloadBtn) {
             const card = state.suggestions[state.activeSuggestion];
             if (!card) return;
             el.searchInput.value = formatSuggestionHeadline(card);
+            updateSearchClearButton();
             renderSuggestions([]);
             openCardDetails(card.id);
           } else {
@@ -6712,6 +6803,7 @@ el.autocomplete.addEventListener('click', (e) => {
   const card = state.suggestions[idx];
   if (!card) return;
   el.searchInput.value = formatSuggestionHeadline(card);
+  updateSearchClearButton();
   el.searchInput.blur();
   renderSuggestions([]);
   openCardDetails(card.id);
@@ -7212,7 +7304,7 @@ window.PokeAlbumCardSearchClearCache = function PokeAlbumCardSearchClearCache() 
     if (typeof MARKET_FLAG_SVG_CACHE !== 'undefined' && MARKET_FLAG_SVG_CACHE?.clear) {
       MARKET_FLAG_SVG_CACHE.clear();
     }
-    if (el?.searchInput) el.searchInput.value = '';
+    if (el?.searchInput) { el.searchInput.value = ''; if (typeof updateSearchClearButton === 'function') updateSearchClearButton(); }
     if (el?.autocomplete) {
       el.autocomplete.innerHTML = '';
       el.autocomplete.classList.remove('open');
@@ -7352,9 +7444,12 @@ const els = {
           moveAlbumPicker: $("#moveAlbumPicker"),
           moveAlbumPickerList: $("#moveAlbumPickerList"),
           moveAlbumPickerBack: $("#moveAlbumPickerBack"),
+          moveAlbumAddAlbumBtn: $("#moveAlbumAddAlbumBtn"),
           moveSlotPicker: $("#moveSlotPicker"),
           moveSlotPickerList: $("#moveSlotPickerList"),
           moveSlotPickerBack: $("#moveSlotPickerBack"),
+          moveSlotFilterBtn: $("#moveSlotFilterBtn"),
+          moveSlotFilterMenu: $("#moveSlotFilterMenu"),
           albumDeleteCardConfirmBackdrop: $("#albumDeleteCardConfirmBackdrop"),
           albumDeleteCardConfirmTitle: $("#albumDeleteCardConfirmTitle"),
           albumDeleteCardConfirmText: $("#albumDeleteCardConfirmBackdrop .album-delete-confirm-text"),
@@ -7414,6 +7509,8 @@ const DEFAULT_ALBUM = Object.freeze({
           savedDetailCardId: null,
           savedDetailSwipeSuppressClick: false,
           addCardReturnView: "home",
+          albumFormReturnView: "home",
+          albumFormReturnPicker: null,
           renamingAlbum: null,
           deletingAlbum: null,
           currentHomeSection: "Album",
@@ -7429,6 +7526,7 @@ const DEFAULT_ALBUM = Object.freeze({
           deleteDuplicateQuantity: 1,
           deleteDuplicateMaxQuantity: 1,
           deleteDuplicateRecordIds: [],
+          moveSlotFilter: "all",
         };
         const STORAGE_SCHEMA_VERSION = 1;
         const DB_NAME = "pokealbum-store";
@@ -7837,6 +7935,30 @@ async function loadSavedAlbums() {
         }
         function getAlbumCardTitle(card = {}) {
           return card.display?.name || card.rawCard?.name || card.rawCard?.local_name || "Carta Pokémon";
+        }
+        function getAlbumMoveSlotOccupiedLabel(card = {}) {
+          const raw = card.rawCard || {};
+          const name = getAlbumCardTitle(card);
+          const setCode = String(
+            card.set?.code
+            || card.display?.setCode
+            || raw.set_code
+            || raw.code_set
+            || raw.expansion?.code
+            || raw.set?.code
+            || ""
+          ).trim().toUpperCase();
+          const version = String(
+            card.display?.version
+            || card.version
+            || raw.version
+            || raw.fixed_properties?.collector_number
+            || raw.collector_number
+            || raw.number
+            || raw.card_number
+            || ""
+          ).trim();
+          return [name, setCode, version].filter(Boolean).join(" - ");
         }
         function getAlbumCardMeta(card = {}) {
           return [
@@ -9091,6 +9213,7 @@ async function renderHomeDuplicateCards() {
             panel?.setAttribute("aria-hidden", "true");
           });
           els.moveAlbumPickerList?.classList.remove("album-picker-albums-grid");
+          closeMoveSlotFilterMenu();
         }
         function cancelAlbumFullscreenPicker() {
           closeAlbumFullscreenPickers();
@@ -9210,28 +9333,40 @@ async function renderHomeDuplicateCards() {
           if (!selectedIds.length || !els.moveAlbumPickerList) return;
           const selectedCount = selectedIds.length;
           const currentId = state.currentAlbum?.albumData?.id || "";
-          const nodes = getAlbumNodesList().filter((node) => node.albumData?.id !== currentId);
+          const nodes = getAlbumNodesList();
           els.moveAlbumPickerList.classList.add("album-picker-albums-grid");
           els.moveAlbumPickerList.innerHTML = "";
           if (!nodes.length) {
             els.moveAlbumPickerList.classList.remove("album-picker-albums-grid");
-            els.moveAlbumPickerList.innerHTML = `<div class="album-picker-empty">Nessun altro album disponibile. Triste, ma ordinato.</div>`;
+            els.moveAlbumPickerList.innerHTML = `<div class="album-picker-empty">Non sono disponibili album per lo spostamento.</div>`;
           } else {
             for (const sourceNode of nodes) {
               const albumId = sourceNode.albumData.id;
-              const freeSlots = await getFreeSlotNumbersForAlbum(albumId);
+              const isCurrentAlbum = currentId && albumId === currentId;
+              const freeSlots = isCurrentAlbum ? [] : await getFreeSlotNumbersForAlbum(albumId);
               const freeCount = freeSlots.length;
-              const firstFree = freeSlots[0] || 0;
-              const notEnough = freeCount < selectedCount;
+              const notEnough = !isCurrentAlbum && freeCount < selectedCount;
               const pickerNode = createAlbumNode({
                 ...sourceNode.albumData,
                 cardCount: Number(sourceNode.albumData.cardCount || 0),
               });
-              pickerNode.dataset.targetAlbumId = albumId;
-              pickerNode.tabIndex = 0;
-              pickerNode.setAttribute("role", "button");
-              pickerNode.setAttribute("aria-label", `${getAlbumPublicName(sourceNode.albumData)} · ${notEnough ? "slot liberi insufficienti" : "sposta qui"}`);
+              pickerNode.classList.toggle("is-current-album", isCurrentAlbum);
               pickerNode.classList.toggle("is-capacity-warning", notEnough);
+              if (isCurrentAlbum) {
+                pickerNode.removeAttribute("data-target-album-id");
+                pickerNode.removeAttribute("tabindex");
+                pickerNode.setAttribute("aria-current", "true");
+                pickerNode.setAttribute("aria-label", `${getAlbumPublicName(sourceNode.albumData)} · album attuale`);
+                const note = document.createElement("p");
+                note.className = "album-move-note";
+                note.textContent = "Album attuale";
+                pickerNode.appendChild(note);
+              } else {
+                pickerNode.dataset.targetAlbumId = albumId;
+                pickerNode.tabIndex = 0;
+                pickerNode.setAttribute("role", "button");
+                pickerNode.setAttribute("aria-label", `${getAlbumPublicName(sourceNode.albumData)} · ${notEnough ? "slot liberi insufficienti" : "sposta qui"}`);
+              }
               els.moveAlbumPickerList.appendChild(pickerNode);
             }
           }
@@ -9275,6 +9410,47 @@ async function renderHomeDuplicateCards() {
           closeAlbumActionMenu();
           refreshAlbumSelectionVisualState();
         }
+        function closeMoveSlotFilterMenu() {
+          els.moveSlotFilterMenu?.classList.remove("open");
+          els.moveSlotFilterBtn?.setAttribute("aria-expanded", "false");
+        }
+        function toggleMoveSlotFilterMenu() {
+          const isOpen = els.moveSlotFilterMenu?.classList.contains("open");
+          els.moveSlotFilterMenu?.classList.toggle("open", !isOpen);
+          els.moveSlotFilterBtn?.setAttribute("aria-expanded", String(!isOpen));
+        }
+        function updateMoveSlotFilterMenu() {
+          const active = state.moveSlotFilter || "all";
+          els.moveSlotFilterMenu?.querySelectorAll("[data-slot-filter]").forEach((button) => {
+            const isSelected = button.dataset.slotFilter === active;
+            button.classList.toggle("is-selected", isSelected);
+            button.setAttribute("aria-checked", String(isSelected));
+          });
+        }
+        function renderMoveSlotPickerOptions(options = []) {
+          if (!els.moveSlotPickerList) return;
+          const filter = state.moveSlotFilter || "all";
+          const visibleOptions = options.filter((item) => {
+            if (filter === "available") return !item.occupied || item.isCurrentSlot;
+            if (filter === "occupied") return item.occupied && !item.isCurrentSlot;
+            return true;
+          });
+          const html = visibleOptions.map((item) => `
+              <button class="album-picker-option${item.isCurrentSlot ? ' is-selected' : ''}" type="button" data-target-slot-number="${item.slot}"${item.isCurrentSlot ? ' aria-current="true"' : ''}>
+                <span>
+                  <span class="album-picker-option-title">Slot ${item.slot}</span>
+                  ${item.isCurrentSlot ? `<span class="album-picker-option-sub">Slot attuale</span>` : ''}
+                  ${item.occupied && !item.isCurrentSlot ? `<span class="album-picker-option-sub">${item.occupiedTitle}</span>` : ''}
+                </span>
+                ${item.isCurrentSlot ? '<span class="album-picker-option-check" aria-hidden="true">✓</span>' : ''}
+              </button>
+            `).join("");
+          let emptyText = "Nessuno slot disponibile in questo album.";
+          if (filter === "available") emptyText = "Nessuno slot disponibile.";
+          if (filter === "occupied") emptyText = "Nessuno slot occupato.";
+          els.moveSlotPickerList.innerHTML = html || `<div class="album-picker-empty">${emptyText}</div>`;
+          updateMoveSlotFilterMenu();
+        }
         async function openMoveSlotPicker() {
           closeAlbumActionMenu();
           if (getSelectedAlbumCardCount() !== 1) {
@@ -9292,23 +9468,23 @@ async function renderHomeDuplicateCards() {
           for (let slot = 1; slot <= capacity; slot += 1) {
             const occupied = cards.find((card, index) => String(card.id || "") !== selectedId && getAlbumCardDisplaySlot(card, index) === slot);
             const isCurrentSlot = slot === currentSlot;
-            const occupiedTitle = occupied ? albumDetailEscapeHtml(getAlbumCardTitle(occupied)) : "";
-            options.push(`
-              <button class="album-picker-option${isCurrentSlot ? ' is-selected' : ''}" type="button" data-target-slot-number="${slot}"${isCurrentSlot ? ' aria-current="true"' : ''}>
-                <span>
-                  <span class="album-picker-option-title">Slot ${slot}</span>
-                  ${occupied && !isCurrentSlot ? `<span class="album-picker-option-sub">Occupa: ${occupiedTitle} · verrà scambiata</span>` : ''}
-                </span>
-                ${isCurrentSlot ? '<span class="album-picker-option-check" aria-hidden="true">✓</span>' : ''}
-              </button>
-            `);
+            const occupiedTitle = occupied ? albumDetailEscapeHtml(getAlbumMoveSlotOccupiedLabel(occupied)) : "";
+            options.push({
+              slot,
+              occupied: Boolean(occupied),
+              isCurrentSlot,
+              occupiedTitle,
+            });
           }
-          els.moveSlotPickerList.innerHTML = options.length ? options.join("") : `<div class="album-picker-empty">Nessuno slot disponibile in questo album.</div>`;
+          state.moveSlotOptions = options;
+          state.moveSlotFilter = state.moveSlotFilter || "all";
+          renderMoveSlotPickerOptions(options);
           openAlbumFullscreenPicker(els.moveSlotPicker);
         }
         async function moveSelectedCardToAlbum(targetAlbumId = "") {
           const selectedIds = getSelectedAlbumCardIds();
           if (!selectedIds.length || !targetAlbumId) return;
+          if (targetAlbumId === (state.currentAlbum?.albumData?.id || "")) return;
           const cards = await getAllCards();
           const selectedSet = new Set(selectedIds.map(String));
           const records = selectedIds
@@ -9887,6 +10063,7 @@ function setView(view) {
           const searchInput = document.querySelector("#searchInput");
           if (!searchInput) return;
           searchInput.value = "";
+          if (typeof updateSearchClearButton === "function") updateSearchClearButton();
           const focusSearchInput = () => {
             if (!document.body.contains(searchInput)) return;
             searchInput.focus({ preventScroll: true });
@@ -9905,16 +10082,30 @@ function setView(view) {
           }
           setView(shouldReturnToDetail ? "detail" : "home");
         }
-        function openAlbumForm(albumNode = null) {
+        function openAlbumForm(albumNode = null, options = {}) {
           els.addAlbumTitle.textContent = albumNode
             ? "Modifica album"
             : "Crea Album";
+          state.albumFormReturnView = options.returnView || "home";
+          state.albumFormReturnPicker = options.returnPicker || null;
           albumNode ? fillFormFromAlbum(albumNode) : resetFormDefaults();
           setView("form");
         }
-        function closeAlbumForm() {
+        async function returnAfterAlbumForm() {
+          const returnPicker = state.albumFormReturnPicker;
+          const returnView = state.albumFormReturnView || "home";
+          state.albumFormReturnView = "home";
+          state.albumFormReturnPicker = null;
+          if (returnPicker === "move-album" && state.currentAlbum?.albumData) {
+            setView("detail");
+            await openMoveAlbumPicker();
+            return;
+          }
+          setView(returnView === "detail" && state.currentAlbum?.albumData ? "detail" : "home");
+        }
+        async function closeAlbumForm() {
           resetFormDefaults();
-          setView("home");
+          await returnAfterAlbumForm();
         }
 async function saveAlbum() {
           try {
@@ -9929,7 +10120,7 @@ async function saveAlbum() {
               if (state.currentAlbum === state.editingAlbum) {
                 els.albumDetailTitle.textContent = getAlbumPublicName(state.editingAlbum.albumData);
               }
-              closeAlbumForm();
+              await closeAlbumForm();
               showStorageToast("Album aggiornato");
               return;
             }
@@ -9941,7 +10132,7 @@ async function saveAlbum() {
             await persistAlbumNode(node, "create");
             await persistAlbumOrder("create");
             syncEmptyState();
-            closeAlbumForm();
+            await closeAlbumForm();
             showStorageToast(`${getAlbumPublicName(albumRecord)} creato`);
           } catch (error) {
             console.error(error);
@@ -11636,18 +11827,42 @@ function setHomeSection(section = "Album") {
           event.preventDefault();
           cancelAlbumFullscreenPicker();
         });
-        els.moveAlbumPickerList?.addEventListener("click", (event) => {
-          const item = event.target.closest("[data-target-album-id]");
+        els.moveAlbumAddAlbumBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          closeAlbumFullscreenPickers();
+          openAlbumForm(null, { returnView: "detail", returnPicker: "move-album" });
+        });
+        els.moveSlotFilterBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          updateMoveSlotFilterMenu();
+          toggleMoveSlotFilterMenu();
+        });
+        els.moveSlotFilterMenu?.addEventListener("click", (event) => {
+          const item = event.target.closest("[data-slot-filter]");
           if (!item) return;
           event.preventDefault();
-          void moveSelectedCardToAlbum(item.dataset.targetAlbumId || "");
+          event.stopPropagation();
+          state.moveSlotFilter = item.dataset.slotFilter || "all";
+          closeMoveSlotFilterMenu();
+          renderMoveSlotPickerOptions(state.moveSlotOptions || []);
+        });
+        els.moveAlbumPickerList?.addEventListener("click", (event) => {
+          const item = event.target.closest("[data-target-album-id]");
+          if (!item || item.classList.contains("is-current-album")) return;
+          event.preventDefault();
+          const targetAlbumId = item.dataset.targetAlbumId || "";
+          if (!targetAlbumId || targetAlbumId === (state.currentAlbum?.albumData?.id || "")) return;
+          void moveSelectedCardToAlbum(targetAlbumId);
         });
         els.moveAlbumPickerList?.addEventListener("keydown", (event) => {
           if (event.key !== "Enter" && event.key !== " ") return;
           const item = event.target.closest("[data-target-album-id]");
-          if (!item) return;
+          if (!item || item.classList.contains("is-current-album")) return;
           event.preventDefault();
-          void moveSelectedCardToAlbum(item.dataset.targetAlbumId || "");
+          const targetAlbumId = item.dataset.targetAlbumId || "";
+          if (!targetAlbumId || targetAlbumId === (state.currentAlbum?.albumData?.id || "")) return;
+          void moveSelectedCardToAlbum(targetAlbumId);
         });
         els.moveSlotPickerList?.addEventListener("click", (event) => {
           const item = event.target.closest("[data-target-slot-number]");
@@ -11675,6 +11890,11 @@ function setHomeSection(section = "Album") {
         els.albumDeleteCardConfirmBtn?.addEventListener("click", (event) => {
           event.preventDefault();
           void deleteSelectedAlbumCard();
+        });
+        document.addEventListener("click", (event) => {
+          if (!els.moveSlotFilterMenu?.classList.contains("open")) return;
+          if (event.target.closest("#moveSlotFilterMenu") || event.target.closest("#moveSlotFilterBtn")) return;
+          closeMoveSlotFilterMenu();
         });
         els.albumDeleteCardConfirmBackdrop?.addEventListener("click", (event) => {
           if (event.target === els.albumDeleteCardConfirmBackdrop) closeAlbumDeleteConfirm();
