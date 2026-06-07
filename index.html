@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi417-card-search-clear-near-lens-20260607" />
+    <meta name="pokealbum-build" content="vi423-x-lens-same-blue-no-spot-20260607" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -30,6 +30,23 @@ button,input{font:inherit}
 .search-wrap{position:relative}
 .search-input{width:100%;height:58px;border-radius:16px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:var(--text);padding:0 18px;outline:none;font-size:1.03rem}
 .search-icon-btn{width:46px;height:46px;padding:0;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700}
+.card-search-bar .card-search-clear-btn{
+  color:rgba(47,100,255,.46)!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  cursor:pointer!important;
+  filter:none!important;
+}
+.card-search-bar .card-search-clear-btn.is-visible{
+  opacity:.72!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+}
+.card-search-bar .card-search-clear-btn svg{
+  pointer-events:none!important;
+}
+
 .search-input:focus{border-color:rgba(90,166,255,0.85);box-shadow:0 0 0 4px rgba(90,166,255,0.15)}
 .autocomplete{position:absolute;left:0;right:0;top:calc(100% + 8px);background:#10192b;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);z-index:20;display:none;max-height:420px;overflow-y:auto}
 .autocomplete.open{display:block}
@@ -504,11 +521,6 @@ svg{overflow:visible}
 .card-search-shell{width:100%;padding:0}
 .card-search-bar{width:100%;min-height:50px;border-radius:999px;display:grid;grid-template-columns:minmax(0,1fr) 76px;overflow:hidden;background:rgba(255,255,255,0.50);border:1px solid rgba(90,166,255,0.22);box-shadow:0 10px 24px rgba(66,89,152,0.08),inset 0 1px 0 rgba(255,255,255,0.88);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
 .card-search-input{width:100%;min-width:0;height:50px;border:0;outline:none;background:rgba(255,255,255,0.12);padding:0 20px;color:#20345f;font-family:inherit;font-size:14px;font-weight:650;letter-spacing:-0.02em}
-.card-search-clear-btn{position:absolute;right:-10px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;border-radius:0;background:transparent;color:#7d8aa6;display:none;align-items:center;justify-content:center;font-family:inherit;font-size:31px;font-weight:450;line-height:1;cursor:pointer;z-index:3;-webkit-tap-highlight-color:transparent;transition:color .16s ease,transform .16s ease,opacity .16s ease}
-.card-search-clear-btn:hover{background:transparent;color:#3157c9}
-.card-search-clear-btn:active{transform:translateY(-50%) scale(.94)}
-.card-search-clear-btn.is-visible{display:flex}
-.search-wrap.has-clear .card-search-input{padding-right:58px}
 .card-search-input::placeholder{color:#8491ad;font-weight:600}
 .card-search-button{appearance:none;-webkit-appearance:none;width:76px;height:50px;border:0;border-left:1px solid rgba(90,112,168,0.14);border-radius:0;background:rgba(255,255,255,0.32);color:#2f64ff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background-color 0.18s ease,color 0.18s ease,transform 0.18s ease}
 .card-search-button:hover{background:rgba(255,255,255,0.52);color:#3157c9}
@@ -544,7 +556,7 @@ svg{overflow:visible}
 #detailModal .modal{color:#eef4ff}
 .add-card-search-view .card-finder-embed{max-width:none;width:100%;margin:0;padding:0;height:100%;display:flex;flex-direction:column;min-height:0}
 .add-card-search-view .card-search-panel-ux{padding:0;margin:0;background:transparent;border:0;box-shadow:none;color:#20345f}
-.add-card-search-view .card-search-panel-ux .card-search-bar{grid-template-columns:minmax(0,1fr) 76px;gap:0}
+.add-card-search-view .card-search-panel-ux .card-search-bar{grid-template-columns:minmax(0,1fr) 76px 76px;gap:0}
 .add-card-search-view .card-search-panel-ux .search-wrap{min-width:0;position:relative}
 .add-card-search-view .card-search-panel-ux .card-search-input{border-radius:999px 0 0 999px}
 .add-card-search-view .card-search-panel-ux .card-search-button{border-radius:0 999px 999px 0}
@@ -765,12 +777,13 @@ h1{font-size:clamp(24px,4.2vh,31px);max-width:230px}
 .add-card-search-view .card-finder-embed{height:auto !important;min-height:0 !important}
 .add-card-search-view .card-search-panel-ux{position:relative;z-index:30}
 .add-card-search-view #results.grid{flex:0 0 auto !important}
-.add-card-search-view .card-search-panel-ux .card-search-bar{grid-template-columns:minmax(0,1fr) 58px !important;border:1.5px solid rgba(255,255,255,.64);transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease}
+.add-card-search-view .card-search-panel-ux .card-search-bar{grid-template-columns:minmax(0,1fr) 58px 58px !important;border:1.5px solid rgba(255,255,255,.64);transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease}
 .add-card-search-view .card-search-panel-ux .card-search-bar:focus-within{border-color:rgba(90,166,255,0.42);box-shadow:0 0 0 3px rgba(90,166,255,0.10),0 10px 24px rgba(66,89,152,0.10),inset 0 1px 0 rgba(255,255,255,0.90)}
-.add-card-search-view .card-search-panel-ux .card-search-input,.add-card-search-view .card-search-panel-ux .card-search-input:focus{border:0 !important;box-shadow:none !important;outline:none !important;background:rgba(255,255,255,.14);border-radius:999px 0 0 999px} .add-card-search-view .card-search-panel-ux .card-search-input,.add-card-search-view .card-search-panel-ux .card-search-input:focus{font-size:14px !important;font-weight:650 !important;font-family:inherit !important;letter-spacing:-.02em !important} .add-card-search-view .card-search-panel-ux .search-wrap.has-clear .card-search-input,.add-card-search-view .card-search-panel-ux .search-wrap.has-clear .card-search-input:focus{padding-right:44px !important}
+.add-card-search-view .card-search-panel-ux .card-search-input,.add-card-search-view .card-search-panel-ux .card-search-input:focus{border:0 !important;box-shadow:none !important;outline:none !important;background:rgba(255,255,255,.14);border-radius:999px 0 0 999px} .add-card-search-view .card-search-panel-ux .card-search-input,.add-card-search-view .card-search-panel-ux .card-search-input:focus{font-size:14px !important;font-weight:650 !important;font-family:inherit !important;letter-spacing:-.02em !important}
 .add-card-search-view .card-search-panel-ux .card-search-button{width:58px !important;min-width:58px !important;border-left:0 !important;border-radius:0 999px 999px 0;background:rgba(255,255,255,.24)}
 .add-card-search-view .card-search-panel-ux .card-search-button svg{width:25px;height:25px}
-.add-card-search-view .card-search-panel-ux .autocomplete{left:0 !important;right:auto !important;width:calc(100% + 58px) !important;top:calc(100% + 8px)}
+.add-card-search-view .card-search-panel-ux .card-search-button-visual{border-radius:0 !important;pointer-events:none;cursor:default;transform:translateX(28px);position:relative;z-index:1}
+.add-card-search-view .card-search-panel-ux .autocomplete{left:0 !important;right:auto !important;width:calc(100% + 116px) !important;top:calc(100% + 8px)}
 .add-card-search-view .card-search-panel-ux .suggestion{display:grid;grid-template-columns:38px minmax(0,1fr);align-items:start;column-gap:9px;width:100%;padding:6px 10px}
 .add-card-search-view .card-search-panel-ux .suggestion-thumb{width:38px;height:52px;border-radius:4px;object-fit:contain;background:rgba(248,251,255,.78);box-shadow:0 1px 3px rgba(20,35,75,.12)}
 .add-card-search-view .card-search-panel-ux .suggestion-thumb-fallback{width:38px;height:52px;border-radius:4px;display:grid;place-items:center;background:rgba(120,146,207,.12);color:#8a98b5;font-size:9px;font-weight:850}
@@ -2245,6 +2258,111 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   letter-spacing:-0.02em !important;
 }
 
+
+/* Patch: rende evidenti i campi modificabili nella scheda carta da aggiungere,
+   usando lo stesso aspetto della scheda salvata quando è in modifica. */
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row{
+  grid-template-columns:minmax(94px,.85fr) minmax(0,1.15fr) 22px !important;
+  background:rgba(235,247,255,.76) !important;
+  border:1px solid rgba(47,100,255,.24) !important;
+  box-shadow:0 10px 22px rgba(47,100,255,.08),inset 0 1px 0 rgba(255,255,255,.88) !important;
+  cursor:pointer !important;
+  transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease,transform .18s ease !important;
+}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row:active{transform:scale(.992) !important}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row::after{
+  content:"" !important;
+  grid-column:3 !important;
+  align-self:center !important;
+  justify-self:end !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  width:22px !important;
+  height:22px !important;
+  min-width:22px !important;
+  background-color:#6f7f9f !important;
+  opacity:.96 !important;
+  -webkit-mask:center / 18px 18px no-repeat !important;
+  mask:center / 18px 18px no-repeat !important;
+  transition:background-color .18s ease,opacity .18s ease,transform .18s ease !important;
+}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row:hover::after,
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row:active::after{background-color:#2f64ff !important;opacity:1 !important}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-edit-pencil::after{
+  -webkit-mask-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M4 17.25V20h2.75L17.81 8.94l-2.75-2.75L4 17.25Zm15.71-10.04a1 1 0 0 0 0-1.42l-1.5-1.5a1 1 0 0 0-1.42 0l-1.12 1.12 2.75 2.75 1.29-.95Z"/></svg>') !important;
+  mask-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="black" d="M4 17.25V20h2.75L17.81 8.94l-2.75-2.75L4 17.25Zm15.71-10.04a1 1 0 0 0 0-1.42l-1.5-1.5a1 1 0 0 0-1.42 0l-1.12 1.12 2.75 2.75 1.29-.95Z"/></svg>') !important;
+}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-edit-chevron::after{
+  -webkit-mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") !important;
+  mask-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") !important;
+}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row .info-edit-input{
+  border-bottom:1px solid rgba(47,100,255,.28) !important;
+  padding:0 0 2px !important;
+  cursor:text !important;
+}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row .info-edit-input:focus{
+  border-bottom-color:#2f64ff !important;
+}
+@media (max-width:420px){
+  #detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row{grid-template-columns:minmax(82px,.78fr) minmax(0,1.22fr) 20px !important;gap:7px !important}
+  #detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row::after{width:20px !important;height:20px !important;min-width:20px !important;-webkit-mask-size:17px 17px !important;mask-size:17px 17px !important}
+}
+
+
+/* Fix: nella scheda carta da aggiungere, Provenienza usa già la chevron interna del pulsante.
+   Evita quindi la pseudo-icona generica della riga modificabile, che diventava un quadrato. */
+#detailModal:not(.is-saved-card-detail) .add-detail-card .origin-info-row.add-editable-row{
+  grid-template-columns:minmax(94px,.85fr) minmax(0,1.15fr) !important;
+}
+#detailModal:not(.is-saved-card-detail) .add-detail-card .origin-info-row.add-editable-row::after{
+  content:none !important;
+  display:none !important;
+  -webkit-mask-image:none !important;
+  mask-image:none !important;
+}
+@media (max-width:420px){
+  #detailModal:not(.is-saved-card-detail) .add-detail-card .origin-info-row.add-editable-row{
+    grid-template-columns:minmax(82px,.78fr) minmax(0,1.22fr) !important;
+  }
+}
+
+/* vi423: X e lente stesso blu pieno, senza macchie/schiarimenti */
+.add-card-search-view .card-search-panel-ux #searchBtn.card-search-button,
+.add-card-search-view .card-search-panel-ux #searchClearBtn.card-search-clear-btn{
+  color:#2f64ff!important;
+  filter:none!important;
+}
+
+.add-card-search-view .card-search-panel-ux #searchBtn.card-search-button:hover,
+.add-card-search-view .card-search-panel-ux #searchBtn.card-search-button:active,
+.add-card-search-view .card-search-panel-ux #searchClearBtn.card-search-clear-btn:hover,
+.add-card-search-view .card-search-panel-ux #searchClearBtn.card-search-clear-btn:active{
+  color:#2f64ff!important;
+  filter:none!important;
+}
+
+.add-card-search-view .card-search-panel-ux #searchClearBtn.card-search-clear-btn{
+  background:transparent!important;
+  border-left:0!important;
+  box-shadow:none!important;
+  opacity:0!important;
+}
+
+.add-card-search-view .card-search-panel-ux #searchClearBtn.card-search-clear-btn.is-visible{
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:auto!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.add-card-search-view .card-search-panel-ux #searchClearBtn.card-search-clear-btn svg,
+.add-card-search-view .card-search-panel-ux #searchBtn.card-search-button svg{
+  stroke:currentColor!important;
+}
+
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -3364,10 +3482,12 @@ paint-order="stroke">
 <div class="search-panel card-search-panel-ux">
       <div class="card-search-bar search-row">
         <div class="search-wrap">
-          <button id="searchClearBtn" class="card-search-clear-btn" type="button" aria-label="Cancella testo" title="Cancella testo">×</button>
           <input id="searchInput" class="card-search-input search-input" type="text" placeholder="Cerca carta, numero, set..." autocomplete="off" />
           <div id="autocomplete" class="autocomplete"></div>
         </div>
+        <button id="searchClearBtn" class="card-search-button search-icon-btn card-search-button-visual card-search-clear-btn" type="button" title="Cancella ricerca" aria-label="Cancella ricerca">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7l10 10"></path><path d="M17 7L7 17"></path></svg>
+        </button>
         <button id="searchBtn" class="card-search-button search-icon-btn" title="Cerca" aria-label="Cerca">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="5.6"></circle><path d="M15 15l4.15 4.15"></path></svg>
         </button>
@@ -3744,7 +3864,7 @@ paint-order="stroke">
               </label>
             </div>
             <div class="detail-cards">
-              <section class="info-card add-detail-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row editable-info-row origin-info-row"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section><section class="info-card saved-detail-card" aria-hidden="true"><h3 class="info-card-title saved-detail-card-title"><span class="info-card-title-text">Dettagli Carta</span><button class="saved-card-edit-toggle" id="savedCardEditToggleBtn" type="button" aria-pressed="false">Modifica</button></h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">CARTA</div><div class="info-value" id="savedCardInsertedSummary"></div></div><div class="info-row static-info-row"><div class="info-label">Nome</div><div class="info-value" id="savedCardName"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="savedCardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="savedCardVersion"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="total-set"><div class="info-label">Totale Carte Set</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardTotalSet"></div><input class="saved-card-edit-input" id="savedCardTotalSetInput" data-saved-edit-input="total-set" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 94"></div></div><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="savedCardRarity"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron saved-edit-chevron-down" id="savedCardTypeEditRow" data-saved-edit-field="card-type"><div class="info-label">Tipo carta</div><div class="info-value" id="savedCardVariantsSummary"></div></div><div class="saved-variant-editor-row" id="savedVariantEditorRow" aria-hidden="true"><div class="saved-variant-editor-card" aria-label="Selezione tipo carta salvata"><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantHolo" data-saved-variant="holo" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Holo</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantReverse" data-saved-variant="reverse" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Reverse</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantIllustration" data-saved-variant="illustration" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Illustration</span></label></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="release-date"><div class="info-label">Uscita</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardDate"></div><input class="saved-card-edit-input" id="savedCardDateInput" data-saved-edit-input="release-date" type="text" autocomplete="off" placeholder="es. 2026"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="artist"><div class="info-label">Illustratore</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardArtist"></div><input class="saved-card-edit-input" id="savedCardArtistInput" data-saved-edit-input="artist" type="text" autocomplete="off" placeholder="es. Mitsuhiro Arita"></div></div><div class="info-row static-info-row"><div class="info-label">Data inserimento</div><div class="info-value" id="savedCardInsertedAt"></div></div><div class="info-row static-info-row"><div class="info-label">Valore iniziale</div><div class="info-value" id="savedCardInitialValue"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron" data-saved-edit-field="origin"><div class="info-label">Provenienza</div><div class="info-value" id="savedCardOriginValue"></div></div></div></section>
+              <section class="info-card add-detail-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row editable-info-row origin-info-row add-editable-row" data-add-edit-field="origin"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row add-editable-row add-edit-pencil" data-add-edit-field="total-set"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row add-editable-row add-edit-pencil" data-add-edit-field="release-date"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row add-editable-row add-edit-pencil" data-add-edit-field="artist"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section><section class="info-card saved-detail-card" aria-hidden="true"><h3 class="info-card-title saved-detail-card-title"><span class="info-card-title-text">Dettagli Carta</span><button class="saved-card-edit-toggle" id="savedCardEditToggleBtn" type="button" aria-pressed="false">Modifica</button></h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">CARTA</div><div class="info-value" id="savedCardInsertedSummary"></div></div><div class="info-row static-info-row"><div class="info-label">Nome</div><div class="info-value" id="savedCardName"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="savedCardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="savedCardVersion"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="total-set"><div class="info-label">Totale Carte Set</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardTotalSet"></div><input class="saved-card-edit-input" id="savedCardTotalSetInput" data-saved-edit-input="total-set" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 94"></div></div><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="savedCardRarity"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron saved-edit-chevron-down" id="savedCardTypeEditRow" data-saved-edit-field="card-type"><div class="info-label">Tipo carta</div><div class="info-value" id="savedCardVariantsSummary"></div></div><div class="saved-variant-editor-row" id="savedVariantEditorRow" aria-hidden="true"><div class="saved-variant-editor-card" aria-label="Selezione tipo carta salvata"><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantHolo" data-saved-variant="holo" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Holo</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantReverse" data-saved-variant="reverse" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Reverse</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantIllustration" data-saved-variant="illustration" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Illustration</span></label></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="release-date"><div class="info-label">Uscita</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardDate"></div><input class="saved-card-edit-input" id="savedCardDateInput" data-saved-edit-input="release-date" type="text" autocomplete="off" placeholder="es. 2026"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="artist"><div class="info-label">Illustratore</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardArtist"></div><input class="saved-card-edit-input" id="savedCardArtistInput" data-saved-edit-input="artist" type="text" autocomplete="off" placeholder="es. Mitsuhiro Arita"></div></div><div class="info-row static-info-row"><div class="info-label">Data inserimento</div><div class="info-value" id="savedCardInsertedAt"></div></div><div class="info-row static-info-row"><div class="info-label">Valore iniziale</div><div class="info-value" id="savedCardInitialValue"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron" data-saved-edit-field="origin"><div class="info-label">Provenienza</div><div class="info-value" id="savedCardOriginValue"></div></div></div></section>
               <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
             </div>
           </div>
