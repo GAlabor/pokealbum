@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi423-x-lens-same-blue-no-spot-20260607" />
+    <meta name="pokealbum-build" content="vi432-dropbox-cancel-handler-20260609" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -1415,19 +1415,26 @@ body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10
 #detailModal .origin-choice-truck svg{width:30px;height:20px;display:block}
 .profile-menu-backdrop{position:fixed;inset:0;z-index:240;background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,background-color .22s ease,visibility .22s ease}
 .profile-menu-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.18)}
-.profile-menu-panel{position:absolute;right:0;top:0;width:min(52vw,260px);max-width:280px;height:100%;padding:calc(var(--safe-top) + 22px) 18px calc(var(--safe-bottom) + 18px);background:rgba(255,255,255,.78);border-left:1px solid rgba(255,255,255,.72);box-shadow:-18px 0 42px rgba(25,38,82,.18),inset 1px 0 0 rgba(255,255,255,.72);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);transform:translateX(104%);transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f}
+.profile-menu-panel{position:absolute;right:0;top:0;width:min(60vw,285px);max-width:315px;height:100%;padding:calc(var(--safe-top) + 22px) 18px calc(var(--safe-bottom) + 18px);background:rgba(255,255,255,.78);border-left:1px solid rgba(255,255,255,.72);box-shadow:-18px 0 42px rgba(25,38,82,.18),inset 1px 0 0 rgba(255,255,255,.72);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);transform:translateX(104%);transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f;display:flex;flex-direction:column}
 .profile-menu-backdrop.open .profile-menu-panel{transform:translateX(0)}
 .profile-menu-title{margin:0 0 18px;font-size:16px;font-weight:950;letter-spacing:.18em;text-transform:uppercase;text-align:center;line-height:1;background:linear-gradient(135deg,#2f64ff 0%,#7aa6ff 52%,#8f7cff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 8px 22px rgba(47,100,255,.18);position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.profile-menu-divider{height:1px;background:rgba(111,134,188,.18);margin:0 0 10px}
-.profile-storage-card{margin:0 0 12px;padding:12px 12px 11px;border-radius:18px;background:rgba(248,251,255,.54);border:1px solid rgba(120,146,207,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.76);display:grid;gap:7px}
+.profile-menu-divider{height:1px;background:rgba(111,134,188,.18);margin:0 0 8px}
+.profile-storage-card{margin:0 0 8px;padding:10px 10px 9px;border-radius:16px;background:rgba(248,251,255,.54);border:1px solid rgba(120,146,207,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.76);display:grid;gap:7px}
 .profile-storage-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:8px;color:#20345f}
-.profile-storage-label{min-width:0;color:#65779f;font-size:11px;font-weight:850;letter-spacing:-.01em;line-height:1.12}
-.profile-storage-value{color:#20345f;font-size:12px;font-weight:900;letter-spacing:-.02em;line-height:1.12;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.profile-storage-label{min-width:0;color:#65779f;font-size:10.5px;font-weight:850;letter-spacing:-.01em;line-height:1.12}
+.profile-storage-value{color:#20345f;font-size:11.5px;font-weight:900;letter-spacing:-.02em;line-height:1.12;font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
 .profile-storage-note{margin:2px 0 0;color:#8b98b6;font-size:10.5px;font-weight:650;line-height:1.2;text-align:center}
-.profile-menu-action{appearance:none;-webkit-appearance:none;width:100%;min-height:48px;border:0;border-radius:16px;background:transparent;color:#c62828;font-family:inherit;font-size:15px;font-weight:850;letter-spacing:-.02em;text-align:left;padding:0 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:flex-start;gap:10px}
+.profile-menu-action{appearance:none;-webkit-appearance:none;width:100%;min-height:40px;border:0;border-radius:14px;background:transparent;color:#c62828;font-family:inherit;font-size:13.5px;font-weight:820;letter-spacing:-.02em;text-align:left;padding:0 12px;cursor:pointer;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;justify-content:flex-start;gap:8px}
 .profile-menu-action:hover,.profile-menu-action:active{background:rgba(198,40,40,.08)}
 .profile-menu-action.cache-clean-action{color:#2f64ff}
 .profile-menu-action.cache-clean-action:hover,.profile-menu-action.cache-clean-action:active{background:rgba(47,100,255,.08)}
+.profile-storage-toggle{color:#2f64ff;justify-content:space-between}
+.profile-storage-toggle:hover,.profile-storage-toggle:active{background:rgba(47,100,255,.08)}
+.profile-storage-toggle-label{display:inline-flex;align-items:center;gap:10px}
+.profile-storage-chevron{margin-left:auto;color:#7181a3;font-size:18px;font-weight:950;line-height:1;transition:transform .18s ease}
+.profile-storage-toggle[aria-expanded="true"] .profile-storage-chevron{transform:rotate(90deg);color:#2f64ff}
+.profile-storage-menu{display:none;margin:0 0 4px}
+.profile-storage-menu.open{display:block}
 .profile-menu-action::after{content:none;display:none}
 .openable-click-anim{transform-origin:center;will-change:transform}
 .openable-click-anim.opening-press{animation:openablePressPop .32s cubic-bezier(.18,.9,.2,1)}
@@ -1438,6 +1445,16 @@ body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10
 }
 @media (prefers-reduced-motion:reduce){.openable-click-anim.opening-press{animation:none !important}
 }
+
+.profile-menu-action.dropbox-link-action{color:#111827;white-space:nowrap}
+.profile-menu-action.dropbox-link-action:hover,.profile-menu-action.dropbox-link-action:active{background:rgba(17,24,39,.06)}
+.profile-storage-section{margin-top:auto;padding-top:18px}
+.profile-storage-toggle{color:#8f9bb5!important;justify-content:space-between}
+.profile-storage-toggle:hover,.profile-storage-toggle:active{background:rgba(113,129,163,.08)}
+.profile-storage-toggle[aria-expanded="true"] .profile-storage-chevron{color:#8f9bb5}
+.profile-storage-cache-action{appearance:none;-webkit-appearance:none;width:100%;border:0;background:transparent;cursor:pointer;padding:0;margin:0;color:#2f64ff}
+.profile-storage-cache-action .profile-storage-label{color:#2f64ff}
+.profile-storage-cache-action:hover,.profile-storage-cache-action:active{background:rgba(47,100,255,.07)}
 .restore-sheet-backdrop{position:fixed;inset:0;z-index:250;display:flex;align-items:flex-end;justify-content:center;padding:0 14px calc(var(--safe-bottom) + 12px);background:rgba(34,48,86,0);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,background-color .22s ease,visibility .22s ease}
 .restore-sheet-backdrop.open{opacity:1;visibility:visible;pointer-events:auto;background:rgba(34,48,86,.28)}
 .restore-sheet{width:min(100%,430px);border-radius:30px;background:rgba(255,255,255,.80);border:1px solid rgba(255,255,255,.74);box-shadow:0 24px 54px rgba(25,38,82,.24),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(28px) saturate(150%);-webkit-backdrop-filter:blur(28px) saturate(150%);padding:10px 14px 14px;transform:translateY(calc(100% + 28px));transition:transform .28s cubic-bezier(.22,.9,.24,1);color:#20345f}
@@ -2363,6 +2380,45 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   stroke:currentColor!important;
 }
 
+
+
+/* Backup Cloud UX - stato discreto in home e menu dedicato */
+#homeView .home-stats-card{position:relative!important}
+#homeView .home-backup-status-btn{appearance:none;-webkit-appearance:none;position:relative;width:56px;height:56px;border:0;border-radius:21px;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,filter .16s ease}
+#homeView .home-backup-status-btn:active{transform:scale(.965)}
+#homeView .home-backup-status-btn:focus-visible{outline:2px solid rgba(47,100,255,.28);outline-offset:3px}
+#homeView .home-backup-cloud-svg{width:54px;height:54px;display:block;overflow:visible}
+#homeView .home-backup-status-btn .cloud-shape{fill:none;stroke:#a7b1c8;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 8px 12px rgba(70,88,130,.10))}
+#homeView .home-backup-status-btn .backup-check,#homeView .home-backup-status-btn .backup-warn-dot{display:none}
+#homeView .home-backup-status-btn.is-active .cloud-shape{fill:rgba(47,100,255,.92);stroke:#2f64ff;filter:drop-shadow(0 12px 18px rgba(47,100,255,.22))}
+#homeView .home-backup-status-btn.is-active .backup-check{display:block;fill:#fff;stroke:#fff;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+#homeView .home-backup-status-btn.is-stale .cloud-shape{stroke:#2f64ff;fill:rgba(47,100,255,.035)}
+#homeView .home-backup-status-btn.is-stale .backup-warn-dot{display:block;fill:#ffb020;stroke:#fff;stroke-width:3}
+#homeView .home-backup-status-btn.is-error .cloud-shape{stroke:#a7b1c8;fill:none}
+#homeView .home-backup-status-btn.is-error .backup-warn-dot{display:block;fill:#ff4d2f;stroke:#fff;stroke-width:3}
+.backup-popover{position:absolute;right:12px;top:calc(100% - 2px);z-index:60;width:min(260px,calc(100vw - 46px));padding:15px;border-radius:22px;background:rgba(255,255,255,.88);border:1px solid rgba(255,255,255,.76);box-shadow:0 22px 48px rgba(45,61,102,.18),inset 0 1px 0 rgba(255,255,255,.94);backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%);color:#20345f;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(6px) scale(.985);transform-origin:top right;transition:opacity .18s ease,visibility .18s ease,transform .18s ease}
+.backup-popover.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1)}
+.backup-popover::before{content:"";position:absolute;right:28px;top:-8px;width:16px;height:16px;background:rgba(255,255,255,.88);border-left:1px solid rgba(255,255,255,.76);border-top:1px solid rgba(255,255,255,.76);transform:rotate(45deg)}
+.backup-popover-icon{width:46px;height:38px;margin:0 auto 8px;display:grid;place-items:center;color:#a7b1c8}
+.backup-popover-icon svg{width:46px;height:38px;display:block;stroke:currentColor;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.backup-popover-title{margin:0;text-align:center;color:#0f1b34;font-size:15px;font-weight:950;letter-spacing:-.035em;line-height:1.12}
+.backup-popover-text{margin:10px 0 13px;color:#405175;font-size:12.5px;font-weight:650;line-height:1.38;text-align:center}
+.backup-popover-btn{width:100%;height:42px;border:0;border-radius:13px;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);color:#fff;font-family:inherit;font-size:13px;font-weight:900;letter-spacing:-.02em;cursor:pointer;box-shadow:0 10px 22px rgba(47,100,255,.22),inset 0 1px 0 rgba(255,255,255,.28)}
+.backup-popover-link{width:100%;height:34px;margin-top:6px;border:0;background:transparent;color:#2f64ff;font-family:inherit;font-size:12px;font-weight:850;cursor:pointer}
+.backup-popover-meta{margin:10px 0 12px;padding:10px;border-radius:16px;background:rgba(248,251,255,.66);border:1px solid rgba(120,146,207,.12);display:grid;gap:4px;text-align:center}
+.backup-popover-meta strong{font-size:12px;color:#20345f}.backup-popover-meta span{font-size:12px;color:#536381;font-weight:700}
+.backup-popover-danger{width:100%;height:34px;margin-top:4px;border:0;background:transparent;color:#d12a1f;font-family:inherit;font-size:12px;font-weight:850;cursor:pointer}
+.profile-backup-card{margin:0 0 10px;padding:11px 10px 10px;border-radius:18px;background:rgba(248,251,255,.58);border:1px solid rgba(120,146,207,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.78);display:grid;gap:4px;color:#20345f}
+.profile-backup-status-line{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:900;color:#20345f;letter-spacing:-.02em}
+.profile-backup-pill{height:24px;padding:0 9px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;background:rgba(198,40,40,.08);color:#c62828;font-size:10.5px;font-weight:950;white-space:nowrap}
+.profile-backup-pill.is-active{background:rgba(34,197,94,.10);color:#25a968}
+.profile-backup-note{margin:2px 0 0;color:#7382a2;font-size:10.8px;font-weight:650;line-height:1.25}
+.profile-menu-action.backup-link-action{color:#111827;white-space:nowrap;font-weight:880}
+.profile-menu-action.backup-link-action:hover,.profile-menu-action.backup-link-action:active{background:rgba(17,24,39,.06)}
+.profile-menu-action.restore-backup-action{color:#2f64ff}.profile-menu-action.restore-backup-action:hover,.profile-menu-action.restore-backup-action:active{background:rgba(47,100,255,.08)}
+.profile-menu-action.disconnect-backup-action{color:#c62828}.profile-menu-action.disconnect-backup-action.is-hidden{display:none!important}
+@media (max-width:420px){#homeView .home-backup-status-btn{width:52px;height:52px;border-radius:20px}.backup-popover{right:6px;width:min(250px,calc(100vw - 40px))}}
+
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -2438,50 +2494,24 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
                     </span>
                   </div>
                 </div>
-                <div class="home-stats-album" aria-hidden="true">
-                  <svg class="home-stats-album-svg" width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <radialGradient id="bg" cx="50%" cy="45%" r="55%">
-                        <stop offset="0%" stop-color="#F7FBFF"/>
-                        <stop offset="100%" stop-color="#EAF4FF"/>
-                      </radialGradient>
-                      <linearGradient id="cardMain" x1="90" y1="120" x2="340" y2="390">
-                        <stop offset="0%" stop-color="#4D82FF"/>
-                        <stop offset="100%" stop-color="#155BFF"/>
-                      </linearGradient>
-                      <linearGradient id="cardBack" x1="210" y1="110" x2="380" y2="390">
-                        <stop offset="0%" stop-color="#5C8DFF"/>
-                        <stop offset="100%" stop-color="#2D6CFF"/>
-                      </linearGradient>
-                      <linearGradient id="cardLight" x1="300" y1="130" x2="430" y2="380">
-                        <stop offset="0%" stop-color="#8BB1FF"/>
-                        <stop offset="100%" stop-color="#5E91FF"/>
-                      </linearGradient>
-                      <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
-                        <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#1C55CC" flood-opacity="0.25"/>
-                      </filter>
-                      <filter id="smallShadow" x="-40%" y="-40%" width="180%" height="180%">
-                        <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#1C55CC" flood-opacity="0.35"/>
-                      </filter>
-                    </defs>
-                    <rect width="512" height="512" fill="none"/>
-                    <circle cx="256" cy="256" r="220" fill="none"/>
-                    <path d="M145 94 C151 116 151 116 173 122 C151 128 151 128 145 150 C139 128 139 128 117 122 C139 116 139 116 145 94Z"
-                          fill="#4B7DFF" opacity="0.9"/>
-                    <path d="M386 116 C391 134 391 134 409 139 C391 144 391 144 386 162 C381 144 381 144 363 139 C381 134 381 134 386 116Z"
-                          fill="#4B7DFF" opacity="0.85"/>
-                    <rect x="214" y="130" width="150" height="260" rx="44"
-                          fill="url(#cardBack)" filter="url(#softShadow)"
-                          transform="rotate(4 289 260)"/>
-                    <rect x="270" y="150" width="110" height="240" rx="42"
-                          fill="url(#cardLight)" opacity="0.75" filter="url(#softShadow)"
-                          transform="rotate(10 325 270)"/>
-                    <rect x="120" y="145" width="220" height="265" rx="42"
-                          fill="url(#cardMain)" filter="url(#softShadow)"/>
-                    <rect x="123" y="148" width="214" height="259" rx="39"
-                          fill="none" stroke="#7AA5FF" stroke-opacity="0.45" stroke-width="2"/>
+                <button class="home-backup-status-btn is-inactive" id="homeBackupStatusBtn" type="button" aria-label="Backup Cloud non attivo" aria-expanded="false" title="Stato Backup Cloud">
+                  <svg class="home-backup-cloud-svg" viewBox="0 0 64 64" aria-hidden="true">
+                    <path class="cloud-shape" d="M22.5 45.5H48c6.1 0 10.7-4.4 10.7-10.2 0-5.5-4.2-9.8-9.7-10.1C47.4 17.4 40.5 12 32.5 12c-7.4 0-13.7 4.6-16.1 11.1C9.9 24 5 29.1 5 35.6c0 6.1 4.7 9.9 10.5 9.9h7"/>
+                    <circle class="backup-warn-dot" cx="51" cy="18" r="7"/>
+                    <path class="backup-check" d="M43.8 32.3l5 5.1 9.1-10"/>
                   </svg>
+                </button>
+              </div>
+              <div class="backup-popover" id="backupPopover" aria-hidden="true">
+                <div class="backup-popover-icon" aria-hidden="true">
+                  <svg viewBox="0 0 64 48"><path d="M22 38h25c6 0 10-4 10-9.5 0-5.3-4-9.3-9.4-9.6C46 11.2 39.2 6 31.5 6 24.4 6 18.3 10.4 16 16.8 9.7 17.6 5 22.6 5 28.8 5 34.7 9.5 38 15 38h7"/></svg>
                 </div>
+                <h3 class="backup-popover-title" id="backupPopoverTitle">Backup Cloud non attivo</h3>
+                <p class="backup-popover-text" id="backupPopoverText">Le tue carte sono salvate solo su questo dispositivo. Attiva il backup cloud per proteggerle e ripristinarle quando vuoi.</p>
+                <div class="backup-popover-meta is-hidden" id="backupPopoverMeta"><strong>Ultimo backup</strong><span id="backupLastRunText">—</span></div>
+                <button class="backup-popover-btn" id="backupPrimaryBtn" type="button">Attiva Backup Cloud</button>
+                <button class="backup-popover-link" id="backupLearnMoreBtn" type="button">Scopri di più</button>
+                <button class="backup-popover-danger is-hidden" id="backupDisconnectBtn" type="button">Disconnetti</button>
               </div>
             </header>
 <div class="home-top-controls">
@@ -3715,23 +3745,40 @@ paint-order="stroke">
           <aside class="profile-menu-panel" id="profileMenuPanel" role="dialog" aria-modal="true" aria-labelledby="profileMenuTitle">
             <h2 class="profile-menu-title" id="profileMenuTitle">POKÉALBUM</h2>
             <div class="profile-menu-divider" aria-hidden="true"></div>
-            <div class="profile-storage-card" id="profileStorageCard" aria-live="polite">
-              <div class="profile-storage-row">
-                <span class="profile-storage-label">Spazio disponibile:</span>
-                <span class="profile-storage-value" id="profileStorageQuota">—</span>
-              </div>
-              <div class="profile-storage-row">
-                <span class="profile-storage-label">Spazio utilizzato:</span>
-                <span class="profile-storage-value" id="profileStorageUsage">—</span>
-              </div>
-              <div class="profile-storage-row">
-                <span class="profile-storage-label">Spazio rimanente:</span>
-                <span class="profile-storage-value" id="profileStorageRemaining">—</span>
-              </div>
-              <p class="profile-storage-note" id="profileStorageNote">Stima del browser</p>
+            <div class="profile-backup-card" id="profileBackupCard" aria-live="polite">
+              <div class="profile-backup-status-line"><span>Backup Cloud</span><span class="profile-backup-pill" id="profileBackupPill">Non attivo</span></div>
+              <p class="profile-backup-note" id="profileBackupNote">I dati sono salvati solo su questo dispositivo.</p>
             </div>
-            <button class="profile-menu-action cache-clean-action" id="clearCacheBtn" type="button">Pulisci cache</button>
-            <button class="profile-menu-action" id="restoreDataBtn" type="button">Ripristina</button>
+            <button class="profile-menu-action backup-link-action" id="connectDropboxBtn" type="button">Attiva Backup Cloud</button>
+            <button class="profile-menu-action restore-backup-action" id="restoreDataBtn" type="button">Ripristina backup</button>
+            <button class="profile-menu-action disconnect-backup-action is-hidden" id="disconnectBackupBtn" type="button">Disconnetti Backup Cloud</button>
+            <div class="profile-storage-section">
+              <button class="profile-menu-action profile-storage-toggle" id="profileStorageToggle" type="button" aria-expanded="false" aria-controls="profileStorageMenu">
+                <span class="profile-storage-toggle-label">Spazio dispositivo</span>
+                <span class="profile-storage-chevron" aria-hidden="true">›</span>
+              </button>
+              <div class="profile-storage-menu" id="profileStorageMenu" aria-hidden="true">
+                <div class="profile-storage-card" id="profileStorageCard" aria-live="polite">
+                  <div class="profile-storage-row">
+                    <span class="profile-storage-label">Spazio disponibile:</span>
+                    <span class="profile-storage-value" id="profileStorageQuota">—</span>
+                  </div>
+                  <div class="profile-storage-row">
+                    <span class="profile-storage-label">Spazio utilizzato:</span>
+                    <span class="profile-storage-value" id="profileStorageUsage">—</span>
+                  </div>
+                  <div class="profile-storage-row">
+                    <span class="profile-storage-label">Spazio rimanente:</span>
+                    <span class="profile-storage-value" id="profileStorageRemaining">—</span>
+                  </div>
+                  <button class="profile-storage-row profile-storage-cache-action" id="clearCacheBtn" type="button">
+                    <span class="profile-storage-label">Pulisci cache</span>
+                    <span class="profile-storage-value" aria-hidden="true"></span>
+                  </button>
+                  <p class="profile-storage-note" id="profileStorageNote">Stima del dispositivo</p>
+                </div>
+              </div>
+            </div>
           </aside>
         </div>
         <div class="restore-sheet-backdrop" id="restoreSheetBackdrop" aria-hidden="true">
@@ -7505,9 +7552,24 @@ const els = {
           totalPriceValue: $("#totalPriceValue"),
           homeCardsCount: $("#homeCardsCount"),
           homeProfileBtn: $("#homeProfileBtn"),
+          homeBackupStatusBtn: $("#homeBackupStatusBtn"),
+          backupPopover: $("#backupPopover"),
+          backupPopoverTitle: $("#backupPopoverTitle"),
+          backupPopoverText: $("#backupPopoverText"),
+          backupPopoverMeta: $("#backupPopoverMeta"),
+          backupLastRunText: $("#backupLastRunText"),
+          backupPrimaryBtn: $("#backupPrimaryBtn"),
+          backupLearnMoreBtn: $("#backupLearnMoreBtn"),
+          backupDisconnectBtn: $("#backupDisconnectBtn"),
+          profileBackupPill: $("#profileBackupPill"),
+          profileBackupNote: $("#profileBackupNote"),
+          disconnectBackupBtn: $("#disconnectBackupBtn"),
+          connectDropboxBtn: $("#connectDropboxBtn"),
           profileMenuBackdrop: $("#profileMenuBackdrop"),
           profileMenuPanel: $("#profileMenuPanel"),
           profileMenuTitle: $("#profileMenuTitle"),
+          profileStorageToggle: $("#profileStorageToggle"),
+          profileStorageMenu: $("#profileStorageMenu"),
           profileStorageQuota: $("#profileStorageQuota"),
           profileStorageUsage: $("#profileStorageUsage"),
           profileStorageRemaining: $("#profileStorageRemaining"),
@@ -10419,7 +10481,7 @@ function formatStorageBytes(bytes) {
             maximumFractionDigits: decimals,
           })} ${units[unitIndex]}`;
         }
-        function setProfileStorageValues(quotaText = "—", usageText = "—", remainingText = "—", noteText = "Stima del browser") {
+        function setProfileStorageValues(quotaText = "—", usageText = "—", remainingText = "—", noteText = "Stima del dispositivo") {
           if (els.profileStorageQuota) els.profileStorageQuota.textContent = quotaText;
           if (els.profileStorageUsage) els.profileStorageUsage.textContent = usageText;
           if (els.profileStorageRemaining) els.profileStorageRemaining.textContent = remainingText;
@@ -10430,7 +10492,7 @@ function formatStorageBytes(bytes) {
             .filter(([, value]) => Number(value) > 0)
             .sort((a, b) => Number(b[1]) - Number(a[1]))
             .map(([key, value]) => `${key}: ${formatStorageBytes(Number(value))}`);
-          return entries.length ? `Dettaglio: ${entries.join(" · ")}` : "Stima del browser";
+          return entries.length ? `Dettaglio: ${entries.join(" · ")}` : "Stima del dispositivo";
         }
         async function updateProfileStorageInfo() {
           if (!navigator.storage || typeof navigator.storage.estimate !== "function") {
@@ -10454,8 +10516,265 @@ function formatStorageBytes(bytes) {
             setProfileStorageValues("n/d", "n/d", "n/d", "Stima non disponibile");
           }
         }
+        function setProfileStorageMenuOpen(isOpen) {
+          els.profileStorageMenu?.classList.toggle("open", Boolean(isOpen));
+          els.profileStorageMenu?.setAttribute("aria-hidden", isOpen ? "false" : "true");
+          els.profileStorageToggle?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+          if (isOpen) updateProfileStorageInfo();
+        }
+        function toggleProfileStorageMenu(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          const isOpen = els.profileStorageToggle?.getAttribute("aria-expanded") === "true";
+          setProfileStorageMenuOpen(!isOpen);
+        }
+        const BACKUP_CLOUD_STATUS_KEY = "pokealbumBackupCloudStatus";
+        const BACKUP_CLOUD_LAST_RUN_KEY = "pokealbumBackupCloudLastRun";
+        function getBackupCloudStatus() {
+          const raw = String(localStorage.getItem(BACKUP_CLOUD_STATUS_KEY) || "inactive").toLowerCase();
+          return ["active", "stale", "error", "inactive"].includes(raw) ? raw : "inactive";
+        }
+        async function refreshBackupCloudStatusFromServer(options = {}) {
+          try {
+            const response = await fetch("/api/status", { cache: "no-store" });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const result = await response.json();
+            const isConnected = Boolean(result?.ok && result?.connected);
+
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, isConnected ? "active" : "inactive");
+
+            if (isConnected && (options.markBackupTime || !localStorage.getItem(BACKUP_CLOUD_LAST_RUN_KEY))) {
+              localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, new Date().toISOString());
+            }
+
+            updateBackupCloudUi();
+
+            if (options.toast) {
+              showStorageToast(isConnected ? "Dropbox collegato" : "Dropbox non collegato", !isConnected);
+            }
+
+            return isConnected;
+          } catch (error) {
+            console.warn("Impossibile verificare lo stato Dropbox", error);
+            if (options.toast) showStorageToast("Impossibile verificare Dropbox", true);
+            updateBackupCloudUi();
+            return false;
+          }
+        }
+        async function handleDropboxReturnStatus() {
+          const url = new URL(window.location.href);
+          const dropboxStatus = url.searchParams.get("dropbox");
+
+          if (dropboxStatus === "connected") {
+            await refreshBackupCloudStatusFromServer({ toast: true, markBackupTime: true });
+            url.searchParams.delete("dropbox");
+            url.searchParams.delete("account_id");
+            window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+            return;
+          }
+
+          if (dropboxStatus === "cancelled") {
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
+            updateBackupCloudUi();
+            showStorageToast("Collegamento Dropbox annullato", true);
+            url.searchParams.delete("dropbox");
+            window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+            refreshBackupCloudStatusFromServer();
+            return;
+          }
+
+          if (dropboxStatus === "error") {
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "error");
+            updateBackupCloudUi();
+            showStorageToast("Errore durante il collegamento Dropbox", true);
+            url.searchParams.delete("dropbox");
+            window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
+            refreshBackupCloudStatusFromServer();
+            return;
+          }
+
+          refreshBackupCloudStatusFromServer();
+        }
+        function formatBackupLastRun(value) {
+          if (!value) return "Nessun backup eseguito";
+          const date = new Date(value);
+          if (Number.isNaN(date.getTime())) return String(value);
+          return date.toLocaleString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+        }
+        function setBackupPopoverOpen(isOpen) {
+          els.backupPopover?.classList.toggle("open", Boolean(isOpen));
+          els.backupPopover?.setAttribute("aria-hidden", isOpen ? "false" : "true");
+          els.homeBackupStatusBtn?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        }
+        function updateBackupCloudUi() {
+          const status = getBackupCloudStatus();
+          const isActive = status === "active";
+          const isStale = status === "stale";
+          const isError = status === "error";
+          const lastRun = formatBackupLastRun(localStorage.getItem(BACKUP_CLOUD_LAST_RUN_KEY));
+          els.homeBackupStatusBtn?.classList.remove("is-active", "is-stale", "is-error", "is-inactive");
+          els.homeBackupStatusBtn?.classList.add(isActive ? "is-active" : isStale ? "is-stale" : isError ? "is-error" : "is-inactive");
+          const aria = isActive ? "Backup Cloud attivo" : isStale ? "Backup Cloud da aggiornare" : isError ? "Errore Backup Cloud" : "Backup Cloud non attivo";
+          els.homeBackupStatusBtn?.setAttribute("aria-label", aria);
+          els.homeBackupStatusBtn?.setAttribute("title", aria);
+          if (els.backupPopoverTitle) els.backupPopoverTitle.textContent = aria;
+          if (els.backupPopoverText) {
+            els.backupPopoverText.textContent = isActive
+              ? "Le tue carte sono al sicuro. I dati vengono salvati nel cloud e puoi ripristinarli quando vuoi."
+              : isStale
+                ? "Il backup è attivo, ma non viene aggiornato da un po’. Esegui un backup per allineare i dati."
+                : isError
+                  ? "L’ultimo backup non è riuscito. Controlla la connessione e riprova."
+                  : "Le tue carte sono salvate solo su questo dispositivo. Attiva il backup cloud per proteggerle e ripristinarle quando vuoi.";
+          }
+          els.backupPopoverMeta?.classList.toggle("is-hidden", !isActive && !isStale && !isError);
+          if (els.backupLastRunText) els.backupLastRunText.textContent = lastRun;
+          if (els.backupPrimaryBtn) els.backupPrimaryBtn.textContent = isActive ? "Esegui backup ora" : "Attiva Backup Cloud";
+          els.backupLearnMoreBtn?.classList.toggle("is-hidden", isActive);
+          els.backupDisconnectBtn?.classList.toggle("is-hidden", !isActive && !isStale && !isError);
+          if (els.profileBackupPill) {
+            els.profileBackupPill.textContent = isActive ? "Attivo" : isStale ? "Da aggiornare" : isError ? "Errore" : "Non attivo";
+            els.profileBackupPill.classList.toggle("is-active", isActive);
+          }
+          if (els.profileBackupNote) {
+            els.profileBackupNote.textContent = isActive
+              ? `Ultimo backup: ${lastRun}`
+              : "I dati sono salvati solo su questo dispositivo.";
+          }
+          if (els.connectDropboxBtn) els.connectDropboxBtn.textContent = isActive ? "Esegui backup ora" : "Attiva Backup Cloud";
+          els.disconnectBackupBtn?.classList.toggle("is-hidden", !isActive && !isStale && !isError);
+        }
+        function toggleBackupPopover(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          updateBackupCloudUi();
+          const isOpen = els.backupPopover?.classList.contains("open");
+          setBackupPopoverOpen(!isOpen);
+        }
+        function getAllFromObjectStore(db, storeName) {
+          return new Promise((resolve, reject) => {
+            try {
+              const transaction = db.transaction(storeName, "readonly");
+              const store = transaction.objectStore(storeName);
+              const request = store.getAll();
+              request.onsuccess = () => resolve(request.result || []);
+              request.onerror = () => reject(request.error || new Error(`Lettura store ${storeName} fallita`));
+            } catch (error) {
+              reject(error);
+            }
+          });
+        }
+
+        async function collectPokeAlbumBackupPayload() {
+          const db = await openDb();
+          const storeNames = Array.from(db.objectStoreNames || []);
+          const stores = {};
+
+          for (const storeName of storeNames) {
+            stores[storeName] = await getAllFromObjectStore(db, storeName);
+          }
+
+          const local = {};
+          for (let i = 0; i < localStorage.length; i += 1) {
+            const key = localStorage.key(i);
+            if (!key) continue;
+            if (key.startsWith("pokealbum") || key.startsWith("pokemon") || key === "ownerName") {
+              local[key] = localStorage.getItem(key);
+            }
+          }
+
+          return {
+            app: "PokéAlbum",
+            schemaVersion: STORAGE_SCHEMA_VERSION,
+            exportedAt: new Date().toISOString(),
+            db: {
+              name: DB_NAME,
+              version: DB_VERSION,
+              stores
+            },
+            localStorage: local
+          };
+        }
+
+        async function saveBackupCloudNow(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+
+          try {
+            const isConnected = await refreshBackupCloudStatusFromServer();
+            if (!isConnected) {
+              connectDropbox(event);
+              return;
+            }
+
+            showStorageToast("Backup in corso...");
+            const payload = await collectPokeAlbumBackupPayload();
+
+            const response = await fetch("/api/save-data", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(payload)
+            });
+
+            let result = null;
+            try {
+              result = await response.json();
+            } catch {
+              result = null;
+            }
+
+            if (!response.ok || !result?.ok) {
+              throw new Error(result?.error ? JSON.stringify(result.error) : `HTTP ${response.status}`);
+            }
+
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
+            localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, new Date().toISOString());
+            updateBackupCloudUi();
+            setBackupPopoverOpen(false);
+            showStorageToast("Backup aggiornato su Dropbox");
+          } catch (error) {
+            console.error("Backup Dropbox fallito", error);
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "error");
+            updateBackupCloudUi();
+            showStorageToast("Backup Dropbox non riuscito", true);
+          }
+        }
+
+        function runBackupPrimaryAction(event) {
+          return saveBackupCloudNow(event);
+        }
+
+        async function disconnectBackupCloud(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+
+          try {
+            await fetch("/api/disconnect", { method: "POST" });
+          } catch (error) {
+            console.warn("Disconnessione Dropbox lato server non riuscita", error);
+          }
+
+          localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
+          localStorage.removeItem(BACKUP_CLOUD_LAST_RUN_KEY);
+          updateBackupCloudUi();
+          setBackupPopoverOpen(false);
+          closeProfileMenu?.();
+          showStorageToast("Backup Cloud disconnesso");
+        }
+        function showBackupInfo(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          showStorageToast("I dati verranno salvati sul tuo account Dropbox");
+        }
+        function connectDropbox(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          window.location.href = "/auth/dropbox/start";
+        }
         function openProfileMenu() {
-          updateProfileStorageInfo();
+          setProfileStorageMenuOpen(false);
           els.profileMenuBackdrop?.classList.add("open");
           els.profileMenuBackdrop?.setAttribute("aria-hidden", "false");
         }
@@ -12152,7 +12471,7 @@ function replayOpenableClickAnimation(node) {
         function bindOpenableClickAnimations() {
           const selector = [
             "#homeProfileBtn", "#quickAddAlbumBtn", "#ownerNameBtn",
-            "#restoreDataBtn", "#clearCacheBtn",
+            "#connectDropboxBtn", "#profileStorageToggle", "#restoreDataBtn", "#clearCacheBtn",
             "#contextEditBtn", "#contextRenameBtn", "#contextDeleteBtn",
             ".card", ".suggestion", ".choice-row-btn",
             "#detailModal .info-choice-btn", "#detailModal .collapsible-trigger",
@@ -12184,6 +12503,13 @@ els.priceToggleBtn.addEventListener("click", () => {
           event.stopPropagation();
           closeProfileMenu();
         });
+        els.profileStorageToggle?.addEventListener("click", toggleProfileStorageMenu);
+        els.homeBackupStatusBtn?.addEventListener("click", toggleBackupPopover);
+        els.backupPrimaryBtn?.addEventListener("click", runBackupPrimaryAction);
+        els.backupLearnMoreBtn?.addEventListener("click", showBackupInfo);
+        els.backupDisconnectBtn?.addEventListener("click", disconnectBackupCloud);
+        els.connectDropboxBtn?.addEventListener("click", runBackupPrimaryAction);
+        els.disconnectBackupBtn?.addEventListener("click", disconnectBackupCloud);
         els.clearCacheBtn?.addEventListener("click", clearTestCache);
         els.restoreDataBtn?.addEventListener("click", requestRestoreData);
         els.restoreCancelBtn?.addEventListener("click", closeRestoreSheet);
@@ -12265,6 +12591,7 @@ els.priceToggleBtn.addEventListener("click", () => {
         }, { passive: true });
         window.addEventListener("pageshow", () => scheduleAlbumImagesResumeRefresh(true), { passive: true });
         window.addEventListener("focus", () => scheduleAlbumImagesResumeRefresh(false), { passive: true });
+        handleDropboxReturnStatus();
 (async () => {
           try {
             await openDb();
