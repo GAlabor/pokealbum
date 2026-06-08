@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi432-dropbox-cancel-handler-20260609" />
+    <meta name="pokealbum-build" content="vi434-dropbox-import-backup-20260609" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -3784,11 +3784,11 @@ paint-order="stroke">
         <div class="restore-sheet-backdrop" id="restoreSheetBackdrop" aria-hidden="true">
           <section class="restore-sheet" id="restoreSheet" role="dialog" aria-modal="true" aria-labelledby="restoreSheetTitle">
             <div class="restore-sheet-handle" aria-hidden="true"></div>
-            <h2 class="restore-sheet-title" id="restoreSheetTitle">Ripristinare PokéAlbum?</h2>
-            <p class="restore-sheet-text">Questa operazione cancella album, carte, impostazioni, cache dati, localStorage/sessionStorage e riporta l’app allo stato iniziale.</p>
+            <h2 class="restore-sheet-title" id="restoreSheetTitle">Ripristinare da Dropbox?</h2>
+            <p class="restore-sheet-text">Questa operazione sostituisce album, carte e impostazioni locali con i dati presenti nel backup Dropbox.</p>
             <div class="restore-sheet-actions">
               <button class="restore-sheet-btn cancel" id="restoreCancelBtn" type="button">Annulla</button>
-              <button class="restore-sheet-btn confirm" id="restoreConfirmBtn" type="button">Cancella tutto</button>
+              <button class="restore-sheet-btn confirm" id="restoreConfirmBtn" type="button">Ripristina</button>
             </div>
           </section>
         </div>
@@ -10556,10 +10556,6 @@ function formatStorageBytes(bytes) {
 
             localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, isConnected ? "active" : "inactive");
 
-            if (isConnected && (options.markBackupTime || !localStorage.getItem(BACKUP_CLOUD_LAST_RUN_KEY))) {
-              localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, new Date().toISOString());
-            }
-
             updateBackupCloudUi();
 
             if (options.toast) {
@@ -10579,7 +10575,12 @@ function formatStorageBytes(bytes) {
           const dropboxStatus = url.searchParams.get("dropbox");
 
           if (dropboxStatus === "connected") {
-            await refreshBackupCloudStatusFromServer({ toast: true, markBackupTime: true });
+            const connected = await refreshBackupCloudStatusFromServer({ toast: false });
+            if (connected) {
+              await loadBackupCloudDataFromDropbox({ toast: true, silentIfMissing: true });
+            } else {
+              showStorageToast("Dropbox collegato, ma stato non verificato", true);
+            }
             url.searchParams.delete("dropbox");
             url.searchParams.delete("account_id");
             window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
@@ -10678,6 +10679,150 @@ function formatStorageBytes(bytes) {
           });
         }
 
+        function isPokeAlbumLocalStorageKey(key) {
+          return (
+            key === "ownerName" ||
+            String(key || "").startsWith("pokealbum") ||
+            String(key || "").startsWith("pokemon")
+          );
+        }
+
+        async function writeBackupStoresToIndexedDb(stores = {}) {
+          const db = await openDb();
+          const availableStores = Array.from(db.objectStoreNames || []);
+          const targetStores = Object.keys(stores || {}).filter((storeName) => availableStores.includes(storeName));
+
+          if (!targetStores.length) {
+            return { writtenStores: 0, writtenRecords: 0 };
+          }
+
+          const tx = db.transaction(targetStores, "readwrite");
+          let writtenRecords = 0;
+
+          targetStores.forEach((storeName) => {
+            const store = tx.objectStore(storeName);
+            store.clear();
+
+            const records = Array.isArray(stores[storeName]) ? stores[storeName] : [];
+            records.forEach((record) => {
+              if (record && typeof record === "object") {
+                store.put(record);
+                writtenRecords += 1;
+              }
+            });
+          });
+
+          await txDone(tx);
+          return { writtenStores: targetStores.length, writtenRecords };
+        }
+
+        async function importPokeAlbumBackupPayload(payload, options = {}) {
+          if (!payload || typeof payload !== "object") {
+            throw new Error("Backup Dropbox vuoto o non valido");
+          }
+
+          const stores = payload?.db?.stores;
+          if (!stores || typeof stores !== "object") {
+            throw new Error("Backup Dropbox senza dati IndexedDB");
+          }
+
+          closeAlbumDetail();
+          closeAddCardSearch();
+          closeAlbumForm();
+          closeRenameSheet();
+          closeDeleteSheet();
+
+          const writeResult = await writeBackupStoresToIndexedDb(stores);
+
+          const backupLocalStorage = payload.localStorage && typeof payload.localStorage === "object"
+            ? payload.localStorage
+            : {};
+
+          const keysToRemove = [];
+          for (let i = 0; i < localStorage.length; i += 1) {
+            const key = localStorage.key(i);
+            if (key && isPokeAlbumLocalStorageKey(key)) keysToRemove.push(key);
+          }
+          keysToRemove.forEach((key) => localStorage.removeItem(key));
+
+          Object.entries(backupLocalStorage).forEach(([key, value]) => {
+            if (isPokeAlbumLocalStorageKey(key) && value !== undefined && value !== null) {
+              localStorage.setItem(key, String(value));
+            }
+          });
+
+          const exportedAt = payload.exportedAt || payload.createdAt || new Date().toISOString();
+          localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
+          localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, exportedAt);
+
+          els.albumsGrid.innerHTML = "";
+          state.albumCount = 0;
+          state.contextAlbum = null;
+          state.editingAlbum = null;
+          state.currentAlbum = null;
+          state.renamingAlbum = null;
+          state.deletingAlbum = null;
+
+          await loadSavedAlbums();
+          await loadOwnerName();
+          await refreshHomeCollectionTotals();
+          resetFormDefaults();
+          syncEmptyState();
+          setView("home");
+          updateBackupCloudUi();
+
+          return {
+            exportedAt,
+            writtenStores: writeResult.writtenStores,
+            writtenRecords: writeResult.writtenRecords,
+            albums: Array.isArray(stores.albums) ? stores.albums.length : 0,
+            cards: Array.isArray(stores.cards) ? stores.cards.length : 0
+          };
+        }
+
+        async function loadBackupCloudDataFromDropbox(options = {}) {
+          const { toast = false, silentIfMissing = false } = options;
+
+          try {
+            const isConnected = await refreshBackupCloudStatusFromServer();
+            if (!isConnected) {
+              if (toast) showStorageToast("Dropbox non collegato", true);
+              return null;
+            }
+
+            if (toast) showStorageToast("Ripristino backup Dropbox...");
+
+            const response = await fetch(dropboxApiUrl("/api/load-data"), { cache: "no-store" });
+            let result = null;
+            try {
+              result = await response.json();
+            } catch {
+              result = null;
+            }
+
+            if (!response.ok || !result?.ok) {
+              throw new Error(result?.error ? JSON.stringify(result.error) : `HTTP ${response.status}`);
+            }
+
+            if (!result.exists) {
+              if (!silentIfMissing && toast) showStorageToast("Nessun backup trovato su Dropbox", true);
+              return null;
+            }
+
+            const summary = await importPokeAlbumBackupPayload(result.data || {});
+            if (toast) {
+              showStorageToast(`Backup ripristinato: ${summary.albums} album, ${summary.cards} carte`);
+            }
+            return summary;
+          } catch (error) {
+            console.error("Ripristino Dropbox fallito", error);
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "error");
+            updateBackupCloudUi();
+            if (toast) showStorageToast("Ripristino Dropbox non riuscito", true);
+            return null;
+          }
+        }
+
         async function collectPokeAlbumBackupPayload() {
           const db = await openDb();
           const storeNames = Array.from(db.objectStoreNames || []);
@@ -10743,7 +10888,7 @@ function formatStorageBytes(bytes) {
             }
 
             localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
-            localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, new Date().toISOString());
+            localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, payload.exportedAt || new Date().toISOString());
             updateBackupCloudUi();
             setBackupPopoverOpen(false);
             showStorageToast("Backup aggiornato su Dropbox");
@@ -10932,19 +11077,14 @@ function formatStorageBytes(bytes) {
         }
         async function confirmRestoreData() {
           try {
-            await deleteBrowserCaches();
-            await unregisterServiceWorkers();
-            try { localStorage.clear(); } catch {}
-            try { sessionStorage.clear(); } catch {}
-            await deleteAllOriginIndexedDatabases();
             closeRestoreSheet();
-            resetAppAfterRestore();
-            setProfileStorageValues("…", "…", "…", "Ripristino completato");
+            const summary = await loadBackupCloudDataFromDropbox({ toast: true });
+            if (!summary) return;
+            setProfileStorageValues("…", "…", "…", "Ripristino da Dropbox completato");
             window.setTimeout(() => void updateProfileStorageInfo(), 250);
-            showStorageToast("PokéAlbum ripristinato");
           } catch (error) {
             console.error(error);
-            showStorageToast(error?.message || "Errore ripristino totale", true);
+            showStorageToast(error?.message || "Errore ripristino Dropbox", true);
           }
         }
         function editOwnerName() {
@@ -12604,11 +12744,13 @@ els.priceToggleBtn.addEventListener("click", () => {
         }, { passive: true });
         window.addEventListener("pageshow", () => scheduleAlbumImagesResumeRefresh(true), { passive: true });
         window.addEventListener("focus", () => scheduleAlbumImagesResumeRefresh(false), { passive: true });
-        handleDropboxReturnStatus();
-(async () => {
+        (async () => {
           try {
             await openDb();
-            await loadSavedAlbums();
+            await handleDropboxReturnStatus();
+            if (!els.albumsGrid?.children?.length) {
+              await loadSavedAlbums();
+            }
             await loadOwnerName();
           } catch (error) {
             console.error(error);
