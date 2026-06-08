@@ -10530,13 +10530,26 @@ function formatStorageBytes(bytes) {
         }
         const BACKUP_CLOUD_STATUS_KEY = "pokealbumBackupCloudStatus";
         const BACKUP_CLOUD_LAST_RUN_KEY = "pokealbumBackupCloudLastRun";
+        const DROPBOX_REMOTE_BACKEND = "https://pokealbum-dropbox-backend.onrender.com";
+        const DROPBOX_API_BASE = (() => {
+          const host = window.location.hostname;
+          const isLocal =
+            host === "localhost" ||
+            host === "127.0.0.1" ||
+            host === "";
+          const isRender = host.endsWith(".onrender.com");
+          return isLocal || isRender ? "" : DROPBOX_REMOTE_BACKEND;
+        })();
+        function dropboxApiUrl(path) {
+          return `${DROPBOX_API_BASE}${path}`;
+        }
         function getBackupCloudStatus() {
           const raw = String(localStorage.getItem(BACKUP_CLOUD_STATUS_KEY) || "inactive").toLowerCase();
           return ["active", "stale", "error", "inactive"].includes(raw) ? raw : "inactive";
         }
         async function refreshBackupCloudStatusFromServer(options = {}) {
           try {
-            const response = await fetch("/api/status", { cache: "no-store" });
+            const response = await fetch(dropboxApiUrl("/api/status"), { cache: "no-store" });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const result = await response.json();
             const isConnected = Boolean(result?.ok && result?.connected);
@@ -10710,7 +10723,7 @@ function formatStorageBytes(bytes) {
             showStorageToast("Backup in corso...");
             const payload = await collectPokeAlbumBackupPayload();
 
-            const response = await fetch("/api/save-data", {
+            const response = await fetch(dropboxApiUrl("/api/save-data"), {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
@@ -10751,7 +10764,7 @@ function formatStorageBytes(bytes) {
           event?.stopPropagation?.();
 
           try {
-            await fetch("/api/disconnect", { method: "POST" });
+            await fetch(dropboxApiUrl("/api/disconnect"), { method: "POST" });
           } catch (error) {
             console.warn("Disconnessione Dropbox lato server non riuscita", error);
           }
@@ -10771,7 +10784,7 @@ function formatStorageBytes(bytes) {
         function connectDropbox(event) {
           event?.preventDefault?.();
           event?.stopPropagation?.();
-          window.location.href = "/auth/dropbox/start";
+          window.location.href = dropboxApiUrl("/auth/dropbox/start");
         }
         function openProfileMenu() {
           setProfileStorageMenuOpen(false);
