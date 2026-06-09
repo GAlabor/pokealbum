@@ -19,6 +19,18 @@ const REDIRECT_URI =
   process.env.DROPBOX_REDIRECT_URI ||
   `http://localhost:${PORT}/auth/dropbox/callback`;
 
+const FRONTEND_URL = (process.env.FRONTEND_URL || `http://localhost:${PORT}/`).replace(/\/?$/, '/');
+
+function frontendRedirect(params = {}) {
+  const url = new URL(FRONTEND_URL);
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') {
+      url.searchParams.set(key, String(value));
+    }
+  }
+  return url.toString();
+}
+
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
@@ -221,7 +233,7 @@ app.get('/auth/dropbox/start', (req, res) => {
 });
 
 app.get('/auth/dropbox/cancel', (req, res) => {
-  res.redirect('/index.html?dropbox=cancelled');
+  res.redirect(frontendRedirect({ dropbox: 'cancelled' }));
 });
 
 app.get('/auth/dropbox/callback', async (req, res) => {
@@ -233,18 +245,18 @@ app.get('/auth/dropbox/callback', async (req, res) => {
 
       const normalizedError = String(error);
       const target = normalizedError === 'access_denied'
-        ? '/index.html?dropbox=cancelled'
-        : `/index.html?dropbox=error&reason=${encodeURIComponent(normalizedError)}`;
+        ? frontendRedirect({ dropbox: 'cancelled' })
+        : frontendRedirect({ dropbox: 'error', reason: normalizedError });
 
       return res.redirect(target);
     }
 
     if (!code || !state) {
-      return res.redirect('/index.html?dropbox=error&reason=missing_code_or_state');
+      return res.redirect(frontendRedirect({ dropbox: 'error', reason: 'missing_code_or_state' }));
     }
 
     if (!pendingStates.has(String(state))) {
-      return res.redirect('/index.html?dropbox=error&reason=invalid_state');
+      return res.redirect(frontendRedirect({ dropbox: 'error', reason: 'invalid_state' }));
     }
 
     pendingStates.delete(String(state));
@@ -295,7 +307,7 @@ app.get('/auth/dropbox/callback', async (req, res) => {
       linked_at: new Date().toISOString()
     });
 
-    res.redirect(`/index.html?dropbox=connected&account_id=${encodeURIComponent(accountJson.account_id)}`);
+    res.redirect(frontendRedirect({ dropbox: 'connected', account_id: accountJson.account_id }));
   } catch (err) {
     console.error(err);
     res.status(500).send('Errore callback Dropbox. Vedi log server.');
@@ -490,6 +502,7 @@ const server = app.listen(PORT, () => {
   console.log(`Server avviato: http://localhost:${PORT}`);
   console.log(`Cartella servita: ${PROJECT_ROOT}`);
   console.log(`Redirect URI Dropbox: ${REDIRECT_URI}`);
+  console.log(`Frontend URL: ${FRONTEND_URL}`);
   console.log(`Token storage: ${USE_SUPABASE ? 'Supabase' : 'file locale'}`);
 });
 
