@@ -20,6 +20,30 @@ const REDIRECT_URI =
   `http://localhost:${PORT}/auth/dropbox/callback`;
 
 const FRONTEND_URL = (process.env.FRONTEND_URL || `http://localhost:${PORT}/`).replace(/\/?$/, '/');
+const STATE_MAX_AGE_MS = 10 * 60 * 1000;
+const FETCH_TIMEOUT_MS = Number(process.env.FETCH_TIMEOUT_MS || 15000);
+
+class HttpError extends Error {
+  constructor(message, status = 500, details = null) {
+    super(message);
+    this.status = status;
+    this.details = details;
+  }
+}
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = FETCH_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: options.signal || controller.signal
+    });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function frontendRedirect(params = {}) {
   const url = new URL(FRONTEND_URL);
@@ -98,7 +122,7 @@ async function writeLocalTokens(data) {
 async function readSupabaseTokens() {
   const url = `${SUPABASE_URL}/rest/v1/dropbox_tokens?select=account_id,name,email,refresh_token,linked_at`;
 
-  const response = await fetch(url, {
+  const response = await fetchWithTimeout(url, {
     method: 'GET',
     headers: supabaseHeaders()
   });
@@ -126,7 +150,7 @@ async function readSupabaseTokens() {
 }
 
 async function upsertSupabaseToken(user) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/dropbox_tokens`, {
+  const response = await fetchWithTimeout(`${SUPABASE_URL}/rest/v1/dropbox_tokens`, {
     method: 'POST',
     headers: supabaseHeaders({
       'Content-Type': 'application/json',
@@ -157,7 +181,7 @@ async function upsertSupabaseToken(user) {
 }
 
 async function clearSupabaseTokens() {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/dropbox_tokens?account_id=not.is.null`, {
+  const response = await fetchWithTimeout(`${SUPABASE_URL}/rest/v1/dropbox_tokens?account_id=not.is.null`, {
     method: 'DELETE',
     headers: supabaseHeaders()
   });
@@ -205,21 +229,49 @@ async function clearTokens() {
   await writeLocalTokens({ users: {} });
 }
 
-function makeState() {
-  return crypto.randomBytes(24).toString('hex');
+function makeSignedState() {
+  const payload = JSON.stringify({
+    nonce: crypto.randomBytes(16).toString('hex'),
+    ts: Date.now()
+  });
+  const data = Buffer.from(payload).toString('base64url');
+  const signature = crypto
+    .createHmac('sha256', APP_SECRET || 'pokealbum-local-state')
+    .update(data)
+    .digest('base64url');
+
+  return `${data}.${signature}`;
 }
 
-// Demo: state in memoria.
-// Va bene per test e uso semplice. In produzione seria: sessione/cookie firmato/database.
-const pendingStates = new Set();
+function verifySignedState(state) {
+  if (!state || typeof state !== 'string' || !state.includes('.')) return false;
+
+  const [data, signature] = state.split('.');
+  const expected = crypto
+    .createHmac('sha256', APP_SECRET || 'pokealbum-local-state')
+    .update(data)
+    .digest('base64url');
+
+  const sigBuffer = Buffer.from(signature || '');
+  const expectedBuffer = Buffer.from(expected);
+  if (sigBuffer.length !== expectedBuffer.length) return false;
+  if (!crypto.timingSafeEqual(sigBuffer, expectedBuffer)) return false;
+
+  try {
+    const payload = JSON.parse(Buffer.from(data, 'base64url').toString('utf8'));
+    const ts = Number(payload.ts || 0);
+    return Number.isFinite(ts) && Date.now() - ts <= STATE_MAX_AGE_MS;
+  } catch {
+    return false;
+  }
+}
 
 app.get('/auth/dropbox/start', (req, res) => {
   if (!APP_KEY || !APP_SECRET) {
     return res.status(500).send('Config Dropbox mancante: controlla variabili ambiente o file .env');
   }
 
-  const state = makeState();
-  pendingStates.add(state);
+  const state = makeSignedState();
 
   const params = new URLSearchParams({
     client_id: APP_KEY,
@@ -241,8 +293,6 @@ app.get('/auth/dropbox/callback', async (req, res) => {
     const { code, state, error } = req.query;
 
     if (error) {
-      if (state) pendingStates.delete(String(state));
-
       const normalizedError = String(error);
       const target = normalizedError === 'access_denied'
         ? frontendRedirect({ dropbox: 'cancelled' })
@@ -255,15 +305,13 @@ app.get('/auth/dropbox/callback', async (req, res) => {
       return res.redirect(frontendRedirect({ dropbox: 'error', reason: 'missing_code_or_state' }));
     }
 
-    if (!pendingStates.has(String(state))) {
+    if (!verifySignedState(String(state))) {
       return res.redirect(frontendRedirect({ dropbox: 'error', reason: 'invalid_state' }));
     }
 
-    pendingStates.delete(String(state));
-
     const basic = Buffer.from(`${APP_KEY}:${APP_SECRET}`).toString('base64');
 
-    const tokenRes = await fetch('https://api.dropboxapi.com/oauth2/token', {
+    const tokenRes = await fetchWithTimeout('https://api.dropboxapi.com/oauth2/token', {
       method: 'POST',
       headers: {
         Authorization: `Basic ${basic}`,
@@ -283,7 +331,7 @@ app.get('/auth/dropbox/callback', async (req, res) => {
       return res.status(500).json(tokenJson);
     }
 
-    const accountRes = await fetch('https://api.dropboxapi.com/2/users/get_current_account', {
+    const accountRes = await fetchWithTimeout('https://api.dropboxapi.com/2/users/get_current_account', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${tokenJson.access_token}`,
@@ -335,7 +383,7 @@ async function getAccessToken(accountId) {
 
   const basic = Buffer.from(`${APP_KEY}:${APP_SECRET}`).toString('base64');
 
-  const tokenRes = await fetch('https://api.dropboxapi.com/oauth2/token', {
+  const tokenRes = await fetchWithTimeout('https://api.dropboxapi.com/oauth2/token', {
     method: 'POST',
     headers: {
       Authorization: `Basic ${basic}`,
@@ -355,6 +403,15 @@ async function getAccessToken(accountId) {
 
   return tokenJson.access_token;
 }
+
+app.get('/healthz', (req, res) => {
+  res.json({
+    ok: true,
+    service: 'pokealbum-dropbox-backend',
+    storage: USE_SUPABASE ? 'supabase' : 'local',
+    now: new Date().toISOString()
+  });
+});
 
 app.get('/api/status', async (req, res) => {
   try {
@@ -381,7 +438,7 @@ app.get('/api/load-data', async (req, res) => {
     const accountId = await getFirstAccountId();
     const accessToken = await getAccessToken(accountId);
 
-    const response = await fetch('https://content.dropboxapi.com/2/files/download', {
+    const response = await fetchWithTimeout('https://content.dropboxapi.com/2/files/download', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -409,10 +466,20 @@ app.get('/api/load-data', async (req, res) => {
       });
     }
 
+    let parsedData;
+    try {
+      parsedData = JSON.parse(text);
+    } catch {
+      return res.status(500).json({
+        ok: false,
+        error: 'Il file pokealbum-data.json su Dropbox non contiene JSON valido'
+      });
+    }
+
     res.json({
       ok: true,
       exists: true,
-      data: JSON.parse(text)
+      data: parsedData
     });
   } catch (err) {
     console.error(err);
@@ -429,7 +496,7 @@ app.post('/api/save-data', async (req, res) => {
     const accessToken = await getAccessToken(accountId);
     const content = JSON.stringify(req.body || {}, null, 2);
 
-    const uploadRes = await fetch('https://content.dropboxapi.com/2/files/upload', {
+    const uploadRes = await fetchWithTimeout('https://content.dropboxapi.com/2/files/upload', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -498,7 +565,7 @@ app.post('/api/disconnect', async (req, res) => {
   }
 });
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server avviato: http://localhost:${PORT}`);
   console.log(`Cartella servita: ${PROJECT_ROOT}`);
   console.log(`Redirect URI Dropbox: ${REDIRECT_URI}`);
