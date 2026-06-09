@@ -19,14 +19,49 @@ const REDIRECT_URI =
   process.env.DROPBOX_REDIRECT_URI ||
   `http://localhost:${PORT}/auth/dropbox/callback`;
 
+const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const USE_SUPABASE = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+
 if (!APP_KEY || !APP_SECRET) {
   console.warn('\n[ATTENZIONE] Mancano DROPBOX_APP_KEY o DROPBOX_APP_SECRET nel file .env\n');
 }
 
-app.use(express.json({ limit: '50mb' }));
-const PROJECT_ROOT = path.resolve('..');
+if (USE_SUPABASE) {
+  console.log('[SUPABASE] Token Dropbox salvati su Supabase');
+} else {
+  console.log('[LOCAL] Token Dropbox salvati su file locale data/tokens.json');
+}
 
+app.use(express.json({ limit: '50mb' }));
+
+// CORS minimo per usare il backend Render da GitHub Pages.
+// Non è Fort Knox, ma almeno il browser non fa il vigile urbano.
+app.use((req, res, next) => {
+  const origin = req.headers.origin || '*';
+
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Vary', 'Origin');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+const PROJECT_ROOT = path.resolve('..');
 app.use(express.static(PROJECT_ROOT));
+
+function supabaseHeaders(extra = {}) {
+  return {
+    apikey: SUPABASE_SERVICE_ROLE_KEY,
+    Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+    ...extra
+  };
+}
 
 async function ensureDataFile() {
   await fs.mkdir(DATA_DIR, { recursive: true });
@@ -38,27 +73,137 @@ async function ensureDataFile() {
   }
 }
 
-async function readTokens() {
+async function readLocalTokens() {
   await ensureDataFile();
   return JSON.parse(await fs.readFile(TOKENS_FILE, 'utf8'));
 }
 
-async function writeTokens(data) {
+async function writeLocalTokens(data) {
   await ensureDataFile();
   await fs.writeFile(TOKENS_FILE, JSON.stringify(data, null, 2));
+}
+
+async function readSupabaseTokens() {
+  const url = `${SUPABASE_URL}/rest/v1/dropbox_tokens?select=account_id,name,email,refresh_token,linked_at`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: supabaseHeaders()
+  });
+
+  const json = await response.json();
+
+  if (!response.ok) {
+    console.error('[SUPABASE READ ERROR]', json);
+    throw new Error(`Errore lettura Supabase: ${JSON.stringify(json)}`);
+  }
+
+  const users = {};
+
+  for (const row of json) {
+    users[row.account_id] = {
+      account_id: row.account_id,
+      name: row.name || 'Utente Dropbox',
+      email: row.email || '',
+      refresh_token: row.refresh_token,
+      linked_at: row.linked_at
+    };
+  }
+
+  return { users };
+}
+
+async function upsertSupabaseToken(user) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/dropbox_tokens`, {
+    method: 'POST',
+    headers: supabaseHeaders({
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates,return=representation'
+    }),
+    body: JSON.stringify({
+      account_id: user.account_id,
+      name: user.name || 'Utente Dropbox',
+      email: user.email || '',
+      refresh_token: user.refresh_token,
+      linked_at: user.linked_at || new Date().toISOString()
+    })
+  });
+
+  const text = await response.text();
+
+  if (!response.ok) {
+    let error;
+    try {
+      error = JSON.parse(text);
+    } catch {
+      error = { raw: text };
+    }
+
+    console.error('[SUPABASE UPSERT ERROR]', error);
+    throw new Error(`Errore salvataggio Supabase: ${JSON.stringify(error)}`);
+  }
+}
+
+async function clearSupabaseTokens() {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/dropbox_tokens?account_id=not.is.null`, {
+    method: 'DELETE',
+    headers: supabaseHeaders()
+  });
+
+  const text = await response.text();
+
+  if (!response.ok) {
+    let error;
+    try {
+      error = JSON.parse(text);
+    } catch {
+      error = { raw: text };
+    }
+
+    console.error('[SUPABASE DELETE ERROR]', error);
+    throw new Error(`Errore cancellazione Supabase: ${JSON.stringify(error)}`);
+  }
+}
+
+async function readTokens() {
+  if (USE_SUPABASE) {
+    return readSupabaseTokens();
+  }
+
+  return readLocalTokens();
+}
+
+async function saveDropboxUser(user) {
+  if (USE_SUPABASE) {
+    await upsertSupabaseToken(user);
+    return;
+  }
+
+  const tokens = await readLocalTokens();
+  tokens.users[user.account_id] = user;
+  await writeLocalTokens(tokens);
+}
+
+async function clearTokens() {
+  if (USE_SUPABASE) {
+    await clearSupabaseTokens();
+    return;
+  }
+
+  await writeLocalTokens({ users: {} });
 }
 
 function makeState() {
   return crypto.randomBytes(24).toString('hex');
 }
 
-// Demo locale: state in memoria.
-// In produzione vera: sessione/cookie firmato/database.
+// Demo: state in memoria.
+// Va bene per test e uso semplice. In produzione seria: sessione/cookie firmato/database.
 const pendingStates = new Set();
 
 app.get('/auth/dropbox/start', (req, res) => {
   if (!APP_KEY || !APP_SECRET) {
-    return res.status(500).send('Config Dropbox mancante: controlla il file .env');
+    return res.status(500).send('Config Dropbox mancante: controlla variabili ambiente o file .env');
   }
 
   const state = makeState();
@@ -81,7 +226,7 @@ app.get('/auth/dropbox/cancel', (req, res) => {
 
 app.get('/auth/dropbox/callback', async (req, res) => {
   try {
-    const { code, state, error, error_description } = req.query;
+    const { code, state, error } = req.query;
 
     if (error) {
       if (state) pendingStates.delete(String(state));
@@ -142,22 +287,18 @@ app.get('/auth/dropbox/callback', async (req, res) => {
       return res.status(500).json(accountJson);
     }
 
-    const tokens = await readTokens();
-
-    tokens.users[accountJson.account_id] = {
+    await saveDropboxUser({
       account_id: accountJson.account_id,
       name: accountJson.name?.display_name || 'Utente Dropbox',
       email: accountJson.email || '',
       refresh_token: tokenJson.refresh_token,
       linked_at: new Date().toISOString()
-    };
-
-    await writeTokens(tokens);
+    });
 
     res.redirect(`/index.html?dropbox=connected&account_id=${encodeURIComponent(accountJson.account_id)}`);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Errore callback Dropbox. Vedi finestra server.');
+    res.status(500).send('Errore callback Dropbox. Vedi log server.');
   }
 });
 
@@ -210,12 +351,14 @@ app.get('/api/status', async (req, res) => {
 
     res.json({
       ok: true,
+      storage: USE_SUPABASE ? 'supabase' : 'local',
       connected: users.length > 0,
       users
     });
   } catch (err) {
     res.status(500).json({
       ok: false,
+      storage: USE_SUPABASE ? 'supabase' : 'local',
       error: String(err.message || err)
     });
   }
@@ -322,15 +465,17 @@ app.post('/api/save-data', async (req, res) => {
   }
 });
 
-
 app.post('/api/disconnect', async (req, res) => {
   try {
-    await writeTokens({ users: {} });
+    await clearTokens();
 
     res.json({
       ok: true,
       connected: false,
-      message: 'Dropbox disconnesso localmente'
+      storage: USE_SUPABASE ? 'supabase' : 'local',
+      message: USE_SUPABASE
+        ? 'Dropbox disconnesso da Supabase'
+        : 'Dropbox disconnesso localmente'
     });
   } catch (err) {
     console.error(err);
@@ -345,6 +490,7 @@ const server = app.listen(PORT, () => {
   console.log(`Server avviato: http://localhost:${PORT}`);
   console.log(`Cartella servita: ${PROJECT_ROOT}`);
   console.log(`Redirect URI Dropbox: ${REDIRECT_URI}`);
+  console.log(`Token storage: ${USE_SUPABASE ? 'Supabase' : 'file locale'}`);
 });
 
 server.on('error', (err) => {
