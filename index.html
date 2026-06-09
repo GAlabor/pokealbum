@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi435-cloud-menu-reset-pwa-return-20260609" />
+    <meta name="pokealbum-build" content="vi436-cloud-menu-disconnect-storage-20260609" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -2512,7 +2512,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
                 <div class="backup-popover-meta is-hidden" id="backupPopoverMeta"><strong>Ultimo backup</strong><span id="backupLastRunText">—</span></div>
                 <button class="backup-popover-btn" id="backupPrimaryBtn" type="button">Attiva Backup Cloud</button>
                 <button class="backup-popover-link" id="backupLearnMoreBtn" type="button">Scopri di più</button>
-                <button class="backup-popover-danger is-hidden" id="backupDisconnectBtn" type="button">Disconnetti</button>
+                <button class="backup-popover-danger is-hidden" id="backupDisconnectBtn" type="button">Disconnetti da Cloud</button>
               </div>
             </header>
 <div class="home-top-controls">
@@ -3752,11 +3752,11 @@ paint-order="stroke">
             </div>
             <button class="profile-menu-action backup-link-action" id="connectDropboxBtn" type="button">Attiva Backup Cloud</button>
             <button class="profile-menu-action restore-backup-action is-hidden" id="restoreDataBtn" type="button">Ripristina backup</button>
-            <button class="profile-menu-action disconnect-backup-action is-hidden" id="disconnectBackupBtn" type="button">Disconnetti Backup Cloud</button>
+            <button class="profile-menu-action disconnect-backup-action is-hidden" id="disconnectBackupBtn" type="button">Disconnetti da Cloud</button>
             <button class="profile-menu-action reset-app-action" id="resetAppBtn" type="button">Ripristina App</button>
             <div class="profile-storage-section">
               <button class="profile-menu-action profile-storage-toggle" id="profileStorageToggle" type="button" aria-expanded="false" aria-controls="profileStorageMenu">
-                <span class="profile-storage-toggle-label">Spazio dispositivo</span>
+                <span class="profile-storage-toggle-label">Storage</span>
                 <span class="profile-storage-chevron" aria-hidden="true">›</span>
               </button>
               <div class="profile-storage-menu" id="profileStorageMenu" aria-hidden="true">
@@ -10685,7 +10685,7 @@ function formatStorageBytes(bytes) {
             els.connectDropboxBtn.classList.toggle("is-hidden", false);
           }
           els.restoreDataBtn?.classList.toggle("is-hidden", !isActive);
-          els.disconnectBackupBtn?.classList.add("is-hidden");
+          els.disconnectBackupBtn?.classList.toggle("is-hidden", !isActive);
           els.resetAppBtn?.classList.remove("is-hidden");
         }
         function toggleBackupPopover(event) {
