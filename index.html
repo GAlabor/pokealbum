@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi435-backup-reset-separated-20260609" />
+    <meta name="pokealbum-build" content="vi435-restore-app-backup-split-20260609" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -2417,7 +2417,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .profile-menu-action.backup-link-action:hover,.profile-menu-action.backup-link-action:active{background:rgba(17,24,39,.06)}
 .profile-menu-action.restore-backup-action{color:#2f64ff}.profile-menu-action.restore-backup-action:hover,.profile-menu-action.restore-backup-action:active{background:rgba(47,100,255,.08)}
 .profile-menu-action.restore-backup-action.is-hidden{display:none!important}
-.profile-menu-action.reset-app-action{color:#c62828;margin-top:8px}.profile-menu-action.reset-app-action:hover,.profile-menu-action.reset-app-action:active{background:rgba(198,40,40,.08)}
+.profile-menu-action.restore-app-action{color:#c62828;margin-top:6px}.profile-menu-action.restore-app-action:hover,.profile-menu-action.restore-app-action:active{background:rgba(198,40,40,.08)}
 .profile-menu-action.disconnect-backup-action{color:#c62828}.profile-menu-action.disconnect-backup-action.is-hidden{display:none!important}
 @media (max-width:420px){#homeView .home-backup-status-btn{width:52px;height:52px;border-radius:20px}.backup-popover{right:6px;width:min(250px,calc(100vw - 40px))}}
 
@@ -3780,8 +3780,8 @@ paint-order="stroke">
                   <p class="profile-storage-note" id="profileStorageNote">Stima del dispositivo</p>
                 </div>
               </div>
-              <button class="profile-menu-action reset-app-action" id="resetAppBtn" type="button">Ripristina App</button>
             </div>
+            <button class="profile-menu-action restore-app-action" id="restoreAppBtn" type="button">Ripristina App</button>
           </aside>
         </div>
         <div class="restore-sheet-backdrop" id="restoreSheetBackdrop" aria-hidden="true">
@@ -4017,7 +4017,7 @@ paint-order="stroke">
   </div>
     <script>
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi405-index-meta-cache-refresh-20260607';
+    const POKEALBUM_BUILD_VERSION = 'vi435-restore-app-backup-split-20260609';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const INDEX_URL = 'data/pokemon-index.json';
@@ -7578,8 +7578,8 @@ const els = {
           profileStorageRemaining: $("#profileStorageRemaining"),
           profileStorageNote: $("#profileStorageNote"),
           clearCacheBtn: $("#clearCacheBtn"),
-          resetAppBtn: $("#resetAppBtn"),
           restoreDataBtn: $("#restoreDataBtn"),
+          restoreAppBtn: $("#restoreAppBtn"),
           restoreSheetBackdrop: $("#restoreSheetBackdrop"),
           restoreSheetTitle: $("#restoreSheetTitle"),
           restoreSheetText: $("#restoreSheetText"),
@@ -7721,6 +7721,7 @@ const DEFAULT_ALBUM = Object.freeze({
         const DB_VERSION = 1;
         let dbPromise = null;
         let storageToastTimer = 0;
+        let restoreSheetMode = "cloud";
         /* L’animazione dell’omino profilo resta disarmata durante il caricamento iniziale.
            Viene abilitata solo dopo che l’app ha finito di leggere/sincronizzare i dati salvati. */
         let homeProfileSaveAnimationEnabled = false;
@@ -10661,10 +10662,9 @@ function formatStorageBytes(bytes) {
               ? `Ultimo backup: ${lastRun}`
               : "I dati sono salvati solo su questo dispositivo.";
           }
-          const isConnectedLike = isActive || isStale || isError;
-          if (els.connectDropboxBtn) els.connectDropboxBtn.textContent = isConnectedLike ? "Esegui backup ora" : "Attiva Backup Cloud";
-          els.restoreDataBtn?.classList.toggle("is-hidden", !isConnectedLike);
-          els.disconnectBackupBtn?.classList.toggle("is-hidden", !isConnectedLike);
+          if (els.connectDropboxBtn) els.connectDropboxBtn.textContent = isActive ? "Esegui backup ora" : "Attiva Backup Cloud";
+          els.restoreDataBtn?.classList.toggle("is-hidden", !isActive);
+          els.disconnectBackupBtn?.classList.toggle("is-hidden", !isActive && !isStale && !isError);
         }
         function toggleBackupPopover(event) {
           event?.preventDefault?.();
@@ -10948,16 +10948,22 @@ function formatStorageBytes(bytes) {
           els.profileMenuBackdrop?.classList.remove("open");
           els.profileMenuBackdrop?.setAttribute("aria-hidden", "true");
         }
-        function openRestoreSheet(mode = "backup") {
-          const isReset = mode === "reset-app";
-          if (els.restoreSheetBackdrop) els.restoreSheetBackdrop.dataset.mode = isReset ? "reset-app" : "backup";
-          if (els.restoreSheetTitle) els.restoreSheetTitle.textContent = isReset ? "Ripristinare l’app?" : "Ripristinare backup?";
-          if (els.restoreSheetText) {
-            els.restoreSheetText.textContent = isReset
-              ? "Questa operazione cancella album, carte, impostazioni, cache e dati locali. L’app torna allo stato iniziale. Il backup su Dropbox non viene cancellato."
-              : "Questa operazione prende il file pokealbum-data.json più recente da Dropbox e sostituisce album, carte e impostazioni locali.";
+        function setRestoreSheetMode(mode = "cloud") {
+          restoreSheetMode = mode === "app" ? "app" : "cloud";
+          if (els.restoreSheetTitle) {
+            els.restoreSheetTitle.textContent = restoreSheetMode === "app" ? "Ripristinare l’app?" : "Ripristinare il backup?";
           }
-          if (els.restoreConfirmBtn) els.restoreConfirmBtn.textContent = isReset ? "Ripristina App" : "Ripristina backup";
+          if (els.restoreSheetText) {
+            els.restoreSheetText.textContent = restoreSheetMode === "app"
+              ? "Questa operazione cancella album, carte, impostazioni, backup locale e cache del dispositivo, riportando PokéAlbum allo stato iniziale. Il backup Cloud su Dropbox non viene cancellato."
+              : "Questa operazione carica l’ultimo backup dal file pokealbum-data.json su Dropbox e aggiorna i dati locali. Non esegue il reset dell’app e non cancella il backup Cloud.";
+          }
+          if (els.restoreConfirmBtn) {
+            els.restoreConfirmBtn.textContent = restoreSheetMode === "app" ? "Ripristina App" : "Ripristina backup";
+          }
+        }
+        function openRestoreSheet(mode = "cloud") {
+          setRestoreSheetMode(mode);
           els.restoreSheetBackdrop?.classList.add("open");
           els.restoreSheetBackdrop?.setAttribute("aria-hidden", "false");
         }
@@ -10969,13 +10975,13 @@ function formatStorageBytes(bytes) {
           event?.preventDefault?.();
           event?.stopPropagation?.();
           closeProfileMenu();
-          window.setTimeout(() => openRestoreSheet("backup"), 40);
+          window.setTimeout(() => openRestoreSheet("cloud"), 40);
         }
-        function requestResetApp(event) {
+        function requestRestoreApp(event) {
           event?.preventDefault?.();
           event?.stopPropagation?.();
           closeProfileMenu();
-          window.setTimeout(() => openRestoreSheet("reset-app"), 40);
+          window.setTimeout(() => openRestoreSheet("app"), 40);
         }
         async function deleteBrowserCaches() {
           let deletedCaches = 0;
@@ -11098,27 +11104,26 @@ function formatStorageBytes(bytes) {
             showStorageToast(error?.message || "Errore pulizia cache", true);
           }
         }
-        async function resetAppToInitialState() {
+        async function restoreAppToInitialState() {
           showStorageToast("Ripristino app in corso...");
-          closeAlbumDetail();
-          closeAddCardSearch();
-          closeAlbumForm();
-          closeRenameSheet();
-          closeDeleteSheet();
-          await deleteBrowserCaches();
-          await unregisterServiceWorkers();
-          await deleteAllOriginIndexedDatabases();
-          try {
-            await fetch(dropboxApiUrl("/api/disconnect"), { method: "POST" });
-          } catch (error) {
-            console.warn("Disconnessione Backup Cloud durante il ripristino app non riuscita", error);
-          }
+          try { closeAlbumDetail(); } catch {}
+          try { closeAddCardSearch(); } catch {}
+          try { await closeAlbumForm(); } catch {}
+          try { closeRenameSheet(); } catch {}
+          try { closeDeleteSheet(); } catch {}
+
           const keysToRemove = [];
           for (let i = 0; i < localStorage.length; i += 1) {
             const key = localStorage.key(i);
             if (key && isPokeAlbumLocalStorageKey(key)) keysToRemove.push(key);
           }
           keysToRemove.forEach((key) => localStorage.removeItem(key));
+
+          try { sessionStorage.clear(); } catch {}
+          await deleteIndexedDatabaseByName(DB_NAME);
+          await deleteBrowserCaches();
+          await unregisterServiceWorkers();
+
           state.albumCount = 0;
           state.contextAlbum = null;
           state.editingAlbum = null;
@@ -11126,25 +11131,24 @@ function formatStorageBytes(bytes) {
           state.renamingAlbum = null;
           state.deletingAlbum = null;
           if (els.albumsGrid) els.albumsGrid.innerHTML = "";
-          setProfileStorageValues("…", "…", "…", "App riportata allo stato iniziale");
           updateBackupCloudUi();
-          window.location.reload();
+          showStorageToast("App ripristinata allo stato iniziale");
+          window.setTimeout(() => window.location.reload(), 450);
         }
         async function confirmRestoreData() {
-          const mode = els.restoreSheetBackdrop?.dataset?.mode || "backup";
           try {
             closeRestoreSheet();
-            if (mode === "reset-app") {
-              await resetAppToInitialState();
+            if (restoreSheetMode === "app") {
+              await restoreAppToInitialState();
               return;
             }
             const summary = await loadBackupCloudDataFromDropbox({ toast: true });
             if (!summary) return;
-            setProfileStorageValues("…", "…", "…", "Ripristino da Dropbox completato");
+            setProfileStorageValues("…", "…", "…", "Backup da Dropbox caricato");
             window.setTimeout(() => void updateProfileStorageInfo(), 250);
           } catch (error) {
             console.error(error);
-            showStorageToast(error?.message || (mode === "reset-app" ? "Errore ripristino app" : "Errore ripristino Dropbox"), true);
+            showStorageToast(error?.message || (restoreSheetMode === "app" ? "Errore ripristino app" : "Errore ripristino backup"), true);
           }
         }
         function editOwnerName() {
@@ -12684,7 +12688,7 @@ function replayOpenableClickAnimation(node) {
         function bindOpenableClickAnimations() {
           const selector = [
             "#homeProfileBtn", "#quickAddAlbumBtn", "#ownerNameBtn",
-            "#connectDropboxBtn", "#profileStorageToggle", "#restoreDataBtn", "#resetAppBtn", "#clearCacheBtn",
+            "#connectDropboxBtn", "#profileStorageToggle", "#restoreDataBtn", "#restoreAppBtn", "#clearCacheBtn",
             "#contextEditBtn", "#contextRenameBtn", "#contextDeleteBtn",
             ".card", ".suggestion", ".choice-row-btn",
             "#detailModal .info-choice-btn", "#detailModal .collapsible-trigger",
@@ -12724,7 +12728,7 @@ els.priceToggleBtn.addEventListener("click", () => {
         els.connectDropboxBtn?.addEventListener("click", runBackupPrimaryAction);
         els.disconnectBackupBtn?.addEventListener("click", disconnectBackupCloud);
         els.clearCacheBtn?.addEventListener("click", clearTestCache);
-        els.resetAppBtn?.addEventListener("click", requestResetApp);
+        els.restoreAppBtn?.addEventListener("click", requestRestoreApp);
         els.restoreDataBtn?.addEventListener("click", requestRestoreData);
         els.restoreCancelBtn?.addEventListener("click", closeRestoreSheet);
         els.restoreConfirmBtn?.addEventListener("click", confirmRestoreData);
