@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi438-oracle-dropbox-stable-20260612" />
+    <meta name="pokealbum-build" content="vi446-menu-provider-puntini-20260613" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -2438,7 +2438,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   max-width:315px!important;
   height:100%!important;
   border-radius:0!important;
-  padding:calc(var(--safe-top) + 18px) 14px calc(var(--safe-bottom) + 14px)!important;
+  padding:calc(var(--safe-top) + 8px) 14px calc(var(--safe-bottom) + 14px)!important;
   border:0!important;
   border-left:1px solid rgba(255,255,255,.72)!important;
   background:rgba(255,255,255,.78)!important;
@@ -2454,18 +2454,18 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 
 .profile-menu-head{
   position:relative;
-  min-height:32px;
+  min-height:28px;
   display:flex;
   align-items:center;
-  justify-content:center;
-  margin-bottom:13px;
+  justify-content:flex-start;
+  margin-bottom:5px;
 }
 .profile-menu-title{
   margin:0!important;
   font-size:16px!important;
   letter-spacing:.16em!important;
   line-height:1.08!important;
-  text-align:center!important;
+  text-align:left!important;
   font-weight:950!important;
   text-transform:uppercase!important;
   background:linear-gradient(135deg,#2f64ff 0%,#7aa6ff 65%,#8f7cff 100%)!important;
@@ -2510,15 +2510,15 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .profile-menu-divider{
   height:1px!important;
   background:rgba(111,134,188,.16)!important;
-  margin:10px 0!important;
+  margin:5px 0!important;
   flex:0 0 auto;
 }
 
 .profile-trainer-card{
-  min-height:58px;
+  min-height:52px;
   display:grid;
   grid-template-columns:48px minmax(0,1fr);
-  gap:10px;
+  gap:6px;
   align-items:center;
 }
 .profile-avatar{
@@ -2537,7 +2537,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   fill:currentColor;
   filter:drop-shadow(0 5px 8px rgba(32,52,95,.10));
 }
-.profile-trainer-copy{display:grid;align-content:center;gap:3px;min-width:0}
+.profile-trainer-copy{display:grid;align-content:center;gap:2px;min-width:0}
 .profile-trainer-copy strong{
   font-size:14px;
   line-height:1.08;
@@ -2796,7 +2796,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   width:min(72vw,330px)!important;
   min-width:260px!important;
   max-width:340px!important;
-  padding:calc(var(--safe-top) + 18px) 14px calc(var(--safe-bottom) + 14px)!important;
+  padding:calc(var(--safe-top) + 8px) 14px calc(var(--safe-bottom) + 14px)!important;
 }
 .profile-menu-head{min-height:30px!important;margin-bottom:12px!important}
 .profile-menu-title{font-size:14px!important;letter-spacing:.14em!important;line-height:1.05!important}
@@ -2880,6 +2880,61 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   line-height:1.12!important;
   font-weight:900!important;
 }
+</style>
+
+<style id="menu-vi445-layout-polish">
+/* vi445: spazi menu laterale più stretti e titolo allineato a sinistra */
+.profile-menu-panel{
+  padding:calc(var(--safe-top) + 8px) 14px calc(var(--safe-bottom) + 14px)!important;
+}
+.profile-menu-head{
+  min-height:26px!important;
+  justify-content:flex-start!important;
+  margin-bottom:4px!important;
+}
+.profile-menu-title{
+  text-align:left!important;
+}
+.profile-menu-divider{
+  margin:4px 0!important;
+}
+.profile-trainer-card{
+  min-height:46px!important;
+  grid-template-columns:42px minmax(0,1fr)!important;
+  gap:5px!important;
+}
+.profile-avatar{
+  width:42px!important;
+  height:42px!important;
+}
+.profile-avatar .profile-menu-user-icon{
+  width:36px!important;
+  height:36px!important;
+}
+.profile-trainer-copy{
+  gap:1px!important;
+}
+@media (max-width:420px){
+  .profile-menu-panel{padding:calc(var(--safe-top) + 8px) 13px calc(var(--safe-bottom) + 14px)!important;}
+  .profile-menu-head{min-height:24px!important;justify-content:flex-start!important;margin-bottom:3px!important;}
+  .profile-menu-divider{margin:4px 0!important;}
+  .profile-trainer-card{grid-template-columns:40px minmax(0,1fr)!important;min-height:44px!important;gap:5px!important;}
+  .profile-avatar{width:40px!important;height:40px!important;}
+}
+
+/* vi446: menu puntini sui servizi cloud collegati */
+.profile-provider-card{position:relative!important;overflow:visible!important;}
+.profile-provider-row{grid-template-columns:25px minmax(0,1fr) auto!important;}
+.provider-service-actions{display:inline-flex;align-items:center;justify-content:flex-end;gap:5px;min-width:0;}
+.provider-more-btn{width:24px!important;height:24px!important;min-width:24px!important;border:0;border-radius:999px;background:rgba(47,100,255,.10);color:#3157c9;font-family:inherit;font-size:10px!important;font-weight:950;letter-spacing:-1px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0 0 2px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.74);}
+.provider-more-btn.is-hidden{display:none!important;}
+.profile-provider-menu{position:absolute;right:8px;top:38px;z-index:8;min-width:142px;padding:6px;border-radius:15px;background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.76);box-shadow:0 18px 38px rgba(25,38,82,.20),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-4px) scale(.98);transition:opacity .16s ease,transform .16s ease,visibility .16s ease;}
+.profile-provider-menu.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1);}
+.profile-provider-menu button{width:100%;min-height:34px;border:0;border-radius:11px;background:transparent;color:#20345f;font-family:inherit;font-size:12px!important;font-weight:850;text-align:left;padding:0 9px;cursor:pointer;white-space:nowrap;}
+.profile-provider-menu button:hover,.profile-provider-menu button:active{background:rgba(47,100,255,.08);}
+.profile-provider-menu button:last-child{color:#c62828;}
+@media (max-width:420px){.provider-more-btn{width:23px!important;height:23px!important;min-width:23px!important}.profile-provider-menu{right:7px;top:36px;min-width:136px}.profile-provider-menu button{font-size:11.5px!important;}}
+
 </style>
 
 </head>
@@ -4245,7 +4300,14 @@ paint-order="stroke">
                     </svg>
                   </span>
                   <span>Dropbox</span>
-                  <span class="provider-check off provider-action" id="profileDropboxCheck" aria-hidden="true">Connetti</span>
+                  <span class="provider-service-actions">
+                    <span class="provider-check off provider-action" id="profileDropboxCheck" aria-hidden="true">Connetti</span>
+                    <button class="provider-more-btn is-hidden" id="profileDropboxMoreBtn" type="button" aria-label="Azioni Dropbox" aria-haspopup="menu" aria-expanded="false">•••</button>
+                  </span>
+                </div>
+                <div class="profile-provider-menu" id="profileDropboxMenu" role="menu" aria-hidden="true">
+                  <button type="button" id="profileDropboxExportBtn" role="menuitem">Esporta backup</button>
+                  <button type="button" id="profileDropboxDisconnectBtn" role="menuitem">Disconnetti</button>
                 </div>
                 <div class="profile-provider-separator"></div>
                 <div class="profile-provider-row is-disconnected">
@@ -4257,7 +4319,9 @@ paint-order="stroke">
                     </svg>
                   </span>
                   <span>Google Drive</span>
-                  <span class="provider-check off provider-action" aria-hidden="true">Connetti</span>
+                  <span class="provider-service-actions">
+                    <span class="provider-check off provider-action" aria-hidden="true">Connetti</span>
+                  </span>
                 </div>
               </div>
 
@@ -4284,10 +4348,6 @@ paint-order="stroke">
                 <span>Ripristina app</span>
                 <span class="profile-row-chevron" aria-hidden="true">›</span>
               </button>
-              <button class="profile-menu-action profile-menu-row disconnect-backup-action is-hidden" id="disconnectBackupBtn" type="button">
-                <span class="profile-row-icon disconnect" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7.5 16.5 6 18a3 3 0 0 1-4.2-4.2L5 10.6"/><path d="M16.5 7.5 18 6a3 3 0 0 1 4.2 4.2L19 13.4"/><path d="M8 8l8 8"/></svg></span>
-                <span>Disconnetti da Cloud</span>
-              </button>
             </nav>
 
             <div class="profile-menu-divider" aria-hidden="true"></div>
@@ -4296,11 +4356,6 @@ paint-order="stroke">
               <button class="profile-menu-action profile-menu-row" id="profileInfoBtn" type="button">
                 <span class="profile-row-icon info" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 10.5v5.5"/><path d="M12 7.5h.01"/></svg></span>
                 <span>Informazioni</span>
-                <span class="profile-row-chevron" aria-hidden="true">›</span>
-              </button>
-              <button class="profile-menu-action profile-menu-row support" id="profileSupportBtn" type="button">
-                <span class="profile-row-icon heart" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 6.2a5 5 0 0 0-7.1 0L12 7.9l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 22l8.8-8.7a5 5 0 0 0 0-7.1Z"/></svg></span>
-                <span>Supporta PokéAlbum</span>
                 <span class="profile-row-chevron" aria-hidden="true">›</span>
               </button>
             </nav>
@@ -8125,6 +8180,10 @@ const els = {
           profileBackupPill: $("#profileBackupPill"),
           profileBackupNote: $("#profileBackupNote"),
           profileDropboxCheck: $("#profileDropboxCheck"),
+          profileDropboxMoreBtn: $("#profileDropboxMoreBtn"),
+          profileDropboxMenu: $("#profileDropboxMenu"),
+          profileDropboxExportBtn: $("#profileDropboxExportBtn"),
+          profileDropboxDisconnectBtn: $("#profileDropboxDisconnectBtn"),
           disconnectBackupBtn: $("#disconnectBackupBtn"),
           connectDropboxBtn: $("#connectDropboxBtn"),
           profileMenuBackdrop: $("#profileMenuBackdrop"),
@@ -11099,6 +11158,26 @@ function formatStorageBytes(bytes) {
           const isOpen = els.profileStorageToggle?.getAttribute("aria-expanded") === "true";
           setProfileStorageMenuOpen(!isOpen);
         }
+        function setProfileProviderMenuOpen(isOpen) {
+          els.profileDropboxMenu?.classList.toggle("open", Boolean(isOpen));
+          els.profileDropboxMenu?.setAttribute("aria-hidden", isOpen ? "false" : "true");
+          els.profileDropboxMoreBtn?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        }
+        function toggleProfileProviderMenu(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          setProfileStorageMenuOpen(false);
+          const isOpen = els.profileDropboxMenu?.classList.contains("open");
+          setProfileProviderMenuOpen(!isOpen);
+        }
+        function exportBackupFromProviderMenu(event) {
+          setProfileProviderMenuOpen(false);
+          return saveBackupCloudNow(event);
+        }
+        function disconnectBackupFromProviderMenu(event) {
+          setProfileProviderMenuOpen(false);
+          return disconnectBackupCloud(event);
+        }
         const BACKUP_CLOUD_STATUS_KEY = "pokealbumBackupCloudStatus";
         const BACKUP_CLOUD_LAST_RUN_KEY = "pokealbumBackupCloudLastRun";
         const DROPBOX_REMOTE_BACKEND = "https://92-4-233-89.sslip.io";
@@ -11264,12 +11343,15 @@ function formatStorageBytes(bytes) {
               ? lastRun
               : "Nessun backup eseguito";
           }
+          const hasLinkedProvider = isActive || isStale || isError;
           if (els.profileDropboxCheck) {
-            els.profileDropboxCheck.textContent = isActive ? "✓" : "Connetti";
-            els.profileDropboxCheck.classList.toggle("off", !isActive);
-            els.profileDropboxCheck.classList.toggle("provider-action", !isActive);
-            els.profileDropboxCheck.closest(".profile-provider-row")?.classList.toggle("is-disconnected", !isActive);
+            els.profileDropboxCheck.textContent = hasLinkedProvider ? "✓" : "Connetti";
+            els.profileDropboxCheck.classList.toggle("off", !hasLinkedProvider);
+            els.profileDropboxCheck.classList.toggle("provider-action", !hasLinkedProvider);
+            els.profileDropboxCheck.closest(".profile-provider-row")?.classList.toggle("is-disconnected", !hasLinkedProvider);
           }
+          els.profileDropboxMoreBtn?.classList.toggle("is-hidden", !hasLinkedProvider);
+          if (!hasLinkedProvider) setProfileProviderMenuOpen(false);
           if (els.connectDropboxBtn) {
             els.connectDropboxBtn.querySelector("span:nth-child(2)") ? (els.connectDropboxBtn.querySelector("span:nth-child(2)").textContent = "Sincronizza ora") : (els.connectDropboxBtn.textContent = "Sincronizza ora");
             els.connectDropboxBtn.classList.toggle("is-hidden", false);
@@ -11560,10 +11642,12 @@ function formatStorageBytes(bytes) {
         }
         function openProfileMenu() {
           setProfileStorageMenuOpen(false);
+          setProfileProviderMenuOpen(false);
           els.profileMenuBackdrop?.classList.add("open");
           els.profileMenuBackdrop?.setAttribute("aria-hidden", "false");
         }
         function closeProfileMenu() {
+          setProfileProviderMenuOpen(false);
           els.profileMenuBackdrop?.classList.remove("open");
           els.profileMenuBackdrop?.setAttribute("aria-hidden", "true");
         }
@@ -13338,7 +13422,12 @@ els.priceToggleBtn.addEventListener("click", () => {
         els.profileMenuBackdrop?.addEventListener("click", (event) => {
           if (event.target === els.profileMenuBackdrop) closeProfileMenu();
         });
-        els.profileMenuPanel?.addEventListener("click", (event) => event.stopPropagation());
+        els.profileMenuPanel?.addEventListener("click", (event) => {
+          if (!event.target.closest?.("#profileDropboxMenu") && !event.target.closest?.("#profileDropboxMoreBtn")) {
+            setProfileProviderMenuOpen(false);
+          }
+          event.stopPropagation();
+        });
         els.profileMenuTitle?.addEventListener("click", (event) => {
           event.preventDefault();
           event.stopPropagation();
@@ -13349,6 +13438,9 @@ els.priceToggleBtn.addEventListener("click", () => {
           closeProfileMenu();
         });
         els.profileStorageToggle?.addEventListener("click", toggleProfileStorageMenu);
+        els.profileDropboxMoreBtn?.addEventListener("click", toggleProfileProviderMenu);
+        els.profileDropboxExportBtn?.addEventListener("click", exportBackupFromProviderMenu);
+        els.profileDropboxDisconnectBtn?.addEventListener("click", disconnectBackupFromProviderMenu);
         els.homeBackupStatusBtn?.addEventListener("click", toggleBackupPopover);
         els.backupPrimaryBtn?.addEventListener("click", runBackupPrimaryAction);
         els.backupLearnMoreBtn?.addEventListener("click", showBackupInfo);
