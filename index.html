@@ -2789,6 +2789,57 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 }
 .profile-provider-row.is-disconnected{opacity:1!important}
 .profile-provider-row.is-disconnected .provider-logo{opacity:.58!important}
+
+
+/* Ritocco menu 2026-06-13: pannello più largo e contenuto leggibile su una riga */
+.profile-menu-panel{
+  width:min(72vw,330px)!important;
+  min-width:260px!important;
+  max-width:340px!important;
+  padding:calc(var(--safe-top) + 18px) 14px calc(var(--safe-bottom) + 14px)!important;
+}
+.profile-menu-head{min-height:30px!important;margin-bottom:12px!important}
+.profile-menu-title{font-size:14px!important;letter-spacing:.14em!important;line-height:1.05!important}
+.profile-menu-title span{font-size:8px!important;margin-left:4px!important}
+.profile-menu-divider{margin:9px 0!important}
+.profile-trainer-card{min-height:50px!important;grid-template-columns:42px minmax(0,1fr)!important;gap:9px!important}
+.profile-avatar{width:42px!important;height:42px!important}
+.profile-avatar .profile-menu-user-icon{width:38px!important;height:38px!important}
+.profile-trainer-copy strong{font-size:13px!important;line-height:1.08!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.profile-sync-pill{min-height:17px!important;padding:0 7px!important;font-size:9.5px!important}
+.profile-menu-section{gap:6px!important}
+.profile-section-title{min-height:32px!important;grid-template-columns:28px minmax(0,1fr)!important;font-size:12px!important;font-weight:880!important;letter-spacing:-.028em!important;border-radius:12px!important}
+.profile-provider-card{border-radius:14px!important;padding:4px 8px!important}
+.profile-provider-row{min-height:34px!important;grid-template-columns:25px minmax(0,1fr) auto!important;gap:7px!important;font-size:12px!important;font-weight:850!important;letter-spacing:-.028em!important}
+.profile-provider-separator{margin-left:32px!important}
+.provider-logo,.provider-logo svg{width:22px!important;height:22px!important}
+.provider-check{min-width:18px!important;width:auto!important;height:18px!important;padding:0 6px!important;border-radius:999px!important;font-size:10.5px!important;white-space:nowrap!important}
+.provider-check.off{min-width:auto!important;width:auto!important;padding:0 7px!important}
+.profile-last-sync{min-height:38px!important;border-radius:13px!important;grid-template-columns:30px minmax(0,1fr)!important;padding:6px 8px!important}
+.profile-last-sync .profile-row-icon{width:25px!important;height:25px!important;border-radius:9px!important}
+.profile-last-sync .profile-row-icon svg{width:16px!important;height:16px!important}
+.profile-last-sync em{font-size:9px!important}
+.profile-last-sync strong{font-size:10.5px!important}
+.profile-actions-list{gap:0!important}
+.profile-menu-row{min-height:35px!important;grid-template-columns:30px minmax(0,1fr) 11px!important;font-size:12px!important;font-weight:850!important;letter-spacing:-.028em!important;border-radius:12px!important}
+.profile-actions-list.bottom .profile-menu-row{min-height:34px!important}
+.profile-menu-action.disconnect-backup-action{font-size:11px!important;min-height:32px!important;grid-template-columns:30px minmax(0,1fr)!important}
+.profile-row-icon{width:26px!important;height:26px!important}
+.profile-row-icon svg,.profile-row-icon.cloud svg,.profile-row-icon.sync svg,.profile-row-icon.clock svg,.profile-row-icon.restore-app svg,.profile-row-icon.disconnect svg,.profile-row-icon.heart svg,.profile-row-icon.info svg{width:19px!important;height:19px!important;stroke-width:1.85!important}
+.profile-row-icon.cloud svg{width:20px!important;height:20px!important}
+.profile-row-chevron{font-size:18px!important}
+.profile-menu-row>span:nth-child(2),.profile-section-title>span:nth-child(2),.profile-provider-row>span:nth-child(2){white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;min-width:0!important}
+@media (max-width:420px){
+  .profile-menu-panel{width:72vw!important;min-width:260px!important;max-width:300px!important;padding-left:13px!important;padding-right:13px!important}
+  .profile-menu-title{font-size:13.5px!important;letter-spacing:.13em!important}
+  .profile-menu-title span{font-size:8px!important}
+  .profile-trainer-card{grid-template-columns:40px minmax(0,1fr)!important;min-height:48px!important}
+  .profile-avatar{width:40px!important;height:40px!important}
+  .profile-avatar .profile-menu-user-icon{width:36px!important;height:36px!important}
+  .profile-section-title,.profile-menu-row{font-size:11.5px!important}
+  .profile-provider-row{font-size:11.5px!important}
+  .profile-row-icon svg{width:18px!important;height:18px!important}
+}
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
