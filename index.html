@@ -2840,7 +2840,49 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   .profile-provider-row{font-size:11.5px!important}
   .profile-row-icon svg{width:18px!important;height:18px!important}
 }
-</style></head>
+</style>
+<style id="menu-font-enlarge-patch">
+.profile-menu-panel{
+  width:min(68vw,340px)!important;
+  max-width:360px!important;
+}
+.profile-menu-panel,
+.profile-menu-panel *{
+  font-size:1.13em;
+}
+</style>
+
+
+<style id="menu-specific-text-bump-patch">
+/* Ritocco mirato menu laterale: aumento leggero SOLO dei testi richiesti */
+.profile-menu-panel .profile-menu-title span{
+  font-size:9.8px!important;
+  letter-spacing:.02em!important;
+  font-weight:900!important;
+}
+.profile-menu-panel .profile-sync-pill{
+  font-size:10.3px!important;
+  min-height:18px!important;
+  padding:0 8px!important;
+}
+.profile-menu-panel .provider-check.provider-action{
+  font-size:11.2px!important;
+  min-height:19px!important;
+  padding:0 8px!important;
+}
+.profile-menu-panel .profile-last-sync em{
+  font-size:9.8px!important;
+  line-height:1.08!important;
+  font-weight:850!important;
+}
+.profile-menu-panel .profile-last-sync strong{
+  font-size:11.2px!important;
+  line-height:1.12!important;
+  font-weight:900!important;
+}
+</style>
+
+</head>
   <body class="ui-booting">
     <div class="phone-stage">
       <main class="screen">
