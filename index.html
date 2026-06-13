@@ -2420,6 +2420,375 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .profile-menu-action.reset-app-action{color:#c62828;font-weight:880}.profile-menu-action.reset-app-action:hover,.profile-menu-action.reset-app-action:active{background:rgba(198,40,40,.08)}
 @media (max-width:420px){#homeView .home-backup-status-btn{width:52px;height:52px;border-radius:20px}.backup-popover{right:6px;width:min(250px,calc(100vw - 40px))}}
 
+
+/* Menu laterale 2026-06-13: mezza pagina, testi compatti, icone pulite */
+.profile-menu-backdrop{
+  z-index:240!important;
+  background:rgba(34,48,86,0)!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.profile-menu-backdrop.open{background:rgba(34,48,86,.18)!important}
+
+.profile-menu-panel{
+  right:0!important;
+  top:0!important;
+  bottom:auto!important;
+  width:min(60vw,285px)!important;
+  max-width:315px!important;
+  height:100%!important;
+  border-radius:0!important;
+  padding:calc(var(--safe-top) + 18px) 14px calc(var(--safe-bottom) + 14px)!important;
+  border:0!important;
+  border-left:1px solid rgba(255,255,255,.72)!important;
+  background:rgba(255,255,255,.78)!important;
+  box-shadow:-18px 0 42px rgba(25,38,82,.18),inset 1px 0 0 rgba(255,255,255,.72)!important;
+  backdrop-filter:blur(28px) saturate(150%)!important;
+  -webkit-backdrop-filter:blur(28px) saturate(150%)!important;
+  overflow-y:auto!important;
+  color:#20345f!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+}
+
+.profile-menu-head{
+  position:relative;
+  min-height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:13px;
+}
+.profile-menu-title{
+  margin:0!important;
+  font-size:16px!important;
+  letter-spacing:.16em!important;
+  line-height:1.08!important;
+  text-align:center!important;
+  font-weight:950!important;
+  text-transform:uppercase!important;
+  background:linear-gradient(135deg,#2f64ff 0%,#7aa6ff 65%,#8f7cff 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  color:transparent!important;
+  text-shadow:0 8px 22px rgba(47,100,255,.14)!important;
+  cursor:default!important;
+}
+.profile-menu-title span{
+  font-size:9px!important;
+  letter-spacing:.01em!important;
+  color:#7b84a2!important;
+  -webkit-text-fill-color:#7b84a2!important;
+  margin-left:4px!important;
+  font-weight:850!important;
+  text-transform:none!important;
+}
+.profile-menu-close{
+  position:absolute;
+  right:-4px;
+  top:-5px;
+  width:32px;
+  height:32px;
+  border:0;
+  background:transparent;
+  color:#071342;
+  display:grid;
+  place-items:center;
+  padding:0;
+  cursor:pointer;
+}
+.profile-menu-close svg{
+  width:22px;
+  height:22px;
+  stroke:currentColor;
+  stroke-width:2.15;
+  stroke-linecap:round;
+  fill:none;
+}
+
+.profile-menu-divider{
+  height:1px!important;
+  background:rgba(111,134,188,.16)!important;
+  margin:10px 0!important;
+  flex:0 0 auto;
+}
+
+.profile-trainer-card{
+  min-height:58px;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr);
+  gap:10px;
+  align-items:center;
+}
+.profile-avatar{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:linear-gradient(145deg,rgba(226,236,253,.92),rgba(245,249,255,.76));
+  display:grid;
+  place-items:center;
+  color:#667498;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+}
+.profile-avatar svg{
+  width:32px;
+  height:32px;
+  fill:currentColor;
+  filter:drop-shadow(0 5px 8px rgba(32,52,95,.10));
+}
+.profile-trainer-copy{display:grid;align-content:center;gap:3px;min-width:0}
+.profile-trainer-copy strong{
+  font-size:14px;
+  line-height:1.08;
+  font-weight:900;
+  letter-spacing:-.03em;
+  color:#071342;
+}
+.profile-trainer-copy>span:not(.profile-sync-pill){
+  font-size:11px;
+  font-weight:720;
+  color:#727da2;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.profile-sync-pill{
+  justify-self:start;
+  min-height:19px;
+  border-radius:999px;
+  padding:0 8px;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:rgba(34,197,94,.10);
+  color:#18a965;
+  font-size:10.5px;
+  font-weight:900;
+  line-height:1;
+}
+.profile-sync-pill i{width:8px;height:8px;border-radius:50%;background:#18bd68;display:block}
+.profile-sync-pill:not(.is-active){background:rgba(198,40,40,.08);color:#c62828}
+.profile-sync-pill:not(.is-active) i{background:#c62828}
+
+.profile-row-chevron{margin-left:auto;color:#071342;font-size:22px;line-height:1;font-weight:330;opacity:.72}
+
+.profile-menu-section{display:grid;gap:8px}
+.profile-section-title{
+  min-height:34px!important;
+  padding:0!important;
+  display:grid!important;
+  grid-template-columns:30px minmax(0,1fr) 13px!important;
+  align-items:center!important;
+  gap:0!important;
+  border-radius:12px!important;
+  color:#071342!important;
+  font-size:12.5px!important;
+  font-weight:850!important;
+  letter-spacing:-.025em!important;
+}
+.profile-menu-action{min-height:0}
+.profile-menu-action:hover,.profile-menu-action:active{background:rgba(47,100,255,.055)!important}
+
+.profile-row-icon{width:28px;height:28px;display:grid;place-items:center;color:#2f64ff;flex:0 0 28px}
+.profile-row-icon svg{
+  width:20px;
+  height:20px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  overflow:visible;
+}
+.profile-row-icon.cloud svg{width:22px;height:22px;stroke-width:1.85}
+.profile-row-icon.sync svg{width:20px;height:20px;stroke-width:2}
+.profile-row-icon.clock svg{width:20px;height:20px;stroke-width:1.95}
+.profile-row-icon.restore-app svg{width:21px;height:21px;stroke-width:1.9}
+.profile-row-icon.disconnect svg{width:20px;height:20px;stroke-width:1.95}
+.profile-row-icon.heart{color:#df4779}.profile-row-icon.heart svg{width:20px;height:20px;stroke-width:1.9}
+.profile-row-icon.info svg{width:20px;height:20px;stroke-width:1.9}
+
+.profile-provider-card{
+  border-radius:15px;
+  background:rgba(255,255,255,.52);
+  border:1px solid rgba(255,255,255,.62);
+  box-shadow:0 8px 18px rgba(78,102,162,.07),inset 0 1px 0 rgba(255,255,255,.82);
+  overflow:hidden;
+  padding:5px 9px;
+}
+.profile-provider-row{
+  min-height:38px;
+  display:grid;
+  grid-template-columns:28px minmax(0,1fr) 20px;
+  align-items:center;
+  gap:8px;
+  font-size:12.5px;
+  font-weight:820;
+  letter-spacing:-.025em;
+  color:#071342;
+}
+.profile-provider-row.is-disconnected{opacity:.66}
+.profile-provider-separator{height:1px;background:rgba(111,134,188,.14);margin-left:36px}
+.provider-logo{width:25px;height:25px;display:grid;place-items:center}
+.provider-logo svg{width:24px;height:24px;display:block}
+.provider-logo.dropbox svg{fill:#0b7ff0}.provider-logo.google svg .gdrive-green{fill:#34a853}.provider-logo.google svg .gdrive-yellow{fill:#fbbc05}.provider-logo.google svg .gdrive-blue{fill:#4285f4}
+.provider-check{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:#18bd68;color:#fff;font-size:13px;font-weight:900;box-shadow:0 5px 10px rgba(24,189,104,.16)}
+.provider-check.off{background:#d8deeb;color:#7b87a8;box-shadow:none;font-size:12px}
+
+.profile-last-sync{
+  min-height:42px;
+  border-radius:14px;
+  background:rgba(255,255,255,.52);
+  border:1px solid rgba(255,255,255,.60);
+  box-shadow:0 6px 16px rgba(78,102,162,.07),inset 0 1px 0 rgba(255,255,255,.82);
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr);
+  align-items:center;
+  padding:7px 9px;
+}
+.profile-last-sync .profile-row-icon{width:28px;height:28px;border-radius:10px;background:rgba(47,100,255,.08)}
+.profile-last-sync .profile-row-icon svg{width:18px;height:18px}
+.profile-last-sync span:last-child{display:grid;gap:2px;min-width:0}
+.profile-last-sync em{font-style:normal;color:#7a84a4;font-size:10px;font-weight:820;line-height:1.1}
+.profile-last-sync strong{color:#071342;font-size:11px;font-weight:880;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.profile-actions-list{display:grid;gap:0}
+.profile-menu-row{
+  width:100%;
+  min-height:38px!important;
+  padding:0!important;
+  border-radius:12px!important;
+  background:transparent!important;
+  color:#071342!important;
+  display:grid!important;
+  grid-template-columns:34px minmax(0,1fr) 13px!important;
+  align-items:center!important;
+  text-align:left!important;
+  font-size:12.5px!important;
+  font-weight:820!important;
+  letter-spacing:-.025em!important;
+}
+.profile-menu-row + .profile-menu-row{border-top:1px solid rgba(111,134,188,.12)!important}
+.profile-actions-list.bottom .profile-menu-row{min-height:37px!important}
+.profile-menu-action.disconnect-backup-action{color:#c62828!important;font-size:11.5px!important;min-height:34px!important;grid-template-columns:30px minmax(0,1fr)!important}
+.profile-menu-action.disconnect-backup-action.is-hidden{display:none!important}
+.profile-menu-action.reset-app-action,.profile-menu-action.restore-backup-action,.profile-menu-action.backup-link-action{color:#071342!important}
+.profile-menu-row>span:nth-child(2){min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.is-legacy-hidden{display:none!important}
+
+@media (max-width:420px){
+  .profile-menu-panel{
+    right:0!important;
+    top:0!important;
+    bottom:auto!important;
+    width:50vw!important;
+    min-width:190px!important;
+    max-width:240px!important;
+    height:100%!important;
+    border-radius:0!important;
+    padding:calc(var(--safe-top) + 18px) 12px calc(var(--safe-bottom) + 14px)!important;
+  }
+  .profile-menu-title{font-size:13px!important;letter-spacing:.14em!important}
+  .profile-menu-title span{font-size:8px!important;margin-left:3px!important}
+  .profile-trainer-card{grid-template-columns:42px minmax(0,1fr) 11px;gap:8px;min-height:52px}
+  .profile-avatar{width:42px;height:42px}.profile-avatar svg{width:28px;height:28px}
+  .profile-trainer-copy strong{font-size:12.5px}.profile-trainer-copy>span:not(.profile-sync-pill){font-size:10px}.profile-sync-pill{font-size:9px;min-height:17px;padding:0 7px}
+  .profile-section-title{font-size:11.5px!important;min-height:32px!important;grid-template-columns:28px minmax(0,1fr) 11px!important}
+  .profile-provider-row{min-height:35px;font-size:11.2px;grid-template-columns:25px minmax(0,1fr) 18px;gap:6px}.provider-logo,.provider-logo svg{width:22px;height:22px}.provider-check{width:18px;height:18px;font-size:11px}
+  .profile-last-sync{min-height:39px;grid-template-columns:31px minmax(0,1fr);padding:6px 8px}.profile-last-sync .profile-row-icon{width:25px;height:25px}.profile-last-sync em{font-size:9.2px}.profile-last-sync strong{font-size:10px}
+  .profile-menu-row{min-height:35px!important;font-size:11.3px!important;grid-template-columns:30px minmax(0,1fr) 11px!important}.profile-actions-list.bottom .profile-menu-row{min-height:34px!important}
+  .profile-row-icon{width:25px;height:25px}.profile-row-icon svg{width:18px;height:18px}.profile-row-chevron{font-size:19px}
+}
+
+
+
+/* Fix menu laterale 2026-06-13: testi più piccoli, niente X, Dropbox dinamico */
+.profile-menu-panel{
+  width:50vw!important;
+  min-width:188px!important;
+  max-width:236px!important;
+  padding:calc(var(--safe-top) + 15px) 10px calc(var(--safe-bottom) + 12px)!important;
+}
+.profile-menu-head{min-height:24px!important;margin-bottom:9px!important;justify-content:center!important}
+.profile-menu-title{
+  font-size:12px!important;
+  letter-spacing:.13em!important;
+  line-height:1!important;
+  margin:0!important;
+  font-weight:950!important;
+  white-space:nowrap!important;
+}
+.profile-menu-title span{font-size:7px!important;letter-spacing:.01em!important;margin-left:3px!important;vertical-align:baseline!important}
+.profile-menu-close{display:none!important}
+.profile-menu-divider{margin:7px 0!important}
+.profile-trainer-card{min-height:44px!important;grid-template-columns:36px minmax(0,1fr) 9px!important;gap:7px!important}
+.profile-avatar{width:36px!important;height:36px!important}.profile-avatar svg{width:24px!important;height:24px!important}
+.profile-trainer-copy{gap:2px!important}.profile-trainer-copy strong{font-size:11px!important;line-height:1.05!important}.profile-trainer-copy>span:not(.profile-sync-pill){font-size:8.8px!important;line-height:1.05!important}.profile-sync-pill{min-height:15px!important;padding:0 5px!important;font-size:8px!important;gap:4px!important}.profile-sync-pill i{width:6px!important;height:6px!important}
+.profile-menu-section{gap:5px!important}.profile-section-title{min-height:27px!important;grid-template-columns:22px minmax(0,1fr) 9px!important;font-size:9.6px!important;font-weight:850!important;letter-spacing:-.035em!important;border-radius:10px!important}
+.profile-provider-card{border-radius:12px!important;padding:3px 6px!important}.profile-provider-row{min-height:29px!important;grid-template-columns:21px minmax(0,1fr) 15px!important;gap:5px!important;font-size:9.8px!important;font-weight:820!important}.profile-provider-separator{margin-left:26px!important}.provider-logo,.provider-logo svg{width:19px!important;height:19px!important}.provider-check{width:15px!important;height:15px!important;font-size:9px!important}
+.profile-last-sync{min-height:33px!important;border-radius:12px!important;grid-template-columns:25px minmax(0,1fr)!important;padding:5px 6px!important}.profile-last-sync .profile-row-icon{width:21px!important;height:21px!important;border-radius:8px!important}.profile-last-sync .profile-row-icon svg{width:14px!important;height:14px!important}.profile-last-sync em{font-size:7.8px!important}.profile-last-sync strong{font-size:8.8px!important}
+.profile-actions-list{gap:0!important}.profile-menu-row{min-height:30px!important;grid-template-columns:24px minmax(0,1fr) 9px!important;font-size:9.8px!important;font-weight:820!important;letter-spacing:-.035em!important;border-radius:10px!important}.profile-actions-list.bottom .profile-menu-row{min-height:29px!important}.profile-menu-action.disconnect-backup-action{font-size:9px!important;min-height:28px!important;grid-template-columns:24px minmax(0,1fr)!important}
+.profile-row-icon{width:21px!important;height:21px!important}.profile-row-icon svg,.profile-row-icon.cloud svg,.profile-row-icon.sync svg,.profile-row-icon.clock svg,.profile-row-icon.restore-app svg,.profile-row-icon.disconnect svg,.profile-row-icon.heart svg,.profile-row-icon.info svg{width:16px!important;height:16px!important;stroke-width:1.8!important}.profile-row-icon.cloud svg{width:17px!important;height:17px!important}.profile-row-chevron{font-size:16px!important;opacity:.62!important}
+.profile-menu-row>span:nth-child(2),.profile-section-title>span:nth-child(2){white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;min-width:0!important}
+@media (max-width:420px){
+  .profile-menu-panel{width:50vw!important;min-width:184px!important;max-width:218px!important;padding-left:9px!important;padding-right:9px!important}
+  .profile-menu-title{font-size:11.5px!important;letter-spacing:.12em!important}.profile-menu-title span{font-size:7px!important}
+  .profile-trainer-card{grid-template-columns:34px minmax(0,1fr) 8px!important;min-height:42px!important}.profile-avatar{width:34px!important;height:34px!important}.profile-avatar svg{width:22px!important;height:22px!important}
+  .profile-section-title,.profile-menu-row{font-size:9.3px!important}.profile-provider-row{font-size:9.3px!important}.profile-row-icon svg{width:15px!important;height:15px!important}
+}
+
+.profile-avatar{
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.profile-avatar .profile-menu-user-icon{
+  width:42px!important;
+  height:42px!important;
+  display:block!important;
+  color:#7f8fac!important;
+  filter:drop-shadow(0 7px 12px rgba(66,89,152,.14))!important;
+}
+.profile-avatar .profile-menu-user-icon .cerchio-base{
+  stroke:#b9d9ff!important;
+  fill:none!important;
+  stroke-width:20!important;
+}
+.profile-avatar .profile-menu-user-icon .cerchio-loader{
+  display:none!important;
+}
+.profile-avatar .profile-menu-user-icon .utente{
+  fill:#7f8fac!important;
+}
+@media (max-width:420px){
+  .profile-avatar .profile-menu-user-icon{
+    width:32px!important;
+    height:32px!important;
+  }
+}
+
+
+
+/* Ritocco menu 2026-06-13: nessuna chevron su Backup e sincronizzazione, Connetti sui provider scollegati */
+.profile-section-title{grid-template-columns:22px minmax(0,1fr)!important}
+.profile-section-title .profile-row-chevron{display:none!important}
+.profile-provider-row{grid-template-columns:21px minmax(0,1fr) auto!important}
+.provider-check.provider-action{
+  width:auto!important;
+  min-width:42px!important;
+  height:17px!important;
+  padding:0 6px!important;
+  border-radius:999px!important;
+  background:rgba(47,100,255,.10)!important;
+  color:#3157c9!important;
+  font-size:8.2px!important;
+  font-weight:900!important;
+  letter-spacing:-.03em!important;
+  box-shadow:none!important;
+}
+.profile-provider-row.is-disconnected{opacity:1!important}
+.profile-provider-row.is-disconnected .provider-logo{opacity:.58!important}
 </style></head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -3744,39 +4113,116 @@ paint-order="stroke">
         </div>
 <div class="profile-menu-backdrop" id="profileMenuBackdrop" aria-hidden="true">
           <aside class="profile-menu-panel" id="profileMenuPanel" role="dialog" aria-modal="true" aria-labelledby="profileMenuTitle">
-            <h2 class="profile-menu-title" id="profileMenuTitle">POKÉALBUM</h2>
-            <div class="profile-menu-divider" aria-hidden="true"></div>
-            <div class="profile-backup-card" id="profileBackupCard" aria-live="polite">
-              <div class="profile-backup-status-line"><span>Backup Cloud</span><span class="profile-backup-pill" id="profileBackupPill">Non attivo</span></div>
-              <p class="profile-backup-note" id="profileBackupNote">I dati sono salvati solo su questo dispositivo.</p>
+            <div class="profile-menu-head">
+              <h2 class="profile-menu-title" id="profileMenuTitle">POKEALBUM <span>v1.0</span></h2>
             </div>
-            <button class="profile-menu-action backup-link-action" id="connectDropboxBtn" type="button">Attiva Backup Cloud</button>
-            <button class="profile-menu-action restore-backup-action is-hidden" id="restoreDataBtn" type="button">Ripristina backup</button>
-            <button class="profile-menu-action disconnect-backup-action is-hidden" id="disconnectBackupBtn" type="button">Disconnetti da Cloud</button>
-            <button class="profile-menu-action reset-app-action" id="resetAppBtn" type="button">Ripristina App</button>
-            <div class="profile-storage-section">
+
+            <section class="profile-trainer-card" aria-label="Profilo utente">
+              <div class="profile-avatar" aria-hidden="true">
+                <svg class="home-profile-icon login-save-icon profile-menu-user-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                  <circle class="cerchio-base" cx="256" cy="256" r="206" />
+                  <circle class="cerchio-loader" cx="256" cy="256" r="206" />
+                  <circle class="utente" cx="256" cy="184" r="55" />
+                  <path class="utente" d="M146 365C146 303.7 195.7 254 257 254C318.3 254 368 303.7 368 365C368 377.7 357.7 388 345 388H169C156.3 388 146 377.7 146 365Z" />
+                </svg>
+              </div>
+              <div class="profile-trainer-copy">
+                <strong id="profileTrainerName">Il tuo nome</strong>
+                <span class="profile-sync-pill" id="profileBackupPill"><i></i>Non attivo</span>
+              </div>
+            </section>
+
+            <div class="profile-menu-divider" aria-hidden="true"></div>
+
+            <section class="profile-menu-section" aria-label="Backup e sincronizzazione">
+              <button class="profile-section-title profile-menu-action backup-link-action" id="profileBackupSectionBtn" type="button">
+                <span class="profile-row-icon cloud" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 18h10.2a4.3 4.3 0 0 0 .5-8.6A6.1 6.1 0 0 0 5.7 8.2 4.9 4.9 0 0 0 6.5 18Z"/></svg></span>
+                <span>Backup e sincronizzazione</span>
+              </button>
+
+              <div class="profile-provider-card">
+                <div class="profile-provider-row">
+                  <span class="provider-logo dropbox" aria-hidden="true">
+                    <svg viewBox="0 0 64 64">
+                      <path d="M18 8 4 17l14 9 14-9-14-9Z"/>
+                      <path d="M46 8 32 17l14 9 14-9-14-9Z"/>
+                      <path d="M18 28 4 37l14 9 14-9-14-9Z"/>
+                      <path d="M46 28 32 37l14 9 14-9-14-9Z"/>
+                      <path d="M32 43 18 52l14 8 14-8-14-9Z"/>
+                    </svg>
+                  </span>
+                  <span>Dropbox</span>
+                  <span class="provider-check off provider-action" id="profileDropboxCheck" aria-hidden="true">Connetti</span>
+                </div>
+                <div class="profile-provider-separator"></div>
+                <div class="profile-provider-row is-disconnected">
+                  <span class="provider-logo google" aria-hidden="true">
+                    <svg viewBox="0 0 64 64">
+                      <path class="gdrive-green" d="M25 8h14l21 36H46L25 8Z"/>
+                      <path class="gdrive-yellow" d="M25 8 4 44l7 12 21-36-7-12Z"/>
+                      <path class="gdrive-blue" d="M11 56h42l7-12H18l-7 12Z"/>
+                    </svg>
+                  </span>
+                  <span>Google Drive</span>
+                  <span class="provider-check off provider-action" aria-hidden="true">Connetti</span>
+                </div>
+              </div>
+
+              <div class="profile-last-sync" id="profileBackupCard" aria-live="polite">
+                <span class="profile-row-icon clock-soft" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span>
+                <span><em>Ultima sincronizzazione</em><strong id="profileBackupNote">Nessun backup eseguito</strong></span>
+              </div>
+            </section>
+
+            <div class="profile-menu-divider" aria-hidden="true"></div>
+
+            <nav class="profile-actions-list" aria-label="Azioni menu">
+              <button class="profile-menu-action profile-menu-row sync-now-row" id="connectDropboxBtn" type="button">
+                <span class="profile-row-icon sync" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.2-4.7L4 8"/><path d="M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.2 4.7L20 16"/><path d="M20 20v-4h-4"/></svg></span>
+                <span>Sincronizza ora</span>
+              </button>
+              <button class="profile-menu-action profile-menu-row restore-backup-action" id="restoreDataBtn" type="button">
+                <span class="profile-row-icon clock" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.35-5.65"/><path d="M4 5v4h4"/><path d="M12 8v4l2.5 1.5"/></svg></span>
+                <span>Backup precedenti</span>
+                <span class="profile-row-chevron" aria-hidden="true">›</span>
+              </button>
+              <button class="profile-menu-action profile-menu-row reset-app-action" id="resetAppBtn" type="button">
+                <span class="profile-row-icon restore-app" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7v5h5"/><path d="M20 17v-5h-5"/><path d="M6.2 10a6.5 6.5 0 0 1 10.9-3"/><path d="M17.8 14a6.5 6.5 0 0 1-10.9 3"/></svg></span>
+                <span>Ripristina app</span>
+                <span class="profile-row-chevron" aria-hidden="true">›</span>
+              </button>
+              <button class="profile-menu-action profile-menu-row disconnect-backup-action is-hidden" id="disconnectBackupBtn" type="button">
+                <span class="profile-row-icon disconnect" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7.5 16.5 6 18a3 3 0 0 1-4.2-4.2L5 10.6"/><path d="M16.5 7.5 18 6a3 3 0 0 1 4.2 4.2L19 13.4"/><path d="M8 8l8 8"/></svg></span>
+                <span>Disconnetti da Cloud</span>
+              </button>
+            </nav>
+
+            <div class="profile-menu-divider" aria-hidden="true"></div>
+
+            <nav class="profile-actions-list bottom" aria-label="Informazioni">
+              <button class="profile-menu-action profile-menu-row" id="profileInfoBtn" type="button">
+                <span class="profile-row-icon info" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 10.5v5.5"/><path d="M12 7.5h.01"/></svg></span>
+                <span>Informazioni</span>
+                <span class="profile-row-chevron" aria-hidden="true">›</span>
+              </button>
+              <button class="profile-menu-action profile-menu-row support" id="profileSupportBtn" type="button">
+                <span class="profile-row-icon heart" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 6.2a5 5 0 0 0-7.1 0L12 7.9l-1.7-1.7a5 5 0 0 0-7.1 7.1L12 22l8.8-8.7a5 5 0 0 0 0-7.1Z"/></svg></span>
+                <span>Supporta PokéAlbum</span>
+                <span class="profile-row-chevron" aria-hidden="true">›</span>
+              </button>
+            </nav>
+
+            <div class="profile-storage-section is-legacy-hidden">
               <button class="profile-menu-action profile-storage-toggle" id="profileStorageToggle" type="button" aria-expanded="false" aria-controls="profileStorageMenu">
                 <span class="profile-storage-toggle-label">Storage</span>
                 <span class="profile-storage-chevron" aria-hidden="true">›</span>
               </button>
               <div class="profile-storage-menu" id="profileStorageMenu" aria-hidden="true">
                 <div class="profile-storage-card" id="profileStorageCard" aria-live="polite">
-                  <div class="profile-storage-row">
-                    <span class="profile-storage-label">Spazio disponibile:</span>
-                    <span class="profile-storage-value" id="profileStorageQuota">—</span>
-                  </div>
-                  <div class="profile-storage-row">
-                    <span class="profile-storage-label">Spazio utilizzato:</span>
-                    <span class="profile-storage-value" id="profileStorageUsage">—</span>
-                  </div>
-                  <div class="profile-storage-row">
-                    <span class="profile-storage-label">Spazio rimanente:</span>
-                    <span class="profile-storage-value" id="profileStorageRemaining">—</span>
-                  </div>
-                  <button class="profile-storage-row profile-storage-cache-action" id="clearCacheBtn" type="button">
-                    <span class="profile-storage-label">Pulisci cache</span>
-                    <span class="profile-storage-value" aria-hidden="true"></span>
-                  </button>
+                  <div class="profile-storage-row"><span class="profile-storage-label">Spazio disponibile:</span><span class="profile-storage-value" id="profileStorageQuota">—</span></div>
+                  <div class="profile-storage-row"><span class="profile-storage-label">Spazio utilizzato:</span><span class="profile-storage-value" id="profileStorageUsage">—</span></div>
+                  <div class="profile-storage-row"><span class="profile-storage-label">Spazio rimanente:</span><span class="profile-storage-value" id="profileStorageRemaining">—</span></div>
+                  <button class="profile-storage-row profile-storage-cache-action" id="clearCacheBtn" type="button"><span class="profile-storage-label">Pulisci cache</span><span class="profile-storage-value" aria-hidden="true"></span></button>
                   <p class="profile-storage-note" id="profileStorageNote">Stima del dispositivo</p>
                 </div>
               </div>
@@ -7585,11 +8031,13 @@ const els = {
           backupDisconnectBtn: $("#backupDisconnectBtn"),
           profileBackupPill: $("#profileBackupPill"),
           profileBackupNote: $("#profileBackupNote"),
+          profileDropboxCheck: $("#profileDropboxCheck"),
           disconnectBackupBtn: $("#disconnectBackupBtn"),
           connectDropboxBtn: $("#connectDropboxBtn"),
           profileMenuBackdrop: $("#profileMenuBackdrop"),
           profileMenuPanel: $("#profileMenuPanel"),
           profileMenuTitle: $("#profileMenuTitle"),
+          profileMenuCloseBtn: $("#profileMenuCloseBtn"),
           profileStorageToggle: $("#profileStorageToggle"),
           profileStorageMenu: $("#profileStorageMenu"),
           profileStorageQuota: $("#profileStorageQuota"),
@@ -7605,6 +8053,7 @@ const els = {
           restoreCancelBtn: $("#restoreCancelBtn"),
           restoreConfirmBtn: $("#restoreConfirmBtn"),
           ownerNameBtn: $("#ownerNameBtn"),
+          profileTrainerName: $("#profileTrainerName"),
           ownerNameSheetBackdrop: $("#ownerNameSheetBackdrop"),
           ownerNameInput: $("#ownerNameInput"),
           ownerNameCancelBtn: $("#ownerNameCancelBtn"),
@@ -7946,6 +8395,7 @@ function openDb() {
           state.renamingAlbum = null;
           state.deletingAlbum = null;
           els.ownerNameBtn.textContent = defaultOwnerName;
+          if (els.profileTrainerName) els.profileTrainerName.textContent = defaultOwnerName;
           closeAlbumDetail();
           closeAddCardSearch();
           closeAlbumForm();
@@ -10430,6 +10880,9 @@ function parseCollectionPriceAmount(value) {
         function applyOwnerName(name) {
           const cleanName = String(name || "").trim() || defaultOwnerName;
           els.ownerNameBtn.textContent = cleanName;
+          if (els.profileTrainerName) {
+            els.profileTrainerName.textContent = cleanName;
+          }
           els.ownerNameBtn.setAttribute(
             "aria-label",
             `Modifica nome proprietario: ${cleanName}`,
@@ -10711,17 +11164,25 @@ function formatStorageBytes(bytes) {
           if (els.profileBackupPill) {
             els.profileBackupPill.textContent = isActive ? "Attivo" : isStale ? "Da aggiornare" : isError ? "Errore" : "Non attivo";
             els.profileBackupPill.classList.toggle("is-active", isActive);
+            els.profileBackupPill.innerHTML = `<i></i>${isActive ? "Sincronizzato" : isStale ? "Da sincronizzare" : isError ? "Errore sincronizzazione" : "Disconnesso"}`;
           }
           if (els.profileBackupNote) {
             els.profileBackupNote.textContent = isActive
-              ? `Ultimo backup: ${lastRun}`
-              : "I dati sono salvati solo su questo dispositivo.";
+              ? lastRun
+              : "Nessun backup eseguito";
+          }
+          if (els.profileDropboxCheck) {
+            els.profileDropboxCheck.textContent = isActive ? "✓" : "Connetti";
+            els.profileDropboxCheck.classList.toggle("off", !isActive);
+            els.profileDropboxCheck.classList.toggle("provider-action", !isActive);
+            els.profileDropboxCheck.closest(".profile-provider-row")?.classList.toggle("is-disconnected", !isActive);
           }
           if (els.connectDropboxBtn) {
-            els.connectDropboxBtn.textContent = isActive ? "Esegui backup ora" : "Attiva Backup Cloud";
+            els.connectDropboxBtn.querySelector("span:nth-child(2)") ? (els.connectDropboxBtn.querySelector("span:nth-child(2)").textContent = "Sincronizza ora") : (els.connectDropboxBtn.textContent = "Sincronizza ora");
             els.connectDropboxBtn.classList.toggle("is-hidden", false);
           }
-          els.restoreDataBtn?.classList.toggle("is-hidden", !isActive);
+          els.restoreDataBtn?.classList.toggle("is-hidden", false);
+          els.restoreDataBtn?.setAttribute("aria-disabled", isActive ? "false" : "true");
           els.disconnectBackupBtn?.classList.toggle("is-hidden", !isActive);
           els.resetAppBtn?.classList.remove("is-hidden");
         }
@@ -12786,6 +13247,10 @@ els.priceToggleBtn.addEventListener("click", () => {
         });
         els.profileMenuPanel?.addEventListener("click", (event) => event.stopPropagation());
         els.profileMenuTitle?.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        });
+        els.profileMenuCloseBtn?.addEventListener("click", (event) => {
           event.preventDefault();
           event.stopPropagation();
           closeProfileMenu();
