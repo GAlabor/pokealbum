@@ -1360,7 +1360,7 @@ body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10
 #homeView .top-meta{padding-right:0 !important}
 #homeView .home-profile-btn{z-index:12 !important}
 #homeView .eyebrow{padding-right:76px !important}
-#homeView .home-stats-card{width:100%;min-height:82px;margin:14px 0 0 !important;padding:13px 16px 12px 16px;border-radius:28px;display:grid;grid-template-columns:minmax(0,1fr) 56px;align-items:center;gap:12px;background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.68);box-shadow:0 18px 34px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%)}
+#homeView .home-stats-card{width:100%;min-height:82px;margin:14px 0 0 !important;padding:13px 16px 12px 16px;border-radius:28px;display:grid;grid-template-columns:minmax(0,1fr);align-items:center;gap:12px;background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.68);box-shadow:0 18px 34px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%)}
 #homeView .home-stats-copy{min-width:0;display:grid;gap:6px}
 #homeView .home-cards-line{margin:0;display:flex;align-items:center;gap:6px;color:#243865;line-height:1;letter-spacing:-.03em}
 #homeView .home-cards-count{color:#2f64ff;font-size:31px;font-weight:950;line-height:.92;letter-spacing:-.06em}
@@ -1377,7 +1377,7 @@ body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10
 #homeView .home-stats-album-book::after{content:"";position:absolute;right:5px;top:5px;bottom:5px;width:4px;border-radius:999px;background:rgba(16,50,170,.32)}
 #homeView .home-stats-album-book::before{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:2px;border-radius:999px;background:rgba(255,255,255,.34)}
 @media (max-width:420px){#homeView .eyebrow{padding-right:72px !important}
-#homeView .home-stats-card{min-height:78px;margin-top:12px !important;padding:12px 14px;grid-template-columns:minmax(0,1fr) 52px;border-radius:26px}
+#homeView .home-stats-card{min-height:78px;margin-top:12px !important;padding:12px 14px;grid-template-columns:minmax(0,1fr);border-radius:26px}
 #homeView .home-cards-count{font-size:29px}
 #homeView .home-stats-album{width:52px;height:52px;border-radius:20px}
 #homeView .home-stats-album-book{width:28px;height:36px}
@@ -2981,9 +2981,9 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   padding:0 8px!important;
 }
 .profile-menu-panel .provider-check.provider-action{
-  font-size:11.2px!important;
-  min-height:19px!important;
-  padding:0 8px!important;
+  font-size:12px!important;
+  min-height:22px!important;
+  padding:0 11px!important;
 }
 .profile-menu-panel .profile-last-sync em{
   font-size:9.8px!important;
@@ -3037,18 +3037,19 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   .profile-avatar{width:40px!important;height:40px!important;}
 }
 
-/* vi446: menu puntini sui servizi cloud collegati */
+/* vi477: menu puntini sui servizi cloud collegati, senza cerchietto */
 .profile-provider-card{position:relative!important;overflow:visible!important;}
 .profile-provider-row{grid-template-columns:25px minmax(0,1fr) auto!important;}
 .provider-service-actions{display:inline-flex;align-items:center;justify-content:flex-end;gap:5px;min-width:0;}
-.provider-more-btn{width:24px!important;height:24px!important;min-width:24px!important;border:0;border-radius:999px;background:rgba(47,100,255,.10);color:#3157c9;font-family:inherit;font-size:10px!important;font-weight:950;letter-spacing:-1px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0 0 2px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.74);}
+.provider-more-btn{width:28px!important;height:28px!important;min-width:28px!important;border:0!important;border-radius:0!important;background:transparent!important;color:#3157c9;font-family:inherit;font-size:12.5px!important;font-weight:950;letter-spacing:0;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0 0 1px;cursor:pointer;box-shadow:none!important;-webkit-tap-highlight-color:transparent;}
+.provider-more-btn:hover,.provider-more-btn:active,.provider-more-btn[aria-expanded="true"]{background:transparent!important;box-shadow:none!important;color:#2f64ff;}
 .provider-more-btn.is-hidden{display:none!important;}
 .profile-provider-menu{position:absolute;right:8px;top:38px;z-index:8;min-width:142px;padding:6px;border-radius:15px;background:rgba(255,255,255,.92);border:1px solid rgba(255,255,255,.76);box-shadow:0 18px 38px rgba(25,38,82,.20),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-4px) scale(.98);transition:opacity .16s ease,transform .16s ease,visibility .16s ease;}
 .profile-provider-menu.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1);}
 .profile-provider-menu button{width:100%;min-height:34px;border:0;border-radius:11px;background:transparent;color:#20345f;font-family:inherit;font-size:12px!important;font-weight:850;text-align:left;padding:0 9px;cursor:pointer;white-space:nowrap;}
 .profile-provider-menu button:hover,.profile-provider-menu button:active{background:rgba(47,100,255,.08);}
 .profile-provider-menu button:last-child{color:#c62828;}
-@media (max-width:420px){.provider-more-btn{width:23px!important;height:23px!important;min-width:23px!important}.profile-provider-menu{right:7px;top:36px;min-width:136px}.profile-provider-menu button{font-size:11.5px!important;}}
+@media (max-width:420px){.provider-more-btn{width:28px!important;height:28px!important;min-width:28px!important;font-size:12.5px!important}.profile-provider-menu{right:7px;top:36px;min-width:136px}.profile-provider-menu button{font-size:11.5px!important;}}
 
 </style>
 
@@ -3328,24 +3329,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
                     </span>
                   </div>
                 </div>
-                <button class="home-backup-status-btn is-inactive" id="homeBackupStatusBtn" type="button" aria-label="Backup Cloud non attivo" aria-expanded="false" title="Stato Backup Cloud">
-                  <svg class="home-backup-cloud-svg" viewBox="0 0 64 64" aria-hidden="true">
-                    <path class="cloud-shape" d="M22.5 45.5H48c6.1 0 10.7-4.4 10.7-10.2 0-5.5-4.2-9.8-9.7-10.1C47.4 17.4 40.5 12 32.5 12c-7.4 0-13.7 4.6-16.1 11.1C9.9 24 5 29.1 5 35.6c0 6.1 4.7 9.9 10.5 9.9h7"/>
-                    <circle class="backup-warn-dot" cx="51" cy="18" r="7"/>
-                    <path class="backup-check" d="M43.8 32.3l5 5.1 9.1-10"/>
-                  </svg>
-                </button>
-              </div>
-              <div class="backup-popover" id="backupPopover" aria-hidden="true">
-                <div class="backup-popover-icon" aria-hidden="true">
-                  <svg viewBox="0 0 64 48"><path d="M22 38h25c6 0 10-4 10-9.5 0-5.3-4-9.3-9.4-9.6C46 11.2 39.2 6 31.5 6 24.4 6 18.3 10.4 16 16.8 9.7 17.6 5 22.6 5 28.8 5 34.7 9.5 38 15 38h7"/></svg>
-                </div>
-                <h3 class="backup-popover-title" id="backupPopoverTitle">Backup Cloud non attivo</h3>
-                <p class="backup-popover-text" id="backupPopoverText">Le tue carte sono salvate solo su questo dispositivo. Attiva il backup cloud per proteggerle e ripristinarle quando vuoi.</p>
-                <div class="backup-popover-meta is-hidden" id="backupPopoverMeta"><strong>Ultimo backup</strong><span id="backupLastRunText">—</span></div>
-                <button class="backup-popover-btn" id="backupPrimaryBtn" type="button">Attiva Backup Cloud</button>
-                <button class="backup-popover-link" id="backupLearnMoreBtn" type="button">Scopri di più</button>
-                <button class="backup-popover-danger is-hidden" id="backupDisconnectBtn" type="button">Rimuovi</button>
               </div>
             </header>
 <div class="home-top-controls">
@@ -5089,17 +5072,20 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'local-index';
+    const POKEALBUM_BUILD_VERSION = 'vi481-local-cache-fingerprint';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
+    const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
     const INDEX_URL = 'data/pokemon-index.json';
     const META_URL = 'data/pokemon-index-meta.json';
     const PRICE_DB_URL = 'data/pokemon_price-db.json';
     const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
     const APP_DATA_CACHE_NAME = `pokealbum-data-cache-${POKEALBUM_BUILD_VERSION}`;
     (function ensureFreshAppShell() {
-      // Modalità locale pulita: non aggiunge pa_build, pa_local o cache-buster all'URL.
-      // Se arrivano da una vecchia versione o da una sessione del browser, li rimuove dalla barra indirizzi.
+      const isLocalApp = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
+
+      // Modalità locale pulita: rimuove solo i vecchi parametri tecnici dalla barra indirizzi.
+      // Nota: NON rimuove eventuali parametri tipo ?v=... usati dal BAT per forzare il refresh.
       try {
         const url = new URL(window.location.href);
         let changed = false;
@@ -5116,11 +5102,100 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       } catch (error) {
         console.warn('Pulizia URL locale non riuscita', error);
       }
+
+      function computeLocalHtmlFingerprint(input) {
+        let hash = 2166136261;
+        const text = String(input || '');
+        for (let i = 0; i < text.length; i += 1) {
+          hash ^= text.charCodeAt(i);
+          hash = Math.imul(hash, 16777619);
+        }
+        return `${text.length}-${(hash >>> 0).toString(36)}`;
+      }
+
+      async function unregisterLocalServiceWorkers() {
+        if (!isLocalApp || !navigator.serviceWorker || typeof navigator.serviceWorker.getRegistrations !== 'function') return;
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(registrations.map((registration) => registration.unregister()));
+        } catch (error) {
+          console.warn('Service worker locale non rimosso', error);
+        }
+      }
+
+      async function clearLocalShellCachesOnBuildChange() {
+        if (!isLocalApp) return;
+        try {
+          const previousBuild = localStorage.getItem(POKEALBUM_BUILD_STORAGE_KEY);
+          if (previousBuild === POKEALBUM_BUILD_VERSION) return;
+          localStorage.setItem(POKEALBUM_BUILD_STORAGE_KEY, POKEALBUM_BUILD_VERSION);
+
+          if (window.caches && typeof caches.keys === 'function') {
+            const names = await caches.keys();
+            await Promise.all(names.map((name) => caches.delete(name)));
+          }
+        } catch (error) {
+          console.warn('Pulizia cache shell locale non riuscita', error);
+        }
+      }
+
+      async function checkLocalHtmlVersion() {
+        if (!isLocalApp || document.hidden) return;
+        try {
+          const url = new URL(window.location.pathname || '/index.html', window.location.origin);
+          url.searchParams.set('_fresh_check', String(Date.now()));
+          const response = await fetch(url.toString(), {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache',
+              'Pragma': 'no-cache'
+            }
+          });
+          if (!response.ok) return;
+          const html = await response.text();
+          const freshFingerprint = computeLocalHtmlFingerprint(html);
+          const previousFingerprint = localStorage.getItem(POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY);
+
+          if (previousFingerprint && previousFingerprint !== freshFingerprint) {
+            localStorage.setItem(POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY, freshFingerprint);
+            window.location.replace(`${window.location.pathname}?v=${Date.now()}${window.location.hash || ''}`);
+            return;
+          }
+
+          if (!previousFingerprint) {
+            localStorage.setItem(POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY, freshFingerprint);
+          }
+
+          const match = html.match(/const\s+POKEALBUM_BUILD_VERSION\s*=\s*['"]([^'"]+)['"]/);
+          const freshBuild = match?.[1];
+          if (freshBuild && freshBuild !== POKEALBUM_BUILD_VERSION) {
+            localStorage.setItem(POKEALBUM_BUILD_STORAGE_KEY, freshBuild);
+            window.location.replace(`${window.location.pathname}?v=${Date.now()}${window.location.hash || ''}`);
+          }
+        } catch (error) {
+          console.warn('Controllo versione locale non riuscito', error);
+        }
+      }
+
+      void unregisterLocalServiceWorkers();
+      void clearLocalShellCachesOnBuildChange();
+
       window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
           window.location.reload();
+          return;
         }
+        void checkLocalHtmlVersion();
       });
+      window.addEventListener('focus', () => void checkLocalHtmlVersion());
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) void checkLocalHtmlVersion();
+      });
+      if (isLocalApp) {
+        window.setInterval(() => {
+          if (!document.hidden) void checkLocalHtmlVersion();
+        }, 2500);
+      }
     })();
     async function fetchJsonWithAppCache(url, options = {}) {
       const force = Boolean(options.force);
@@ -12161,7 +12236,7 @@ function formatStorageBytes(bytes) {
           refreshBackupCloudStatusFromServer();
         }
         function formatBackupLastRun(value) {
-          if (!value) return "Nessun backup eseguito";
+          if (!value) return "Nessuna sincronizzazione";
           const date = new Date(value);
           if (Number.isNaN(date.getTime())) return String(value);
           return date.toLocaleString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
