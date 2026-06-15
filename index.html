@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi446-menu-provider-puntini-20260613" />
+    <meta name="pokealbum-build" content="vi457-menu-avatar-home-image-20260615" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -194,6 +194,27 @@ button,input{font:inherit}
 .album-delete-confirm-actions button{height:48px;border:0;border-radius:999px;font-family:inherit;font-size:14px;font-weight:900;letter-spacing:-.02em;cursor:pointer}
 .album-delete-cancel{background:rgba(235,241,255,.72);color:#65779f;border:1px solid rgba(120,146,207,.16)!important}
 .album-delete-confirm{background:linear-gradient(135deg,#ff8b8b 0%,#e53935 100%);color:#fff;box-shadow:0 10px 22px rgba(229,57,53,.22),inset 0 1px 0 rgba(255,255,255,.28)}
+
+/* === Avatar personale: ritaglio/centratura foto profilo === */
+.avatar-crop-backdrop{position:fixed;inset:0;z-index:260;background:linear-gradient(180deg,rgba(241,246,255,.98),rgba(225,234,249,.98));padding:calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 16px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility .22s ease;color:#20345f}
+.avatar-crop-backdrop.open{opacity:1;visibility:visible;pointer-events:auto}
+body.avatar-crop-open{overflow:hidden;overscroll-behavior:none;touch-action:none}
+.avatar-crop-sheet{height:100%;display:flex;flex-direction:column;min-height:0}
+.avatar-crop-head{height:var(--topbar-control-size);position:relative;display:flex;align-items:flex-start;justify-content:center;margin-bottom:10px;flex:0 0 auto}
+.avatar-crop-title{position:absolute;left:58px;right:58px;top:0;margin:13px 0 0;color:#1c2e5a;font-size:clamp(16px,2vh,20px);line-height:1.25;font-weight:750;letter-spacing:-0.03em;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.avatar-crop-icon-btn{position:absolute;top:0;width:var(--topbar-control-size);height:var(--topbar-control-size);border:1px solid rgba(255,255,255,.56);border-radius:50%;background:rgba(255,255,255,.58);color:#5c6f99;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);cursor:pointer;padding:0}
+.avatar-crop-icon-btn.cancel{left:0}.avatar-crop-icon-btn.confirm{right:0;color:#2f64ff}.avatar-crop-icon-btn:hover{color:#3157c9;background:rgba(255,255,255,.68);box-shadow:0 16px 28px rgba(73,96,157,.18),inset 0 1px 0 rgba(255,255,255,.96)}.avatar-crop-icon-btn:active{transform:scale(.97)}
+.avatar-crop-icon-btn svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round}
+.avatar-crop-area{flex:1 1 auto;min-height:0;display:grid;place-items:center;position:relative;overflow:hidden;border-radius:30px;background:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.62);box-shadow:0 18px 38px rgba(66,89,152,.12),inset 0 1px 0 rgba(255,255,255,.78);touch-action:none;user-select:none;-webkit-user-select:none}
+.avatar-crop-stage{position:relative;width:min(72vw,320px,58dvh);height:min(72vw,320px,58dvh);border-radius:50%;overflow:hidden;background:#dfe8f8;box-shadow:0 16px 34px rgba(47,100,255,.16),0 0 0 9999px rgba(20,34,74,.16),inset 0 1px 0 rgba(255,255,255,.70)}
+.avatar-crop-stage::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 3px rgba(255,255,255,.82),inset 0 0 0 4px rgba(47,100,255,.18);pointer-events:none}
+.avatar-crop-img{position:absolute;left:50%;top:50%;max-width:none;max-height:none;transform:translate(calc(-50% + var(--avatar-crop-x,0px)),calc(-50% + var(--avatar-crop-y,0px))) scale(var(--avatar-crop-scale,1));transform-origin:center center;will-change:transform;user-select:none;-webkit-user-drag:none;touch-action:none}
+.avatar-crop-help{margin:10px auto 0;max-width:320px;color:#65779f;font-size:13px;font-weight:750;line-height:1.22;text-align:center;flex:0 0 auto}
+.avatar-crop-controls{margin:10px auto 0;width:min(100%,360px);display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:10px;flex:0 0 auto}
+.avatar-crop-zoom-btn{width:42px;height:42px;border:0;border-radius:999px;background:rgba(255,255,255,.62);color:#3157c9;font-family:inherit;font-size:22px;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.88);cursor:pointer}
+.avatar-crop-range{width:100%;accent-color:#2f64ff}
+@media (max-width:420px){.avatar-crop-backdrop{padding-left:14px;padding-right:14px}.avatar-crop-head{margin-bottom:8px}.avatar-crop-stage{width:min(76vw,300px,54dvh);height:min(76vw,300px,54dvh)}.avatar-crop-help,.avatar-crop-controls{margin-top:8px}}
+
 :root{--bg:#0b1220;--bg2:#dfe9fb;--panel:rgba(255,255,255,0.54);--panel-2:rgba(255,255,255,0.06);--text:#14254f;--muted:#7080a3;--accent:#5aa6ff;--accent-2:#ffd84f;--danger:#ff7272;--ok:#73d78b;--border:rgba(255,255,255,0.1);--shadow:0 20px 50px rgba(64,96,170,0.18);--radius:20px;--bg1:#edf2fb;--bg3:#dff4ff;--blue:#2f64ff;--blue2:#5d90ff;--panel-stroke:rgba(255,255,255,0.7);--safe-top:max(16px,env(safe-area-inset-top));--safe-bottom:max(16px,env(safe-area-inset-bottom));--topbar-control-size:50px;--topbar-control-icon-size:23px;--topbar-control-offset-x:0px;--topbar-control-offset-y:0px;--field-title-size:14px;--field-title-weight:850;--field-title-line-height:1.05;--field-title-letter-spacing:-0.02em;--field-title-color:#243865;--field-subtitle-size:12px;--field-subtitle-weight:500;--field-subtitle-line-height:1.2;--field-subtitle-letter-spacing:0;--field-subtitle-color:#65779f;--field-title-subtitle-gap:2px}
 *{box-sizing:border-box}
 .phone-stage{width:100%;max-width:100vw;height:100%;display:block;padding:0;overflow:hidden;overflow-x:hidden}
@@ -492,6 +513,7 @@ body.album-reorder-active .album-card .album-wrap,.album-drag-ghost .album-wrap{
 .modal-backdrop{position:fixed;inset:0;background:transparent;display:none;align-items:center;justify-content:center;padding:0;z-index:50;backdrop-filter:none;-webkit-backdrop-filter:none}
 .modal-backdrop.open{display:block}
 .context-menu{position:fixed;left:16px;top:16px;width:max-content;min-width:168px;max-width:min(230px,calc(100vw - 32px));padding:6px;border-radius:16px;background:rgba(255,255,255,0.6);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(150%);box-shadow:0 18px 34px rgba(25,38,82,0.16),inset 0 1px 0 rgba(255,255,255,0.78);border:1px solid rgba(255,255,255,0.46);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+#avatarImageMenuBackdrop{z-index:255}
 .context-menu *,.menu-btn{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .menu-btn{width:100%;padding:11px 12px;border:0;border-radius:13px;background:transparent;color:#243865;text-align:left;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:9px}
 .menu-icon{width:15px;height:15px;flex:0 0 15px;stroke-width:2;opacity:0.82}
@@ -1485,6 +1507,22 @@ body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10
 .home-profile-btn .cerchio-base{stroke:#cbd5e1;stroke-width:20;fill:none;transition:stroke .25s ease,filter .25s ease}
 .home-profile-btn .cerchio-loader{stroke:var(--blue,#2f64ff);stroke-width:20;fill:none;stroke-linecap:round;stroke-dasharray:320 975;opacity:0}
 .home-profile-btn .utente{fill:#94a3b8}
+.home-profile-avatar-img{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:70%;
+  height:70%;
+  border-radius:50%;
+  object-fit:cover;
+  display:none;
+  transform:translate(-50%,-50%);
+  z-index:1;
+  pointer-events:none;
+}
+.home-profile-btn.has-custom-avatar .home-profile-avatar-img{display:block!important}
+.home-profile-btn .home-profile-icon{position:relative;z-index:2}
+.home-profile-btn.has-custom-avatar .utente{display:none!important}
 .home-profile-btn.saving .cerchio-loader{opacity:1;animation:homeProfileMultiGiro 1.65s linear forwards,homeProfileHideLoader .2s ease 1.65s forwards}
 .home-profile-btn.saving .cerchio-base{animation:homeProfileAccensioneTotale .35s ease 1.65s forwards,homeProfileSpegnimentoTotale .65s ease 2.35s forwards}
 @keyframes homeProfileMultiGiro{from{stroke-dashoffset:-120;filter:drop-shadow(0 0 7px var(--blue,#2f64ff))}
@@ -2537,7 +2575,27 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   fill:currentColor;
   filter:drop-shadow(0 5px 8px rgba(32,52,95,.10));
 }
-.profile-trainer-copy{display:grid;align-content:center;gap:2px;min-width:0}
+.profile-avatar{cursor:pointer;overflow:hidden;position:relative}
+.profile-avatar-img{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:72%;
+  height:72%;
+  border-radius:50%;
+  object-fit:cover;
+  display:none;
+  transform:translate(-50%,-50%);
+  z-index:1;
+  pointer-events:none;
+}
+.profile-avatar.has-custom-avatar .profile-avatar-img{display:block!important}
+.profile-avatar.has-custom-avatar svg{display:block!important;position:relative;z-index:2}
+.profile-avatar.has-custom-avatar .utente{display:none!important}
+
+
+
+.profile-trainer-copy{display:grid;align-content:center;gap:6px;min-width:0}
 .profile-trainer-copy strong{
   font-size:14px;
   line-height:1.08;
@@ -2725,7 +2783,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .profile-menu-divider{margin:7px 0!important}
 .profile-trainer-card{min-height:44px!important;grid-template-columns:36px minmax(0,1fr) 9px!important;gap:7px!important}
 .profile-avatar{width:36px!important;height:36px!important}.profile-avatar svg{width:24px!important;height:24px!important}
-.profile-trainer-copy{gap:2px!important}.profile-trainer-copy strong{font-size:11px!important;line-height:1.05!important}.profile-trainer-copy>span:not(.profile-sync-pill){font-size:8.8px!important;line-height:1.05!important}.profile-sync-pill{min-height:15px!important;padding:0 5px!important;font-size:8px!important;gap:4px!important}.profile-sync-pill i{width:6px!important;height:6px!important}
+.profile-trainer-copy{gap:6px!important}.profile-trainer-copy strong{font-size:11px!important;line-height:1.05!important}.profile-trainer-copy>span:not(.profile-sync-pill){font-size:8.8px!important;line-height:1.05!important}.profile-sync-pill{min-height:15px!important;padding:0 5px!important;font-size:8px!important;gap:4px!important}.profile-sync-pill i{width:6px!important;height:6px!important}
 .profile-menu-section{gap:5px!important}.profile-section-title{min-height:27px!important;grid-template-columns:22px minmax(0,1fr) 9px!important;font-size:9.6px!important;font-weight:850!important;letter-spacing:-.035em!important;border-radius:10px!important}
 .profile-provider-card{border-radius:12px!important;padding:3px 6px!important}.profile-provider-row{min-height:29px!important;grid-template-columns:21px minmax(0,1fr) 15px!important;gap:5px!important;font-size:9.8px!important;font-weight:820!important}.profile-provider-separator{margin-left:26px!important}.provider-logo,.provider-logo svg{width:19px!important;height:19px!important}.provider-check{width:15px!important;height:15px!important;font-size:9px!important}
 .profile-last-sync{min-height:33px!important;border-radius:12px!important;grid-template-columns:25px minmax(0,1fr)!important;padding:5px 6px!important}.profile-last-sync .profile-row-icon{width:21px!important;height:21px!important;border-radius:8px!important}.profile-last-sync .profile-row-icon svg{width:14px!important;height:14px!important}.profile-last-sync em{font-size:7.8px!important}.profile-last-sync strong{font-size:8.8px!important}
@@ -2840,6 +2898,8 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   .profile-provider-row{font-size:11.5px!important}
   .profile-row-icon svg{width:18px!important;height:18px!important}
 }
+.profile-avatar.has-custom-avatar .profile-menu-user-icon{display:none!important}
+.profile-avatar.has-custom-avatar .profile-avatar-img{display:block!important}
 </style>
 <style id="menu-font-enlarge-patch">
 .profile-menu-panel{
@@ -2912,7 +2972,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   height:36px!important;
 }
 .profile-trainer-copy{
-  gap:1px!important;
+  gap:6px!important;
 }
 @media (max-width:420px){
   .profile-menu-panel{padding:calc(var(--safe-top) + 8px) 13px calc(var(--safe-bottom) + 14px)!important;}
@@ -2937,6 +2997,99 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 
 </style>
 
+<style id="menu-vi447-breathing-space-patch">
+/* vi447: più respiro nel menu laterale, lasciando compatta la parte alta profilo */
+.profile-menu-section{
+  gap:10px!important;
+  margin-top:4px!important;
+  margin-bottom:12px!important;
+}
+.profile-section-title{
+  min-height:40px!important;
+  margin-bottom:2px!important;
+}
+.profile-provider-card{
+  margin-top:2px!important;
+  margin-bottom:8px!important;
+  padding:8px 8px!important;
+}
+.profile-provider-row{
+  min-height:40px!important;
+}
+.profile-provider-separator{
+  margin-top:3px!important;
+  margin-bottom:3px!important;
+}
+.profile-last-sync{
+  min-height:48px!important;
+  margin-top:4px!important;
+  padding:8px!important;
+}
+.profile-actions-list{
+  display:grid!important;
+  gap:7px!important;
+  margin:4px 0 8px!important;
+}
+.profile-actions-list.bottom{
+  margin-top:6px!important;
+}
+.profile-menu-row{
+  min-height:44px!important;
+}
+.profile-menu-divider{
+  margin:11px 0!important;
+}
+.profile-provider-menu{
+  top:48px!important;
+}
+@media (max-width:420px){
+  .profile-menu-section{gap:9px!important;margin-top:4px!important;margin-bottom:11px!important;}
+  .profile-section-title{min-height:38px!important;}
+  .profile-provider-card{padding:7px 8px!important;margin-bottom:7px!important;}
+  .profile-provider-row{min-height:38px!important;}
+  .profile-last-sync{min-height:46px!important;padding:7px 8px!important;}
+  .profile-actions-list{gap:6px!important;margin:4px 0 7px!important;}
+  .profile-menu-row{min-height:42px!important;}
+  .profile-menu-divider{margin:10px 0!important;}
+  .profile-provider-menu{top:46px!important;}
+}
+</style>
+
+
+
+<style id="menu-avatar-size-patch">
+/* vi448: avatar menu laterale leggermente più grande, forma circolare invariata */
+.profile-menu-panel .profile-trainer-card{
+  min-height:54px!important;
+  grid-template-columns:48px minmax(0,1fr)!important;
+  gap:7px!important;
+}
+.profile-menu-panel .profile-avatar{
+  width:48px!important;
+  height:48px!important;
+  border-radius:50%!important;
+}
+.profile-menu-panel .profile-avatar .profile-menu-user-icon{
+  width:43px!important;
+  height:43px!important;
+}
+@media (max-width:420px){
+  .profile-menu-panel .profile-trainer-card{
+    min-height:52px!important;
+    grid-template-columns:46px minmax(0,1fr)!important;
+    gap:6px!important;
+  }
+  .profile-menu-panel .profile-avatar{
+    width:46px!important;
+    height:46px!important;
+  }
+  .profile-menu-panel .profile-avatar .profile-menu-user-icon{
+    width:41px!important;
+    height:41px!important;
+  }
+}
+</style>
+
 </head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -2944,6 +3097,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
         <section class="content">
           <div class="app-view" id="homeView">
             <button class="home-profile-btn" id="homeProfileBtn" type="button" aria-label="Profilo utente" title="Profilo">
+              <img class="home-profile-avatar-img" id="homeProfileAvatarImage" alt="Immagine profilo" />
               <svg class="home-profile-icon login-save-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <circle class="cerchio-base" cx="256" cy="256" r="206" />
                 <circle class="cerchio-loader" cx="256" cy="256" r="206" />
@@ -4259,6 +4413,40 @@ paint-order="stroke">
             </button>
           </div>
         </div>
+        <div class="modal-backdrop" id="avatarImageMenuBackdrop" aria-hidden="true">
+          <div
+            class="context-menu"
+            id="avatarImageMenu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Azioni immagine profilo"
+          >
+            <button class="menu-btn" id="avatarImageEditBtn" type="button">
+              <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+              </svg>
+              <span>Modifica immagine</span>
+            </button>
+            <button class="menu-btn" id="avatarImageChangeBtn" type="button">
+              <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+              </svg>
+              <span>Cambia immagine</span>
+            </button>
+            <button class="menu-btn danger" id="avatarImageRemoveBtn" type="button">
+              <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 6h18"></path>
+                <path d="M8 6V4h8v2"></path>
+                <path d="M19 6l-1 14H6L5 6"></path>
+                <path d="M10 11v5"></path>
+                <path d="M14 11v5"></path>
+              </svg>
+              <span>Elimina immagine</span>
+            </button>
+          </div>
+        </div>
 <div class="profile-menu-backdrop" id="profileMenuBackdrop" aria-hidden="true">
           <aside class="profile-menu-panel" id="profileMenuPanel" role="dialog" aria-modal="true" aria-labelledby="profileMenuTitle">
             <div class="profile-menu-head">
@@ -4266,14 +4454,16 @@ paint-order="stroke">
             </div>
 
             <section class="profile-trainer-card" aria-label="Profilo utente">
-              <div class="profile-avatar" aria-hidden="true">
-                <svg class="home-profile-icon login-save-icon profile-menu-user-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+              <div class="profile-avatar" id="profileAvatarBtn" role="button" tabindex="0" aria-label="Inserisci immagine profilo">
+                <img class="profile-avatar-img" id="profileAvatarImage" alt="Immagine profilo" />
+                <svg class="home-profile-icon login-save-icon profile-menu-user-icon" id="profileAvatarIcon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
                   <circle class="cerchio-base" cx="256" cy="256" r="206" />
                   <circle class="cerchio-loader" cx="256" cy="256" r="206" />
                   <circle class="utente" cx="256" cy="184" r="55" />
                   <path class="utente" d="M146 365C146 303.7 195.7 254 257 254C318.3 254 368 303.7 368 365C368 377.7 357.7 388 345 388H169C156.3 388 146 377.7 146 365Z" />
                 </svg>
               </div>
+              <input id="profileAvatarInput" type="file" accept="image/*" hidden />
               <div class="profile-trainer-copy">
                 <strong id="profileTrainerName">Il tuo nome</strong>
                 <span class="profile-sync-pill" id="profileBackupPill"><i></i>Non attivo</span>
@@ -4400,6 +4590,27 @@ paint-order="stroke">
             <div class="rename-sheet-actions">
               <button class="rename-sheet-btn cancel" id="renameCancelBtn" type="button">Annulla</button>
               <button class="rename-sheet-btn save" id="renameSaveBtn" type="button">Salva</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="avatar-crop-backdrop" id="avatarCropBackdrop" aria-hidden="true">
+          <section class="avatar-crop-sheet" role="dialog" aria-modal="true" aria-labelledby="avatarCropTitle">
+            <div class="avatar-crop-head">
+              <button class="avatar-crop-icon-btn cancel" id="avatarCropCancelBtn" type="button" aria-label="Annulla immagine profilo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></button>
+              <h2 class="avatar-crop-title" id="avatarCropTitle">Centra immagine profilo</h2>
+              <button class="avatar-crop-icon-btn confirm" id="avatarCropSaveBtn" type="button" aria-label="Salva immagine profilo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"></path></svg></button>
+            </div>
+            <div class="avatar-crop-area" id="avatarCropArea">
+              <div class="avatar-crop-stage" id="avatarCropStage">
+                <img class="avatar-crop-img" id="avatarCropImage" alt="Anteprima immagine profilo" draggable="false" />
+              </div>
+            </div>
+            <p class="avatar-crop-help">Sposta e ridimensiona l’immagine</p>
+            <div class="avatar-crop-controls">
+              <button class="avatar-crop-zoom-btn" id="avatarCropZoomOut" type="button" aria-label="Riduci immagine">−</button>
+              <input class="avatar-crop-range" id="avatarCropZoomRange" type="range" min="0.1" max="3" step="0.01" value="1" aria-label="Zoom immagine profilo" />
+              <button class="avatar-crop-zoom-btn" id="avatarCropZoomIn" type="button" aria-label="Ingrandisci immagine">+</button>
             </div>
           </section>
         </div>
@@ -8168,6 +8379,7 @@ const els = {
           totalPriceValue: $("#totalPriceValue"),
           homeCardsCount: $("#homeCardsCount"),
           homeProfileBtn: $("#homeProfileBtn"),
+          homeProfileAvatarImage: $("#homeProfileAvatarImage"),
           homeBackupStatusBtn: $("#homeBackupStatusBtn"),
           backupPopover: $("#backupPopover"),
           backupPopoverTitle: $("#backupPopoverTitle"),
@@ -8206,6 +8418,24 @@ const els = {
           restoreConfirmBtn: $("#restoreConfirmBtn"),
           ownerNameBtn: $("#ownerNameBtn"),
           profileTrainerName: $("#profileTrainerName"),
+          profileAvatarBtn: $("#profileAvatarBtn"),
+          profileAvatarImage: $("#profileAvatarImage"),
+          profileAvatarInput: $("#profileAvatarInput"),
+          profileAvatarIcon: $("#profileAvatarIcon"),
+          avatarImageMenuBackdrop: $("#avatarImageMenuBackdrop"),
+          avatarImageMenu: $("#avatarImageMenu"),
+          avatarImageEditBtn: $("#avatarImageEditBtn"),
+          avatarImageChangeBtn: $("#avatarImageChangeBtn"),
+          avatarImageRemoveBtn: $("#avatarImageRemoveBtn"),
+          avatarCropBackdrop: $("#avatarCropBackdrop"),
+          avatarCropArea: $("#avatarCropArea"),
+          avatarCropStage: $("#avatarCropStage"),
+          avatarCropImage: $("#avatarCropImage"),
+          avatarCropCancelBtn: $("#avatarCropCancelBtn"),
+          avatarCropSaveBtn: $("#avatarCropSaveBtn"),
+          avatarCropZoomOut: $("#avatarCropZoomOut"),
+          avatarCropZoomIn: $("#avatarCropZoomIn"),
+          avatarCropZoomRange: $("#avatarCropZoomRange"),
           ownerNameSheetBackdrop: $("#ownerNameSheetBackdrop"),
           ownerNameInput: $("#ownerNameInput"),
           ownerNameCancelBtn: $("#ownerNameCancelBtn"),
@@ -8293,6 +8523,7 @@ const DEFAULT_ALBUM = Object.freeze({
         let visibleTotalPrice = els.totalPriceValue.textContent.trim();
         const hiddenTotalPrice = "€ *****";
         const OWNER_NAME_STORAGE_KEY = "pokealbumOwnerName";
+        const PROFILE_AVATAR_STORAGE_KEY = "pokealbumProfileAvatarImage";
         const defaultOwnerName = els.ownerNameBtn.textContent.trim();
         const state = {
           albumCount: 0,
@@ -8548,6 +8779,7 @@ function openDb() {
           state.deletingAlbum = null;
           els.ownerNameBtn.textContent = defaultOwnerName;
           if (els.profileTrainerName) els.profileTrainerName.textContent = defaultOwnerName;
+          void setProfileAvatarImage("");
           closeAlbumDetail();
           closeAddCardSearch();
           closeAlbumForm();
@@ -11066,6 +11298,240 @@ function parseCollectionPriceAmount(value) {
             applyOwnerName(defaultOwnerName);
           }
         }
+        function applyProfileAvatarImage(imageDataUrl = "") {
+          const cleanImage = String(imageDataUrl || "").trim();
+          const avatarTargets = [
+            { wrapper: els.profileAvatarBtn, image: els.profileAvatarImage },
+            { wrapper: els.homeProfileBtn, image: els.homeProfileAvatarImage },
+          ];
+          avatarTargets.forEach(({ wrapper, image }) => {
+            if (!wrapper || !image) return;
+            if (cleanImage) {
+              image.src = cleanImage;
+              wrapper.classList.add("has-custom-avatar");
+            } else {
+              image.removeAttribute("src");
+              wrapper.classList.remove("has-custom-avatar");
+            }
+          });
+          return cleanImage;
+        }
+        async function setProfileAvatarImage(imageDataUrl = "") {
+          const cleanImage = applyProfileAvatarImage(imageDataUrl);
+          try {
+            if (cleanImage) localStorage.setItem(PROFILE_AVATAR_STORAGE_KEY, cleanImage);
+            else localStorage.removeItem(PROFILE_AVATAR_STORAGE_KEY);
+          } catch {}
+          try {
+            await saveSetting(PROFILE_AVATAR_STORAGE_KEY, cleanImage);
+          } catch (error) {
+            console.warn("Immagine profilo non salvata in IndexedDB", error);
+          }
+        }
+        async function loadProfileAvatarImage() {
+          try {
+            const savedImage = await loadSetting(PROFILE_AVATAR_STORAGE_KEY);
+            if (savedImage) {
+              applyProfileAvatarImage(savedImage);
+              return;
+            }
+          } catch {}
+          try {
+            applyProfileAvatarImage(localStorage.getItem(PROFILE_AVATAR_STORAGE_KEY) || "");
+          } catch {
+            applyProfileAvatarImage("");
+          }
+        }
+        function chooseProfileAvatarImage() {
+          els.profileAvatarInput?.click();
+        }
+        function editCurrentProfileAvatarImage() {
+          const currentImage = els.profileAvatarImage?.getAttribute("src") || "";
+          if (!currentImage) return chooseProfileAvatarImage();
+          openAvatarCropSheet(currentImage);
+        }
+        function hasProfileAvatarImage() {
+          return Boolean(els.profileAvatarBtn?.classList.contains("has-custom-avatar"));
+        }
+        function positionAvatarImageMenu() {
+          if (!els.avatarImageMenu || !els.profileAvatarBtn) return;
+          const rect = els.profileAvatarBtn.getBoundingClientRect();
+          const gap = 10;
+          const margin = 12;
+          els.avatarImageMenu.style.left = "0px";
+          els.avatarImageMenu.style.top = "0px";
+          const menuRect = els.avatarImageMenu.getBoundingClientRect();
+          const safeLeft = window.innerWidth - menuRect.width - margin;
+          const safeTop = window.innerHeight - menuRect.height - margin;
+          const preferredLeft = rect.left + rect.width / 2 - menuRect.width / 2;
+          const preferredTop = rect.bottom + gap;
+          const fallbackTop = rect.top - menuRect.height - gap;
+          const finalTop = preferredTop > safeTop ? fallbackTop : preferredTop;
+          els.avatarImageMenu.style.left = `${Math.max(margin, Math.min(preferredLeft, safeLeft))}px`;
+          els.avatarImageMenu.style.top = `${Math.max(margin, Math.min(finalTop, safeTop))}px`;
+        }
+        function openAvatarImageMenu() {
+          if (!els.avatarImageMenuBackdrop || !hasProfileAvatarImage()) return chooseProfileAvatarImage();
+          els.avatarImageMenuBackdrop.classList.add("open");
+          els.avatarImageMenuBackdrop.setAttribute("aria-hidden", "false");
+          positionAvatarImageMenu();
+        }
+        function closeAvatarImageMenu() {
+          els.avatarImageMenuBackdrop?.classList.remove("open");
+          els.avatarImageMenuBackdrop?.setAttribute("aria-hidden", "true");
+        }
+        async function removeProfileAvatarImage() {
+          closeAvatarImageMenu();
+          await setProfileAvatarImage("");
+          showStorageToast("Immagine profilo rimossa");
+        }
+        function handleProfileAvatarClick() {
+          if (hasProfileAvatarImage()) openAvatarImageMenu();
+          else chooseProfileAvatarImage();
+        }
+        const avatarCropState = {
+          source: "",
+          img: null,
+          x: 0,
+          y: 0,
+          scale: 1,
+          minScale: 1,
+          maxScale: 3,
+          startX: 0,
+          startY: 0,
+          pointerX: 0,
+          pointerY: 0,
+          dragging: false,
+        };
+        function setAvatarCropTransform() {
+          if (!els.avatarCropImage) return;
+          els.avatarCropImage.style.setProperty("--avatar-crop-x", `${avatarCropState.x}px`);
+          els.avatarCropImage.style.setProperty("--avatar-crop-y", `${avatarCropState.y}px`);
+          els.avatarCropImage.style.setProperty("--avatar-crop-scale", `${avatarCropState.scale}`);
+          if (els.avatarCropZoomRange) els.avatarCropZoomRange.value = String(avatarCropState.scale);
+        }
+        function clampAvatarCropPosition() {
+          const stage = els.avatarCropStage?.getBoundingClientRect?.();
+          const img = avatarCropState.img;
+          if (!stage || !img) return;
+          const baseW = img.naturalWidth * avatarCropState.minScale;
+          const baseH = img.naturalHeight * avatarCropState.minScale;
+          const shownW = img.naturalWidth * avatarCropState.scale;
+          const shownH = img.naturalHeight * avatarCropState.scale;
+          const maxX = Math.max(0, (shownW - stage.width) / 2);
+          const maxY = Math.max(0, (shownH - stage.height) / 2);
+          avatarCropState.x = Math.max(-maxX, Math.min(maxX, avatarCropState.x));
+          avatarCropState.y = Math.max(-maxY, Math.min(maxY, avatarCropState.y));
+        }
+        function setAvatarCropScale(nextScale) {
+          avatarCropState.scale = Math.max(avatarCropState.minScale, Math.min(avatarCropState.maxScale, Number(nextScale) || avatarCropState.minScale));
+          clampAvatarCropPosition();
+          setAvatarCropTransform();
+        }
+        function closeAvatarCropSheet() {
+          els.avatarCropBackdrop?.classList.remove("open");
+          els.avatarCropBackdrop?.setAttribute("aria-hidden", "true");
+          document.body.classList.remove("avatar-crop-open");
+          if (els.profileAvatarInput) els.profileAvatarInput.value = "";
+        }
+        function openAvatarCropSheet(imageDataUrl) {
+          if (!els.avatarCropBackdrop || !els.avatarCropImage || !els.avatarCropStage) {
+            return setProfileAvatarImage(imageDataUrl);
+          }
+          const img = new Image();
+          img.onload = () => {
+            const stage = els.avatarCropStage.getBoundingClientRect();
+            const coverScale = Math.max(stage.width / img.naturalWidth, stage.height / img.naturalHeight);
+            const containScale = Math.min(stage.width / img.naturalWidth, stage.height / img.naturalHeight);
+            const minScale = Math.max(0.05, Math.min(coverScale * 0.45, containScale * 0.85));
+            avatarCropState.source = imageDataUrl;
+            avatarCropState.img = img;
+            avatarCropState.x = 0;
+            avatarCropState.y = 0;
+            avatarCropState.minScale = minScale;
+            avatarCropState.maxScale = Math.max(coverScale * 4, coverScale + 1.25);
+            avatarCropState.scale = coverScale;
+            els.avatarCropImage.src = imageDataUrl;
+            els.avatarCropImage.style.width = `${img.naturalWidth}px`;
+            els.avatarCropImage.style.height = `${img.naturalHeight}px`;
+            if (els.avatarCropZoomRange) {
+              els.avatarCropZoomRange.min = String(avatarCropState.minScale);
+              els.avatarCropZoomRange.max = String(avatarCropState.maxScale);
+              els.avatarCropZoomRange.step = String((avatarCropState.maxScale - avatarCropState.minScale) / 160 || 0.01);
+            }
+            setAvatarCropTransform();
+            els.avatarCropBackdrop.classList.add("open");
+            els.avatarCropBackdrop.setAttribute("aria-hidden", "false");
+            document.body.classList.add("avatar-crop-open");
+          };
+          img.onerror = () => showStorageToast("Immagine profilo non leggibile", true);
+          img.src = imageDataUrl;
+        }
+        async function saveAvatarCropSheet() {
+          const img = avatarCropState.img;
+          const stage = els.avatarCropStage?.getBoundingClientRect?.();
+          if (!img || !stage) return;
+          const outputSize = 512;
+          const canvas = document.createElement("canvas");
+          canvas.width = outputSize;
+          canvas.height = outputSize;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return;
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(outputSize / 2, outputSize / 2, outputSize / 2, 0, Math.PI * 2);
+          ctx.clip();
+          const baseW = img.naturalWidth * avatarCropState.scale;
+          const baseH = img.naturalHeight * avatarCropState.scale;
+          const ratio = outputSize / stage.width;
+          const drawW = baseW * ratio;
+          const drawH = baseH * ratio;
+          const drawX = outputSize / 2 - drawW / 2 + avatarCropState.x * ratio;
+          const drawY = outputSize / 2 - drawH / 2 + avatarCropState.y * ratio;
+          ctx.drawImage(img, drawX, drawY, drawW, drawH);
+          ctx.restore();
+          const croppedDataUrl = canvas.toDataURL("image/jpeg", 0.88);
+          await setProfileAvatarImage(croppedDataUrl);
+          closeAvatarCropSheet();
+          showStorageToast("Immagine profilo aggiornata");
+        }
+        function handleAvatarCropPointerDown(event) {
+          event.preventDefault();
+          avatarCropState.dragging = true;
+          avatarCropState.pointerX = event.clientX;
+          avatarCropState.pointerY = event.clientY;
+          avatarCropState.startX = avatarCropState.x;
+          avatarCropState.startY = avatarCropState.y;
+          els.avatarCropArea?.setPointerCapture?.(event.pointerId);
+        }
+        function handleAvatarCropPointerMove(event) {
+          if (!avatarCropState.dragging) return;
+          event.preventDefault();
+          avatarCropState.x = avatarCropState.startX + (event.clientX - avatarCropState.pointerX);
+          avatarCropState.y = avatarCropState.startY + (event.clientY - avatarCropState.pointerY);
+          clampAvatarCropPosition();
+          setAvatarCropTransform();
+        }
+        function handleAvatarCropPointerUp(event) {
+          avatarCropState.dragging = false;
+          try { els.avatarCropArea?.releasePointerCapture?.(event.pointerId); } catch {}
+        }
+        function handleProfileAvatarImageChange(event) {
+          const file = event.target?.files?.[0];
+          if (!file) return;
+          if (!file.type || !file.type.startsWith("image/")) {
+            showStorageToast("Scegli un file immagine", true);
+            event.target.value = "";
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = () => openAvatarCropSheet(String(reader.result || ""));
+          reader.onerror = () => {
+            showStorageToast("Immagine profilo non leggibile", true);
+            event.target.value = "";
+          };
+          reader.readAsDataURL(file);
+        }
         function openOwnerNameSheet() {
           const currentName = els.ownerNameBtn.textContent.trim();
           els.ownerNameInput.value = currentName;
@@ -11343,15 +11809,14 @@ function formatStorageBytes(bytes) {
               ? lastRun
               : "Nessun backup eseguito";
           }
-          const hasLinkedProvider = isActive || isStale || isError;
           if (els.profileDropboxCheck) {
-            els.profileDropboxCheck.textContent = hasLinkedProvider ? "✓" : "Connetti";
-            els.profileDropboxCheck.classList.toggle("off", !hasLinkedProvider);
-            els.profileDropboxCheck.classList.toggle("provider-action", !hasLinkedProvider);
-            els.profileDropboxCheck.closest(".profile-provider-row")?.classList.toggle("is-disconnected", !hasLinkedProvider);
+            els.profileDropboxCheck.textContent = isActive ? "✓" : "Connetti";
+            els.profileDropboxCheck.classList.toggle("off", !isActive);
+            els.profileDropboxCheck.classList.toggle("provider-action", !isActive);
+            els.profileDropboxCheck.closest(".profile-provider-row")?.classList.toggle("is-disconnected", !isActive);
           }
-          els.profileDropboxMoreBtn?.classList.toggle("is-hidden", !hasLinkedProvider);
-          if (!hasLinkedProvider) setProfileProviderMenuOpen(false);
+          els.profileDropboxMoreBtn?.classList.toggle("is-hidden", !isActive);
+          if (!isActive) setProfileProviderMenuOpen(false);
           if (els.connectDropboxBtn) {
             els.connectDropboxBtn.querySelector("span:nth-child(2)") ? (els.connectDropboxBtn.querySelector("span:nth-child(2)").textContent = "Sincronizza ora") : (els.connectDropboxBtn.textContent = "Sincronizza ora");
             els.connectDropboxBtn.classList.toggle("is-hidden", false);
@@ -11468,6 +11933,7 @@ function formatStorageBytes(bytes) {
 
           await loadSavedAlbums();
           await loadOwnerName();
+          await loadProfileAvatarImage();
           await refreshHomeCollectionTotals();
           resetFormDefaults();
           syncEmptyState();
@@ -13456,6 +13922,47 @@ els.priceToggleBtn.addEventListener("click", () => {
           if (event.target === els.restoreSheetBackdrop) closeRestoreSheet();
         });
         els.ownerNameBtn.addEventListener("click", editOwnerName);
+        els.profileAvatarBtn?.addEventListener("click", handleProfileAvatarClick);
+        els.profileAvatarBtn?.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleProfileAvatarClick();
+          }
+        });
+        els.avatarImageMenu?.addEventListener("click", (event) => event.stopPropagation());
+        els.avatarImageEditBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          closeAvatarImageMenu();
+          editCurrentProfileAvatarImage();
+        });
+        els.avatarImageChangeBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          closeAvatarImageMenu();
+          chooseProfileAvatarImage();
+        });
+        els.avatarImageRemoveBtn?.addEventListener("click", (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          void removeProfileAvatarImage();
+        });
+        els.avatarImageMenuBackdrop?.addEventListener("click", (event) => {
+          if (event.target === els.avatarImageMenuBackdrop) closeAvatarImageMenu();
+        });
+        window.addEventListener("resize", () => {
+          if (els.avatarImageMenuBackdrop?.classList.contains("open")) positionAvatarImageMenu();
+        });
+        els.profileAvatarInput?.addEventListener("change", handleProfileAvatarImageChange);
+        els.avatarCropCancelBtn?.addEventListener("click", closeAvatarCropSheet);
+        els.avatarCropSaveBtn?.addEventListener("click", saveAvatarCropSheet);
+        els.avatarCropArea?.addEventListener("pointerdown", handleAvatarCropPointerDown);
+        els.avatarCropArea?.addEventListener("pointermove", handleAvatarCropPointerMove);
+        els.avatarCropArea?.addEventListener("pointerup", handleAvatarCropPointerUp);
+        els.avatarCropArea?.addEventListener("pointercancel", handleAvatarCropPointerUp);
+        els.avatarCropZoomRange?.addEventListener("input", (event) => setAvatarCropScale(event.target.value));
+        els.avatarCropZoomOut?.addEventListener("click", () => setAvatarCropScale(avatarCropState.scale - (avatarCropState.maxScale - avatarCropState.minScale) / 12));
+        els.avatarCropZoomIn?.addEventListener("click", () => setAvatarCropScale(avatarCropState.scale + (avatarCropState.maxScale - avatarCropState.minScale) / 12));
         els.ownerNameCancelBtn.addEventListener("click", closeOwnerNameSheet);
         els.ownerNameSaveBtn.addEventListener("click", saveOwnerNameSheet);
         els.ownerNameInput.addEventListener("keydown", (event) => {
@@ -13481,6 +13988,7 @@ els.priceToggleBtn.addEventListener("click", () => {
         });
         document.addEventListener("keydown", (event) => {
           if (event.key === "Escape" && state.deletingAlbum) closeDeleteSheet();
+          if (event.key === "Escape" && els.avatarImageMenuBackdrop?.classList.contains("open")) closeAvatarImageMenu();
         });
         els.contextMenu.addEventListener("click", (event) =>
           event.stopPropagation(),
@@ -13537,10 +14045,12 @@ els.priceToggleBtn.addEventListener("click", () => {
               await loadSavedAlbums();
             }
             await loadOwnerName();
+            await loadProfileAvatarImage();
           } catch (error) {
             console.error(error);
             showStorageToast("IndexedDB non disponibile", true);
             await loadOwnerName();
+            await loadProfileAvatarImage();
           } finally {
             await refreshHomeCollectionTotals();
             resetFormDefaults();
