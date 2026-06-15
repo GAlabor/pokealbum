@@ -198,21 +198,21 @@ button,input{font:inherit}
 /* === Avatar personale: ritaglio/centratura foto profilo === */
 .avatar-crop-backdrop{position:fixed;inset:0;z-index:260;background:linear-gradient(180deg,rgba(241,246,255,.98),rgba(225,234,249,.98));padding:calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 16px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility .22s ease;color:#20345f}
 .avatar-crop-backdrop.open{opacity:1;visibility:visible;pointer-events:auto}
-body.avatar-crop-open{overflow:hidden;overscroll-behavior:none;touch-action:none}
+body.avatar-crop-open{overflow:hidden;overscroll-behavior:none}
 .avatar-crop-sheet{height:100%;display:flex;flex-direction:column;min-height:0}
 .avatar-crop-head{height:var(--topbar-control-size);position:relative;display:flex;align-items:flex-start;justify-content:center;margin-bottom:10px;flex:0 0 auto}
 .avatar-crop-title{position:absolute;left:58px;right:58px;top:0;margin:13px 0 0;color:#1c2e5a;font-size:clamp(16px,2vh,20px);line-height:1.25;font-weight:750;letter-spacing:-0.03em;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .avatar-crop-icon-btn{position:absolute;top:0;width:var(--topbar-control-size);height:var(--topbar-control-size);border:1px solid rgba(255,255,255,.56);border-radius:50%;background:rgba(255,255,255,.58);color:#5c6f99;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);cursor:pointer;padding:0}
 .avatar-crop-icon-btn.cancel{left:0}.avatar-crop-icon-btn.confirm{right:0;color:#2f64ff}.avatar-crop-icon-btn:hover{color:#3157c9;background:rgba(255,255,255,.68);box-shadow:0 16px 28px rgba(73,96,157,.18),inset 0 1px 0 rgba(255,255,255,.96)}.avatar-crop-icon-btn:active{transform:scale(.97)}
 .avatar-crop-icon-btn svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round}
-.avatar-crop-area{flex:1 1 auto;min-height:0;display:grid;place-items:center;position:relative;overflow:hidden;border-radius:30px;background:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.62);box-shadow:0 18px 38px rgba(66,89,152,.12),inset 0 1px 0 rgba(255,255,255,.78);touch-action:none;user-select:none;-webkit-user-select:none}
+.avatar-crop-area{flex:1 1 auto;min-height:0;display:grid;place-items:center;position:relative;overflow:hidden;border-radius:30px;background:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.62);box-shadow:0 18px 38px rgba(66,89,152,.12),inset 0 1px 0 rgba(255,255,255,.78);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .avatar-crop-stage{position:relative;width:min(72vw,320px,58dvh);height:min(72vw,320px,58dvh);border-radius:50%;overflow:hidden;background:#dfe8f8;box-shadow:0 16px 34px rgba(47,100,255,.16),0 0 0 9999px rgba(20,34,74,.16),inset 0 1px 0 rgba(255,255,255,.70)}
 .avatar-crop-stage::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 3px rgba(255,255,255,.82),inset 0 0 0 4px rgba(47,100,255,.18);pointer-events:none}
-.avatar-crop-img{position:absolute;left:50%;top:50%;max-width:none;max-height:none;transform:translate(calc(-50% + var(--avatar-crop-x,0px)),calc(-50% + var(--avatar-crop-y,0px))) scale(var(--avatar-crop-scale,1));transform-origin:center center;will-change:transform;user-select:none;-webkit-user-drag:none;touch-action:none}
+.avatar-crop-img{position:absolute;left:50%;top:50%;max-width:none;max-height:none;transform:translate(calc(-50% + var(--avatar-crop-x,0px)),calc(-50% + var(--avatar-crop-y,0px))) scale(var(--avatar-crop-scale,1));transform-origin:center center;will-change:transform;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;touch-action:none;-webkit-touch-callout:none}
 .avatar-crop-help{margin:10px auto 0;max-width:320px;color:#65779f;font-size:13px;font-weight:750;line-height:1.22;text-align:center;flex:0 0 auto}
 .avatar-crop-controls{margin:10px auto 0;width:min(100%,360px);display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:10px;flex:0 0 auto}
 .avatar-crop-zoom-btn{width:42px;height:42px;border:0;border-radius:999px;background:rgba(255,255,255,.62);color:#3157c9;font-family:inherit;font-size:22px;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.88);cursor:pointer}
-.avatar-crop-range{width:100%;accent-color:#2f64ff}
+.avatar-crop-range{width:100%;accent-color:#2f64ff;touch-action:pan-x;-webkit-user-select:auto;user-select:auto}
 @media (max-width:420px){.avatar-crop-backdrop{padding-left:14px;padding-right:14px}.avatar-crop-head{margin-bottom:8px}.avatar-crop-stage{width:min(76vw,300px,54dvh);height:min(76vw,300px,54dvh)}.avatar-crop-help,.avatar-crop-controls{margin-top:8px}}
 
 :root{--bg:#0b1220;--bg2:#dfe9fb;--panel:rgba(255,255,255,0.54);--panel-2:rgba(255,255,255,0.06);--text:#14254f;--muted:#7080a3;--accent:#5aa6ff;--accent-2:#ffd84f;--danger:#ff7272;--ok:#73d78b;--border:rgba(255,255,255,0.1);--shadow:0 20px 50px rgba(64,96,170,0.18);--radius:20px;--bg1:#edf2fb;--bg3:#dff4ff;--blue:#2f64ff;--blue2:#5d90ff;--panel-stroke:rgba(255,255,255,0.7);--safe-top:max(16px,env(safe-area-inset-top));--safe-bottom:max(16px,env(safe-area-inset-bottom));--topbar-control-size:50px;--topbar-control-icon-size:23px;--topbar-control-offset-x:0px;--topbar-control-offset-y:0px;--field-title-size:14px;--field-title-weight:850;--field-title-line-height:1.05;--field-title-letter-spacing:-0.02em;--field-title-color:#243865;--field-subtitle-size:12px;--field-subtitle-weight:500;--field-subtitle-line-height:1.2;--field-subtitle-letter-spacing:0;--field-subtitle-color:#65779f;--field-title-subtitle-gap:2px}
@@ -11402,6 +11402,20 @@ function parseCollectionPriceAmount(value) {
           pointerX: 0,
           pointerY: 0,
           dragging: false,
+          activePointers: new Map(),
+          pinchStartDistance: 0,
+          pinchStartScale: 1,
+          pinchStartMidX: 0,
+          pinchStartMidY: 0,
+          pinchStartOffsetX: 0,
+          pinchStartOffsetY: 0,
+          touchMode: "",
+          touchStartDistance: 0,
+          touchStartScale: 1,
+          touchStartMidX: 0,
+          touchStartMidY: 0,
+          touchStartOffsetX: 0,
+          touchStartOffsetY: 0,
         };
         function setAvatarCropTransform() {
           if (!els.avatarCropImage) return;
@@ -11495,25 +11509,135 @@ function parseCollectionPriceAmount(value) {
           closeAvatarCropSheet();
           showStorageToast("Immagine profilo aggiornata");
         }
-        function handleAvatarCropPointerDown(event) {
+        function getAvatarCropPointerPair() {
+          const points = Array.from(avatarCropState.activePointers.values());
+          return points.length >= 2 ? [points[0], points[1]] : null;
+        }
+        function getAvatarCropDistance(a, b) {
+          return Math.hypot((b.x || 0) - (a.x || 0), (b.y || 0) - (a.y || 0));
+        }
+        function getAvatarCropMidpoint(a, b) {
+          return { x: ((a.x || 0) + (b.x || 0)) / 2, y: ((a.y || 0) + (b.y || 0)) / 2 };
+        }
+        function startAvatarCropPinchFromPointers() {
+          const pair = getAvatarCropPointerPair();
+          if (!pair) return;
+          const mid = getAvatarCropMidpoint(pair[0], pair[1]);
+          avatarCropState.dragging = false;
+          avatarCropState.pinchStartDistance = Math.max(1, getAvatarCropDistance(pair[0], pair[1]));
+          avatarCropState.pinchStartScale = avatarCropState.scale;
+          avatarCropState.pinchStartMidX = mid.x;
+          avatarCropState.pinchStartMidY = mid.y;
+          avatarCropState.pinchStartOffsetX = avatarCropState.x;
+          avatarCropState.pinchStartOffsetY = avatarCropState.y;
+        }
+        function moveAvatarCropPinchFromPointers() {
+          const pair = getAvatarCropPointerPair();
+          if (!pair || !avatarCropState.pinchStartDistance) return;
+          const mid = getAvatarCropMidpoint(pair[0], pair[1]);
+          const distance = Math.max(1, getAvatarCropDistance(pair[0], pair[1]));
+          const nextScale = avatarCropState.pinchStartScale * (distance / avatarCropState.pinchStartDistance);
+          avatarCropState.scale = Math.max(avatarCropState.minScale, Math.min(avatarCropState.maxScale, nextScale));
+          avatarCropState.x = avatarCropState.pinchStartOffsetX + (mid.x - avatarCropState.pinchStartMidX);
+          avatarCropState.y = avatarCropState.pinchStartOffsetY + (mid.y - avatarCropState.pinchStartMidY);
+          clampAvatarCropPosition();
+          setAvatarCropTransform();
+        }
+        function getAvatarCropTouchPoint(touch) {
+          return { x: touch.clientX, y: touch.clientY };
+        }
+        function startAvatarCropTouchGesture(event) {
+          if (!event.touches || !event.touches.length) return;
+          if (event.touches.length >= 2) {
+            const a = getAvatarCropTouchPoint(event.touches[0]);
+            const b = getAvatarCropTouchPoint(event.touches[1]);
+            const mid = getAvatarCropMidpoint(a, b);
+            avatarCropState.touchMode = "pinch";
+            avatarCropState.touchStartDistance = Math.max(1, getAvatarCropDistance(a, b));
+            avatarCropState.touchStartScale = avatarCropState.scale;
+            avatarCropState.touchStartMidX = mid.x;
+            avatarCropState.touchStartMidY = mid.y;
+            avatarCropState.touchStartOffsetX = avatarCropState.x;
+            avatarCropState.touchStartOffsetY = avatarCropState.y;
+          } else {
+            const t = getAvatarCropTouchPoint(event.touches[0]);
+            avatarCropState.touchMode = "drag";
+            avatarCropState.pointerX = t.x;
+            avatarCropState.pointerY = t.y;
+            avatarCropState.startX = avatarCropState.x;
+            avatarCropState.startY = avatarCropState.y;
+          }
+        }
+        function handleAvatarCropTouchStart(event) {
           event.preventDefault();
-          avatarCropState.dragging = true;
-          avatarCropState.pointerX = event.clientX;
-          avatarCropState.pointerY = event.clientY;
-          avatarCropState.startX = avatarCropState.x;
-          avatarCropState.startY = avatarCropState.y;
+          startAvatarCropTouchGesture(event);
+        }
+        function handleAvatarCropTouchMove(event) {
+          if (!event.touches || !event.touches.length) return;
+          event.preventDefault();
+          if (event.touches.length >= 2) {
+            if (avatarCropState.touchMode !== "pinch") startAvatarCropTouchGesture(event);
+            const a = getAvatarCropTouchPoint(event.touches[0]);
+            const b = getAvatarCropTouchPoint(event.touches[1]);
+            const mid = getAvatarCropMidpoint(a, b);
+            const distance = Math.max(1, getAvatarCropDistance(a, b));
+            const nextScale = avatarCropState.touchStartScale * (distance / avatarCropState.touchStartDistance);
+            avatarCropState.scale = Math.max(avatarCropState.minScale, Math.min(avatarCropState.maxScale, nextScale));
+            avatarCropState.x = avatarCropState.touchStartOffsetX + (mid.x - avatarCropState.touchStartMidX);
+            avatarCropState.y = avatarCropState.touchStartOffsetY + (mid.y - avatarCropState.touchStartMidY);
+          } else {
+            if (avatarCropState.touchMode !== "drag") startAvatarCropTouchGesture(event);
+            const t = getAvatarCropTouchPoint(event.touches[0]);
+            avatarCropState.x = avatarCropState.startX + (t.x - avatarCropState.pointerX);
+            avatarCropState.y = avatarCropState.startY + (t.y - avatarCropState.pointerY);
+          }
+          clampAvatarCropPosition();
+          setAvatarCropTransform();
+        }
+        function handleAvatarCropTouchEnd(event) {
+          if (event.touches && event.touches.length) {
+            startAvatarCropTouchGesture(event);
+          } else {
+            avatarCropState.touchMode = "";
+          }
+        }
+        function handleAvatarCropPointerDown(event) {
+          if (event.pointerType === "touch") return;
+          event.preventDefault();
+          avatarCropState.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+          if (avatarCropState.activePointers.size >= 2) {
+            startAvatarCropPinchFromPointers();
+          } else {
+            avatarCropState.dragging = true;
+            avatarCropState.pointerX = event.clientX;
+            avatarCropState.pointerY = event.clientY;
+            avatarCropState.startX = avatarCropState.x;
+            avatarCropState.startY = avatarCropState.y;
+          }
           els.avatarCropArea?.setPointerCapture?.(event.pointerId);
         }
         function handleAvatarCropPointerMove(event) {
-          if (!avatarCropState.dragging) return;
+          if (event.pointerType === "touch") return;
+          if (!avatarCropState.activePointers.has(event.pointerId) && !avatarCropState.dragging) return;
           event.preventDefault();
+          if (avatarCropState.activePointers.has(event.pointerId)) {
+            avatarCropState.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+          }
+          if (avatarCropState.activePointers.size >= 2) {
+            moveAvatarCropPinchFromPointers();
+            return;
+          }
+          if (!avatarCropState.dragging) return;
           avatarCropState.x = avatarCropState.startX + (event.clientX - avatarCropState.pointerX);
           avatarCropState.y = avatarCropState.startY + (event.clientY - avatarCropState.pointerY);
           clampAvatarCropPosition();
           setAvatarCropTransform();
         }
         function handleAvatarCropPointerUp(event) {
+          if (event.pointerType === "touch") return;
+          avatarCropState.activePointers.delete(event.pointerId);
           avatarCropState.dragging = false;
+          avatarCropState.pinchStartDistance = 0;
           try { els.avatarCropArea?.releasePointerCapture?.(event.pointerId); } catch {}
         }
         function handleProfileAvatarImageChange(event) {
@@ -13956,10 +14080,14 @@ els.priceToggleBtn.addEventListener("click", () => {
         els.profileAvatarInput?.addEventListener("change", handleProfileAvatarImageChange);
         els.avatarCropCancelBtn?.addEventListener("click", closeAvatarCropSheet);
         els.avatarCropSaveBtn?.addEventListener("click", saveAvatarCropSheet);
-        els.avatarCropArea?.addEventListener("pointerdown", handleAvatarCropPointerDown);
-        els.avatarCropArea?.addEventListener("pointermove", handleAvatarCropPointerMove);
-        els.avatarCropArea?.addEventListener("pointerup", handleAvatarCropPointerUp);
-        els.avatarCropArea?.addEventListener("pointercancel", handleAvatarCropPointerUp);
+        els.avatarCropArea?.addEventListener("pointerdown", handleAvatarCropPointerDown, { passive: false });
+        els.avatarCropArea?.addEventListener("pointermove", handleAvatarCropPointerMove, { passive: false });
+        els.avatarCropArea?.addEventListener("pointerup", handleAvatarCropPointerUp, { passive: false });
+        els.avatarCropArea?.addEventListener("pointercancel", handleAvatarCropPointerUp, { passive: false });
+        els.avatarCropArea?.addEventListener("touchstart", handleAvatarCropTouchStart, { passive: false });
+        els.avatarCropArea?.addEventListener("touchmove", handleAvatarCropTouchMove, { passive: false });
+        els.avatarCropArea?.addEventListener("touchend", handleAvatarCropTouchEnd, { passive: false });
+        els.avatarCropArea?.addEventListener("touchcancel", handleAvatarCropTouchEnd, { passive: false });
         els.avatarCropZoomRange?.addEventListener("input", (event) => setAvatarCropScale(event.target.value));
         els.avatarCropZoomOut?.addEventListener("click", () => setAvatarCropScale(avatarCropState.scale - (avatarCropState.maxScale - avatarCropState.minScale) / 12));
         els.avatarCropZoomIn?.addEventListener("click", () => setAvatarCropScale(avatarCropState.scale + (avatarCropState.maxScale - avatarCropState.minScale) / 12));
