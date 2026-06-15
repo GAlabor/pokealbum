@@ -229,6 +229,48 @@ async function clearTokens() {
   await writeLocalTokens({ users: {} });
 }
 
+async function revokeDropboxTokenForUser(user) {
+  if (!user?.refresh_token || !APP_KEY || !APP_SECRET) return false;
+
+  try {
+    const accessToken = await getAccessToken(user.account_id);
+    const response = await fetchWithTimeout('https://api.dropboxapi.com/2/auth/token/revoke', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: 'null'
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.warn('[DROPBOX REVOKE WARNING]', user.account_id, response.status, text);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn('[DROPBOX REVOKE WARNING]', user.account_id, error?.message || error);
+    return false;
+  }
+}
+
+async function revokeDropboxTokens() {
+  const tokens = await readTokens();
+  const users = Object.values(tokens.users || {});
+
+  const results = [];
+  for (const user of users) {
+    results.push({
+      account_id: user.account_id,
+      revoked: await revokeDropboxTokenForUser(user)
+    });
+  }
+
+  return results;
+}
+
 function makeSignedState() {
   const payload = JSON.stringify({
     nonce: crypto.randomBytes(16).toString('hex'),
@@ -280,6 +322,11 @@ app.get('/auth/dropbox/start', (req, res) => {
     token_access_type: 'offline',
     state
   });
+
+  const forceReapprove = String(req.query.force_reapprove || req.query.forceReapprove || '').toLowerCase();
+  if (forceReapprove === '1' || forceReapprove === 'true' || forceReapprove === 'yes') {
+    params.set('force_reapprove', 'true');
+  }
 
   res.redirect(`https://www.dropbox.com/oauth2/authorize?${params.toString()}`);
 });
@@ -546,15 +593,17 @@ app.post('/api/save-data', async (req, res) => {
 
 app.post('/api/disconnect', async (req, res) => {
   try {
+    const revoked = await revokeDropboxTokens();
     await clearTokens();
 
     res.json({
       ok: true,
       connected: false,
       storage: USE_SUPABASE ? 'supabase' : 'local',
+      revoked,
       message: USE_SUPABASE
-        ? 'Dropbox disconnesso da Supabase'
-        : 'Dropbox disconnesso localmente'
+        ? 'Dropbox disconnesso da Supabase e token revocato'
+        : 'Dropbox disconnesso localmente e token revocato'
     });
   } catch (err) {
     console.error(err);
