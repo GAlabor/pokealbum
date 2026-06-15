@@ -9,7 +9,6 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi473-local-oauth-return-lock-20260615" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -5090,7 +5089,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi473-local-oauth-return-lock-20260615';
+    const POKEALBUM_BUILD_VERSION = 'local-index';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const INDEX_URL = 'data/pokemon-index.json';
@@ -5099,80 +5098,29 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
     const APP_DATA_CACHE_NAME = `pokealbum-data-cache-${POKEALBUM_BUILD_VERSION}`;
     (function ensureFreshAppShell() {
-      const reloadKey = `pokealbum:reload-attempt:${POKEALBUM_BUILD_VERSION}`;
-      const buildRegex = /POKEALBUM_BUILD_VERSION\s*=\s*['"]([^'"]+)['"]/;
-      async function clearOldRuntimeCaches() {
-        try {
-          if (window.caches && typeof caches.keys === 'function') {
-            const cacheNames = await caches.keys();
-            await Promise.all(cacheNames
-              .filter((name) => /^pokealbum-|^app-|workbox-|precache-/i.test(name) && name !== APP_DATA_CACHE_NAME)
-              .map((name) => caches.delete(name)));
-          }
-        } catch (error) {
-          console.warn('Pulizia cache versione precedente non riuscita', error);
-        }
-        try {
-          if (navigator.serviceWorker && typeof navigator.serviceWorker.getRegistrations === 'function') {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(registrations.map((registration) => registration.unregister()));
-          }
-        } catch (error) {
-          console.warn('Rimozione service worker non riuscita', error);
-        }
-      }
-      try {
-        const previousBuild = localStorage.getItem(POKEALBUM_BUILD_STORAGE_KEY);
-        if (previousBuild !== POKEALBUM_BUILD_VERSION) {
-          localStorage.setItem(POKEALBUM_BUILD_STORAGE_KEY, POKEALBUM_BUILD_VERSION);
-          void clearOldRuntimeCaches();
-        }
-      } catch (error) {
-        console.warn('Versione app non salvabile', error);
-      }
+      // Modalità locale pulita: non aggiunge pa_build, pa_local o cache-buster all'URL.
+      // Se arrivano da una vecchia versione o da una sessione del browser, li rimuove dalla barra indirizzi.
       try {
         const url = new URL(window.location.href);
-        if (url.searchParams.get(POKEALBUM_BUILD_PARAM) !== POKEALBUM_BUILD_VERSION) {
-          url.searchParams.set(POKEALBUM_BUILD_PARAM, POKEALBUM_BUILD_VERSION);
-          url.searchParams.set('_', Date.now().toString(36));
-          window.location.replace(url.toString());
-          return;
+        let changed = false;
+        for (const param of ['pa_build', 'pa_local', '_', '_fresh_check']) {
+          if (url.searchParams.has(param)) {
+            url.searchParams.delete(param);
+            changed = true;
+          }
+        }
+        if (changed) {
+          const clean = url.pathname + (url.searchParams.toString() ? `?${url.searchParams.toString()}` : '') + url.hash;
+          window.history.replaceState({}, document.title, clean);
         }
       } catch (error) {
-        console.warn('URL versionata non applicabile', error);
+        console.warn('Pulizia URL locale non riuscita', error);
       }
       window.addEventListener('pageshow', (event) => {
-        if (event.persisted && !sessionStorage.getItem(reloadKey)) {
-          sessionStorage.setItem(reloadKey, 'pageshow');
+        if (event.persisted) {
           window.location.reload();
         }
       });
-      window.setTimeout(async () => {
-        try {
-          if (sessionStorage.getItem(reloadKey) === 'network') return;
-          const checkUrl = new URL(window.location.href);
-          checkUrl.searchParams.set('_fresh_check', Date.now().toString(36));
-          const response = await fetch(checkUrl.toString(), {
-            cache: 'no-store',
-            headers: {
-              'Cache-Control': 'no-cache',
-              'Pragma': 'no-cache'
-            }
-          });
-          if (!response.ok) return;
-          const remoteHtml = await response.text();
-          const remoteBuild = remoteHtml.match(buildRegex)?.[1];
-          if (remoteBuild && remoteBuild !== POKEALBUM_BUILD_VERSION) {
-            sessionStorage.setItem(reloadKey, 'network');
-            const freshUrl = new URL(window.location.href);
-            freshUrl.searchParams.set(POKEALBUM_BUILD_PARAM, remoteBuild);
-            freshUrl.searchParams.set('_', Date.now().toString(36));
-            window.location.replace(freshUrl.toString());
-          }
-        } catch (error) {
-          console.warn('Controllo aggiornamento app non riuscito', error);
-        }
-      }, 1200);
     })();
     async function fetchJsonWithAppCache(url, options = {}) {
       const force = Boolean(options.force);
@@ -12058,13 +12006,22 @@ function formatStorageBytes(bytes) {
           const url = new URL(window.location.href);
           url.hash = "";
           url.searchParams.delete("_fresh_check");
+          url.searchParams.delete("pa_build");
+          url.searchParams.delete("pa_local");
+          url.searchParams.delete("_");
           url.searchParams.delete("dropbox");
           url.searchParams.delete("account_id");
-          url.searchParams.set("pa_local", "1");
           return url.toString();
         }
         function buildDropboxOAuthStartUrl() {
           const url = new URL(dropboxApiUrl("/auth/dropbox/start"), window.location.href);
+
+          /*
+            Dopo una disconnessione vogliamo una vera riautorizzazione Dropbox,
+            non il solito teatrino del token già salvato che torna vivo come uno zombie.
+            Il backend userà questo flag per passare force_reapprove a Dropbox.
+          */
+          url.searchParams.set("force_reapprove", "true");
 
           /*
             Fondamentale per l'uso locale:
@@ -12580,17 +12537,10 @@ function formatStorageBytes(bytes) {
           showStorageToast("Collegamento in corso...");
 
           /*
-            Prima controlliamo se Oracle ha già un token Dropbox valido.
-            Se esiste, ricolleghiamo l'app senza aprire di nuovo l'autorizzazione Dropbox.
+            Non controlliamo più se il server ha già un token valido prima di aprire OAuth:
+            dopo "Rimuovi" l'utente vuole rifare l'accesso, non essere ricollegato in automatico
+            da un refresh token sopravvissuto in qualche angolo oscuro del backend.
           */
-          const connected = await refreshBackupCloudStatusFromServer({ toast: false });
-          if (connected === true) {
-            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
-            updateBackupCloudUi();
-            showStorageToast("Dropbox ricollegato");
-            return;
-          }
-
           window.location.href = buildDropboxOAuthStartUrl();
         }
         function openProfileMenu() {
