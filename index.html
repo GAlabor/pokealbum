@@ -9,7 +9,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <meta name="pokealbum-build" content="vi457-menu-avatar-home-image-20260615" />
+    <meta name="pokealbum-build" content="vi461-menu-avatar-menu-size-fix-20260615" />
     <title>PokéAlbum Home</title>
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
@@ -208,7 +208,7 @@ body.avatar-crop-open{overflow:hidden;overscroll-behavior:none}
 .avatar-crop-area{flex:1 1 auto;min-height:0;display:grid;place-items:center;position:relative;overflow:hidden;border-radius:30px;background:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.62);box-shadow:0 18px 38px rgba(66,89,152,.12),inset 0 1px 0 rgba(255,255,255,.78);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .avatar-crop-stage{position:relative;width:min(72vw,320px,58dvh);height:min(72vw,320px,58dvh);border-radius:50%;overflow:hidden;background:#dfe8f8;box-shadow:0 16px 34px rgba(47,100,255,.16),0 0 0 9999px rgba(20,34,74,.16),inset 0 1px 0 rgba(255,255,255,.70)}
 .avatar-crop-stage::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 3px rgba(255,255,255,.82),inset 0 0 0 4px rgba(47,100,255,.18);pointer-events:none}
-.avatar-crop-img{position:absolute;left:50%;top:50%;max-width:none;max-height:none;transform:translate(calc(-50% + var(--avatar-crop-x,0px)),calc(-50% + var(--avatar-crop-y,0px))) scale(var(--avatar-crop-scale,1));transform-origin:center center;will-change:transform;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;touch-action:none;-webkit-touch-callout:none}
+.avatar-crop-img{position:absolute;left:50%;top:50%;max-width:none;cursor:grab;max-height:none;transform:translate(calc(-50% + var(--avatar-crop-x,0px)),calc(-50% + var(--avatar-crop-y,0px))) scale(var(--avatar-crop-scale,1));transform-origin:center center;will-change:transform;user-select:none;-webkit-user-select:none;-webkit-user-drag:none;touch-action:none;-webkit-touch-callout:none}
 .avatar-crop-help{margin:10px auto 0;max-width:320px;color:#65779f;font-size:13px;font-weight:750;line-height:1.22;text-align:center;flex:0 0 auto}
 .avatar-crop-controls{margin:10px auto 0;width:min(100%,360px);display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:10px;flex:0 0 auto}
 .avatar-crop-zoom-btn{width:42px;height:42px;border:0;border-radius:999px;background:rgba(255,255,255,.62);color:#3157c9;font-family:inherit;font-size:22px;font-weight:900;box-shadow:inset 0 1px 0 rgba(255,255,255,.88);cursor:pointer}
@@ -1511,17 +1511,21 @@ body .bottom-nav-shell{right:14px !important;bottom:calc(var(--safe-bottom) + 10
   position:absolute;
   left:50%;
   top:50%;
-  width:70%;
-  height:70%;
+  width:64%;
+  height:64%;
   border-radius:50%;
   object-fit:cover;
   display:none;
   transform:translate(-50%,-50%);
   z-index:1;
   pointer-events:none;
+  box-shadow:none;
 }
 .home-profile-btn.has-custom-avatar .home-profile-avatar-img{display:block!important}
-.home-profile-btn .home-profile-icon{position:relative;z-index:2}
+.home-profile-btn .home-profile-icon{position:relative;z-index:4;pointer-events:none}
+.home-profile-btn.has-custom-avatar .home-profile-icon{z-index:5!important}
+.home-profile-btn.has-custom-avatar .cerchio-base,
+.home-profile-btn.has-custom-avatar .cerchio-loader{display:block!important}
 .home-profile-btn.has-custom-avatar .utente{display:none!important}
 .home-profile-btn.saving .cerchio-loader{opacity:1;animation:homeProfileMultiGiro 1.65s linear forwards,homeProfileHideLoader .2s ease 1.65s forwards}
 .home-profile-btn.saving .cerchio-base{animation:homeProfileAccensioneTotale .35s ease 1.65s forwards,homeProfileSpegnimentoTotale .65s ease 2.35s forwards}
@@ -3090,6 +3094,51 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 }
 </style>
 
+
+<style id="menu-avatar-custom-size-fix">
+/* vi461: quando c'è una foto personale nel menu laterale, l'avatar non deve cambiare misura.
+   La foto resta dentro lo stesso spazio utile dell'icona, mentre cerchio/animazioni restano sopra. */
+.profile-menu-panel .profile-avatar{
+  position:relative!important;
+  overflow:visible!important;
+  flex:0 0 auto!important;
+}
+.profile-menu-panel .profile-avatar .profile-avatar-img{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  width:64%!important;
+  height:64%!important;
+  max-width:64%!important;
+  max-height:64%!important;
+  min-width:0!important;
+  min-height:0!important;
+  transform:translate(-50%,-50%)!important;
+  border-radius:50%!important;
+  object-fit:cover!important;
+  display:none!important;
+  z-index:1!important;
+  pointer-events:none!important;
+  box-shadow:none!important;
+}
+.profile-menu-panel .profile-avatar.has-custom-avatar .profile-avatar-img{
+  display:block!important;
+}
+.profile-menu-panel .profile-avatar.has-custom-avatar .profile-menu-user-icon{
+  display:block!important;
+  position:relative!important;
+  z-index:3!important;
+}
+.profile-menu-panel .profile-avatar.has-custom-avatar .profile-menu-user-icon .utente{
+  display:none!important;
+}
+.profile-menu-panel .profile-avatar.has-custom-avatar .profile-menu-user-icon .cerchio-base{
+  display:block!important;
+}
+.profile-menu-panel .profile-avatar.has-custom-avatar .profile-menu-user-icon .cerchio-loader{
+  display:none!important;
+}
+</style>
 </head>
   <body class="ui-booting">
     <div class="phone-stage">
@@ -11327,6 +11376,8 @@ function parseCollectionPriceAmount(value) {
           } catch (error) {
             console.warn("Immagine profilo non salvata in IndexedDB", error);
           }
+          markHomeProfilePendingChanges();
+          playPendingHomeProfileSaveAnimation();
         }
         async function loadProfileAvatarImage() {
           try {
@@ -14088,6 +14139,10 @@ els.priceToggleBtn.addEventListener("click", () => {
         els.avatarCropArea?.addEventListener("touchmove", handleAvatarCropTouchMove, { passive: false });
         els.avatarCropArea?.addEventListener("touchend", handleAvatarCropTouchEnd, { passive: false });
         els.avatarCropArea?.addEventListener("touchcancel", handleAvatarCropTouchEnd, { passive: false });
+        els.avatarCropImage?.addEventListener("touchstart", handleAvatarCropTouchStart, { passive: false });
+        els.avatarCropImage?.addEventListener("touchmove", handleAvatarCropTouchMove, { passive: false });
+        els.avatarCropImage?.addEventListener("touchend", handleAvatarCropTouchEnd, { passive: false });
+        els.avatarCropImage?.addEventListener("touchcancel", handleAvatarCropTouchEnd, { passive: false });
         els.avatarCropZoomRange?.addEventListener("input", (event) => setAvatarCropScale(event.target.value));
         els.avatarCropZoomOut?.addEventListener("click", () => setAvatarCropScale(avatarCropState.scale - (avatarCropState.maxScale - avatarCropState.minScale) / 12));
         els.avatarCropZoomIn?.addEventListener("click", () => setAvatarCropScale(avatarCropState.scale + (avatarCropState.maxScale - avatarCropState.minScale) / 12));
