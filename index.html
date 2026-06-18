@@ -311,6 +311,13 @@ h1{margin:0;font-size:clamp(30px,5.2vh,42px);max-width:290px;line-height:0.94;le
 .choice-option.is-selected{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);box-shadow:0 10px 22px rgba(47,100,255,.22),inset 0 1px 0 rgba(255,255,255,.28)}
 .choice-option-check{width:20px;height:20px;opacity:0}
 .choice-option.is-selected .choice-option-check{opacity:1}
+.collection-presence-list{display:grid;gap:8px}
+.collection-presence-card{display:grid;gap:7px;border:0;border-radius:20px;background:rgba(248,251,255,.62);padding:12px 13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.78);color:#20345f;text-align:left}
+.collection-presence-row{display:grid;grid-template-columns:minmax(104px,128px) minmax(0,1fr);gap:10px;align-items:start}
+.collection-presence-label{color:#7382a2;font-size:12px;font-weight:850;letter-spacing:-.02em}
+.collection-presence-value{color:#1c2e5a;font-size:14px;font-weight:850;letter-spacing:-.025em;overflow-wrap:anywhere}
+.collection-duplicate-count,.collection-status-count{display:inline-flex;align-items:center;line-height:1;vertical-align:baseline;font:inherit;font-weight:inherit;letter-spacing:inherit}
+.collection-presence-empty{padding:18px 10px;text-align:center;color:#7382a2;font-size:14px;font-weight:800}
 @media (max-width:420px){.choice-sheet-backdrop{padding-left:12px;padding-right:12px}
 .choice-sheet{border-radius:28px}
 }
@@ -603,32 +610,34 @@ svg{overflow:visible}
 #detailModal .card-sheet-page{min-height:100dvh;color:#20345f;background:radial-gradient(circle at 18% 90%,rgba(154,170,255,.22),transparent 22%),radial-gradient(circle at 85% 10%,rgba(126,221,255,.34),transparent 22%),linear-gradient(180deg,rgba(241,246,255,.96),rgba(225,234,249,.95))}
 #detailModal .card-sheet-container{max-width:760px;margin:0 auto;padding:calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 24px)}
 #detailModal .card-sheet-panel{background:transparent;border:0;border-radius:16px;box-shadow:none;overflow:visible}
-#detailModal .card-sheet-topbar{display:flex;align-items:center;gap:6px;padding:0 0 10px;border-bottom:none;margin:0;justify-content:flex-start;min-height:var(--topbar-control-size)}
+#detailModal .card-sheet-topbar{display:flex;align-items:center;gap:6px;padding:0 0 10px;border-bottom:none;margin:0;justify-content:flex-start;min-height:var(--topbar-control-size);position:relative}
 #detailModal .sheet-icon-btn{border:1px solid rgba(255,255,255,.56);background:rgba(255,255,255,.58);color:#5c6f99;border-radius:50%;height:var(--topbar-control-size);min-width:var(--topbar-control-size);font-size:20px;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;width:var(--topbar-control-size);box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%)}
 #detailModal .sheet-icon-btn:hover{color:#3157c9;background:rgba(255,255,255,.68)}
 #detailModal .detail-top-name{font-size:clamp(18px,2.4vh,24px);line-height:1.1;font-weight:850;color:#1c2e5a;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-#detailModal .card-sheet-actions{margin-left:auto;display:inline-flex;align-items:center;gap:6px;position:relative}
-#detailModal .detail-content{padding:0;display:grid;gap:12px}
-#detailModal .collection-status-wrap{display:flex;justify-content:center;align-items:center;margin:-2px 0 0;width:100%}
-#detailModal .collection-status-pill{appearance:none;-webkit-appearance:none;min-height:34px;max-width:100%;border-radius:999px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:inherit;font-size:10.5px;font-weight:900;letter-spacing:.01em;line-height:1;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,border-color .16s ease}
+#detailModal .card-sheet-actions{position:absolute;right:0;top:var(--topbar-control-offset-y);display:inline-flex;align-items:center;gap:8px;z-index:4;margin-left:0;margin-top:0}
+#detailModal .detail-content{padding:0;display:grid;gap:3px}
+#detailModal .collection-status-wrap{display:flex;justify-content:space-between;align-items:center;margin:0;width:100%;gap:6px}
+#detailModal .collection-status-pill{appearance:none;-webkit-appearance:none;min-height:30px;max-width:100%;border-radius:999px;padding:0 11px 0 12px;display:inline-flex;align-items:center;justify-content:center;gap:5px;font-family:inherit;font-size:10px;font-weight:900;letter-spacing:-.005em;line-height:1;text-transform:none;cursor:pointer;-webkit-tap-highlight-color:transparent;border:1px solid rgba(120,146,207,.16);background:rgba(255,255,255,.68);color:#20345f;box-shadow:0 7px 16px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.86);transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,border-color .16s ease}
 #detailModal .collection-status-pill:active{transform:scale(.985)}
-#detailModal .collection-status-pill.is-present{width:auto;min-width:0;min-height:34px;padding:0 9px 0 7px;border:1px solid rgba(255,122,0,.38);background:rgba(255,122,0,.065);color:#f26b00;box-shadow:0 8px 18px rgba(255,122,0,.08),inset 0 1px 0 rgba(255,255,255,.82)}
-#detailModal .collection-status-pill.is-missing{width:min(100%,350px);min-height:32px;border:1px solid rgba(34,197,94,.34);background:rgba(34,197,94,.055);color:#16a34a;box-shadow:inset 0 1px 0 rgba(255,255,255,.82)}
-#detailModal .collection-status-icon{width:17px;height:17px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
-#detailModal .collection-status-pill.is-present .collection-status-icon{background:#ff7a00;color:#fff;box-shadow:0 2px 5px rgba(255,122,0,.22)}
-#detailModal .collection-status-pill.is-missing .collection-status-icon{width:15px;height:15px;background:transparent;color:#16a34a}
-#detailModal .collection-status-icon svg{width:11px;height:11px;display:block;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-#detailModal .collection-status-pill.is-missing .collection-status-icon svg{width:12px;height:12px;stroke-width:2.8}
+#detailModal .collection-status-pill.is-present{width:auto;min-width:0;min-height:28px;padding:0 9px 0 8px;flex:1 1 auto;font-size:9.2px;letter-spacing:.01em;border:1px solid rgba(var(--collection-status-rgb,220,38,38),.24);background:rgba(var(--collection-status-rgb,220,38,38),.040);color:var(--collection-status-color,#dc2626);box-shadow:inset 0 1px 0 rgba(255,255,255,.76)}
+#detailModal .collection-status-pill.is-missing{width:auto;min-width:0;min-height:28px;padding:0 9px 0 8px;flex:1 1 auto;font-size:9.2px;letter-spacing:.01em;border:1px solid rgba(34,197,94,.24);background:rgba(34,197,94,.040);color:#16a34a;box-shadow:inset 0 1px 0 rgba(255,255,255,.76)}
+#detailModal .collection-status-pill.is-loading{width:auto;min-width:0;min-height:28px;padding:0 9px 0 8px;flex:1 1 auto;font-size:9.2px;letter-spacing:.01em;border:1px solid rgba(120,146,207,.20);background:rgba(248,251,255,.58);color:#7382a2;box-shadow:inset 0 1px 0 rgba(255,255,255,.76);cursor:default}
+#detailModal .collection-status-icon{width:14px;height:14px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+#detailModal .collection-status-pill.is-present .collection-status-icon{width:12px;height:12px;background:transparent;color:var(--collection-status-color,#dc2626);box-shadow:none}
+#detailModal .collection-status-pill.is-missing .collection-status-icon{width:12px;height:12px;background:transparent;color:#16a34a}
+#detailModal .collection-status-icon svg,#detailModal .collection-status-chevron svg{width:9px;height:9px;display:block;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+#detailModal .collection-status-pill.is-present .collection-status-icon svg,#detailModal .collection-status-pill.is-missing .collection-status-icon svg{width:9px;height:9px;stroke-width:2.8}
 #detailModal .collection-status-text{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#detailModal .collection-status-chevron{font-size:15px;font-weight:950;line-height:1;opacity:.72;color:currentColor;transform:translateY(-.5px);flex:0 0 auto}
+#detailModal .collection-status-chevron{width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;opacity:.62;color:currentColor;transform:translateY(0);flex:0 0 auto}
 #detailModal .collection-status-pill.is-missing .collection-status-chevron{display:none}
+#detailModal .collection-status-pill.is-loading .collection-status-chevron{display:none}
 #detailModal.is-saved-card-detail .collection-status-wrap{display:none}
-#detailModal .detail-image-wrap{display:flex;justify-content:center;padding:14px;border-radius:30px;background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.64);box-shadow:0 20px 42px rgba(66,89,152,.14),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
-#detailModal .detail-img{width:100%;max-width:320px;border-radius:16px;display:block;background:transparent;border:0;box-shadow:0 12px 28px rgba(57,91,176,.16)}
-#detailModal .detail-price{text-align:center;margin-top:10px;margin:0;padding:7px 14px;border-radius:24px;background:rgba(255,255,255,.50);border:1px solid rgba(255,255,255,.62);box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.86)}
+#detailModal .detail-image-wrap{display:flex;justify-content:center;padding:4px;border-radius:22px;background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.64);box-shadow:0 14px 28px rgba(66,89,152,.11),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
+#detailModal .detail-img{width:100%;max-width:258px;border-radius:12px;display:block;background:transparent;border:0;box-shadow:0 7px 18px rgba(57,91,176,.12)}
+#detailModal .detail-price{text-align:center;margin-top:10px;margin:0;padding:4px 14px;border-radius:22px;background:rgba(255,255,255,.50);border:1px solid rgba(255,255,255,.62);box-shadow:0 12px 24px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.86)}
 #detailModal .detail-price-label,#detailModal .detail-offer{color:#7382a2}
 #detailModal .detail-price-currency,#detailModal .detail-price-value{color:#1c2e5a}
-#detailModal .detail-cards{display:grid;gap:12px;max-width:none;margin:0 auto;width:100%}
+#detailModal .detail-cards{display:grid;gap:7px;max-width:none;margin:0 auto;width:100%}
 #detailModal .info-card{border:1px solid rgba(255,255,255,.62);border-radius:24px;background:rgba(255,255,255,.50);overflow:hidden;color:#20345f;box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.86);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
 #detailModal .info-card-title,#detailModal .collapsible-trigger{color:#1c2e5a}
 #detailModal .info-divider{height:1px;background:rgba(111,134,188,.14);margin:0 16px}
@@ -828,16 +837,16 @@ h1{font-size:clamp(24px,4.2vh,31px);max-width:230px}
 #detailModal .sheet-icon-btn.menu-btn{font-size:0;letter-spacing:0}
 #detailModal .sheet-icon-btn.menu-btn svg circle{fill:currentColor;stroke:none}
 #detailModal .detail-top-name{position:absolute;left:58px;right:112px;top:50%;transform:translateY(-50%);font-size:clamp(16px,2vh,20px);line-height:1.25;letter-spacing:-.03em;font-weight:750;color:#1c2e5a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;pointer-events:none}
-#detailModal .card-sheet-actions{margin-left:auto;display:inline-flex;align-items:flex-start;gap:6px;position:relative}
+#detailModal .card-sheet-actions{position:absolute;right:0;top:var(--topbar-control-offset-y);display:inline-flex;align-items:center;gap:8px;z-index:4;margin-left:0;margin-top:0}
 #detailModal .topbar-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:218px;max-width:min(250px,calc(100vw - 32px));padding:6px;border-radius:16px;background:rgba(255,255,255,.78);border:1px solid rgba(255,255,255,.56);box-shadow:0 18px 34px rgba(25,38,82,.16),inset 0 1px 0 rgba(255,255,255,.78);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);overflow:hidden;z-index:40}
 #detailModal .topbar-menu button{width:100%;min-height:42px;padding:11px 12px;border:0;border-radius:13px;background:transparent;color:#243865;text-align:left;font-family:inherit;font-size:14px;font-weight:600;display:flex;align-items:center;gap:9px;cursor:pointer;white-space:nowrap}
 #detailModal .topbar-menu button:hover,#detailModal .topbar-menu button:active{background:rgba(47,100,255,.08)}
 #detailModal .topbar-menu button.danger{color:#c62828}
 #detailModal .topbar-menu .menu-icon{width:16px;height:16px;flex:0 0 16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.84}
-#detailModal .detail-content{gap:12px}
+#detailModal .detail-content{gap:10px}
 #detailModal .detail-image-wrap,#detailModal .detail-price,#detailModal .info-card{border-radius:24px;background:rgba(255,255,255,.52);border:1px solid rgba(255,255,255,.64);box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.88);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}
-#detailModal .detail-image-wrap{padding:14px}
-#detailModal .detail-img{max-width:285px;border-radius:16px;box-shadow:0 12px 28px rgba(57,91,176,.16)}
+#detailModal .detail-image-wrap{padding:10px}
+#detailModal .detail-img{max-width:270px;border-radius:16px;box-shadow:0 12px 28px rgba(57,91,176,.16)}
 #detailModal .info-card-title,#detailModal .collapsible-trigger{font-size:16px;font-weight:850;letter-spacing:-.02em;color:#1c2e5a}
 #detailModal .info-list{gap:9px}
 #detailModal .info-row{grid-template-columns:minmax(100px,130px) minmax(0,1fr);gap:6px}
@@ -1039,9 +1048,7 @@ h1{font-size:clamp(24px,4.2vh,31px);max-width:230px}
 #emptyState .album-wrap::after{content:"✦";position:absolute;inset:-27%;z-index:0;pointer-events:none;color:rgba(93,135,255,0.72);font-size:clamp(13px,2.2vw,22px);line-height:1;display:block;text-align:right;padding-top:18%;padding-right:2%;background:radial-gradient(circle at 12% 30%,rgba(79,126,255,0.68) 0 2px,transparent 2.8px),radial-gradient(circle at 4% 68%,rgba(79,126,255,0.55) 0 1.8px,transparent 2.6px),radial-gradient(circle at 30% 5%,rgba(79,126,255,0.42) 0 1.6px,transparent 2.4px),radial-gradient(circle at 90% 70%,rgba(79,126,255,0.38) 0 1.8px,transparent 2.7px),radial-gradient(circle at 84% 19%,rgba(79,126,255,0.32) 0 1.4px,transparent 2.2px)}
 #emptyState .album-wrap .album{z-index:1}
 #emptyState .album-wrap .plus-badge{z-index:4}
-#detailModal .card-sheet-actions{margin-left:auto;display:inline-flex;align-items:flex-start;gap:0;position:relative}
-#detailModal .detail-add-card-btn{color:#2f64ff;background:rgba(255,255,255,.68);border-color:rgba(47,100,255,.22)}
-#detailModal .detail-add-card-btn:hover{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);box-shadow:0 16px 28px rgba(47,100,255,.20),inset 0 1px 0 rgba(255,255,255,.40)}
+#detailModal .card-sheet-actions{position:absolute;right:0;top:var(--topbar-control-offset-y);display:inline-flex;align-items:center;gap:8px;z-index:4;margin-left:0;margin-top:0}
 #detailModal .detail-top-name{right:58px}
 @media (max-width:420px){#detailModal .detail-top-name{right:58px}
 }
@@ -1069,11 +1076,11 @@ h1{font-size:clamp(24px,4.2vh,31px);max-width:230px}
 @media (max-width:420px){#detailModal .detail-top-title-wrap{left:58px;right:58px}
 #detailModal .detail-top-card-name{font-size:19px}
 }
-#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{width:100%;max-width:320px;padding:0;margin:0 auto}
+#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{width:100%;max-width:304px;padding:0;margin:0 auto}
 #detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader img{width:100%;max-width:100%;height:auto;display:block;border-radius:16px;object-fit:contain}
-@media (max-width:760px){#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{max-width:300px}
+@media (max-width:760px){#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{max-width:282px}
 }
-@media (max-width:420px){#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{max-width:285px}
+@media (max-width:420px){#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{max-width:270px}
 }
 #homeView{position:relative !important}
 .top-meta{padding-right:86px !important}
@@ -1168,10 +1175,10 @@ button:focus,button:active,select:focus,select:active,a:focus,a:active{outline:n
 #detailModal .detail-price-currency,#detailModal .detail-price-value{line-height:35px}
 #detailModal .detail-offer{min-height:36px;display:flex;align-items:center;justify-content:center}
 #detailModal .detail-offer .offer-controls{width:100%}
-#detailModal .detail-image-wrap{height:430px !important;min-height:430px !important;max-height:430px !important;display:flex !important;align-items:center !important;justify-content:center !important;overflow:hidden !important}
-#detailModal .detail-img{width:285px !important;height:398px !important;max-width:285px !important;max-height:398px !important;object-fit:contain !important;flex:0 0 auto !important}
-#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{width:285px !important;height:398px !important;max-width:285px !important;max-height:398px !important;min-height:398px !important;display:flex !important;align-items:center !important;justify-content:center !important;flex:0 0 auto !important}
-#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader img{width:266px !important;height:371px !important;max-width:266px !important;max-height:371px !important;object-fit:contain !important;flex:0 0 auto !important}
+#detailModal .detail-image-wrap{height:422px !important;min-height:422px !important;max-height:422px !important;display:flex !important;align-items:center !important;justify-content:center !important;overflow:hidden !important}
+#detailModal .detail-img{width:280px !important;height:391px !important;max-width:280px !important;max-height:391px !important;object-fit:contain !important;flex:0 0 auto !important}
+#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{width:280px !important;height:391px !important;max-width:280px !important;max-height:391px !important;min-height:391px !important;display:flex !important;align-items:center !important;justify-content:center !important;flex:0 0 auto !important}
+#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader img{width:262px !important;height:365px !important;max-width:262px !important;max-height:365px !important;object-fit:contain !important;flex:0 0 auto !important}
 #detailModal .detail-price{height:108px !important;min-height:108px !important;max-height:108px !important;display:grid !important;grid-template-rows:16px 38px 40px !important;align-items:center !important;justify-items:center !important;row-gap:0 !important;overflow:visible !important}
 #detailModal .detail-price{position:relative !important}
 #detailModal .price-dots-btn{position:absolute;top:6px;left:10px;width:34px;height:30px;border:0;border-radius:12px;background:transparent;color:#5f6f91;display:inline-flex;align-items:center;justify-content:center;gap:3px;cursor:pointer;z-index:4;transition:background-color .16s ease,color .16s ease,transform .16s ease;-webkit-tap-highlight-color:transparent}
@@ -1210,53 +1217,37 @@ button:focus,button:active,select:focus,select:active,a:focus,a:active{outline:n
 #detailModal .detail-price-value{display:inline-block !important;min-width:100px !important;text-align:left !important}
 #detailModal .detail-offer{height:40px !important;min-height:40px !important;max-height:40px !important;margin-top:0 !important;display:flex !important;align-items:center !important;justify-content:center !important;overflow:visible !important}
 #detailModal .detail-offer .offer-controls,#detailModal .detail-offer .market-visual-controls{min-height:28px !important}
-@media (max-width:760px){#detailModal .detail-image-wrap{height:430px !important;min-height:430px !important;max-height:430px !important}
+@media (max-width:760px){#detailModal .detail-image-wrap{height:422px !important;min-height:422px !important;max-height:422px !important}
 }
-@media (max-width:420px){#detailModal .detail-image-wrap{height:426px !important;min-height:426px !important;max-height:426px !important}
-#detailModal .detail-img{width:285px !important;height:398px !important;max-width:285px !important;max-height:398px !important}
-#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{width:285px !important;height:398px !important;max-width:285px !important;max-height:398px !important;min-height:398px !important}
+@media (max-width:420px){#detailModal .detail-image-wrap{height:418px !important;min-height:418px !important;max-height:418px !important}
+#detailModal .detail-img{width:280px !important;height:391px !important;max-width:280px !important;max-height:391px !important}
+#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{width:280px !important;height:391px !important;max-width:280px !important;max-height:391px !important;min-height:391px !important}
 }
 #detailModal .detail-price{height:108px !important;min-height:108px !important;max-height:108px !important;display:grid !important;grid-template-rows:16px 38px 40px !important;align-items:center !important;justify-items:center !important;row-gap:0 !important;overflow:visible !important}
 #detailModal .detail-price-line{width:148px !important;min-width:148px !important;max-width:148px !important;height:38px !important;display:inline-flex !important;align-items:baseline !important;justify-content:center !important;gap:4px !important;white-space:nowrap !important;font-variant-numeric:tabular-nums !important;font-feature-settings:"tnum" 1,"lnum" 1 !important}
 #detailModal .detail-price-currency{flex:0 0 auto !important;width:auto !important;min-width:0 !important;margin:0 !important;line-height:35px !important}
 #detailModal .detail-price-value{flex:0 0 auto !important;display:inline-block !important;width:auto !important;min-width:0 !important;max-width:none !important;text-align:center !important;line-height:35px !important;letter-spacing:-0.025em !important;font-variant-numeric:tabular-nums !important;font-feature-settings:"tnum" 1,"lnum" 1 !important}
-#detailModal .detail-variant-card{margin-top:10px;padding:8px 78px;border-radius:28px;background:rgba(245,248,255,.76);border:1px solid rgba(255,255,255,.78);box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);display:flex;align-items:center;justify-content:center;gap:10px;overflow:hidden}
-#detailModal .detail-variant-row{min-height:42px;padding:0 14px 0 10px;border-radius:999px;border:1px solid rgba(155,176,221,.26);background:rgba(255,255,255,.46);box-shadow:inset 0 1px 0 rgba(255,255,255,.72);display:inline-flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease}
+
 #detailModal .detail-variant-row:active{transform:scale(.98)}
-#detailModal .detail-variant-row:has(input:checked){background:rgba(255,255,255,.70);border-color:rgba(47,100,255,.30);box-shadow:0 8px 18px rgba(47,100,255,.10),inset 0 1px 0 rgba(255,255,255,.86)}
-#detailModal .detail-variant-radio{width:23px;height:23px;position:relative;display:inline-block;flex:0 0 23px}
-#detailModal .detail-variant-radio input{display:none}
-#detailModal .detail-variant-circle{width:23px;height:23px;border-radius:50%;border:1.5px solid rgba(94,120,170,.68);box-sizing:border-box;display:block;position:relative;background:rgba(255,255,255,.28)}
-#detailModal .detail-variant-radio input:checked+.detail-variant-circle{border-color:#2d8cff}
-#detailModal .detail-variant-radio input:checked+.detail-variant-circle::before{content:"";position:absolute;top:3px;left:3px;right:3px;bottom:3px;border-radius:50%;background:#2d8cff}
-#detailModal .detail-variant-text{color:#60729f;font-size:15px;font-weight:850;line-height:1;letter-spacing:-.02em;white-space:nowrap}
+
 @media (max-width:420px){.detail-variant-card{padding:8px 10px;gap:8px}
-#detailModal .detail-variant-row{min-height:40px;padding:0 10px 0 9px;gap:6px}
-#detailModal .detail-variant-text{font-size:14px}
+
 }
-#detailModal .detail-content{gap:12px !important}
-#detailModal .detail-cards{gap:12px !important;margin:0 auto !important}
-#detailModal .detail-image-wrap,#detailModal .detail-price,#detailModal .detail-variant-card,#detailModal .info-card{border-radius:24px !important;background:rgba(255,255,255,.52) !important;border:1px solid rgba(255,255,255,.64) !important;box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.88) !important;backdrop-filter:blur(22px) saturate(145%) !important;-webkit-backdrop-filter:blur(22px) saturate(145%) !important}
-#detailModal .detail-variant-card{width:100% !important;margin:0 !important;padding:10px 8px !important;display:grid !important;grid-template-columns:.82fr .98fr 1.20fr !important;align-items:center !important;justify-content:initial !important;gap:4px !important;overflow:visible !important}
-#detailModal .detail-variant-row{width:100% !important;min-width:0 !important;min-height:42px !important;padding:0 3px !important;justify-content:flex-start !important;gap:5px !important}
-#detailModal .detail-variant-text{min-width:0 !important;overflow:visible !important;text-overflow:clip !important}
-@media (max-width:360px){#detailModal .detail-variant-card{padding:9px 7px !important;grid-template-columns:.80fr .98fr 1.22fr !important;gap:3px !important}
-#detailModal .detail-variant-row{min-height:40px !important;padding:0 2px !important;gap:4px !important}
-#detailModal .detail-variant-radio,#detailModal .detail-variant-circle{width:20px !important;height:20px !important;flex-basis:20px !important}
-#detailModal .detail-variant-radio input:checked+.detail-variant-circle::before{inset:3px !important}
-#detailModal .detail-variant-text{font-size:13px !important}
+#detailModal .detail-content{gap:10px !important}
+#detailModal .detail-cards{gap:10px !important;margin:0 auto !important}
+#detailModal .detail-image-wrap,#detailModal .detail-price,#detailModal .info-card{border-radius:24px !important;background:rgba(255,255,255,.52) !important;border:1px solid rgba(255,255,255,.64) !important;box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.88) !important;backdrop-filter:blur(22px) saturate(145%) !important;-webkit-backdrop-filter:blur(22px) saturate(145%) !important}
+
+@media (max-width:360px){
+
+#detailModal .detail-variant-radio,
+
 }
-#detailModal .detail-variant-row{border:0 !important;background:transparent !important;box-shadow:none !important;border-radius:0 !important;padding:0 3px !important}
-#detailModal .detail-variant-row:has(input:checked){background:transparent !important;border-color:transparent !important;box-shadow:none !important}
-#detailModal .detail-variant-text{font-size:13px !important;font-weight:820 !important;color:#60729f !important;transition:color .16s ease}
-#detailModal .detail-variant-row:has(input:checked) .detail-variant-text{color:#2d8cff !important}
-@media (max-width:360px){#detailModal .detail-variant-text{font-size:12px !important}
+
+@media (max-width:360px){
 }
-#detailModal .detail-variant-card{display:grid !important;grid-template-columns:max-content max-content max-content !important;justify-content:center !important;align-items:center !important;column-gap:18px !important;row-gap:0 !important;padding-left:8px !important;padding-right:8px !important}
-#detailModal .detail-variant-row{width:auto !important;min-width:0 !important;padding:0 !important;justify-content:flex-start !important;gap:5px !important}
-#detailModal .detail-variant-text{display:inline-block !important;width:auto !important;min-width:0 !important;padding:0 !important}
-@media (max-width:360px){#detailModal .detail-variant-card{grid-template-columns:max-content max-content max-content !important;column-gap:14px !important;padding-left:6px !important;padding-right:6px !important}
-#detailModal .detail-variant-row{gap:4px !important}
+
+@media (max-width:360px){
+
 }
 #detailModal .detail-image-wrap{position:relative !important;cursor:zoom-in}
 #detailModal .detail-image-wrap .detail-img{cursor:zoom-in}
@@ -1286,8 +1277,8 @@ body.card-zoom-open{overflow:hidden;overscroll-behavior:none;touch-action:none}
 .card-zoom-stage{padding-top:calc(var(--safe-top) + 60px);padding-bottom:calc(var(--safe-bottom) + 88px)}
 .card-zoom-img{max-width:94vw;max-height:calc(100dvh - 156px)}
 }
-#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{width:285px !important;height:398px !important;max-width:285px !important;max-height:398px !important;min-height:398px !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:0 !important;padding:0 !important;margin:0 auto !important;flex:0 0 auto !important}
-#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader img{width:285px !important;height:398px !important;max-width:285px !important;max-height:398px !important;border-radius:16px !important;object-fit:contain !important;display:block !important;flex:0 0 auto !important}
+#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader{width:280px !important;height:391px !important;max-width:280px !important;max-height:391px !important;min-height:391px !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:0 !important;padding:0 !important;margin:0 auto !important;flex:0 0 auto !important}
+#detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader img{width:280px !important;height:391px !important;max-width:280px !important;max-height:391px !important;border-radius:16px !important;object-fit:contain !important;display:block !important;flex:0 0 auto !important}
 #detailModal .detail-image-wrap>.image-loading-placeholder.card-back-loader>div{display:none !important}
 body .content:not(.is-form-open){padding-bottom:calc(var(--safe-bottom) + 26px) !important}
 body .albums-view{padding-bottom:calc(var(--safe-bottom) + 92px) !important}
@@ -1744,7 +1735,7 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{bottom:calc(var(--s
 #detailModal.is-saved-card-detail .detail-top-title-wrap{position:static !important;transform:none !important;left:auto !important;right:auto !important;top:auto !important;flex:1 1 auto !important;min-width:0 !important;text-align:left !important;pointer-events:none !important;align-self:center !important}
 #detailModal.is-saved-card-detail .detail-top-card-name{text-align:left !important;font-size:clamp(18px,2.2vh,22px) !important;line-height:1.05 !important}
 #detailModal.is-saved-card-detail .detail-top-card-meta{text-align:left !important;font-size:12px !important;margin-top:2px !important}
-#detailModal.is-saved-card-detail .card-sheet-actions,#detailModal.is-saved-card-detail .detail-variant-card,#detailModal.is-saved-card-detail .detail-offer,#detailModal.is-saved-card-detail .detail-price-label,#detailModal.is-saved-card-detail .detail-price-source,#detailModal.is-saved-card-detail .price-dots-btn,#detailModal.is-saved-card-detail .price-action-menu,#detailModal.is-saved-card-detail .json-info-card{display:none !important}
+#detailModal.is-saved-card-detail .card-sheet-actions,#detailModal.is-saved-card-detail .detail-offer,#detailModal.is-saved-card-detail .detail-price-label,#detailModal.is-saved-card-detail .detail-price-source,#detailModal.is-saved-card-detail .price-dots-btn,#detailModal.is-saved-card-detail .price-action-menu,#detailModal.is-saved-card-detail .json-info-card{display:none !important}
 #detailModal.is-saved-card-detail .detail-price{width:auto !important;justify-self:center !important;min-width:118px !important;padding:8px 18px !important;border-radius:999px !important}
 #detailModal.is-saved-card-detail .detail-price-line{justify-content:center !important;margin:0 !important}
 #detailModal.is-saved-card-detail .editable-info-row,#detailModal.is-saved-card-detail .origin-info-row{cursor:default !important}
@@ -1957,8 +1948,7 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{bottom:calc(var(--s
 #detailModal:not(.is-saved-card-detail) .info-card .info-label{font-size:10.5px !important;letter-spacing:.045em !important}
 #detailModal:not(.is-saved-card-detail) .info-card .info-value,#detailModal:not(.is-saved-card-detail) .info-card .info-choice-value,#detailModal:not(.is-saved-card-detail) .info-card .info-edit-input{font-size:12.5px !important}
 }
-#detailModal:not(.is-saved-card-detail) .detail-variant-card::before{content:"TIPO CARTA";grid-column:1 / -1;display:block;width:100%;margin:0 0 2px;color:#7382a2;font-size:15px;font-weight:900;letter-spacing:.02em;line-height:1;text-transform:uppercase;text-align:center}
-#detailModal:not(.is-saved-card-detail) .detail-variant-card{row-gap:9px !important}
+
 #detailModal .json-info-card .collapsible-trigger{border-bottom:0 !important}
 #detailModal:not(.is-saved-card-detail) .card-sheet-topbar{justify-content:flex-start !important}
 #detailModal:not(.is-saved-card-detail) .detail-top-title-wrap{position:static !important;transform:none !important;left:auto !important;right:auto !important;top:auto !important;flex:1 1 auto !important;min-width:0 !important;display:grid !important;gap:2px !important;text-align:left !important;pointer-events:none !important;align-self:center !important}
@@ -2182,6 +2172,9 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{bottom:calc(var(--s
 .album-detail-view.is-selecting .album-select-more.is-enabled{color:#3157c9 !important}
 .album-detail-view.is-selecting .album-select-more:disabled:hover,.album-detail-view.is-selecting .album-select-more[aria-disabled="true"]:hover{background:transparent !important}
 .album-select-btn{height:40px !important;min-height:40px !important;align-self:center !important;padding:0 14px !important;background:rgba(255,255,255,.50) !important}
+#detailModal .detail-add-card-btn{margin-top:4px !important;min-width:auto !important;padding:0 11px !important;white-space:nowrap !important;background:linear-gradient(135deg,#7aa6ff 0%,#4f83ff 48%,#2f64ff 100%) !important;color:#fff !important;border-color:rgba(255,255,255,.36) !important;box-shadow:none !important;transform:none !important;transition:background-color .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease,opacity .18s ease !important}
+#detailModal .detail-add-card-btn:hover{background:linear-gradient(135deg,#7aa6ff 0%,#4f83ff 48%,#2f64ff 100%) !important;color:#fff !important;box-shadow:none !important;filter:saturate(1.04) brightness(1.01) !important}
+#detailModal .detail-add-card-btn:active{transform:none !important}
 @media (max-width:380px){.album-detail-topbar{column-gap:6px !important}
 .album-detail-view.is-selecting .album-select-actions{padding:3px !important}
 .album-detail-view.is-selecting .album-select-close,.album-detail-view.is-selecting .album-select-more{width:36px !important;height:36px !important;min-width:36px !important;min-height:36px !important}
@@ -2226,7 +2219,6 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{bottom:calc(var(--s
 @media (max-width:380px){.album-detail-view.is-selecting .album-detail-topbar .album-detail-title-wrap{right:186px !important}
 .album-select-count{font-size:11px;padding:0 7px}
 }
-#detailModal .collection-status-pill.is-present .collection-status-chevron{display:inline-flex !important;align-items:center !important;justify-content:center !important;width:18px !important;height:18px !important;min-width:18px !important;flex:0 0 18px !important;margin-left:0 !important;font-size:0 !important;line-height:0 !important;color:currentColor !important;background-color:currentColor !important;opacity:.72 !important;transform:none !important;-webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 16px 16px no-repeat !important;mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cpath%20d%3D%22M9%206l6%206-6%206%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.35%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E") center / 16px 16px no-repeat !important}
 #detailModal .collection-status-pill.is-missing .collection-status-chevron{display:none !important}
 
 /* Album card long-press / drag logic imported from trascinamento.html, adapted to real album slots */
@@ -2266,7 +2258,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .album-detail-cards,.album-detail-cards *,.album-detail-card,.album-detail-card *,.album-slot-empty,.album-slot-empty *,.album-card-touch-shade,.album-card-touch-preview,.album-card-touch-preview *,.album-card-touch-menu,.album-card-touch-menu *,.album-card-drag-ghost,.album-card-drag-ghost *{user-select:none !important;-webkit-user-select:none !important;-webkit-touch-callout:none !important}
 .album-detail-card,.album-detail-card-image-wrap,.album-detail-card-image,.album-slot-empty{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
-
 /* Drag target border: the blue border replaces the native white slot border. No pseudo-overlay, no double border, no weird shape-shifting circus. */
 .album-detail-card.album-drag-over,.album-slot-empty.album-drag-over{position:relative !important;outline:0 !important;transform:none !important}
 .album-detail-card.album-drag-over{border:0 !important;background:transparent !important;box-shadow:none !important;overflow:visible !important}
@@ -2275,8 +2266,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .album-detail-card.album-drag-over::after,.album-slot-empty.album-drag-over::after{content:none !important;display:none !important}
 .album-detail-card.album-drag-over::before,.album-slot-empty.album-drag-over::before{box-shadow:none !important}
 .album-slot-empty.album-drag-over::before{opacity:.42 !important}
-
-
 
 .add-card-search-view .card-search-title{left:58px!important;right:16px!important;text-align:left!important;justify-self:start!important;pointer-events:none}
 .storage-toast{width:max-content!important;max-width:calc(100vw - 16px)!important;overflow:hidden!important;text-overflow:clip!important}
@@ -2315,7 +2304,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   line-height:1.22 !important;
   letter-spacing:-0.02em !important;
 }
-
 
 /* Patch: rende evidenti i campi modificabili nella scheda carta da aggiungere,
    usando lo stesso aspetto della scheda salvata quando è in modifica. */
@@ -2367,7 +2355,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   #detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row{grid-template-columns:minmax(82px,.78fr) minmax(0,1.22fr) 20px !important;gap:7px !important}
   #detailModal:not(.is-saved-card-detail) .add-detail-card .add-editable-row::after{width:20px !important;height:20px !important;min-width:20px !important;-webkit-mask-size:17px 17px !important;mask-size:17px 17px !important}
 }
-
 
 /* Fix: nella scheda carta da aggiungere, Provenienza usa già la chevron interna del pulsante.
    Evita quindi la pseudo-icona generica della riga modificabile, che diventava un quadrato. */
@@ -2421,8 +2408,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   stroke:currentColor!important;
 }
 
-
-
 /* Backup Cloud UX - stato discreto in home e menu dedicato */
 #homeView .home-stats-card{position:relative!important}
 #homeView .home-backup-status-btn{appearance:none;-webkit-appearance:none;position:relative;width:56px;height:56px;border:0;border-radius:21px;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,filter .16s ease}
@@ -2460,7 +2445,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .profile-menu-action.disconnect-backup-action{color:#c62828}.profile-menu-action.disconnect-backup-action.is-hidden{display:none!important}
 .profile-menu-action.reset-app-action{color:#c62828;font-weight:880}.profile-menu-action.reset-app-action:hover,.profile-menu-action.reset-app-action:active{background:rgba(198,40,40,.08)}
 @media (max-width:420px){#homeView .home-backup-status-btn{width:52px;height:52px;border-radius:20px}.backup-popover{right:6px;width:min(250px,calc(100vw - 40px))}}
-
 
 /* Menu laterale 2026-06-13: mezza pagina, testi compatti, icone pulite */
 .profile-menu-backdrop{
@@ -2595,8 +2579,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .profile-avatar.has-custom-avatar .profile-avatar-img{display:block!important}
 .profile-avatar.has-custom-avatar svg{display:block!important;position:relative;z-index:2}
 .profile-avatar.has-custom-avatar .utente{display:none!important}
-
-
 
 .profile-trainer-copy{display:grid;align-content:center;gap:6px;min-width:0}
 .profile-trainer-copy strong{
@@ -2763,8 +2745,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   .profile-row-icon{width:25px;height:25px}.profile-row-icon svg{width:18px;height:18px}.profile-row-chevron{font-size:19px}
 }
 
-
-
 /* Fix menu laterale 2026-06-13: testi più piccoli, niente X, Dropbox dinamico */
 .profile-menu-panel{
   width:50vw!important;
@@ -2829,9 +2809,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   }
 }
 
-
-
-
 /* Ritocco Dropbox 2026-06-15: Collega cliccabile e Sincronizza disattivo se non collegato */
 .provider-check.provider-action{
   cursor:pointer!important;
@@ -2865,7 +2842,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 }
 .profile-provider-row.is-disconnected{opacity:1!important}
 .profile-provider-row.is-disconnected .provider-logo{opacity:.58!important}
-
 
 /* Ritocco menu 2026-06-13: pannello più largo e contenuto leggibile su una riga */
 .profile-menu-panel{
@@ -2919,7 +2895,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .profile-avatar.has-custom-avatar .profile-menu-user-icon{display:none!important}
 .profile-avatar.has-custom-avatar .profile-avatar-img{display:block!important}
 
-
 /* vi468: menu servizi cloud più pulito */
 .profile-menu-title span{
   margin-left:1px!important;
@@ -2966,7 +2941,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   font-size:1.13em;
 }
 </style>
-
 
 <style id="menu-specific-text-bump-patch">
 /* Ritocco mirato menu laterale: aumento leggero SOLO dei testi richiesti */
@@ -3111,8 +3085,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 }
 </style>
 
-
-
 <style id="menu-avatar-size-patch">
 /* vi448: avatar menu laterale leggermente più grande, forma circolare invariata */
 .profile-menu-panel .profile-trainer-card{
@@ -3145,7 +3117,6 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   }
 }
 </style>
-
 
 <style id="menu-avatar-custom-size-fix">
 /* vi461: quando c'è una foto personale nel menu laterale, l'avatar non deve cambiare misura.
@@ -4823,45 +4794,26 @@ paint-order="stroke">
               <div class="detail-top-card-meta" id="detailTopMeta"></div>
             </div>
             <div class="card-sheet-actions">
-              <button class="sheet-icon-btn detail-add-card-btn" type="button" aria-label="Aggiungi carta">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+              <button class="album-select-btn detail-add-card-btn" type="button" aria-label="Aggiungi carta">
+                + Aggiungi
               </button>
             </div>
           </div>
           <div class="detail-content">
             <div class="collection-status-wrap">
+              <button class="collection-status-pill" id="cardTypePill" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="cardTypeChoiceSheet">
+                <span class="collection-status-text" id="cardTypeText">Normal</span>
+                <span class="collection-status-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"></path></svg></span>
+              </button>
               <button class="collection-status-pill is-missing" id="collectionStatusPill" type="button" aria-expanded="false" aria-controls="collectionStatusDetails">
                 <span class="collection-status-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"></path></svg></span>
                 <span class="collection-status-text" id="collectionStatusText">NON PRESENTE NELLA COLLEZIONE</span>
-                <span class="collection-status-chevron" aria-hidden="true">&gt;</span>
+                <span class="collection-status-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"></path></svg></span>
               </button>
               <div class="collection-status-details" id="collectionStatusDetails" hidden></div>
             </div>
             <div class="detail-image-wrap" id="detailImageWrap"><div class="image-loading-placeholder card-back-loader"><img src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="Retro carta Pokémon"></div><img style="display:none" data-loading-placeholder="true" class="detail-img" id="detailCardImage" src="" alt=""><button type="button" class="card-zoom-btn" id="cardZoomBtn" aria-label="Ingrandisci carta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5"></path><path d="M3 3l7 7"></path><path d="M16 3h5v5"></path><path d="M21 3l-7 7"></path><path d="M8 21H3v-5"></path><path d="M3 21l7-7"></path><path d="M16 21h5v-5"></path><path d="M21 21l-7-7"></path></svg></button></div>
             <div class="detail-price"><span class="detail-price-label">Prezzo</span><button type="button" class="price-dots-btn" id="manualSetPill" aria-label="Opzioni prezzo" aria-haspopup="menu" aria-expanded="false"><span aria-hidden="true"></span></button><div class="price-action-menu" id="priceActionMenu" role="menu" aria-hidden="true"><button type="button" class="price-action-item" id="priceActionEdit" role="menuitem">Modifica</button><button type="button" class="price-action-item danger" id="priceActionRestore" role="menuitem">Ripristina</button></div><span class="detail-price-source" id="detailPriceSource" aria-live="polite"></span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
-            <div class="detail-variant-card" aria-label="Varianti carta">
-              <label class="detail-variant-row">
-                <span class="detail-variant-radio">
-                  <input type="checkbox" id="variantHolo" autocomplete="off">
-                  <span class="detail-variant-circle"></span>
-                </span>
-                <span class="detail-variant-text">Holo</span>
-              </label>
-              <label class="detail-variant-row">
-                <span class="detail-variant-radio">
-                  <input type="checkbox" id="variantReverse" autocomplete="off">
-                  <span class="detail-variant-circle"></span>
-                </span>
-                <span class="detail-variant-text">Reverse</span>
-              </label>
-              <label class="detail-variant-row">
-                <span class="detail-variant-radio">
-                  <input type="checkbox" id="variantIllustration" autocomplete="off">
-                  <span class="detail-variant-circle"></span>
-                </span>
-                <span class="detail-variant-text">Illustration</span>
-              </label>
-            </div>
             <div class="detail-cards">
               <section class="info-card add-detail-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row editable-info-row origin-info-row add-editable-row" data-add-edit-field="origin"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row add-editable-row add-edit-pencil" data-add-edit-field="total-set"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row add-editable-row add-edit-pencil" data-add-edit-field="release-date"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row add-editable-row add-edit-pencil" data-add-edit-field="artist"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section><section class="info-card saved-detail-card" aria-hidden="true"><h3 class="info-card-title saved-detail-card-title"><span class="info-card-title-text">Dettagli Carta</span><button class="saved-card-edit-toggle" id="savedCardEditToggleBtn" type="button" aria-pressed="false">Modifica</button></h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">CARTA</div><div class="info-value" id="savedCardInsertedSummary"></div></div><div class="info-row static-info-row"><div class="info-label">Nome</div><div class="info-value" id="savedCardName"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="savedCardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="savedCardVersion"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="total-set"><div class="info-label">Totale Carte Set</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardTotalSet"></div><input class="saved-card-edit-input" id="savedCardTotalSetInput" data-saved-edit-input="total-set" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 94"></div></div><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="savedCardRarity"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron saved-edit-chevron-down" id="savedCardTypeEditRow" data-saved-edit-field="card-type"><div class="info-label">Tipo carta</div><div class="info-value" id="savedCardVariantsSummary"></div></div><div class="saved-variant-editor-row" id="savedVariantEditorRow" aria-hidden="true"><div class="saved-variant-editor-card" aria-label="Selezione tipo carta salvata"><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantHolo" data-saved-variant="holo" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Holo</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantReverse" data-saved-variant="reverse" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Reverse</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantIllustration" data-saved-variant="illustration" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Illustration</span></label></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="release-date"><div class="info-label">Uscita</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardDate"></div><input class="saved-card-edit-input" id="savedCardDateInput" data-saved-edit-input="release-date" type="text" autocomplete="off" placeholder="es. 2026"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="artist"><div class="info-label">Illustratore</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardArtist"></div><input class="saved-card-edit-input" id="savedCardArtistInput" data-saved-edit-input="artist" type="text" autocomplete="off" placeholder="es. Mitsuhiro Arita"></div></div><div class="info-row static-info-row"><div class="info-label">Data inserimento</div><div class="info-value" id="savedCardInsertedAt"></div></div><div class="info-row static-info-row"><div class="info-label">Valore iniziale</div><div class="info-value" id="savedCardInitialValue"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron" data-saved-edit-field="origin"><div class="info-label">Provenienza</div><div class="info-value" id="savedCardOriginValue"></div></div></div></section>
               <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
@@ -4872,6 +4824,74 @@ paint-order="stroke">
       <div id="copyToast" class="copy-toast">Copiato negli appunti</div>
     </div>
     <div class="saved-location-pill" id="savedLocationPill" aria-label="Posizione carta salvata"></div>
+  </div>
+<div class="choice-sheet-backdrop" id="cardTypeChoiceSheet" aria-hidden="true">
+    <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="cardTypeChoiceTitle">
+      <div class="choice-sheet-handle"></div>
+      <h2 class="choice-sheet-title" id="cardTypeChoiceTitle">Tipo carta<span class="field-subtitle">Scegli la variante fisica della carta</span></h2>
+      <div class="choice-list">
+        <button class="choice-option is-selected" type="button" data-card-type="normal">
+          <span>Normal</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="choice-option" type="button" data-card-type="holo">
+          <span>Holo</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="choice-option" type="button" data-card-type="full_holo">
+          <span>Full Holo</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="choice-option" type="button" data-card-type="reverse">
+          <span>Reverse</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="choice-option" type="button" data-card-type="reverse_holo">
+          <span>Reverse Holo</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="choice-option" type="button" data-card-type="illustration">
+          <span>Illustration</span>
+          <svg class="choice-option-check" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+<div class="choice-sheet-backdrop" id="collectionOtherVersionsSheet" aria-hidden="true">
+    <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="collectionOtherVersionsTitle">
+      <div class="choice-sheet-handle"></div>
+      <h2 class="choice-sheet-title" id="collectionOtherVersionsTitle">Versioni in possesso</h2>
+      <div class="choice-list" id="collectionOtherVersionsList"></div>
+    </div>
+  </div>
+<div class="choice-sheet-backdrop" id="collectionPresenceSheet" aria-hidden="true">
+    <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="collectionPresenceTitle">
+      <div class="choice-sheet-handle"></div>
+      <h2 class="choice-sheet-title" id="collectionPresenceTitle">Presente nella collezione</h2>
+      <div class="collection-presence-list" id="collectionPresenceList"></div>
+    </div>
+  </div>
+<div class="choice-sheet-backdrop" id="missingCardDataSheet" aria-hidden="true">
+    <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="missingCardDataTitle">
+      <div class="choice-sheet-handle"></div>
+      <h2 class="choice-sheet-title" id="missingCardDataTitle">Dati mancanti</h2>
+      <p class="album-delete-confirm-text">Alcune informazioni della carta non sono state compilate.<br>Potrai modificarle in seguito.</p>
+      <div class="origin-sheet-actions">
+        <button class="origin-sheet-btn cancel" id="missingCardDataCancel" type="button">Indietro</button>
+        <button class="origin-sheet-btn save" id="missingCardDataConfirm" type="button">Aggiungi comunque</button>
+      </div>
+    </div>
+  </div>
+<div class="choice-sheet-backdrop" id="duplicateCardActionSheet" aria-hidden="true">
+    <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="duplicateCardActionTitle">
+      <div class="choice-sheet-handle"></div>
+      <h2 class="choice-sheet-title" id="duplicateCardActionTitle">Carta già presente</h2>
+      <p class="album-delete-confirm-text">Scegli se sostituire la carta esistente o aggiungere un duplicato.</p>
+      <div class="origin-sheet-actions">
+        <button class="origin-sheet-btn cancel" id="duplicateCardReplaceBtn" type="button">Sostituisci</button>
+        <button class="origin-sheet-btn save" id="duplicateCardAddBtn" type="button">Aggiungi</button>
+      </div>
+    </div>
   </div>
 <div class="choice-sheet-backdrop" id="originChoiceSheet" aria-hidden="true">
     <div class="choice-sheet" role="dialog" aria-modal="true" aria-labelledby="originChoiceTitle">
@@ -5311,6 +5331,16 @@ const el = {
       collectionStatusPill: document.getElementById('collectionStatusPill'),
       collectionStatusText: document.getElementById('collectionStatusText'),
       collectionStatusDetails: document.getElementById('collectionStatusDetails'),
+      collectionOtherVersionsSheet: document.getElementById('collectionOtherVersionsSheet'),
+      collectionOtherVersionsList: document.getElementById('collectionOtherVersionsList'),
+      collectionPresenceSheet: document.getElementById('collectionPresenceSheet'),
+      collectionPresenceList: document.getElementById('collectionPresenceList'),
+      missingCardDataSheet: document.getElementById('missingCardDataSheet'),
+      missingCardDataCancel: document.getElementById('missingCardDataCancel'),
+      missingCardDataConfirm: document.getElementById('missingCardDataConfirm'),
+      duplicateCardActionSheet: document.getElementById('duplicateCardActionSheet'),
+      duplicateCardReplaceBtn: document.getElementById('duplicateCardReplaceBtn'),
+      duplicateCardAddBtn: document.getElementById('duplicateCardAddBtn'),
       manualSetPill: document.getElementById('manualSetPill'),
       priceActionMenu: document.getElementById('priceActionMenu'),
       priceActionEdit: document.getElementById('priceActionEdit'),
@@ -5362,9 +5392,9 @@ const el = {
       cardOriginInput: document.getElementById('cardOriginInput'),
       cardOriginBtn: document.getElementById('cardOriginBtn'),
       cardOriginValue: document.getElementById('cardOriginValue'),
-      variantHolo: document.getElementById('variantHolo'),
-      variantReverse: document.getElementById('variantReverse'),
-      variantIllustration: document.getElementById('variantIllustration'),
+      cardTypePill: document.getElementById('cardTypePill'),
+      cardTypeText: document.getElementById('cardTypeText'),
+      cardTypeChoiceSheet: document.getElementById('cardTypeChoiceSheet'),
       originChoiceSheet: document.getElementById('originChoiceSheet'),
       originInputSheet: document.getElementById('originInputSheet'),
       originInputTitle: document.getElementById('originInputTitle'),
@@ -5436,8 +5466,10 @@ function setStatus(msg, type = '') {
       modal.classList.remove('open');
       if (modal.id === 'detailModal') modal.classList.remove('is-card-title-hidden-on-scroll');
       if (modal && modal.id === 'detailModal') {
+        closeCardTypeChoiceSheet();
         closeOriginChoiceSheet();
         closeOriginInputSheet();
+        closeMissingCardDataSheet();
         closePriceEditSheet();
         closePricePickerPage('language');
         closePricePickerPage('condition');
@@ -6604,7 +6636,7 @@ async function loadMarketSummary(card, options = {}) {
           const data = await api(`/marketplace/products?blueprint_id=${encodeURIComponent(card.id)}`);
           if (state.selectedCard && Number(state.selectedCard.id) !== Number(card.id)) return;
           const products = extractArray(data, ['products']);
-          if (!products.length) { setPriceResult('-', 'Nessuna inserzione marketplace trovata'); return; }
+          if (!products.length) { setPriceResult('-', 'Nessun prezzo di riferimento'); return; }
           const pricedProducts = products.map(product => ({ product, priceCents: getProductPriceCents(product) })).filter(row => Number.isFinite(row.priceCents));
           if (!pricedProducts.length) { setPriceResult('-', 'Inserzioni trovate, ma nessun prezzo leggibile'); return; }
           state.market.rows = buildMarketRows(products);
@@ -6653,7 +6685,7 @@ async function loadMarketSummary(card, options = {}) {
           if (!isCurrentMarketRequest(card, requestSeq)) return;
           pricedProducts = products.map(product => ({ product, priceCents: getProductPriceCents(product) })).filter(row => Number.isFinite(row.priceCents));
         }
-        if (!products.length) { setPriceResult('-', 'Nessuna inserzione marketplace trovata'); return; }
+        if (!products.length) { setPriceResult('-', 'Nessun prezzo di riferimento'); return; }
         if (!pricedProducts.length) { setPriceResult('-', 'Inserzioni trovate, ma nessun prezzo leggibile'); return; }
         state.market.rows = buildMarketRows(products);
         const preferredSelection = normalizeSavedMarketSelection(options.preferredSelection || options.marketSelection || {});
@@ -7242,27 +7274,216 @@ function getCollectionStatusBlueprintId(card = {}) {
       const value = card.blueprintId ?? card.blueprint_id ?? raw.id ?? raw.blueprint_id ?? raw.card_id ?? card.id ?? '';
       return String(value ?? '').trim();
     }
-    function setCollectionStatusPill(isPresent = false) {
+    function normalizeCollectionStatusCardType(card = {}) {
+      const variants = card.variants || {};
+      const directValue = variants.type || card.cardType || card.tipoCarta || card.tipo_carta || card.type || '';
+      const directType = normalizeCardType(directValue);
+      if (String(directValue || '').trim() && directType !== 'normal') return directType;
+      const hasReverseHolo = Boolean(variants.reverseHolo || card.reverseHolo);
+      const hasFullHolo = Boolean(variants.fullHolo || card.fullHolo);
+      const hasHolo = Boolean(variants.holo || card.holo);
+      const hasReverse = Boolean(variants.reverse || card.reverse);
+      const hasIllustration = Boolean(variants.illustration || card.illustration);
+      if (hasIllustration) return 'illustration';
+      if (hasReverseHolo || (hasReverse && hasHolo)) return 'reverse_holo';
+      if (hasFullHolo) return 'full_holo';
+      if (hasReverse) return 'reverse';
+      if (hasHolo) return 'holo';
+      return 'normal';
+    }
+    function closeCollectionOtherVersionsSheet() {
+      if (!el.collectionOtherVersionsSheet) return;
+      el.collectionOtherVersionsSheet.classList.remove('open');
+      el.collectionOtherVersionsSheet.setAttribute('aria-hidden', 'true');
+      if (el.collectionStatusPill) el.collectionStatusPill.setAttribute('aria-expanded', 'false');
+    }
+    function closeCollectionPresenceSheet() {
+      if (!el.collectionPresenceSheet) return;
+      el.collectionPresenceSheet.classList.remove('open');
+      el.collectionPresenceSheet.setAttribute('aria-hidden', 'true');
+      if (el.collectionStatusPill) el.collectionStatusPill.setAttribute('aria-expanded', 'false');
+    }
+    function getCollectionStatusAlbumName(album = {}) {
+      const name = String(album?.name || '').trim();
+      const publicName = String(album?.publicName || '').trim();
+      const autoName = String(album?.autoName || album?.fallbackName || '').trim();
+      return name || publicName || autoName || 'Album';
+    }
+    function formatCollectionStatusSlot(saved = {}) {
+      const slot = Number(saved.albumSlotNumber || saved.slotNumber || 0);
+      return slot > 0 ? `Slot ${slot}` : '';
+    }
+    function formatCollectionDuplicateLabel(label = '', count = 0) {
+      const cleanLabel = String(label || '').trim() || 'Normal';
+      const cleanCount = Number(count || 0);
+      return `${escapeHtml(cleanLabel)}${cleanCount > 1 ? ` <span class="collection-duplicate-count">(${cleanCount})</span>` : ''}`;
+    }
+    function renderCollectionOtherVersionsList(matches = [], albums = []) {
+      if (!el.collectionOtherVersionsList) return;
+      const albumsById = new Map((Array.isArray(albums) ? albums : []).map(album => [String(album?.id || ''), album]));
+      const grouped = new Map();
+      (Array.isArray(matches) ? matches : []).forEach((saved) => {
+        const type = getCardTypeLabel(normalizeCollectionStatusCardType(saved));
+        const albumId = String(saved.albumId || '').trim();
+        if (!grouped.has(type)) grouped.set(type, { type, albumEntries: [], count: 0 });
+        const row = grouped.get(type);
+        row.count += 1;
+        if (albumId) {
+          const album = albumsById.get(albumId);
+          const albumName = getCollectionStatusAlbumName(album);
+          const slot = formatCollectionStatusSlot(saved);
+          row.albumEntries.push({ albumName, slot });
+        }
+      });
+      const rows = Array.from(grouped.values()).map((row) => {
+        const uniqueEntries = [];
+        const seenEntries = new Set();
+        row.albumEntries.forEach((entry) => {
+          const slotText = entry.slot ? `Slot ${String(entry.slot).replace(/^Slot\s+/i, '')}` : '';
+          const metaText = [entry.albumName, slotText].filter(Boolean).join(' · ');
+          const key = metaText || entry.albumName || slotText;
+          if (!key || seenEntries.has(key)) return;
+          seenEntries.add(key);
+          uniqueEntries.push(metaText);
+        });
+        const metaText = uniqueEntries.join(' | ');
+        return `
+          <button class="choice-option" type="button">
+            <span>${formatCollectionDuplicateLabel(row.type, row.count)}</span>
+            <span class="album-picker-option-sub">${escapeHtml(metaText)}</span>
+          </button>
+        `;
+      }).join('');
+      el.collectionOtherVersionsList.innerHTML = rows || '<button class="choice-option" type="button"><span>Nessun dettaglio disponibile</span><span class="album-picker-option-sub">Non ho trovato altre versioni salvate</span></button>';
+    }
+    function getCollectionPresenceOrigin(saved = {}) {
+      const origin = saved.origin || {};
+      const label = String(origin.label || '').trim();
+      if (label) return label;
+      const type = String(origin.type || '').trim();
+      const detail = String(origin.detail || origin.value || '').trim();
+      return [type, detail].filter(Boolean).join(' - ') || 'Non indicata';
+    }
+    function formatCollectionPresenceDate(saved = {}) {
+      if (typeof formatSavedCardInsertedAt === 'function') return formatSavedCardInsertedAt(saved) || 'Non indicata';
+      const value = saved.addedAt || saved.insertedAt || saved.createdAt || saved.priceAtAdd?.capturedAt || '';
+      return value ? String(value).split(/[T\s]/)[0] : 'Non indicata';
+    }
+    function renderCollectionPresenceList(matches = [], albums = []) {
+      if (!el.collectionPresenceList) return;
+      const allMatches = Array.isArray(matches) ? matches : [];
+      const list = allMatches.filter(saved => String(saved?.albumId || '').trim());
+      if (!list.length) {
+        el.collectionPresenceList.innerHTML = '<div class="collection-presence-empty">Nessuna copia inserita in album</div>';
+        return;
+      }
+      const albumsById = new Map((Array.isArray(albums) ? albums : []).map(album => [String(album?.id || ''), album]));
+      const duplicateCount = Math.max(1, allMatches.length);
+      const rows = list.map((saved, index) => {
+        const albumId = String(saved.albumId || '');
+        const album = albumsById.get(albumId);
+        const albumName = getCollectionStatusAlbumName(album);
+        const slot = formatCollectionStatusSlot(saved);
+        const position = [albumName, slot].filter(Boolean).join(' · ') || 'Non indicata';
+        const version = getCardTypeLabel(normalizeCollectionStatusCardType(saved)) || 'Normale';
+        const origin = getCollectionPresenceOrigin(saved);
+        const insertedAt = formatCollectionPresenceDate(saved);
+        return `
+          <div class="collection-presence-card" role="group" aria-label="Dettaglio copia ${index + 1}">
+            <div class="collection-presence-row"><span class="collection-presence-label">Posizione</span><span class="collection-presence-value">${escapeHtml(position)}</span></div>
+            <div class="collection-presence-row"><span class="collection-presence-label">Versione</span><span class="collection-presence-value">${escapeHtml(version)}</span></div>
+            <div class="collection-presence-row"><span class="collection-presence-label">Provenienza</span><span class="collection-presence-value">${escapeHtml(origin)}</span></div>
+            <div class="collection-presence-row"><span class="collection-presence-label">Data inserimento</span><span class="collection-presence-value">${escapeHtml(insertedAt)}</span></div>
+          </div>
+        `;
+      }).join('');
+      el.collectionPresenceList.innerHTML = rows;
+    }
+    function openCollectionPresenceSheet() {
+      if (!el.collectionPresenceSheet || el.collectionStatusPill?.dataset.status !== 'present') return;
+      closeCardTypeChoiceSheet();
+      closeOriginChoiceSheet();
+      closeOriginInputSheet();
+      closeCollectionOtherVersionsSheet();
+      el.collectionPresenceSheet.classList.add('open');
+      el.collectionPresenceSheet.setAttribute('aria-hidden', 'false');
+      if (el.collectionStatusPill) el.collectionStatusPill.setAttribute('aria-expanded', 'true');
+    }
+    function openCollectionOtherVersionsSheet() {
+      if (!el.collectionOtherVersionsSheet || el.collectionStatusPill?.dataset.status !== 'other') return;
+      closeCardTypeChoiceSheet();
+      closeOriginChoiceSheet();
+      closeOriginInputSheet();
+      closeCollectionPresenceSheet();
+      el.collectionOtherVersionsSheet.classList.add('open');
+      el.collectionOtherVersionsSheet.setAttribute('aria-hidden', 'false');
+      if (el.collectionStatusPill) el.collectionStatusPill.setAttribute('aria-expanded', 'true');
+    }
+    function setCollectionStatusPill(status = 'missing', duplicateCount = 0) {
       if (!el.collectionStatusPill || !el.collectionStatusText) return;
-      el.collectionStatusPill.classList.toggle('is-present', Boolean(isPresent));
-      el.collectionStatusPill.classList.toggle('is-missing', !isPresent);
-      el.collectionStatusText.textContent = isPresent ? 'PRESENTE NELLA COLLEZIONE' : 'NON PRESENTE NELLA COLLEZIONE';
-      el.collectionStatusPill.setAttribute('aria-label', el.collectionStatusText.textContent);
+      const normalizedStatus = status === true ? 'present' : status === false ? 'missing' : String(status || 'missing');
+      const normalizedDuplicateCount = Number(duplicateCount || 0);
+      const isLoading = normalizedStatus === 'loading';
+      const isMissing = normalizedStatus === 'missing';
+      const isOther = normalizedStatus === 'other';
+      closeCollectionOtherVersionsSheet();
+      closeCollectionPresenceSheet();
+      el.collectionStatusPill.dataset.status = normalizedStatus;
+      el.collectionStatusPill.classList.toggle('is-present', !isMissing && !isLoading);
+      el.collectionStatusPill.classList.toggle('is-missing', isMissing);
+      el.collectionStatusPill.classList.toggle('is-loading', isLoading);
+      if (isLoading) {
+        el.collectionStatusPill.style.removeProperty('--collection-status-rgb');
+        el.collectionStatusPill.style.removeProperty('--collection-status-color');
+      } else if (isOther) {
+        el.collectionStatusPill.style.setProperty('--collection-status-rgb', '255,122,0');
+        el.collectionStatusPill.style.setProperty('--collection-status-color', '#f26b00');
+      } else if (!isMissing) {
+        el.collectionStatusPill.style.setProperty('--collection-status-rgb', '220,38,38');
+        el.collectionStatusPill.style.setProperty('--collection-status-color', '#dc2626');
+      } else {
+        el.collectionStatusPill.style.removeProperty('--collection-status-rgb');
+        el.collectionStatusPill.style.removeProperty('--collection-status-color');
+      }
+      const baseText = isLoading
+        ? 'VERIFICA COLLEZIONE...'
+        : isMissing
+          ? 'NON PRESENTE NELLA COLLEZIONE'
+          : isOther
+            ? 'PRESENTE IN ALTRE VERSIONI'
+            : 'PRESENTE NELLA COLLEZIONE';
+      const countHtml = !isMissing && !isLoading && normalizedDuplicateCount > 1 ? ` <span class="collection-status-count">(${normalizedDuplicateCount})</span>` : '';
+      el.collectionStatusText.innerHTML = `${baseText}${countHtml}`;
+      el.collectionStatusPill.setAttribute('aria-label', `${baseText}${!isMissing && !isLoading && normalizedDuplicateCount > 1 ? ` (${normalizedDuplicateCount})` : ''}`);
       el.collectionStatusPill.setAttribute('aria-expanded', 'false');
       if (el.collectionStatusDetails) {
         el.collectionStatusDetails.hidden = true;
         el.collectionStatusDetails.textContent = '';
       }
+      if (el.collectionOtherVersionsList && !isOther && !isLoading) el.collectionOtherVersionsList.innerHTML = '';
+      if (el.collectionPresenceList && normalizedStatus !== 'present' && !isLoading) el.collectionPresenceList.innerHTML = '';
     }
-    async function updateCollectionStatusForCard(card = {}) {
-      setCollectionStatusPill(false);
+    let collectionStatusRequestId = 0;
+    async function updateCollectionStatusForCard(card = {}, options = {}) {
+      const requestId = ++collectionStatusRequestId;
+      if (options.resetBeforeCheck === true) setCollectionStatusPill('loading');
       const currentId = getCollectionStatusBlueprintId(card);
-      if (!currentId || !window.PokeAlbumStorage || typeof window.PokeAlbumStorage.exportAll !== 'function') return;
+      if (!currentId || !window.PokeAlbumStorage || typeof window.PokeAlbumStorage.exportAll !== 'function') {
+        if (requestId === collectionStatusRequestId) setCollectionStatusPill('missing');
+        return;
+      }
       try {
         const data = await window.PokeAlbumStorage.exportAll();
+        if (requestId !== collectionStatusRequestId) return;
         const cards = Array.isArray(data?.cards) ? data.cards : [];
-        const isPresent = cards.some(saved => getCollectionStatusBlueprintId(saved) === currentId);
-        setCollectionStatusPill(isPresent);
+        const albums = Array.isArray(data?.albums) ? data.albums : [];
+        const sameBlueprintCards = cards.filter(saved => getCollectionStatusBlueprintId(saved) === currentId);
+        const currentType = normalizeCardType(selectedCardType);
+        const sameTypeCards = sameBlueprintCards.filter(saved => normalizeCollectionStatusCardType(saved) === currentType);
+        const otherTypeCards = sameBlueprintCards.filter(saved => normalizeCollectionStatusCardType(saved) !== currentType);
+        renderCollectionOtherVersionsList(otherTypeCards, albums);
+        renderCollectionPresenceList(sameTypeCards, albums);
+        setCollectionStatusPill(sameTypeCards.length ? 'present' : otherTypeCards.length ? 'other' : 'missing', sameTypeCards.length ? sameTypeCards.length : otherTypeCards.length);
       } catch (error) {
         console.warn('Impossibile verificare presenza in collezione', error);
       }
@@ -7272,7 +7493,7 @@ async function openCardDetails(cardId) {
       if (!card) return;
       state.selectedCard = card;
       resetCardDetailTemporaryFields();
-      void updateCollectionStatusForCard(card);
+      void updateCollectionStatusForCard(card, { resetBeforeCheck: true });
       const f = getDisplayFields(card);
       const displayName = toTitleCase(f.name || 'Dettaglio carta');
       const detailImageUrl = getCardFullUrl(card);
@@ -7312,13 +7533,52 @@ async function openCardDetails(cardId) {
     let pendingOriginType = '';
     let pendingOriginDetail = '';
     let pendingOriginInTransit = false;
+    let selectedCardType = 'normal';
+    const cardTypeLabels = {
+      normal: 'Normal',
+      holo: 'Holo',
+      full_holo: 'Full Holo',
+      reverse: 'Reverse',
+      reverse_holo: 'Reverse Holo',
+      illustration: 'Illustration',
+    };
+    function normalizeCardType(value = '') {
+      const clean = String(value || '').trim().toLowerCase().replace(/[\s-]+/g, '_');
+      return cardTypeLabels[clean] ? clean : 'normal';
+    }
+    function getCardTypeLabel(value = '') {
+      return cardTypeLabels[normalizeCardType(value)] || 'Normal';
+    }
+    function setCardType(value = 'normal') {
+      selectedCardType = normalizeCardType(value);
+      if (el.cardTypeText) el.cardTypeText.textContent = getCardTypeLabel(selectedCardType);
+      document.querySelectorAll('[data-card-type]').forEach((button) => {
+        button.classList.toggle('is-selected', normalizeCardType(button.dataset.cardType) === selectedCardType);
+      });
+      if (state.selectedCard && !el.detailModal?.classList.contains('is-saved-card-detail')) {
+        void updateCollectionStatusForCard(state.selectedCard);
+      }
+    }
+    function getSelectedCardTypePayload() {
+      const type = normalizeCardType(selectedCardType);
+      return {
+        type,
+        label: getCardTypeLabel(type),
+        holo: type === 'holo' || type === 'full_holo',
+        fullHolo: type === 'full_holo',
+        reverse: type === 'reverse' || type === 'reverse_holo',
+        reverseHolo: type === 'reverse_holo',
+        illustration: type === 'illustration',
+      };
+    }
 function resetCardDetailTemporaryFields() {
       state.savedDetailCardId = null;
       if (typeof resetSavedDetailSwipeVisual === 'function') resetSavedDetailSwipeVisual(false);
       setSavedCardEditMode(false);
       if (el.detailModal) delete el.detailModal.dataset.savedCardId;
       el.detailModal?.classList.remove('is-saved-card-detail');
-      setCollectionStatusPill(false);
+      setCardType('normal');
+      setCollectionStatusPill('loading');
       el.detailModal?.querySelector('.saved-detail-card')?.setAttribute('aria-hidden', 'true');
       el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'false');
       [el.cardTotalSetInput, el.cardArtistInput, el.cardDateInput, el.cardOriginInput].forEach(input => {
@@ -7343,9 +7603,7 @@ function resetCardDetailTemporaryFields() {
       el.detailPriceValue?.closest('.detail-price-line')?.classList.remove('has-no-price');
       if (el.cardVariantsSummary) el.cardVariantsSummary.textContent = '';
       if (el.savedLocationPill) el.savedLocationPill.textContent = '';
-      [el.variantHolo, el.variantReverse, el.variantIllustration].forEach(input => {
-        if (input) input.checked = false;
-      });
+      setCardType('normal');
       pendingOriginType = '';
       pendingOriginDetail = '';
       pendingOriginInTransit = false;
@@ -7357,6 +7615,7 @@ function resetCardDetailTemporaryFields() {
       closePriceEditSheet();
       closePricePickerPage('language');
       closePricePickerPage('condition');
+      closeCardTypeChoiceSheet();
       closeOriginChoiceSheet();
       closeOriginInputSheet();
     }
@@ -7438,8 +7697,24 @@ function resetCardDetailTemporaryFields() {
       });
       syncSavedOriginFromOriginSheet(label, cleanType, cleanDetail, originInTransit);
     }
+function openCardTypeChoiceSheet() {
+      if (!el.cardTypeChoiceSheet) return;
+      closeCollectionOtherVersionsSheet();
+      closeOriginChoiceSheet();
+      closeOriginInputSheet();
+      el.cardTypeChoiceSheet.classList.add('open');
+      el.cardTypeChoiceSheet.setAttribute('aria-hidden', 'false');
+      if (el.cardTypePill) el.cardTypePill.setAttribute('aria-expanded', 'true');
+    }
+    function closeCardTypeChoiceSheet() {
+      if (!el.cardTypeChoiceSheet) return;
+      el.cardTypeChoiceSheet.classList.remove('open');
+      el.cardTypeChoiceSheet.setAttribute('aria-hidden', 'true');
+      if (el.cardTypePill) el.cardTypePill.setAttribute('aria-expanded', 'false');
+    }
 function openOriginChoiceSheet() {
       if (!el.originChoiceSheet) return;
+      closeCollectionOtherVersionsSheet();
       closeOriginInputSheet();
       el.originChoiceSheet.classList.add('open');
       el.originChoiceSheet.setAttribute('aria-hidden', 'false');
@@ -7641,20 +7916,6 @@ function openOriginChoiceSheet() {
       setSavedCardEditMode(!active);
     }
 function attachEvents() {
-      const syncVariantSelection = (changedInput) => {
-        if (!changedInput || !changedInput.checked) return;
-        if (changedInput === el.variantIllustration) {
-          if (el.variantHolo) el.variantHolo.checked = false;
-          if (el.variantReverse) el.variantReverse.checked = false;
-          return;
-        }
-        if ((changedInput === el.variantHolo || changedInput === el.variantReverse) && el.variantIllustration) {
-          el.variantIllustration.checked = false;
-        }
-      };
-      [el.variantHolo, el.variantReverse, el.variantIllustration].forEach(input => {
-        if (input) input.addEventListener('change', () => syncVariantSelection(input));
-      });
       if (el.savedCardEditToggleBtn) {
         el.savedCardEditToggleBtn.addEventListener('click', (event) => {
           event.preventDefault();
@@ -7798,6 +8059,46 @@ function attachEvents() {
           event.stopPropagation();
           if (el.detailModal?.classList.contains('is-saved-card-detail')) return;
           openOriginChoiceSheet();
+        });
+      }
+      if (el.cardTypePill) {
+        el.cardTypePill.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          openCardTypeChoiceSheet();
+        });
+      }
+      if (el.cardTypeChoiceSheet) {
+        el.cardTypeChoiceSheet.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (event.target === el.cardTypeChoiceSheet) {
+            closeCardTypeChoiceSheet();
+            return;
+          }
+          const option = event.target.closest('[data-card-type]');
+          if (!option) return;
+          setCardType(option.dataset.cardType);
+          closeCardTypeChoiceSheet();
+        });
+      }
+      if (el.collectionStatusPill) {
+        el.collectionStatusPill.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (el.collectionStatusPill.dataset.status === 'other') openCollectionOtherVersionsSheet();
+          if (el.collectionStatusPill.dataset.status === 'present') openCollectionPresenceSheet();
+        });
+      }
+      if (el.collectionPresenceSheet) {
+        el.collectionPresenceSheet.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (event.target === el.collectionPresenceSheet) closeCollectionPresenceSheet();
+        });
+      }
+      if (el.collectionOtherVersionsSheet) {
+        el.collectionOtherVersionsSheet.addEventListener('click', (event) => {
+          event.stopPropagation();
+          if (event.target === el.collectionOtherVersionsSheet) closeCollectionOtherVersionsSheet();
         });
       }
       if (el.originChoiceSheet) {
@@ -8123,7 +8424,65 @@ el.autocomplete.addEventListener('click', (e) => {
         });
       }
     }
-function buildCollectionCardPayload() {
+function getMissingAddCardFields() {
+      const missing = [];
+      const totalSet = String(el.cardTotalSetInput?.value || '').trim();
+      const releaseDate = String(el.cardDateInput?.value || '').trim();
+      const artist = String(el.cardArtistInput?.value || '').trim();
+      const origin = String(el.cardOriginInput?.value || '').trim();
+      if (!origin) missing.push('origin');
+      if (!totalSet) missing.push('totalSet');
+      if (!releaseDate) missing.push('releaseDate');
+      if (!artist) missing.push('artist');
+      return missing;
+    }
+    function hasMissingAddCardFields() {
+      return getMissingAddCardFields().length > 0;
+    }
+    function openMissingCardDataSheet() {
+      if (!el.missingCardDataSheet) return;
+      el.missingCardDataSheet.classList.add('open');
+      el.missingCardDataSheet.setAttribute('aria-hidden', 'false');
+    }
+    function closeMissingCardDataSheet() {
+      if (!el.missingCardDataSheet) return;
+      el.missingCardDataSheet.classList.remove('open');
+      el.missingCardDataSheet.setAttribute('aria-hidden', 'true');
+    }
+    function openDuplicateCardActionSheet() {
+      if (!el.duplicateCardActionSheet) return;
+      el.duplicateCardActionSheet.classList.add('open');
+      el.duplicateCardActionSheet.setAttribute('aria-hidden', 'false');
+    }
+    function closeDuplicateCardActionSheet() {
+      if (!el.duplicateCardActionSheet) return;
+      el.duplicateCardActionSheet.classList.remove('open');
+      el.duplicateCardActionSheet.setAttribute('aria-hidden', 'true');
+    }
+    async function addSelectedCardToCollection({ skipMissingCheck = false, duplicateAction = '' } = {}) {
+      const payload = buildCollectionCardPayload();
+      if (!payload || typeof window.PokeAlbumStorage?.addCardToCurrentAlbum !== 'function') {
+        window.PokeAlbumStorage?.showToast?.('Crea o apri prima un album', true);
+        return;
+      }
+      if (!skipMissingCheck && hasMissingAddCardFields()) {
+        openMissingCardDataSheet();
+        return;
+      }
+      const result = await window.PokeAlbumStorage.addCardToCurrentAlbum(payload, { duplicateAction });
+      if (result?.needsDuplicateChoice) {
+        closeMissingCardDataSheet();
+        openDuplicateCardActionSheet();
+        return;
+      }
+      closeMissingCardDataSheet();
+      closeDuplicateCardActionSheet();
+      closeModal(el.detailModal);
+      if (typeof window.PokeAlbumStorage?.returnToCurrentAlbum === 'function') {
+        window.PokeAlbumStorage.returnToCurrentAlbum();
+      }
+    }
+    function buildCollectionCardPayload() {
       const card = state.selectedCard;
       if (!card) return null;
       const f = getDisplayFields(card);
@@ -8155,11 +8514,7 @@ function buildCollectionCardPayload() {
           total: el.cardTotalSetInput?.value?.trim() || '',
         },
         rarity: f.rarity || '',
-        variants: {
-          holo: Boolean(el.variantHolo?.checked),
-          reverse: Boolean(el.variantReverse?.checked),
-          illustration: Boolean(el.variantIllustration?.checked),
-        },
+        variants: getSelectedCardTypePayload(),
         artist: el.cardArtistInput?.value?.trim() || '',
         releaseDate: el.cardDateInput?.value?.trim() || '',
         origin: {
@@ -8189,16 +8544,29 @@ function buildCollectionCardPayload() {
       const addButton = event.target.closest('.detail-add-card-btn');
       if (!addButton) return;
       event.preventDefault();
-      const payload = buildCollectionCardPayload();
-      if (!payload || typeof window.PokeAlbumStorage?.addCardToCurrentAlbum !== 'function') {
-        window.PokeAlbumStorage?.showToast?.('Crea o apri prima un album', true);
-        return;
-      }
-      await window.PokeAlbumStorage.addCardToCurrentAlbum(payload);
-      closeModal(el.detailModal);
-      if (typeof window.PokeAlbumStorage?.returnToCurrentAlbum === 'function') {
-        window.PokeAlbumStorage.returnToCurrentAlbum();
-      }
+      await addSelectedCardToCollection();
+    });
+    el.missingCardDataCancel?.addEventListener('click', (event) => {
+      event.preventDefault();
+      closeMissingCardDataSheet();
+    });
+    el.missingCardDataConfirm?.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await addSelectedCardToCollection({ skipMissingCheck: true });
+    });
+    el.missingCardDataSheet?.addEventListener('click', (event) => {
+      if (event.target === el.missingCardDataSheet) closeMissingCardDataSheet();
+    });
+    el.duplicateCardReplaceBtn?.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await addSelectedCardToCollection({ skipMissingCheck: true, duplicateAction: 'replace' });
+    });
+    el.duplicateCardAddBtn?.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await addSelectedCardToCollection({ skipMissingCheck: true, duplicateAction: 'add' });
+    });
+    el.duplicateCardActionSheet?.addEventListener('click', (event) => {
+      if (event.target === el.duplicateCardActionSheet) closeDuplicateCardActionSheet();
     });
 async function init() {
       attachEvents();
@@ -9013,7 +9381,11 @@ function openDb() {
         async function getCardsByAlbum(albumId) {
           const db = await openDb();
           const tx = db.transaction("cards", "readonly");
-          return idbRequest(tx.objectStore("cards").index("albumId").getAll(albumId));
+          const cards = await idbRequest(tx.objectStore("cards").index("albumId").getAll(albumId));
+          return (Array.isArray(cards) ? cards : []).filter((card) => {
+            const scope = String(card?.collectionScope || "album").toLowerCase();
+            return scope !== "loose" && Boolean(card?.albumId);
+          });
         }
         async function getAllCards() {
           return getAllStore("cards");
@@ -9167,8 +9539,12 @@ function buildCardRecord(payload = {}, album = null) {
             },
             rarity: payload.rarity || "",
             variants: {
+              type: normalizeCardType(payload.variants?.type || payload.cardType || payload.tipoCarta || ''),
+              label: getCardTypeLabel(payload.variants?.type || payload.cardType || payload.tipoCarta || ''),
               holo: Boolean(payload.variants?.holo || payload.holo),
+              fullHolo: Boolean(payload.variants?.fullHolo || payload.fullHolo),
               reverse: Boolean(payload.variants?.reverse || payload.reverse),
+              reverseHolo: Boolean(payload.variants?.reverseHolo || payload.reverseHolo),
               illustration: Boolean(payload.variants?.illustration || payload.illustration),
             },
             artist: payload.artist || "",
@@ -9370,11 +9746,14 @@ async function loadSavedAlbums() {
         }
         function formatSavedCardVariantSummary(card = {}) {
           const variants = card.variants || {};
+          if (variants.type) return getCardTypeLabel(variants.type);
+          if (variants.fullHolo) return 'Full Holo';
+          if (variants.reverseHolo) return 'Reverse Holo';
           return [
             variants.holo ? 'Holo' : '',
             variants.reverse ? 'Reverse' : '',
             variants.illustration ? 'Illustration' : '',
-          ].filter(Boolean).join(' - ') || 'Normale';
+          ].filter(Boolean).join(' - ') || 'Normal';
         }
         function getSavedCardOriginLabel(card = {}) {
           const origin = card.origin || {};
@@ -9509,9 +9888,6 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
             el.cardOriginBtn.setAttribute('aria-disabled', 'true');
             el.cardOriginBtn.setAttribute('tabindex', '-1');
           }
-          [el.variantHolo, el.variantReverse, el.variantIllustration].forEach(input => {
-            if (input) input.checked = false;
-          });
           if (el.detailRaw) el.detailRaw.textContent = JSON.stringify(savedCard, null, 2);
           if (el.savedLocationPill) {
             const albumName = getAlbumPublicName(state.currentAlbum?.albumData || {}) || '';
@@ -9829,13 +10205,15 @@ function enableSavedCardDetailChevronNavigation() {
         function getCardDuplicateVariantKey(card = {}) {
           const raw = card.rawCard || {};
           const variants = card.variants || {};
+          const type = normalizeCardType(variants.type || card.cardType || raw.card_type || raw.cardType || '');
+          if (type !== 'normal') return `type:${type}`;
           const holo = normalizeDuplicateVariantFlag(
             variants.holo ?? card.holo ?? raw.holo ?? raw.is_holo ?? raw.isHolo ?? raw.card_holo
           );
           const reverse = normalizeDuplicateVariantFlag(
             variants.reverse ?? card.reverse ?? raw.reverse ?? raw.is_reverse ?? raw.isReverse ?? raw.card_reverse
           );
-          return `h:${holo ? 1 : 0}|r:${reverse ? 1 : 0}`;
+          return `type:${type}|h:${holo ? 1 : 0}|r:${reverse ? 1 : 0}`;
         }
         function getCardDuplicateKey(card = {}) {
           const raw = card.rawCard || {};
@@ -9889,6 +10267,79 @@ function enableSavedCardDetailChevronNavigation() {
             const key = getCardDuplicateKey(card);
             return key && Number(countMap.get(key) || 0) > 1;
           });
+        }
+        function isCardStoredInAlbumSlot(card = {}) {
+          const scope = String(card?.collectionScope || "album").toLowerCase();
+          return scope !== "loose" && Boolean(card?.albumId);
+        }
+        function makeCardLooseDuplicate(record = {}) {
+          record.albumId = null;
+          record.collectionScope = "loose";
+          record.albumSlotNumber = null;
+          record.slotNumber = null;
+          record.updatedAt = new Date().toISOString();
+          return record;
+        }
+        function findExistingDuplicateCard(cards = [], candidate = {}) {
+          const candidateKey = getCardDuplicateKey(candidate);
+          if (!candidateKey) return null;
+          const matches = (Array.isArray(cards) ? cards : []).filter((card) => getCardDuplicateKey(card) === candidateKey);
+          return matches.find((card) => isCardStoredInAlbumSlot(card)) || matches[0] || null;
+        }
+        function mergeReplacementCardRecord(existing = {}, candidate = {}) {
+          const now = new Date().toISOString();
+          return {
+            ...candidate,
+            id: existing.id,
+            albumId: existing.albumId || null,
+            collectionScope: existing.collectionScope || (existing.albumId ? "album" : "loose"),
+            albumSlotNumber: existing.albumSlotNumber ?? existing.slotNumber ?? null,
+            slotNumber: existing.slotNumber ?? existing.albumSlotNumber ?? null,
+            addedAt: existing.addedAt || candidate.addedAt,
+            updatedAt: now,
+            sync: { ...(candidate.sync || {}), ...(existing.sync || {}), dirty: true },
+          };
+        }
+        async function normalizeDuplicateCardsToCollection(reason = "duplicate-slot-cleanup") {
+          const cards = await getAllCards();
+          const groups = new Map();
+          (Array.isArray(cards) ? cards : []).forEach((card) => {
+            const key = getCardDuplicateKey(card);
+            if (!key) return;
+            if (!groups.has(key)) groups.set(key, []);
+            groups.get(key).push(card);
+          });
+          const touchedAlbumIds = new Set();
+          let changed = 0;
+          for (const group of groups.values()) {
+            if (!Array.isArray(group) || group.length <= 1) continue;
+            const ordered = group.slice().sort((a, b) => {
+              const aInAlbum = isCardStoredInAlbumSlot(a) ? 0 : 1;
+              const bInAlbum = isCardStoredInAlbumSlot(b) ? 0 : 1;
+              if (aInAlbum !== bInAlbum) return aInAlbum - bInAlbum;
+              const slotA = Number(a.albumSlotNumber || a.slotNumber || Number.MAX_SAFE_INTEGER);
+              const slotB = Number(b.albumSlotNumber || b.slotNumber || Number.MAX_SAFE_INTEGER);
+              if (slotA !== slotB) return slotA - slotB;
+              const dateCompare = String(a.addedAt || "").localeCompare(String(b.addedAt || ""));
+              if (dateCompare !== 0) return dateCompare;
+              return String(a.id || "").localeCompare(String(b.id || ""));
+            });
+            const keepAlbumCard = ordered.find((card) => isCardStoredInAlbumSlot(card)) || null;
+            for (const card of ordered) {
+              if (!isCardStoredInAlbumSlot(card)) continue;
+              if (keepAlbumCard && String(card.id || "") === String(keepAlbumCard.id || "")) continue;
+              if (card.albumId) touchedAlbumIds.add(card.albumId);
+              makeCardLooseDuplicate(card);
+              await putStore("cards", card);
+              await queueSync("card", card.id, "update", card);
+              changed += 1;
+            }
+          }
+          if (changed) {
+            await refreshAlbumCountsAfterMove(Array.from(touchedAlbumIds));
+            await refreshDuplicateCountCache();
+          }
+          return changed;
         }
         function getAlbumCardsInInsertionOrder(cards = []) {
           return getUniqueCardsByDuplicateKey(Array.isArray(cards) ? cards : [])
@@ -11000,34 +11451,69 @@ async function updateSavedCardDetails(cardId = "", patch = {}) {
           await refreshHomeCollectionTotals();
           return record;
         }
-async function addCardToCurrentAlbum(payload) {
+async function addCardToCurrentAlbum(payload, options = {}) {
+          const duplicateAction = String(options?.duplicateAction || '').toLowerCase();
           const shouldSaveInsideAlbum = state.addCardReturnView === "detail" && Boolean(state.currentAlbum?.albumData);
-          if (!shouldSaveInsideAlbum) {
-            const record = buildCardRecord(payload, null);
-            record.collectionScope = "loose";
-            record.albumId = null;
+          const allCardsBeforeAdd = await getAllCards();
+          const duplicateProbe = buildCardRecord(payload, shouldSaveInsideAlbum ? state.currentAlbum.albumData : null);
+          const existingDuplicate = findExistingDuplicateCard(allCardsBeforeAdd, duplicateProbe);
+          if (existingDuplicate && !duplicateAction) {
+            return { needsDuplicateChoice: true, existingDuplicate };
+          }
+          if (existingDuplicate && duplicateAction === 'replace') {
+            const record = mergeReplacementCardRecord(existingDuplicate, duplicateProbe);
+            await putStore("cards", record);
+            await queueSync("card", record.id, "update", record);
+            await refreshDuplicateCountCache();
+            if (record.albumId) await refreshAlbumCountsAfterMove([record.albumId]);
+            const albumCards = record.albumId ? await getCardsByAlbum(record.albumId) : [];
+            if (state.currentAlbum?.albumData?.id && String(state.currentAlbum.albumData.id) === String(record.albumId || "")) {
+              state.currentAlbum.albumData.cardCount = getUniqueCardsByDuplicateKey(albumCards).length;
+              state.currentAlbum.albumData.updatedAt = new Date().toISOString();
+              await putStore("albums", state.currentAlbum.albumData);
+              renderAlbum(state.currentAlbum);
+              renderAlbumDetailCards(albumCards);
+            }
+            await refreshHomeSectionContent();
+            await refreshHomeCollectionTotals();
+            const albumName = record.albumId ? getAlbumNameById(record.albumId) : "Collezione";
+            const slotText = Number(record.albumSlotNumber || record.slotNumber || 0) ? ` Slot ${Number(record.albumSlotNumber || record.slotNumber || 0)}` : "";
+            showStorageToast(`Carta sostituita in ${albumName}${slotText}`);
+            return record;
+          }
+          if (!shouldSaveInsideAlbum || existingDuplicate) {
+            const record = duplicateProbe;
+            makeCardLooseDuplicate(record);
+            await putStore("cards", record);
+            await queueSync("card", record.id, "add", record);
+            await refreshDuplicateCountCache();
+            await normalizeDuplicateCardsToCollection("add-duplicate");
+            await refreshHomeSectionContent();
+            await refreshHomeCollectionTotals();
+            showStorageToast(existingDuplicate ? "Aggiunta ai duplicati" : "Aggiunta alla Collezione");
+            return record;
+          }
+          const albumNode = state.currentAlbum;
+          const record = duplicateProbe;
+          record.albumId = albumNode.albumData.id;
+          record.collectionScope = "album";
+          const freeSlots = await getFreeSlotNumbersForAlbum(albumNode.albumData.id);
+          if (!freeSlots.length) {
+            makeCardLooseDuplicate(record);
             await putStore("cards", record);
             await queueSync("card", record.id, "add", record);
             await refreshDuplicateCountCache();
             await refreshHomeSectionContent();
             await refreshHomeCollectionTotals();
-            showStorageToast("Aggiunta alla Collezione");
+            showStorageToast("Album pieno: carta aggiunta solo alla Collezione", true);
             return record;
-          }
-          const albumNode = state.currentAlbum;
-          const record = buildCardRecord(payload, albumNode.albumData);
-          record.collectionScope = "album";
-          const existingAlbumCards = await getCardsByAlbum(albumNode.albumData.id);
-          const freeSlots = await getFreeSlotNumbersForAlbum(albumNode.albumData.id);
-          if (!freeSlots.length) {
-            showStorageToast("Album pieno: nessuno slot disponibile", true);
-            return null;
           }
           record.albumSlotNumber = freeSlots[0];
           record.slotNumber = freeSlots[0];
           await putStore("cards", record);
           await queueSync("card", record.id, "add", record);
           await refreshDuplicateCountCache();
+          await normalizeDuplicateCardsToCollection("add-card");
           const albumCards = await getCardsByAlbum(albumNode.albumData.id);
           albumNode.albumData.cardCount = getUniqueCardsByDuplicateKey(albumCards).length;
           albumNode.albumData.updatedAt = new Date().toISOString();
@@ -12416,6 +12902,7 @@ function formatStorageBytes(bytes) {
           state.deletingAlbum = null;
 
           await loadSavedAlbums();
+          await normalizeDuplicateCardsToCollection("restore");
           await loadOwnerName();
           await loadProfileAvatarImage();
           await refreshHomeCollectionTotals();
@@ -14582,6 +15069,7 @@ els.priceToggleBtn.addEventListener("click", () => {
             if (!els.albumsGrid?.children?.length) {
               await loadSavedAlbums();
             }
+            await normalizeDuplicateCardsToCollection("startup");
             await loadOwnerName();
             await loadProfileAvatarImage();
           } catch (error) {
