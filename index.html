@@ -614,7 +614,7 @@ svg{overflow:visible}
 #detailModal .sheet-icon-btn{border:1px solid rgba(255,255,255,.56);background:rgba(255,255,255,.58);color:#5c6f99;border-radius:50%;height:var(--topbar-control-size);min-width:var(--topbar-control-size);font-size:20px;padding:0;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;width:var(--topbar-control-size);box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%)}
 #detailModal .sheet-icon-btn:hover{color:#3157c9;background:rgba(255,255,255,.68)}
 #detailModal .detail-top-name{font-size:clamp(18px,2.4vh,24px);line-height:1.1;font-weight:850;color:#1c2e5a;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-#detailModal .card-sheet-actions{position:absolute;right:0;top:var(--topbar-control-offset-y);display:inline-flex;align-items:center;gap:8px;z-index:4;margin-left:0;margin-top:0}
+#detailModal .card-sheet-actions{margin-left:auto;display:inline-flex;align-items:flex-start;gap:0;position:relative}
 #detailModal .detail-content{padding:0;display:grid;gap:3px}
 #detailModal .collection-status-wrap{display:flex;justify-content:space-between;align-items:center;margin:0;width:100%;gap:6px}
 #detailModal .collection-status-pill{appearance:none;-webkit-appearance:none;min-height:30px;max-width:100%;border-radius:999px;padding:0 11px 0 12px;display:inline-flex;align-items:center;justify-content:center;gap:5px;font-family:inherit;font-size:10px;font-weight:900;letter-spacing:-.005em;line-height:1;text-transform:none;cursor:pointer;-webkit-tap-highlight-color:transparent;border:1px solid rgba(120,146,207,.16);background:rgba(255,255,255,.68);color:#20345f;box-shadow:0 7px 16px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.86);transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,border-color .16s ease}
@@ -2172,9 +2172,8 @@ body:has(#albumDetailView:not(.is-hidden)) .bottom-nav-shell{bottom:calc(var(--s
 .album-detail-view.is-selecting .album-select-more.is-enabled{color:#3157c9 !important}
 .album-detail-view.is-selecting .album-select-more:disabled:hover,.album-detail-view.is-selecting .album-select-more[aria-disabled="true"]:hover{background:transparent !important}
 .album-select-btn{height:40px !important;min-height:40px !important;align-self:center !important;padding:0 14px !important;background:rgba(255,255,255,.50) !important}
-#detailModal .detail-add-card-btn{margin-top:4px !important;min-width:auto !important;padding:0 11px !important;white-space:nowrap !important;background:linear-gradient(135deg,#7aa6ff 0%,#4f83ff 48%,#2f64ff 100%) !important;color:#fff !important;border-color:rgba(255,255,255,.36) !important;box-shadow:none !important;transform:none !important;transition:background-color .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease,opacity .18s ease !important}
-#detailModal .detail-add-card-btn:hover{background:linear-gradient(135deg,#7aa6ff 0%,#4f83ff 48%,#2f64ff 100%) !important;color:#fff !important;box-shadow:none !important;filter:saturate(1.04) brightness(1.01) !important}
-#detailModal .detail-add-card-btn:active{transform:none !important}
+#detailModal .detail-add-card-btn{color:#fff;background:linear-gradient(135deg,#7aa6ff 0%,#2f64ff 100%);border-color:rgba(255,255,255,.62);box-shadow:0 12px 24px rgba(47,100,255,.22),inset 0 1px 0 rgba(255,255,255,.34)}
+#detailModal .detail-add-card-btn:hover{color:#2f64ff;background:rgba(255,255,255,.68);box-shadow:0 16px 28px rgba(73,96,157,.18),inset 0 1px 0 rgba(255,255,255,.96)}
 @media (max-width:380px){.album-detail-topbar{column-gap:6px !important}
 .album-detail-view.is-selecting .album-select-actions{padding:3px !important}
 .album-detail-view.is-selecting .album-select-close,.album-detail-view.is-selecting .album-select-more{width:36px !important;height:36px !important;min-width:36px !important;min-height:36px !important}
@@ -4794,8 +4793,8 @@ paint-order="stroke">
               <div class="detail-top-card-meta" id="detailTopMeta"></div>
             </div>
             <div class="card-sheet-actions">
-              <button class="album-select-btn detail-add-card-btn" type="button" aria-label="Aggiungi carta">
-                + Aggiungi
+              <button class="sheet-icon-btn detail-add-card-btn" type="button" aria-label="Aggiungi carta">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
               </button>
             </div>
           </div>
