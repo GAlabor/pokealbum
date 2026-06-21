@@ -24,6 +24,10 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function log(level, message) {
   const line = `[${nowIso()}] [${level}] ${message}`;
   console.log(line);
@@ -271,6 +275,8 @@ async function buildDatabase() {
     const exp = pokemonExpansions[i];
 
     await log('INFO', `${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
+	
+	await sleep(120);
 
     let blueprintsPayload;
 
