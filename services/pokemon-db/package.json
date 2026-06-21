@@ -1,0 +1,12 @@
+{
+  "name": "pokealbum-pokemon-db",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "update": "node update-db.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
