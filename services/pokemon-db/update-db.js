@@ -6,6 +6,7 @@ const token = process.env.CARDTRADER_TOKEN;
 const dbDir = process.env.POKEMON_DB_DIR || '/opt/pokealbum-db';
 const minCardsCount = Number(process.env.MIN_CARDS_COUNT || 1000);
 const fetchTimeoutMs = Number(process.env.FETCH_TIMEOUT_MS || 30000);
+const requestDelayMs = Number(process.env.REQUEST_DELAY_MS || 120);
 
 const API_BASE = 'https://api.cardtrader.com/api/v2';
 
