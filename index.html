@@ -4984,32 +4984,16 @@ paint-order="stroke">
     </div>
   </div>
     <script>
-const POKEALBUM_FRONTEND_URL = "https://galabor.github.io/pokealbum/";
 const POKEALBUM_LOCAL_OAUTH_WINDOW_NAME_KEY = "pokealbumLocalOAuthReturnTo";
 const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   "return_to",
-  "returnTo",
   "redirect_to",
-  "redirectTo",
-  "frontend_url",
-  "frontendUrl",
-  "app_url",
-  "appUrl",
-  "pa_return_to",
-  "success_url",
-  "successUrl",
-  "return_url",
-  "returnUrl",
-  "client_return_to",
-  "local_return_to"
+  "frontend_url"
 ];
 
 (function redirectOAuthReturnToCorrectFrontend() {
   try {
     const url = new URL(window.location.href);
-    const host = window.location.hostname;
-    const isRender = host.endsWith(".onrender.com");
-    const isOracle = host === "92-4-233-89.sslip.io";
     const hasDropboxResult =
       url.searchParams.has("dropbox") ||
       url.searchParams.has("dropbox_connected") ||
@@ -5017,12 +5001,9 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
       url.searchParams.has("error");
 
     /*
-      Se l'autorizzazione Dropbox è partita dal locale, il backend Oracle dovrebbe
-      restituirci l'indirizzo locale nei parametri. In alcuni ritorni però il
-      backend cade comunque sulla pagina online: per questo salviamo anche il
-      ritorno in window.name prima di uscire dall'app locale. La stessa scheda del
-      browser può così rientrare su 127.0.0.1 senza dipendere dal token. Sì, OAuth
-      è riuscito a trasformare un semplice "torna dove eri" in archeologia.
+      Gestione ritorno OAuth Dropbox avviato dall'app locale.
+      Il target locale viene passato al backend Oracle e salvato anche in window.name
+      per recuperare il ritorno sulla stessa scheda in caso di redirect intermedio.
     */
     const safeLocalTargetFromRaw = (rawValue) => {
       if (!rawValue) return null;
@@ -5070,28 +5051,12 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
       return;
     }
 
-    /*
-      Compatibilità vecchia: se Render riceveva il ritorno OAuth, riportava
-      alla Home pubblicata su GitHub Pages.
-    */
-    if (!isRender) return;
-    const shouldReturnToHome =
-      hasDropboxResult ||
-      url.pathname === "/" ||
-      url.pathname.endsWith("/index.html");
-
-    if (!shouldReturnToHome) return;
-
-    const target = new URL(POKEALBUM_FRONTEND_URL);
-    target.search = url.search;
-    target.hash = url.hash;
-    window.location.replace(target.toString());
   } catch (error) {
     console.warn("Redirect OAuth verso frontend corretto non riuscito", error);
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi481-local-cache-fingerprint';
+    const POKEALBUM_BUILD_VERSION = 'vi523-oracle-dropbox-clean';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -12577,18 +12542,14 @@ function formatStorageBytes(bytes) {
           const url = new URL(dropboxApiUrl("/auth/dropbox/start"), window.location.href);
 
           /*
-            Dopo una disconnessione vogliamo una vera riautorizzazione Dropbox,
-            non il solito teatrino del token già salvato che torna vivo come uno zombie.
-            Il backend userà questo flag per passare force_reapprove a Dropbox.
+            Dopo una disconnessione viene forzata una nuova autorizzazione Dropbox,
+            evitando il riuso automatico di credenziali già salvate lato backend.
           */
           url.searchParams.set("force_reapprove", "true");
 
           /*
-            Fondamentale per l'uso locale:
-            il BAT apre 127.0.0.1, ma l'OAuth Dropbox passa da Oracle.
-            Quindi diciamo a Oracle dove deve riportarci dopo il login.
-            Uso più nomi parametro per restare compatibile anche se il backend
-            legge return_to, redirect_to o frontend_url.
+            In locale il BAT apre 127.0.0.1, mentre l'OAuth Dropbox passa dal backend Oracle.
+            Passiamo quindi al backend l'URL locale dove deve riportare l'app dopo il login.
           */
           if (isLocalPokAlbumFrontend()) {
             const returnTo = getDropboxOAuthReturnUrl();
@@ -12601,18 +12562,8 @@ function formatStorageBytes(bytes) {
             } catch {}
 
             url.searchParams.set("return_to", returnTo);
-            url.searchParams.set("returnTo", returnTo);
             url.searchParams.set("redirect_to", returnTo);
-            url.searchParams.set("redirectTo", returnTo);
             url.searchParams.set("frontend_url", returnTo);
-            url.searchParams.set("frontendUrl", returnTo);
-            url.searchParams.set("app_url", returnTo);
-            url.searchParams.set("appUrl", returnTo);
-            url.searchParams.set("pa_return_to", returnTo);
-            url.searchParams.set("success_url", returnTo);
-            url.searchParams.set("return_url", returnTo);
-            url.searchParams.set("client_return_to", returnTo);
-            url.searchParams.set("local_return_to", returnTo);
           }
 
           return url.toString();
