@@ -100,6 +100,10 @@ function replaceFileNamePrefix(url, newPrefix) {
   return `${basePath}${newPrefix}${cleanFileName}`;
 }
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 function buildImageUrls(imageUrl) {
   const cleaned = cleanImageUrl(imageUrl);
 
