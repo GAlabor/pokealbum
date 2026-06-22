@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 const token = process.env.CARDTRADER_TOKEN;
-const dbDir = process.env.POKEMON_DB_DIR || '/opt/pokealbum-db';
+const dbDir = process.env.POKEMON_DB_DIR || '/opt/pokealbum-pokemon-db/data';
 const minCardsCount = Number(process.env.MIN_CARDS_COUNT || 1000);
 const fetchTimeoutMs = Number(process.env.FETCH_TIMEOUT_MS || 30000);
 const requestDelayMs = Number(process.env.REQUEST_DELAY_MS || 120);
@@ -35,6 +35,10 @@ async function api(apiPath) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function extractArray(payload, preferredKeys = []) {
@@ -100,10 +104,6 @@ function replaceFileNamePrefix(url, newPrefix) {
   return `${basePath}${newPrefix}${cleanFileName}`;
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 function buildImageUrls(imageUrl) {
   const cleaned = cleanImageUrl(imageUrl);
 
@@ -155,15 +155,24 @@ async function detectSingleCardCategory(gameId) {
 
 async function main() {
   console.log('Avvio aggiornamento database Pokémon...');
+  console.log(`Cartella DB: ${dbDir}`);
+  console.log(`Delay richieste: ${requestDelayMs} ms`);
 
   const info = await api('/info');
+  await sleep(requestDelayMs);
+
   const pokemonGame = await detectPokemonGame();
+  await sleep(requestDelayMs);
+
   const category = await detectSingleCardCategory(pokemonGame.id);
+  await sleep(requestDelayMs);
 
   console.log(`Game trovato: ${pokemonGame.name || pokemonGame.display_name || pokemonGame.id}`);
   console.log(`Categoria: ${category?.name || category?.id || 'non trovata'}`);
 
   const expansionsPayload = await api('/expansions');
+  await sleep(requestDelayMs);
+
   const expansions = extractArray(expansionsPayload, ['expansions']);
 
   const pokemonExpansions = expansions.filter(x =>
@@ -185,6 +194,7 @@ async function main() {
 
     try {
       blueprintsPayload = await api(`/blueprints/export?expansion_id=${encodeURIComponent(exp.id)}`);
+      await sleep(requestDelayMs);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
 
@@ -197,6 +207,7 @@ async function main() {
         error: message
       });
 
+      await sleep(requestDelayMs);
       continue;
     }
 
