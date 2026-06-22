@@ -1,115 +1,38 @@
+import 'dotenv/config';
 import fs from 'fs/promises';
 import path from 'path';
-import dotenv from 'dotenv';
 
-dotenv.config();
+const token = process.env.CARDTRADER_TOKEN;
+const dbDir = process.env.POKEMON_DB_DIR || '/opt/pokealbum-db';
+const minCardsCount = Number(process.env.MIN_CARDS_COUNT || 1000);
+const fetchTimeoutMs = Number(process.env.FETCH_TIMEOUT_MS || 30000);
 
-const CONFIG = {
-  apiBase: 'https://api.cardtrader.com/api/v2',
-  token: process.env.CARDTRADER_TOKEN || '',
-  dbDir: process.env.POKEMON_DB_DIR || '/opt/pokealbum-db',
-  minCardsCount: Number(process.env.MIN_CARDS_COUNT || 1000),
-  fetchTimeoutMs: Number(process.env.FETCH_TIMEOUT_MS || 30000)
-};
+const API_BASE = 'https://api.cardtrader.com/api/v2';
 
-const PATHS = {
-  indexesDir: path.join(CONFIG.dbDir, 'indexes'),
-  tmpDir: path.join(CONFIG.dbDir, 'tmp'),
-  logsDir: path.join(CONFIG.dbDir, 'logs'),
-  activeManifest: path.join(CONFIG.dbDir, 'active-index.json'),
-  logFile: path.join(CONFIG.dbDir, 'logs', 'update.log')
-};
-
-function nowIso() {
-  return new Date().toISOString();
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function log(level, message) {
-  const line = `[${nowIso()}] [${level}] ${message}`;
-  console.log(line);
-
-  try {
-    await fs.mkdir(PATHS.logsDir, { recursive: true });
-    await fs.appendFile(PATHS.logFile, `${line}\n`, 'utf8');
-  } catch {
-    // Il log non deve mai bloccare l'aggiornamento.
-  }
-}
-
-async function step(label, fn) {
-  const started = Date.now();
-  await log('INFO', `${label}...`);
-
-  try {
-    const result = await fn();
-    const seconds = ((Date.now() - started) / 1000).toFixed(1);
-    await log('SUCCESS', `${label} completato (${seconds}s)`);
-    return result;
-  } catch (error) {
-    const seconds = ((Date.now() - started) / 1000).toFixed(1);
-    await log('ERROR', `${label} fallito (${seconds}s): ${error?.message || error}`);
-    throw error;
-  }
-}
-
-function assertConfig() {
-  if (!CONFIG.token) {
-    throw new Error('CARDTRADER_TOKEN mancante');
-  }
-
-  if (!Number.isFinite(CONFIG.minCardsCount) || CONFIG.minCardsCount < 1000) {
-    throw new Error('MIN_CARDS_COUNT non valido');
-  }
-
-  if (!Number.isFinite(CONFIG.fetchTimeoutMs) || CONFIG.fetchTimeoutMs < 1000) {
-    throw new Error('FETCH_TIMEOUT_MS non valido');
-  }
-}
-
-async function ensureDirs() {
-  await fs.mkdir(CONFIG.dbDir, { recursive: true });
-  await fs.mkdir(PATHS.indexesDir, { recursive: true });
-  await fs.mkdir(PATHS.tmpDir, { recursive: true });
-  await fs.mkdir(PATHS.logsDir, { recursive: true });
-}
-
-async function readJsonIfExists(filePath, fallback = null) {
-  try {
-    const text = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(text);
-  } catch {
-    return fallback;
-  }
-}
-
-async function writeJson(filePath, data) {
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+if (!token) {
+  throw new Error('CARDTRADER_TOKEN mancante');
 }
 
 async function api(apiPath) {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), CONFIG.fetchTimeoutMs);
+  const timeout = setTimeout(() => controller.abort(), fetchTimeoutMs);
 
   try {
-    const response = await fetch(`${CONFIG.apiBase}${apiPath}`, {
+    const response = await fetch(`${API_BASE}${apiPath}`, {
       headers: {
-        Authorization: `Bearer ${CONFIG.token}`
+        Authorization: `Bearer ${token}`
       },
       signal: controller.signal
     });
 
     if (!response.ok) {
       const text = await response.text().catch(() => '');
-      throw new Error(`CardTrader HTTP ${response.status}: ${text || response.statusText}`);
+      throw new Error(`Errore API ${response.status}: ${text || response.statusText}`);
     }
 
     return response.json();
   } finally {
-    clearTimeout(timer);
+    clearTimeout(timeout);
   }
 }
 
@@ -135,7 +58,6 @@ function stripLeadingZeros(value) {
 
 function getNumberNorm(value) {
   const text = String(value ?? '').trim();
-
   if (!/^\d+$/.test(text)) return null;
 
   const normalized = Number(stripLeadingZeros(text));
@@ -217,45 +139,24 @@ async function detectSingleCardCategory(gameId) {
   const payload = await api(`/categories?game_id=${encodeURIComponent(gameId)}`);
   const categories = extractArray(payload, ['categories']);
 
-  return categories.find(c =>
+  const direct = categories.find(c =>
     (/single/i.test(String(c.name || '')) && /card/i.test(String(c.name || ''))) ||
     /pokemon singles/i.test(String(c.name || '')) ||
     /singles/i.test(String(c.name || ''))
-  ) || categories[0] || null;
+  );
+
+  return direct || categories[0] || null;
 }
 
-function validateDatabase(cards, meta) {
-  if (!Array.isArray(cards)) {
-    throw new Error('Database non valido: non è un array');
-  }
+async function main() {
+  console.log('Avvio aggiornamento database Pokémon...');
 
-  if (cards.length < CONFIG.minCardsCount) {
-    throw new Error(`Database troppo piccolo: ${cards.length} carte, minimo ${CONFIG.minCardsCount}`);
-  }
-
-  if (!meta || typeof meta !== 'object') {
-    throw new Error('Meta database mancante o non valido');
-  }
-
-  if (Number(meta.cardsCount) !== cards.length) {
-    throw new Error(`Meta incoerente: cardsCount=${meta.cardsCount}, array=${cards.length}`);
-  }
-
-  const sample = cards.slice(0, 50);
-  const broken = sample.find(card => !card.id || !card.name || !card.set_name);
-
-  if (broken) {
-    throw new Error(`Carta non valida nel campione: ${JSON.stringify(broken).slice(0, 300)}`);
-  }
-}
-
-async function buildDatabase() {
   const info = await api('/info');
   const pokemonGame = await detectPokemonGame();
   const category = await detectSingleCardCategory(pokemonGame.id);
 
-  await log('INFO', `Game trovato: ${pokemonGame.name || pokemonGame.display_name || pokemonGame.id}`);
-  await log('INFO', `Categoria: ${category?.name || category?.id || 'non trovata'}`);
+  console.log(`Game trovato: ${pokemonGame.name || pokemonGame.display_name || pokemonGame.id}`);
+  console.log(`Categoria: ${category?.name || category?.id || 'non trovata'}`);
 
   const expansionsPayload = await api('/expansions');
   const expansions = extractArray(expansionsPayload, ['expansions']);
@@ -273,19 +174,16 @@ async function buildDatabase() {
 
   for (let i = 0; i < pokemonExpansions.length; i++) {
     const exp = pokemonExpansions[i];
-
-    await log('INFO', `${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
-	
-	await sleep(120);
+    console.log(`${i + 1}/${pokemonExpansions.length} - ${exp.name}`);
 
     let blueprintsPayload;
 
     try {
       blueprintsPayload = await api(`/blueprints/export?expansion_id=${encodeURIComponent(exp.id)}`);
     } catch (error) {
-      const message = error?.message || String(error);
+      const message = error instanceof Error ? error.message : String(error);
 
-      await log('WARN', `SKIP espansione ${exp.id} - ${exp.name}: ${message}`);
+      console.warn(`SKIP espansione ${exp.id} - ${exp.name}: ${message}`);
 
       skippedExpansions.push({
         id: exp.id,
@@ -334,8 +232,12 @@ async function buildDatabase() {
     }
   }
 
+  if (allCards.length < minCardsCount) {
+    throw new Error(`Database troppo piccolo: ${allCards.length} carte. Minimo richiesto: ${minCardsCount}`);
+  }
+
   const meta = {
-    updatedAt: nowIso(),
+    updatedAt: new Date().toISOString(),
     appName: info.name || '',
     appId: info.id || null,
     gameId: pokemonGame.id,
@@ -346,7 +248,7 @@ async function buildDatabase() {
     expansionsCount: pokemonExpansions.length,
     skippedExpansionsCount: skippedExpansions.length,
     skippedExpansions,
-    indexVersion: 5,
+    indexVersion: 4,
     imageSchema: {
       version: 1,
       fields: [
@@ -357,89 +259,27 @@ async function buildDatabase() {
     }
   };
 
-  return {
-    cards: allCards,
-    meta
-  };
-}
+  await fs.mkdir(dbDir, { recursive: true });
 
-function getNextVersion(activeManifest) {
-  const current = Number(activeManifest?.version || 0);
-  return current + 1;
-}
-
-async function publishDatabase(cards, meta) {
-  const active = await readJsonIfExists(PATHS.activeManifest, null);
-  const version = getNextVersion(active);
-
-  const indexFileName = `pokemon-index-v${version}.json`;
-  const metaFileName = `pokemon-index-v${version}-meta.json`;
-
-  const tmpIndexPath = path.join(PATHS.tmpDir, indexFileName);
-  const tmpMetaPath = path.join(PATHS.tmpDir, metaFileName);
-
-  const finalIndexPath = path.join(PATHS.indexesDir, indexFileName);
-  const finalMetaPath = path.join(PATHS.indexesDir, metaFileName);
-
-  await writeJson(tmpIndexPath, cards);
-  await writeJson(tmpMetaPath, meta);
-
-  const tmpCards = await readJsonIfExists(tmpIndexPath, null);
-  const tmpMeta = await readJsonIfExists(tmpMetaPath, null);
-
-  validateDatabase(tmpCards, tmpMeta);
-
-  await fs.rename(tmpIndexPath, finalIndexPath);
-  await fs.rename(tmpMetaPath, finalMetaPath);
-
-  const manifest = {
-    version,
-    createdAt: nowIso(),
-    cards: cards.length,
-    generator: 'pokealbum-pokemon-db 1.0',
-    index: `indexes/${indexFileName}`,
-    meta: `indexes/${metaFileName}`
-  };
-
-  const tmpManifest = path.join(PATHS.tmpDir, 'active-index.json');
-  await writeJson(tmpManifest, manifest);
-
-  const checkManifest = await readJsonIfExists(tmpManifest, null);
-
-  if (!checkManifest?.index || !checkManifest?.meta || !checkManifest?.cards) {
-    throw new Error('Manifest temporaneo non valido');
-  }
-
-  await fs.rename(tmpManifest, PATHS.activeManifest);
-
-  return manifest;
-}
-
-async function main() {
-  await ensureDirs();
-  assertConfig();
-
-  await log('INFO', '=== Avvio aggiornamento database Pokémon ===');
-
-  const { cards, meta } = await step('Download e costruzione database', buildDatabase);
-
-  await step('Validazione database', async () => {
-    validateDatabase(cards, meta);
-  });
-
-  const manifest = await step('Pubblicazione atomica database', async () => {
-    return publishDatabase(cards, meta);
-  });
-
-  await log(
-    'SUCCESS',
-    `Database attivo v${manifest.version}: ${manifest.cards} carte`
+  await fs.writeFile(
+    path.join(dbDir, 'pokemon-index.json'),
+    JSON.stringify(allCards)
   );
 
-  await log('INFO', '=== Fine aggiornamento database Pokémon ===');
+  await fs.writeFile(
+    path.join(dbDir, 'pokemon-index-meta.json'),
+    JSON.stringify(meta)
+  );
+
+  console.log(`Database aggiornato: ${allCards.length} carte, ${pokemonExpansions.length} espansioni.`);
+  console.log(`File scritti in: ${dbDir}`);
+
+  if (skippedExpansions.length) {
+    console.warn(`Espansioni saltate: ${skippedExpansions.length}`);
+  }
 }
 
-main().catch(async error => {
-  await log('ERROR', error?.stack || error?.message || String(error));
+main().catch(error => {
+  console.error(error);
   process.exit(1);
 });
