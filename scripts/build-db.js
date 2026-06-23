@@ -1,13 +1,16 @@
+import 'dotenv/config';
 import fs from 'fs/promises';
 
 const token = process.env.CARDTRADER_TOKEN;
 const API_BASE = 'https://api.cardtrader.com/api/v2';
+const API_DELAY_MS = 120;
 
 if (!token) {
   throw new Error('CARDTRADER_TOKEN mancante');
 }
 
 async function api(path) {
+  await new Promise(resolve => setTimeout(resolve, API_DELAY_MS));
   const response = await fetch(`${API_BASE}${path}`, {
     headers: {
       Authorization: `Bearer ${token}`

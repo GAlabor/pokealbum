@@ -6,5 +6,8 @@
   "scripts": {
     "build:db": "node scripts/build-db.js",
     "build:price-db": "node scripts/build_price-db.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
   }
 }
