@@ -13,7 +13,9 @@
     <link rel="preconnect" href="https://cardtrader.com" crossorigin>
     <link rel="dns-prefetch" href="//cardtrader.com">
     <link rel="preconnect" href="https://www.cardtrader.com" crossorigin>
-    <link rel="dns-prefetch" href="//www.cardtrader.com"><style>
+    <link rel="dns-prefetch" href="//www.cardtrader.com">
+    <link rel="preconnect" href="https://92-4-233-89.sslip.io" crossorigin>
+    <link rel="dns-prefetch" href="//92-4-233-89.sslip.io"><style>
 .album-needed-toast{opacity:0;visibility:hidden;pointer-events:none}
 .album-needed-toast.is-visible{visibility:visible}
 .app{max-width:1400px;margin:0 auto}
@@ -664,7 +666,7 @@ body{padding:22px;min-height:100dvh;display:block;position:fixed;inset:0;overflo
 .add-card-search-view #results .thumb-wrap img,.add-card-search-view #results img.thumb{width:auto !important;height:100% !important;max-width:100% !important;max-height:120px !important;object-fit:contain !important;display:block !important;border-radius:9px !important}
 .add-card-search-view #results .thumb-fallback{height:120px !important;min-height:120px !important;padding:8px !important;font-size:11px !important}
 .add-card-search-view #results .card-body{padding:8px 9px 9px !important;flex:0 0 auto !important;gap:3px !important}
-.add-card-search-view #results .card-title{color:#1c2e5a;font-size:12.5px !important;font-weight:850 !important;line-height:1.12 !important;min-height:28px !important;display:-webkit-box !important;-webkit-line-clamp:2 !important;-webkit-box-orient:vertical !important;overflow:hidden !important}
+.add-card-search-view #results .card-title{color:#1c2e5a;font-size:12.5px !important;font-weight:850 !important;line-height:1.12 !important;min-height:28px !important;display:-webkit-box !important;-webkit-line-clamp:2 !important;line-clamp:2 !important;-webkit-box-orient:vertical !important;overflow:hidden !important}
 .add-card-search-view #results .card-meta{color:#7382a2;font-size:10.8px !important;font-weight:650;line-height:1.15 !important}
 .add-card-search-view #results .card-meta>div{white-space:nowrap !important;overflow:hidden !important;text-overflow:ellipsis !important}
 @media (max-width:760px){#detailModal .card-sheet-container{padding:12px}
@@ -1237,18 +1239,6 @@ button:focus,button:active,select:focus,select:active,a:focus,a:active{outline:n
 #detailModal .detail-cards{gap:10px !important;margin:0 auto !important}
 #detailModal .detail-image-wrap,#detailModal .detail-price,#detailModal .info-card{border-radius:24px !important;background:rgba(255,255,255,.52) !important;border:1px solid rgba(255,255,255,.64) !important;box-shadow:0 14px 30px rgba(66,89,152,.10),inset 0 1px 0 rgba(255,255,255,.88) !important;backdrop-filter:blur(22px) saturate(145%) !important;-webkit-backdrop-filter:blur(22px) saturate(145%) !important}
 
-@media (max-width:360px){
-
-#detailModal .detail-variant-radio,
-
-}
-
-@media (max-width:360px){
-}
-
-@media (max-width:360px){
-
-}
 #detailModal .detail-image-wrap{position:relative !important;cursor:zoom-in}
 #detailModal .detail-image-wrap .detail-img{cursor:zoom-in}
 #detailModal .card-zoom-btn{position:absolute;right:18px;bottom:18px;width:42px;height:42px;border:1px solid rgba(255,255,255,.56);border-radius:50%;background:rgba(255,255,255,.58);color:#5c6f99;display:none;align-items:center;justify-content:center;padding:0;box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);cursor:zoom-in;z-index:4;-webkit-tap-highlight-color:transparent;transition:transform .18s ease,background-color .18s ease,color .18s ease,box-shadow .18s ease,opacity .18s ease}
@@ -1542,7 +1532,7 @@ body:not(.ui-booting) #emptyState,body:not(.ui-booting) #albumsView,body:not(.ui
 .home-collection-card-image{width:auto;height:100%;max-width:100%;max-height:138px;object-fit:contain;display:block;border-radius:9px}
 .home-collection-card-fallback{height:124px;display:flex;align-items:center;justify-content:center;text-align:center;color:#7382a2;font-size:11px;font-weight:750;padding:8px}
 .home-collection-card-body{padding:8px 9px 10px;display:grid;gap:3px}
-.home-collection-card-title{margin:0;color:#1c2e5a;font-size:12.5px;font-weight:850;line-height:1.12;min-height:28px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.home-collection-card-title{margin:0;color:#1c2e5a;font-size:12.5px;font-weight:850;line-height:1.12;min-height:28px;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .home-collection-card-meta,.home-collection-card-album,.home-collection-card-price{margin:0;color:#7382a2;font-size:10.8px;font-weight:650;line-height:1.18;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home-collection-card-album{color:#2f64ff;font-weight:760}
 .home-collection-card-price{color:#1c2e5a;font-weight:820}
@@ -1554,7 +1544,7 @@ body:not(.ui-booting) #emptyState,body:not(.ui-booting) #albumsView,body:not(.ui
 .home-set-card{border:1px solid rgba(255,255,255,.62);border-radius:20px;background:rgba(255,255,255,.56);color:#20345f;box-shadow:0 12px 26px rgba(66,89,152,.12),inset 0 1px 0 rgba(255,255,255,.9);backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%);overflow:hidden;min-width:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease}
 .home-set-card:hover{transform:translateY(-1px);border-color:rgba(47,100,255,.18);box-shadow:0 16px 30px rgba(66,89,152,.15),inset 0 1px 0 rgba(255,255,255,.94)}
 .home-set-card-head{padding:12px 12px 10px;display:grid;gap:5px;border-bottom:1px solid rgba(111,134,188,.12)}
-.home-set-card-title{margin:0;color:#1c2e5a;font-size:14px;font-weight:900;line-height:1.12;letter-spacing:-.035em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.home-set-card-title{margin:0;color:#1c2e5a;font-size:14px;font-weight:900;line-height:1.12;letter-spacing:-.035em;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .home-set-card-meta{margin:0;color:#7382a2;font-size:11px;font-weight:760;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .home-set-card-count{color:#2f64ff;font-weight:900}
 .home-set-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:9px 10px 11px;min-height:74px}
@@ -1585,7 +1575,7 @@ body:not(.ui-booting) #emptyState,body:not(.ui-booting) #albumsView,body:not(.ui
 .album-detail-card-image{width:100%;height:100%;max-height:188px;object-fit:contain;display:block;border-radius:13px;filter:drop-shadow(0 10px 14px rgba(20,34,74,.16))}
 .album-detail-card-fallback{width:100%;height:100%;min-height:150px;border-radius:16px;display:grid;place-items:center;text-align:center;padding:12px;color:#7382a2;font-size:12px;font-weight:800;background:rgba(248,251,255,.56)}
 .album-detail-card-body{padding:7px 10px 10px;display:grid;gap:3px}
-.album-detail-card-title{margin:0;color:#1c2e5a;font-size:13px;font-weight:900;letter-spacing:-.03em;line-height:1.15;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.album-detail-card-title{margin:0;color:#1c2e5a;font-size:13px;font-weight:900;letter-spacing:-.03em;line-height:1.15;overflow:hidden;display:-webkit-box;line-clamp:2;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .album-detail-card-meta{margin:0;color:#7382a2;font-size:11px;font-weight:700;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .album-detail-card-price{margin:2px 0 0;color:#2f64ff;font-size:12px;font-weight:900;line-height:1.2}
 @media (min-width:520px){.album-detail-cards-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -1624,7 +1614,6 @@ body:not(.ui-booting) #emptyState,body:not(.ui-booting) #albumsView,body:not(.ui
 .album-page-label{font-size:26px !important}
 .album-detail-cards-grid{gap:22px 16px !important;padding-left:2px !important;padding-right:2px !important}
 .album-slot-empty{border-width:4px !important;font-size:22px !important;border-radius:20px !important}
-}
 .album-page-controls{position:relative !important;top:auto !important;z-index:5 !important;display:flex !important;align-items:center !important;justify-content:center !important;gap:12px !important;margin:2px 0 14px !important;padding:0 !important;background:transparent !important;border:0 !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
 .album-page-label-wrap{min-width:0 !important;text-align:center !important;display:flex !important;align-items:center !important;justify-content:center !important}
 .album-page-label{margin:0 !important;color:#111827 !important;font-size:18px !important;font-weight:780 !important;line-height:1.1 !important;letter-spacing:-.035em !important;white-space:nowrap !important}
@@ -4310,8 +4299,8 @@ paint-order="stroke">
         </button>
       </div>
       <div class="card-index-meta search-meta">
-        <div id="updatedText">Indice</div>
-        <div id="countsText">0 carte - 0 espansioni</div>
+        <div id="updatedText">Indice in caricamento</div>
+        <div id="countsText"></div>
       </div>
       <div class="status" id="statusText" style="margin-top:10px;"></div>
       <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
@@ -5056,14 +5045,15 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi523-oracle-dropbox-clean';
+    const POKEALBUM_BUILD_VERSION = 'vi524-oracle-db-cache';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
-    const INDEX_URL = 'data/pokemon-index.json';
-    const META_URL = 'data/pokemon-index-meta.json';
+    const INDEX_URL = 'https://92-4-233-89.sslip.io/db/pokemon-index.json';
+    const META_URL = 'https://92-4-233-89.sslip.io/db/pokemon-index-meta.json';
     const PRICE_DB_URL = 'data/pokemon_price-db.json';
     const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
+    const INDEX_CHANGE_CHECK_INTERVAL_MS = 60000;
     const APP_DATA_CACHE_NAME = `pokealbum-data-cache-${POKEALBUM_BUILD_VERSION}`;
     (function ensureFreshAppShell() {
       const isLocalApp = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
@@ -5181,48 +5171,53 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
         }, 2500);
       }
     })();
+    function getAppCacheKey(url) {
+      return new URL(url, window.location.href).href;
+    }
+    function canUseAppCache() {
+      return Boolean(window.caches && typeof caches.open === 'function' && typeof caches.match === 'function');
+    }
+    async function readJsonFromAppCache(url) {
+      if (!canUseAppCache()) return null;
+      try {
+        const cached = await caches.match(getAppCacheKey(url));
+        return cached ? cached.json() : null;
+      } catch (error) {
+        console.warn('Cache dati non leggibile', error);
+        return null;
+      }
+    }
+    async function writeResponseToAppCache(url, response) {
+      if (!canUseAppCache()) return;
+      try {
+        const cache = await caches.open(APP_DATA_CACHE_NAME);
+        await cache.put(getAppCacheKey(url), response.clone());
+      } catch (error) {
+        console.warn('Cache dati non salvata', error);
+      }
+    }
     async function fetchJsonWithAppCache(url, options = {}) {
       const force = Boolean(options.force);
       const cacheFirst = options.cacheFirst === true;
-      const cacheKey = new URL(url, window.location.href).href;
-      const canUseCacheApi = Boolean(window.caches && typeof caches.open === 'function' && typeof caches.match === 'function');
-      async function readCachedJson() {
-        if (!canUseCacheApi) return null;
-        try {
-          const cached = await caches.match(cacheKey);
-          return cached ? cached.json() : null;
-        } catch (error) {
-          console.warn('Cache dati non leggibile', error);
-          return null;
-        }
-      }
       if (!force && cacheFirst) {
-        const cached = await readCachedJson();
+        const cached = await readJsonFromAppCache(url);
         if (cached) return cached;
       }
-      const fetchUrl = `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
+      const shouldBypassHttpCache = force || !cacheFirst;
+      const fetchUrl = shouldBypassHttpCache
+        ? `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`
+        : url;
       try {
         const response = await fetch(fetchUrl, {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
+          cache: shouldBypassHttpCache ? 'no-store' : 'default'
         });
         if (!response.ok) {
           throw new Error(`${url} non caricato: HTTP ${response.status}`);
         }
-        if (canUseCacheApi) {
-          try {
-            const cache = await caches.open(APP_DATA_CACHE_NAME);
-            await cache.put(cacheKey, response.clone());
-          } catch (error) {
-            console.warn('Cache dati non salvata', error);
-          }
-        }
+        await writeResponseToAppCache(url, response);
         return response.json();
       } catch (error) {
-        const cached = await readCachedJson();
+        const cached = await readJsonFromAppCache(url);
         if (cached) {
           console.warn(`${url} non raggiungibile, uso la copia cache`, error);
           return cached;
@@ -5240,6 +5235,9 @@ const state = {
       lastSuggestionTotal: 0,
       hasSearched: false,
       indexLoadingPromise: null,
+      indexChangeCheckPromise: null,
+      indexChangeCheckTimer: null,
+      lastIndexMetaSignature: '',
       searchWarmupStarted: false,
       searchWarmupDone: false,
       searchWarmupTimer: null,
@@ -6829,7 +6827,52 @@ function computeScore(card, query) {
       }
       return [];
     }
-async function fetchPokemonIndex(force = false, options = {}) {
+function normalizeIndexMetaValue(value) {
+      if (value === null || value === undefined) return '';
+      if (typeof value === 'string') return value.trim();
+      if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+      try { return JSON.stringify(value); } catch (_) { return String(value); }
+    }
+    function getIndexMetaSignature(meta) {
+      if (!meta || typeof meta !== 'object') return '';
+      const updatedAt = getIndexUpdatedValue(meta);
+      const version = meta.indexVersion || meta.version || meta.dbVersion || meta.databaseVersion || meta.buildVersion || '';
+      const count = meta.cardsCount || meta.cardCount || meta.cards_count || meta.count || meta.totalCards || '';
+      const expansions = getIndexExpansionsCount(meta);
+      const hash = meta.hash || meta.sha256 || meta.checksum || meta.etag || meta.fingerprint || '';
+      return [updatedAt, version, count, expansions, hash].map(normalizeIndexMetaValue).join('|');
+    }
+    async function getFreshOracleIndexMeta() {
+      return fetchJsonWithAppCache(META_URL, { force: true, cacheFirst: false });
+    }
+    async function getCachedOracleIndexBundle() {
+      const [cards, meta] = await Promise.all([
+        readJsonFromAppCache(INDEX_URL),
+        readJsonFromAppCache(META_URL),
+      ]);
+      return { cards, meta };
+    }
+    function applyPokemonIndex(cards, meta) {
+      state.cards = cards;
+      state.meta = meta || {};
+      state.lastIndexMetaSignature = getIndexMetaSignature(state.meta);
+      state.searchWarmupStarted = false;
+      state.searchWarmupDone = false;
+      hydrateStats();
+      clearResultsArea();
+      scheduleSearchWarmup();
+    }
+    function refreshVisibleSearchAfterIndexUpdate() {
+      const query = el.searchInput?.value || '';
+      if (!query.trim()) {
+        renderSuggestions([]);
+        return;
+      }
+      state.suggestions = buildSuggestions(query);
+      renderSuggestions(state.suggestions);
+      if (state.hasSearched) runSearch(query);
+    }
+    async function fetchPokemonIndex(force = false, options = {}) {
       const silent = options?.silent === true;
       if (!force && state.indexLoadingPromise) {
         return state.indexLoadingPromise;
@@ -6838,23 +6881,38 @@ async function fetchPokemonIndex(force = false, options = {}) {
         try {
           if (!silent) {
             startUpdateTimer();
-            setStatus(force ? 'Aggiorno indice statico da GitHub...' : 'Carico indice statico da GitHub...');
+            setStatus(force ? 'Aggiorno indice statico da Oracle...' : 'Verifico indice statico da Oracle...');
             setProgress(0);
           }
-          const [cards, meta] = await Promise.all([
-            fetchJsonWithAppCache(INDEX_URL, { force }),
-            fetchJsonWithAppCache(META_URL, { force }),
-          ]);
+
+          let cards = null;
+          let meta = null;
+
+          if (force) {
+            [cards, meta] = await Promise.all([
+              fetchJsonWithAppCache(INDEX_URL, { force: true, cacheFirst: false }),
+              getFreshOracleIndexMeta(),
+            ]);
+          } else {
+            const freshMeta = await getFreshOracleIndexMeta();
+            const freshSignature = getIndexMetaSignature(freshMeta);
+            const cached = await getCachedOracleIndexBundle();
+            const cachedSignature = getIndexMetaSignature(cached.meta);
+
+            if (Array.isArray(cached.cards) && cached.cards.length && freshSignature && freshSignature === cachedSignature) {
+              cards = cached.cards;
+              meta = freshMeta || cached.meta || {};
+            } else {
+              if (!silent) setStatus('Indice Oracle cambiato: scarico il nuovo database...');
+              cards = await fetchJsonWithAppCache(INDEX_URL, { force: true, cacheFirst: false });
+              meta = freshMeta || await getFreshOracleIndexMeta();
+            }
+          }
+
           if (!Array.isArray(cards)) {
             throw new Error('pokemon-index.json non è un array di carte valido');
           }
-          state.cards = cards;
-          state.meta = meta || {};
-          state.searchWarmupStarted = false;
-          state.searchWarmupDone = false;
-          hydrateStats();
-          clearResultsArea();
-          scheduleSearchWarmup();
+          applyPokemonIndex(cards, meta);
           if (!silent) {
             setStatus('');
             setProgress(0);
@@ -6864,6 +6922,7 @@ async function fetchPokemonIndex(force = false, options = {}) {
           console.error(error);
           state.cards = [];
           state.meta = null;
+          state.lastIndexMetaSignature = '';
           state.searchWarmupStarted = false;
           state.searchWarmupDone = false;
           hydrateStats();
@@ -6881,7 +6940,51 @@ async function fetchPokemonIndex(force = false, options = {}) {
       if (!force) state.indexLoadingPromise = loadTask;
       return loadTask;
     }
-    function requestIdleWork(callback, timeout = 700) {
+    async function checkOracleIndexUpdate(options = {}) {
+      const silent = options?.silent !== false;
+      if (state.indexChangeCheckPromise) return state.indexChangeCheckPromise;
+      state.indexChangeCheckPromise = (async () => {
+        if (document.hidden) return false;
+        try {
+          const freshMeta = await getFreshOracleIndexMeta();
+          const freshSignature = getIndexMetaSignature(freshMeta);
+          if (!freshSignature) return false;
+          const currentSignature = state.lastIndexMetaSignature || getIndexMetaSignature(state.meta);
+          if (!currentSignature) {
+            state.meta = freshMeta || state.meta;
+            state.lastIndexMetaSignature = freshSignature;
+            return false;
+          }
+          if (freshSignature === currentSignature) return false;
+
+          if (!silent) setStatus('Trovato nuovo database Oracle: aggiornamento in corso...');
+          await fetchPokemonIndex(true, { silent });
+          refreshVisibleSearchAfterIndexUpdate();
+          if (!silent) setStatus('Database aggiornato da Oracle.');
+          window.setTimeout(() => {
+            if (el.status?.textContent === 'Database aggiornato da Oracle.') setStatus('');
+          }, 2200);
+          return true;
+        } catch (error) {
+          console.warn('Controllo aggiornamento indice Oracle non riuscito', error);
+          return false;
+        } finally {
+          state.indexChangeCheckPromise = null;
+        }
+      })();
+      return state.indexChangeCheckPromise;
+    }
+    function startOracleIndexChangeWatcher() {
+      if (state.indexChangeCheckTimer) return;
+      window.addEventListener('focus', () => void checkOracleIndexUpdate({ silent: true }));
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) void checkOracleIndexUpdate({ silent: true });
+      });
+      state.indexChangeCheckTimer = window.setInterval(() => {
+        if (!document.hidden) void checkOracleIndexUpdate({ silent: true });
+      }, INDEX_CHANGE_CHECK_INTERVAL_MS);
+    }
+        function requestIdleWork(callback, timeout = 700) {
       if ('requestIdleCallback' in window) {
         return window.requestIdleCallback(callback, { timeout });
       }
@@ -6896,9 +6999,11 @@ async function fetchPokemonIndex(force = false, options = {}) {
     }
     function scheduleInitialIndexPreload() {
       const startPreload = () => {
-        fetchPokemonIndex(false, { silent: true }).catch(error => {
-          console.error('Preload indice non riuscito:', error);
-        });
+        fetchPokemonIndex(false, { silent: true })
+          .then(() => checkOracleIndexUpdate({ silent: true }))
+          .catch(error => {
+            console.error('Preload indice non riuscito:', error);
+          });
       };
       requestAnimationFrame(() => requestAnimationFrame(startPreload));
     }
@@ -6971,8 +7076,8 @@ async function fetchPokemonIndex(force = false, options = {}) {
       const updatedAt = updatedAtValue ? formatIndexDate(updatedAtValue) : '-';
       const expansions = formatItalianNumber(getIndexExpansionsCount(meta));
       el.updatedText.textContent = updatedAt && updatedAt !== '-'
-        ? `Indice ${updatedAt} - ${expansions} espansioni ${count} carte`
-        : `Indice - ${expansions} espansioni ${count} carte`;
+        ? `Indice ${updatedAt} - ${expansions} espansioni ${count} carte *`
+        : `Indice - ${expansions} espansioni ${count} carte *`;
       el.countsText.textContent = '';
       el.timerChip = null;
     }
@@ -8536,6 +8641,7 @@ async function init() {
       attachEvents();
       setTimerChip('00:00');
       scheduleInitialIndexPreload();
+      startOracleIndexChangeWatcher();
     }
     init().catch(err => {
       console.error(err);
