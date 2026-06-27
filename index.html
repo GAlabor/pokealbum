@@ -5045,12 +5045,14 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi524-oracle-db-cache';
+    const POKEALBUM_BUILD_VERSION = 'vi529-oracle-db-slots';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
-    const INDEX_URL = 'https://92-4-233-89.sslip.io/db/pokemon-index.json';
-    const META_URL = 'https://92-4-233-89.sslip.io/db/pokemon-index-meta.json';
+    const ORACLE_DB_ORIGIN = 'https://92-4-233-89.sslip.io';
+    const ACTIVE_META_URL = `${ORACLE_DB_ORIGIN}/db/active-meta.json`;
+    const INDEX_URL = `${ORACLE_DB_ORIGIN}/db/pokemon-index.json`;
+    const META_URL = `${ORACLE_DB_ORIGIN}/db/pokemon-index-meta.json`;
     const PRICE_DB_URL = 'data/pokemon_price-db.json';
     const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
     const INDEX_CHANGE_CHECK_INTERVAL_MS = 60000;
@@ -5238,6 +5240,9 @@ const state = {
       indexChangeCheckPromise: null,
       indexChangeCheckTimer: null,
       lastIndexMetaSignature: '',
+      currentIndexSlot: '',
+      currentIndexUrl: '',
+      currentMetaUrl: '',
       searchWarmupStarted: false,
       searchWarmupDone: false,
       searchWarmupTimer: null,
@@ -6842,20 +6847,70 @@ function normalizeIndexMetaValue(value) {
       const hash = meta.hash || meta.sha256 || meta.checksum || meta.etag || meta.fingerprint || '';
       return [updatedAt, version, count, expansions, hash].map(normalizeIndexMetaValue).join('|');
     }
-    async function getFreshOracleIndexMeta() {
-      return fetchJsonWithAppCache(META_URL, { force: true, cacheFirst: false });
+    function resolveOracleDbUrl(value, fallbackUrl) {
+      const raw = String(value || '').trim();
+      if (!raw) return fallbackUrl;
+      try {
+        return new URL(raw, ORACLE_DB_ORIGIN).href;
+      } catch (_) {
+        return fallbackUrl;
+      }
     }
-    async function getCachedOracleIndexBundle() {
+    function normalizeOracleActiveMeta(activeMeta) {
+      const active = activeMeta && typeof activeMeta === 'object' ? activeMeta : {};
+      const slot = String(active.activeSlot || active.slot || active.currentSlot || '').trim();
+      const indexUrl = resolveOracleDbUrl(active.indexPath || active.indexUrl || active.index || '', INDEX_URL);
+      const metaUrl = resolveOracleDbUrl(active.metaPath || active.metaUrl || active.meta || '', META_URL);
+      return { active, slot, indexUrl, metaUrl };
+    }
+    function getIndexDescriptorSignature(descriptor) {
+      if (!descriptor) return '';
+      const metaSignature = getIndexMetaSignature(descriptor.meta);
+      return [descriptor.slot || '', descriptor.indexUrl || '', descriptor.metaUrl || '', metaSignature]
+        .map(normalizeIndexMetaValue)
+        .join('|');
+    }
+    async function getFreshOracleActiveMeta() {
+      return fetchJsonWithAppCache(ACTIVE_META_URL, { force: true, cacheFirst: false });
+    }
+    async function getFreshOracleIndexDescriptor() {
+      let activeMeta = null;
+      try {
+        activeMeta = await getFreshOracleActiveMeta();
+      } catch (error) {
+        console.warn('active-meta.json non raggiungibile, uso percorso database legacy', error);
+      }
+      const descriptor = normalizeOracleActiveMeta(activeMeta);
+      const meta = await fetchJsonWithAppCache(descriptor.metaUrl, { force: true, cacheFirst: false });
+      return { ...descriptor, meta };
+    }
+    async function getCachedOracleIndexBundle(descriptor) {
+      const indexUrl = descriptor?.indexUrl || INDEX_URL;
+      const metaUrl = descriptor?.metaUrl || META_URL;
       const [cards, meta] = await Promise.all([
-        readJsonFromAppCache(INDEX_URL),
-        readJsonFromAppCache(META_URL),
+        readJsonFromAppCache(indexUrl),
+        readJsonFromAppCache(metaUrl),
       ]);
       return { cards, meta };
     }
-    function applyPokemonIndex(cards, meta) {
+    function applyPokemonIndex(cards, descriptor) {
+      const meta = descriptor?.meta || {};
       state.cards = cards;
-      state.meta = meta || {};
-      state.lastIndexMetaSignature = getIndexMetaSignature(state.meta);
+      state.meta = {
+        ...meta,
+        __pokealbumSlot: descriptor?.slot || '',
+        __pokealbumIndexUrl: descriptor?.indexUrl || INDEX_URL,
+        __pokealbumMetaUrl: descriptor?.metaUrl || META_URL,
+      };
+      state.currentIndexSlot = descriptor?.slot || '';
+      state.currentIndexUrl = descriptor?.indexUrl || INDEX_URL;
+      state.currentMetaUrl = descriptor?.metaUrl || META_URL;
+      state.lastIndexMetaSignature = getIndexDescriptorSignature({
+        slot: state.currentIndexSlot,
+        indexUrl: state.currentIndexUrl,
+        metaUrl: state.currentMetaUrl,
+        meta,
+      });
       state.searchWarmupStarted = false;
       state.searchWarmupDone = false;
       hydrateStats();
@@ -6878,41 +6933,38 @@ function normalizeIndexMetaValue(value) {
         return state.indexLoadingPromise;
       }
       const loadTask = (async () => {
+        const hadUsableCards = Array.isArray(state.cards) && state.cards.length > 0;
         try {
           if (!silent) {
             startUpdateTimer();
-            setStatus(force ? 'Aggiorno indice statico da Oracle...' : 'Verifico indice statico da Oracle...');
+            setStatus(force ? 'Aggiorno indice statico...' : 'Verifico indice statico...');
             setProgress(0);
           }
 
           let cards = null;
-          let meta = null;
+          let descriptor = null;
 
           if (force) {
-            [cards, meta] = await Promise.all([
-              fetchJsonWithAppCache(INDEX_URL, { force: true, cacheFirst: false }),
-              getFreshOracleIndexMeta(),
-            ]);
+            descriptor = await getFreshOracleIndexDescriptor();
+            cards = await fetchJsonWithAppCache(descriptor.indexUrl, { force: true, cacheFirst: false });
           } else {
-            const freshMeta = await getFreshOracleIndexMeta();
-            const freshSignature = getIndexMetaSignature(freshMeta);
-            const cached = await getCachedOracleIndexBundle();
-            const cachedSignature = getIndexMetaSignature(cached.meta);
+            descriptor = await getFreshOracleIndexDescriptor();
+            const freshSignature = getIndexDescriptorSignature(descriptor);
+            const cached = await getCachedOracleIndexBundle(descriptor);
+            const cachedSignature = getIndexDescriptorSignature({ ...descriptor, meta: cached.meta });
 
             if (Array.isArray(cached.cards) && cached.cards.length && freshSignature && freshSignature === cachedSignature) {
               cards = cached.cards;
-              meta = freshMeta || cached.meta || {};
             } else {
-              if (!silent) setStatus('Indice Oracle cambiato: scarico il nuovo database...');
-              cards = await fetchJsonWithAppCache(INDEX_URL, { force: true, cacheFirst: false });
-              meta = freshMeta || await getFreshOracleIndexMeta();
+              if (!silent) setStatus('Indice cambiato: scarico il nuovo database...');
+              cards = await fetchJsonWithAppCache(descriptor.indexUrl, { force: true, cacheFirst: false });
             }
           }
 
           if (!Array.isArray(cards)) {
             throw new Error('pokemon-index.json non è un array di carte valido');
           }
-          applyPokemonIndex(cards, meta);
+          applyPokemonIndex(cards, descriptor);
           if (!silent) {
             setStatus('');
             setProgress(0);
@@ -6920,13 +6972,18 @@ function normalizeIndexMetaValue(value) {
           return cards;
         } catch (error) {
           console.error(error);
-          state.cards = [];
-          state.meta = null;
-          state.lastIndexMetaSignature = '';
-          state.searchWarmupStarted = false;
-          state.searchWarmupDone = false;
-          hydrateStats();
-          clearResultsArea();
+          if (!hadUsableCards) {
+            state.cards = [];
+            state.meta = null;
+            state.lastIndexMetaSignature = '';
+            state.currentIndexSlot = '';
+            state.currentIndexUrl = '';
+            state.currentMetaUrl = '';
+            state.searchWarmupStarted = false;
+            state.searchWarmupDone = false;
+            hydrateStats();
+            clearResultsArea();
+          }
           if (!silent) {
             setStatus(`Errore caricamento indice statico: ${error.message}`, 'error');
             setProgress(0);
@@ -6944,29 +7001,40 @@ function normalizeIndexMetaValue(value) {
       const silent = options?.silent !== false;
       if (state.indexChangeCheckPromise) return state.indexChangeCheckPromise;
       state.indexChangeCheckPromise = (async () => {
-        if (document.hidden) return false;
         try {
-          const freshMeta = await getFreshOracleIndexMeta();
-          const freshSignature = getIndexMetaSignature(freshMeta);
+          const freshDescriptor = await getFreshOracleIndexDescriptor();
+          const freshSignature = getIndexDescriptorSignature(freshDescriptor);
           if (!freshSignature) return false;
-          const currentSignature = state.lastIndexMetaSignature || getIndexMetaSignature(state.meta);
+          const currentSignature = state.lastIndexMetaSignature || getIndexDescriptorSignature({
+            slot: state.currentIndexSlot,
+            indexUrl: state.currentIndexUrl,
+            metaUrl: state.currentMetaUrl,
+            meta: state.meta,
+          });
           if (!currentSignature) {
-            state.meta = freshMeta || state.meta;
+            state.meta = freshDescriptor.meta || state.meta;
+            state.currentIndexSlot = freshDescriptor.slot || state.currentIndexSlot || '';
+            state.currentIndexUrl = freshDescriptor.indexUrl || state.currentIndexUrl || '';
+            state.currentMetaUrl = freshDescriptor.metaUrl || state.currentMetaUrl || '';
             state.lastIndexMetaSignature = freshSignature;
             return false;
           }
           if (freshSignature === currentSignature) return false;
 
-          if (!silent) setStatus('Trovato nuovo database Oracle: aggiornamento in corso...');
-          await fetchPokemonIndex(true, { silent });
+          if (!silent) setStatus('Trovato nuovo database: aggiornamento in corso...');
+          const cards = await fetchJsonWithAppCache(freshDescriptor.indexUrl, { force: true, cacheFirst: false });
+          if (!Array.isArray(cards)) {
+            throw new Error('pokemon-index.json non è un array di carte valido');
+          }
+          applyPokemonIndex(cards, freshDescriptor);
           refreshVisibleSearchAfterIndexUpdate();
-          if (!silent) setStatus('Database aggiornato da Oracle.');
+          if (!silent) setStatus('Database aggiornato.');
           window.setTimeout(() => {
-            if (el.status?.textContent === 'Database aggiornato da Oracle.') setStatus('');
+            if (el.status?.textContent === 'Database aggiornato.') setStatus('');
           }, 2200);
           return true;
         } catch (error) {
-          console.warn('Controllo aggiornamento indice Oracle non riuscito', error);
+          console.warn('Controllo aggiornamento indice non riuscito', error);
           return false;
         } finally {
           state.indexChangeCheckPromise = null;
@@ -6981,10 +7049,10 @@ function normalizeIndexMetaValue(value) {
         if (!document.hidden) void checkOracleIndexUpdate({ silent: true });
       });
       state.indexChangeCheckTimer = window.setInterval(() => {
-        if (!document.hidden) void checkOracleIndexUpdate({ silent: true });
+        void checkOracleIndexUpdate({ silent: true });
       }, INDEX_CHANGE_CHECK_INTERVAL_MS);
     }
-        function requestIdleWork(callback, timeout = 700) {
+    function requestIdleWork(callback, timeout = 700) {
       if ('requestIdleCallback' in window) {
         return window.requestIdleCallback(callback, { timeout });
       }
