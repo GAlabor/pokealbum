@@ -5045,7 +5045,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi529-oracle-db-slots';
+    const POKEALBUM_BUILD_VERSION = 'vi531-oracle-price-fallback-only';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -5053,8 +5053,9 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     const ACTIVE_META_URL = `${ORACLE_DB_ORIGIN}/db/active-meta.json`;
     const INDEX_URL = `${ORACLE_DB_ORIGIN}/db/pokemon-index.json`;
     const META_URL = `${ORACLE_DB_ORIGIN}/db/pokemon-index-meta.json`;
-    const PRICE_DB_URL = 'data/pokemon_price-db.json';
-    const PRICE_DB_META_URL = 'data/pokemon_price-db-meta.json';
+    const PRICE_ACTIVE_META_URL = `${ORACLE_DB_ORIGIN}/db/prices/active-meta.json`;
+    const PRICE_DB_URL = `${ORACLE_DB_ORIGIN}/db/prices/s1/pokemon_price-db.json`;
+    const PRICE_DB_META_URL = `${ORACLE_DB_ORIGIN}/db/prices/s1/pokemon_price-db-meta.json`;
     const INDEX_CHANGE_CHECK_INTERVAL_MS = 60000;
     const APP_DATA_CACHE_NAME = `pokealbum-data-cache-${POKEALBUM_BUILD_VERSION}`;
     (function ensureFreshAppShell() {
@@ -5271,6 +5272,10 @@ const state = {
         meta: null,
         metaPromise: null,
         metaError: null,
+        descriptor: null,
+        activeSlot: '',
+        dbUrl: '',
+        metaUrl: '',
       },
     };
 const el = {
@@ -6450,10 +6455,15 @@ async function loadPriceDatabaseMeta(force = false) {
       if (!force && state.priceDb.meta) return state.priceDb.meta;
       if (!force && state.priceDb.metaPromise) return state.priceDb.metaPromise;
       state.priceDb.metaPromise = (async () => {
-        const meta = await fetchJsonWithAppCache(PRICE_DB_META_URL, { force });
+        const descriptor = await getFreshOraclePriceDescriptor();
+        const meta = descriptor?.meta;
         if (!meta || typeof meta !== 'object' || Array.isArray(meta)) {
           throw new Error('pokemon_price-db-meta.json non è un oggetto valido');
         }
+        state.priceDb.descriptor = descriptor;
+        state.priceDb.activeSlot = descriptor?.slot || '';
+        state.priceDb.dbUrl = descriptor?.priceDbUrl || '';
+        state.priceDb.metaUrl = descriptor?.metaUrl || '';
         state.priceDb.meta = meta;
         state.priceDb.metaError = null;
         return meta;
@@ -6463,6 +6473,10 @@ async function loadPriceDatabaseMeta(force = false) {
       } catch (error) {
         state.priceDb.metaError = error;
         state.priceDb.meta = null;
+        state.priceDb.descriptor = null;
+        state.priceDb.activeSlot = '';
+        state.priceDb.dbUrl = '';
+        state.priceDb.metaUrl = '';
         return null;
       } finally {
         state.priceDb.metaPromise = null;
@@ -6490,7 +6504,12 @@ async function loadPriceDatabaseMeta(force = false) {
       if (!force && state.priceDb.data) return state.priceDb.data;
       if (!force && state.priceDb.promise) return state.priceDb.promise;
       state.priceDb.promise = (async () => {
-        const data = await fetchJsonWithAppCache(PRICE_DB_URL, { force });
+        await loadPriceDatabaseMeta(force);
+        const priceDbUrl = state.priceDb.dbUrl;
+        if (!priceDbUrl) {
+          throw new Error('Database prezzi Oracle non disponibile');
+        }
+        const data = await fetchJsonWithAppCache(priceDbUrl, { force });
         if (!data || typeof data !== 'object' || Array.isArray(data)) {
           throw new Error('pokemon_price-db.json non è un oggetto valido');
         }
@@ -6542,7 +6561,7 @@ async function loadPriceDatabaseMeta(force = false) {
       setPriceResult(formatEuroFromCents(entry.pc), '', { source: 'database' });
       renderMarketControls(null, { disabled: true, databaseFallback: true });
       setMarketControlsDisabled(true);
-      console.warn('Prezzo live non disponibile, usato database locale.', originalError);
+      console.warn('Prezzo live non disponibile, usato database prezzi Oracle.', originalError);
       return true;
     }
     function setPriceLoadingState(message = 'Carico prezzo...') {
@@ -6862,6 +6881,25 @@ function normalizeIndexMetaValue(value) {
       const indexUrl = resolveOracleDbUrl(active.indexPath || active.indexUrl || active.index || '', INDEX_URL);
       const metaUrl = resolveOracleDbUrl(active.metaPath || active.metaUrl || active.meta || '', META_URL);
       return { active, slot, indexUrl, metaUrl };
+    }
+    function normalizeOraclePriceActiveMeta(activeMeta) {
+      const active = activeMeta && typeof activeMeta === 'object' ? activeMeta : {};
+      const slot = String(active.activeSlot || active.slot || active.currentSlot || '').trim();
+      const priceDbUrl = resolveOracleDbUrl(
+        active.priceDbPath || active.priceDbUrl || active.dbPath || active.dbUrl || active.indexPath || active.indexUrl || '',
+        PRICE_DB_URL
+      );
+      const metaUrl = resolveOracleDbUrl(active.metaPath || active.metaUrl || active.meta || '', PRICE_DB_META_URL);
+      return { active, slot, priceDbUrl, metaUrl };
+    }
+    async function getFreshOraclePriceActiveMeta() {
+      return fetchJsonWithAppCache(PRICE_ACTIVE_META_URL, { force: true, cacheFirst: false });
+    }
+    async function getFreshOraclePriceDescriptor() {
+      const activeMeta = await getFreshOraclePriceActiveMeta();
+      const descriptor = normalizeOraclePriceActiveMeta(activeMeta);
+      const meta = await fetchJsonWithAppCache(descriptor.metaUrl, { force: true, cacheFirst: false });
+      return { ...descriptor, meta };
     }
     function getIndexDescriptorSignature(descriptor) {
       if (!descriptor) return '';
