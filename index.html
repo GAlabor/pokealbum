@@ -5045,7 +5045,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi535-fast-cached-index';
+    const POKEALBUM_BUILD_VERSION = 'vi536-cache-promote-index';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -5186,15 +5186,19 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
       if (!canUseAppCache()) return null;
       const cacheKey = getAppCacheKey(url);
       try {
-        const cached = await caches.match(cacheKey);
-        if (cached) return cached.json();
+        // Legge prima SEMPRE la cache dati corrente. caches.match() globale può pescare
+        // una vecchia copia rimasta in cache precedenti e mostrare per qualche istante
+        // un indice superato, anche dopo che il nuovo slot Oracle è già stato scaricato.
+        const primaryCache = await caches.open(APP_DATA_CACHE_NAME);
+        const primaryResponse = await primaryCache.match(cacheKey);
+        if (primaryResponse) return primaryResponse.json();
 
         // Migrazione morbida: recupera anche dai vecchi cache dati legati alla versione HTML.
         // Così un aggiornamento dell'index.html non obbliga a riscaricare subito 40 MB di indice.
         if (typeof caches.keys === 'function') {
           const names = await caches.keys();
           const dataCacheNames = names.filter(name =>
-            name === APP_DATA_CACHE_NAME || /^pokealbum-data-cache-/.test(String(name || ''))
+            name !== APP_DATA_CACHE_NAME && /^pokealbum-data-cache-/.test(String(name || ''))
           );
 
           for (const name of dataCacheNames) {
@@ -5212,11 +5216,28 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
         return null;
       }
     }
+    async function removeStaleAppCacheCopies(url) {
+      if (!canUseAppCache() || typeof caches.keys !== 'function') return;
+      const cacheKey = getAppCacheKey(url);
+      try {
+        const names = await caches.keys();
+        await Promise.all(names.map(async (name) => {
+          if (name === APP_DATA_CACHE_NAME || !/^pokealbum-data-cache-/.test(String(name || ''))) return;
+          try {
+            const cache = await caches.open(name);
+            await cache.delete(cacheKey);
+          } catch (_) {}
+        }));
+      } catch (error) {
+        console.warn('Pulizia vecchie copie cache dati non riuscita', error);
+      }
+    }
     async function writeResponseToAppCache(url, response) {
       if (!canUseAppCache()) return;
       try {
         const cache = await caches.open(APP_DATA_CACHE_NAME);
         await cache.put(getAppCacheKey(url), response.clone());
+        void removeStaleAppCacheCopies(url);
       } catch (error) {
         console.warn('Cache dati non salvata', error);
       }
