@@ -5045,7 +5045,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi533-real-cards-count';
+    const POKEALBUM_BUILD_VERSION = 'vi534-debug-card-fields';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -5510,7 +5510,7 @@ function setStatus(msg, type = '') {
       return [name, version].filter(Boolean).join(' - ') || '-';
     }
     function formatSuggestionMeta(card) {
-      if (isInternalDebugCard(card)) return `Record tecnico · ${card?.debugInfo?.finishedAtRome || state.meta?.finishedAtRome || '-'}`;
+      if (isInternalDebugCard(card)) return `${getDebugIndexFinishedText(card)} · ${getDebugIndexTotalsText(card)}`;
       const f = getDisplayFields(card);
       const setCode = f.setCode ? f.setCode.toUpperCase() : '';
       const setName = f.setName || '';
@@ -7218,6 +7218,22 @@ function normalizeIndexMetaValue(value) {
         ? state.cards.filter(card => !(typeof isInternalDebugCard === 'function' && isInternalDebugCard(card))).length
         : 0;
     }
+    function getDebugIndexFinishedText(card = null) {
+      return card?.debugInfo?.finishedAtRome
+        || state.meta?.finishedAtRome
+        || formatIndexDate(getIndexUpdatedValue(state.meta))
+        || '-';
+    }
+    function getDebugIndexTotalsText(card = null) {
+      const cardsCount = Number(card?.debugInfo?.realCardsCount ?? getIndexCardsCount(state.meta));
+      const expansionsCount = Number(card?.debugInfo?.realExpansionsCount ?? getIndexExpansionsCount(state.meta));
+      const cardsText = Number.isFinite(cardsCount) ? formatItalianNumber(cardsCount) : '-';
+      const expansionsText = Number.isFinite(expansionsCount) ? formatItalianNumber(expansionsCount) : '-';
+      return `${cardsText} carte / ${expansionsText} espansioni`;
+    }
+    function getDebugIndexNumberText(card = null) {
+      return `Carta Debug n. ${card?.displayNumber || card?.collector_number || '-'}`;
+    }
     function hydrateStats() {
       const meta = state.meta;
       const count = formatItalianNumber(getIndexCardsCount(meta));
@@ -7336,7 +7352,7 @@ function normalizeIndexMetaValue(value) {
       const displayVersion = isInternalDebugCard(card) ? '' : (f.version || '');
       const displaySetCode = isInternalDebugCard(card) ? 'DEBUG' : String(f.setCode || '').toUpperCase();
       const displaySetName = isInternalDebugCard(card)
-        ? `Build ${debugInfo.finishedAtRome || state.meta?.finishedAtRome || '-'}`
+        ? `${getDebugIndexFinishedText(card)} · ${getDebugIndexTotalsText(card)}`
         : (f.setName || '');
       const imageUrl = isInternalDebugCard(card) ? '' : getCardShowUrl(card);
       const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
@@ -7740,10 +7756,12 @@ async function openCardDetails(cardId) {
       const displayName = isDebugCard ? (card.title || 'Indice database attivo') : toTitleCase(f.name || 'Dettaglio carta');
       const detailImageUrl = isDebugCard ? '' : getCardFullUrl(card);
       const setText = isDebugCard
-        ? `Build ${debugInfo.finishedAtRome || state.meta?.finishedAtRome || '-'}`
+        ? getDebugIndexTotalsText(card)
         : [f.setCode, f.setName ? `(${f.setName})` : ''].filter(Boolean).join(' ');
       if (el.detailTopName) el.detailTopName.textContent = displayName;
-      const detailTopMeta = [f.setCode ? f.setCode.toUpperCase() : '', f.version].filter(Boolean).join(' - ');
+      const detailTopMeta = isDebugCard
+        ? getDebugIndexNumberText(card)
+        : [f.setCode ? f.setCode.toUpperCase() : '', f.version].filter(Boolean).join(' - ');
       if (el.detailTopMeta) el.detailTopMeta.textContent = detailTopMeta ? `(${detailTopMeta})` : '';
       if (detailImageUrl && el.detailCardImage) {
         if (el.detailImageWrap) {
@@ -7763,9 +7781,9 @@ async function openCardDetails(cardId) {
       state.market.selected = { langKey: '', condKey: '', ctZero: false, manualCustom: false };
       state.market.loading = false;
       setPriceResult('-', isDebugCard ? 'Record tecnico interno' : 'Prezzo non ancora caricato');
-      if (el.cardRarity) el.cardRarity.textContent = isDebugCard ? 'debug interno' : (f.rarity || '');
+      if (el.cardRarity) el.cardRarity.textContent = isDebugCard ? getDebugIndexFinishedText(card) : (f.rarity || '');
       if (el.cardSet) el.cardSet.textContent = setText || '';
-      if (el.cardVersion) el.cardVersion.textContent = isDebugCard ? `Carta debug n° ${card.displayNumber || card.collector_number || '-'}` : (f.version || '');
+      if (el.cardVersion) el.cardVersion.textContent = isDebugCard ? getDebugIndexNumberText(card) : (f.version || '');
       if (isDebugCard) {
         el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'true');
         setCollectionStatusPill('missing', 0);
