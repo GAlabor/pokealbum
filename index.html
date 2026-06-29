@@ -5045,7 +5045,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi532-internal-debug-index-search';
+    const POKEALBUM_BUILD_VERSION = 'vi533-real-cards-count';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -7196,9 +7196,31 @@ function normalizeIndexMetaValue(value) {
         || meta.sets_count
         || 0;
     }
+    function getIndexCardsCount(meta) {
+      if (!meta || typeof meta !== 'object') {
+        return Array.isArray(state.cards)
+          ? state.cards.filter(card => !(typeof isInternalDebugCard === 'function' && isInternalDebugCard(card))).length
+          : 0;
+      }
+
+      const value = meta.cardsCount
+        ?? meta.cardCount
+        ?? meta.cards_count
+        ?? meta.downloadedCardsCount
+        ?? meta.realCardsCount
+        ?? meta.internalDebugIndex?.realCardsCount
+        ?? null;
+
+      const number = Number(value);
+      if (Number.isFinite(number) && number >= 0) return number;
+
+      return Array.isArray(state.cards)
+        ? state.cards.filter(card => !(typeof isInternalDebugCard === 'function' && isInternalDebugCard(card))).length
+        : 0;
+    }
     function hydrateStats() {
-      const count = formatItalianNumber(state.cards.length);
       const meta = state.meta;
+      const count = formatItalianNumber(getIndexCardsCount(meta));
       const updatedAtValue = getIndexUpdatedValue(meta);
       const updatedAt = updatedAtValue ? formatIndexDate(updatedAtValue) : '-';
       const expansions = formatItalianNumber(getIndexExpansionsCount(meta));
