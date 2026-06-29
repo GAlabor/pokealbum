@@ -5045,7 +5045,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi536-cache-promote-index';
+    const POKEALBUM_BUILD_VERSION = 'vi537-price-active-meta';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -5054,8 +5054,8 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     const INDEX_URL = `${ORACLE_DB_ORIGIN}/db/pokemon-index.json`;
     const META_URL = `${ORACLE_DB_ORIGIN}/db/pokemon-index-meta.json`;
     const PRICE_ACTIVE_META_URL = `${ORACLE_DB_ORIGIN}/db/prices/active-meta.json`;
-    const PRICE_DB_URL = `${ORACLE_DB_ORIGIN}/db/prices/s1/pokemon_price-db.json`;
-    const PRICE_DB_META_URL = `${ORACLE_DB_ORIGIN}/db/prices/s1/pokemon_price-db-meta.json`;
+    const PRICE_DB_LEGACY_URL = `${ORACLE_DB_ORIGIN}/db/prices/s1/pokemon_price-db.json`;
+    const PRICE_DB_META_LEGACY_URL = `${ORACLE_DB_ORIGIN}/db/prices/s1/pokemon_price-db-meta.json`;
     const INTERNAL_DEBUG_INDEX_QUERY = '*indice*';
     const INTERNAL_DEBUG_INDEX_ID = '__pokealbum_internal_debug_index__';
     const INDEX_CHANGE_CHECK_INTERVAL_MS = 60000;
@@ -6947,18 +6947,29 @@ function normalizeIndexMetaValue(value) {
     function normalizeOraclePriceActiveMeta(activeMeta) {
       const active = activeMeta && typeof activeMeta === 'object' ? activeMeta : {};
       const slot = String(active.activeSlot || active.slot || active.currentSlot || '').trim();
+      const slotBasePath = slot ? `/db/prices/${slot}` : '';
+      const slotPriceDbUrl = slotBasePath ? `${slotBasePath}/pokemon_price-db.json` : '';
+      const slotMetaUrl = slotBasePath ? `${slotBasePath}/pokemon_price-db-meta.json` : '';
       const priceDbUrl = resolveOracleDbUrl(
-        active.priceDbPath || active.priceDbUrl || active.dbPath || active.dbUrl || active.indexPath || active.indexUrl || '',
-        PRICE_DB_URL
+        active.priceDbPath || active.priceDbUrl || active.dbPath || active.dbUrl || active.indexPath || active.indexUrl || slotPriceDbUrl,
+        PRICE_DB_LEGACY_URL
       );
-      const metaUrl = resolveOracleDbUrl(active.metaPath || active.metaUrl || active.meta || '', PRICE_DB_META_URL);
+      const metaUrl = resolveOracleDbUrl(
+        active.metaPath || active.metaUrl || active.meta || slotMetaUrl,
+        PRICE_DB_META_LEGACY_URL
+      );
       return { active, slot, priceDbUrl, metaUrl };
     }
     async function getFreshOraclePriceActiveMeta() {
       return fetchJsonWithAppCache(PRICE_ACTIVE_META_URL, { force: true, cacheFirst: false });
     }
     async function getFreshOraclePriceDescriptor() {
-      const activeMeta = await getFreshOraclePriceActiveMeta();
+      let activeMeta = null;
+      try {
+        activeMeta = await getFreshOraclePriceActiveMeta();
+      } catch (error) {
+        console.warn('active-meta.json prezzi non raggiungibile, uso percorso prezzi legacy', error);
+      }
       const descriptor = normalizeOraclePriceActiveMeta(activeMeta);
       const meta = await fetchJsonWithAppCache(descriptor.metaUrl, { force: true, cacheFirst: false });
       return { ...descriptor, meta };
