@@ -5045,7 +5045,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi534-debug-card-fields';
+    const POKEALBUM_BUILD_VERSION = 'vi535-fast-cached-index';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -5059,7 +5059,7 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     const INTERNAL_DEBUG_INDEX_QUERY = '*indice*';
     const INTERNAL_DEBUG_INDEX_ID = '__pokealbum_internal_debug_index__';
     const INDEX_CHANGE_CHECK_INTERVAL_MS = 60000;
-    const APP_DATA_CACHE_NAME = `pokealbum-data-cache-${POKEALBUM_BUILD_VERSION}`;
+    const APP_DATA_CACHE_NAME = 'pokealbum-data-cache-v1';
     (function ensureFreshAppShell() {
       const isLocalApp = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 
@@ -5184,9 +5184,29 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     }
     async function readJsonFromAppCache(url) {
       if (!canUseAppCache()) return null;
+      const cacheKey = getAppCacheKey(url);
       try {
-        const cached = await caches.match(getAppCacheKey(url));
-        return cached ? cached.json() : null;
+        const cached = await caches.match(cacheKey);
+        if (cached) return cached.json();
+
+        // Migrazione morbida: recupera anche dai vecchi cache dati legati alla versione HTML.
+        // Così un aggiornamento dell'index.html non obbliga a riscaricare subito 40 MB di indice.
+        if (typeof caches.keys === 'function') {
+          const names = await caches.keys();
+          const dataCacheNames = names.filter(name =>
+            name === APP_DATA_CACHE_NAME || /^pokealbum-data-cache-/.test(String(name || ''))
+          );
+
+          for (const name of dataCacheNames) {
+            try {
+              const cache = await caches.open(name);
+              const response = await cache.match(cacheKey);
+              if (response) return response.json();
+            } catch (_) {}
+          }
+        }
+
+        return null;
       } catch (error) {
         console.warn('Cache dati non leggibile', error);
         return null;
@@ -6952,6 +6972,51 @@ function normalizeIndexMetaValue(value) {
       ]);
       return { cards, meta };
     }
+    function getKnownOracleIndexDescriptors() {
+      const descriptors = [];
+
+      const addDescriptor = (descriptor) => {
+        if (!descriptor?.indexUrl || !descriptor?.metaUrl) return;
+        const key = `${descriptor.slot || ''}|${descriptor.indexUrl}|${descriptor.metaUrl}`;
+        if (descriptors.some(item => `${item.slot || ''}|${item.indexUrl}|${item.metaUrl}` === key)) return;
+        descriptors.push(descriptor);
+      };
+
+      addDescriptor({
+        slot: state.currentIndexSlot || '',
+        indexUrl: state.currentIndexUrl || INDEX_URL,
+        metaUrl: state.currentMetaUrl || META_URL
+      });
+
+      addDescriptor({ slot: 's1', indexUrl: `${ORACLE_DB_ORIGIN}/db/s1/pokemon-index.json`, metaUrl: `${ORACLE_DB_ORIGIN}/db/s1/pokemon-index-meta.json` });
+      addDescriptor({ slot: 's2', indexUrl: `${ORACLE_DB_ORIGIN}/db/s2/pokemon-index.json`, metaUrl: `${ORACLE_DB_ORIGIN}/db/s2/pokemon-index-meta.json` });
+      addDescriptor({ slot: '', indexUrl: INDEX_URL, metaUrl: META_URL });
+
+      return descriptors;
+    }
+    async function getBestCachedOracleIndexBundle() {
+      const cachedActiveMeta = await readJsonFromAppCache(ACTIVE_META_URL).catch(() => null);
+      const activeDescriptor = normalizeOracleActiveMeta(cachedActiveMeta);
+      const candidates = [
+        activeDescriptor,
+        ...getKnownOracleIndexDescriptors()
+      ];
+
+      for (const descriptor of candidates) {
+        const cached = await getCachedOracleIndexBundle(descriptor);
+        if (Array.isArray(cached.cards) && cached.cards.length) {
+          return {
+            cards: cached.cards,
+            descriptor: {
+              ...descriptor,
+              meta: cached.meta || descriptor.meta || descriptor.active || {}
+            }
+          };
+        }
+      }
+
+      return null;
+    }
     function applyPokemonIndex(cards, descriptor) {
       const meta = descriptor?.meta || {};
       state.cards = cards;
@@ -6993,6 +7058,7 @@ function normalizeIndexMetaValue(value) {
       }
       const loadTask = (async () => {
         const hadUsableCards = Array.isArray(state.cards) && state.cards.length > 0;
+        let servedCachedFirst = false;
         try {
           if (!silent) {
             startUpdateTimer();
@@ -7002,6 +7068,26 @@ function normalizeIndexMetaValue(value) {
 
           let cards = null;
           let descriptor = null;
+
+          if (!force && !hadUsableCards) {
+            const cachedBundle = await getBestCachedOracleIndexBundle();
+            if (cachedBundle) {
+              servedCachedFirst = true;
+              applyPokemonIndex(cachedBundle.cards, cachedBundle.descriptor);
+              if (!silent) {
+                setStatus('');
+                setProgress(0);
+                finishUpdateTimer();
+              }
+
+              // Controllo fresco in background: non blocca più l'apertura della ricerca.
+              checkOracleIndexUpdate({ silent: true }).catch(error => {
+                console.warn('Controllo aggiornamento indice in background non riuscito:', error);
+              });
+
+              return cachedBundle.cards;
+            }
+          }
 
           if (force) {
             descriptor = await getFreshOracleIndexDescriptor();
@@ -7049,7 +7135,7 @@ function normalizeIndexMetaValue(value) {
           }
           throw error;
         } finally {
-          if (!silent) finishUpdateTimer();
+          if (!silent && !servedCachedFirst) finishUpdateTimer();
           if (!force) state.indexLoadingPromise = null;
         }
       })();
