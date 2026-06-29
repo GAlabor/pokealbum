@@ -5045,7 +5045,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi531-oracle-price-fallback-only';
+    const POKEALBUM_BUILD_VERSION = 'vi532-internal-debug-index-search';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -5056,6 +5056,8 @@ const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.d
     const PRICE_ACTIVE_META_URL = `${ORACLE_DB_ORIGIN}/db/prices/active-meta.json`;
     const PRICE_DB_URL = `${ORACLE_DB_ORIGIN}/db/prices/s1/pokemon_price-db.json`;
     const PRICE_DB_META_URL = `${ORACLE_DB_ORIGIN}/db/prices/s1/pokemon_price-db-meta.json`;
+    const INTERNAL_DEBUG_INDEX_QUERY = '*indice*';
+    const INTERNAL_DEBUG_INDEX_ID = '__pokealbum_internal_debug_index__';
     const INDEX_CHANGE_CHECK_INTERVAL_MS = 60000;
     const APP_DATA_CACHE_NAME = `pokealbum-data-cache-${POKEALBUM_BUILD_VERSION}`;
     (function ensureFreshAppShell() {
@@ -5501,12 +5503,14 @@ function setStatus(msg, type = '') {
     .replace(/\b\w/g, c => c.toUpperCase());
 }
     function formatSuggestionHeadline(card) {
+      if (isInternalDebugCard(card)) return card.title || 'Indice database attivo';
       const f = getDisplayFields(card);
       const name = toTitleCase(f.name || '-');
       const version = f.version || '';
       return [name, version].filter(Boolean).join(' - ') || '-';
     }
     function formatSuggestionMeta(card) {
+      if (isInternalDebugCard(card)) return `Record tecnico · ${card?.debugInfo?.finishedAtRome || state.meta?.finishedAtRome || '-'}`;
       const f = getDisplayFields(card);
       const setCode = f.setCode ? f.setCode.toUpperCase() : '';
       const setName = f.setName || '';
@@ -5699,6 +5703,23 @@ function buildCardSearchIndex(card) {
         rawTokens,
         expandedTokens: Array.from(new Set(expandedTokens)).filter(Boolean),
       };
+    }
+    function isInternalDebugCard(card) {
+      return Boolean(card && (card.debugOnly === true || card.id === INTERNAL_DEBUG_INDEX_ID || card.kind === '__pokealbum_internal__'));
+    }
+    function isInternalDebugIndexSearch(rawQuery) {
+      return String(rawQuery || '').trim() === INTERNAL_DEBUG_INDEX_QUERY;
+    }
+    function getInternalDebugIndexCard() {
+      return (Array.isArray(state.cards) ? state.cards : []).find(card => isInternalDebugCard(card) && String(card.id || '') === INTERNAL_DEBUG_INDEX_ID) || null;
+    }
+    function filterInternalDebugCards(cards, rawQuery = '') {
+      const list = Array.isArray(cards) ? cards : [];
+      if (isInternalDebugIndexSearch(rawQuery)) {
+        const debugCard = getInternalDebugIndexCard();
+        return debugCard ? [debugCard] : [];
+      }
+      return list.filter(card => !isInternalDebugCard(card));
     }
     function tokenMatchesCard(card, token) {
       if (!token) return true;
@@ -7288,11 +7309,14 @@ function normalizeIndexMetaValue(value) {
     }
     function getResultCardHtml(card, resultIndex = 0) {
       const f = getDisplayFields(card);
-      const displayName = toTitleCase(f.name || '-');
-      const displayVersion = f.version || '';
-      const displaySetCode = String(f.setCode || '').toUpperCase();
-      const displaySetName = f.setName || '';
-      const imageUrl = getCardShowUrl(card);
+      const debugInfo = card?.debugInfo || {};
+      const displayName = isInternalDebugCard(card) ? (card.title || 'Indice database attivo') : toTitleCase(f.name || '-');
+      const displayVersion = isInternalDebugCard(card) ? '' : (f.version || '');
+      const displaySetCode = isInternalDebugCard(card) ? 'DEBUG' : String(f.setCode || '').toUpperCase();
+      const displaySetName = isInternalDebugCard(card)
+        ? `Build ${debugInfo.finishedAtRome || state.meta?.finishedAtRome || '-'}`
+        : (f.setName || '');
+      const imageUrl = isInternalDebugCard(card) ? '' : getCardShowUrl(card);
       const imageLoading = resultIndex < 8 ? 'eager' : 'lazy';
       const imagePriority = resultIndex < 4 ? 'high' : 'auto';
       return `
@@ -7373,12 +7397,17 @@ function renderResults(cards, options = {}) {
       }
     }
 function buildSuggestions(query) {
+      if (isInternalDebugIndexSearch(query)) {
+        const debugCard = getInternalDebugIndexCard();
+        state.lastSuggestionTotal = debugCard ? 1 : 0;
+        return debugCard ? [debugCard] : [];
+      }
       const parsed = parseQuery(query);
       if (!parsed.normalized || parsed.normalized.length <= 2) {
         state.lastSuggestionTotal = 0;
         return [];
       }
-      const matches = state.cards
+      const matches = filterInternalDebugCards(state.cards, query)
         .map(card => ({ card, score: computeScore(card, parsed) }))
         .filter(x => x.score > 0)
         .sort((a, b) => b.score - a.score);
@@ -7420,6 +7449,17 @@ function buildSuggestions(query) {
       el.autocomplete.classList.add('open');
     }
 function runSearch(rawQuery) {
+      if (isInternalDebugIndexSearch(rawQuery)) {
+        clearSearchProgressAnimation();
+        setProgress(0);
+        const results = filterInternalDebugCards(state.cards, rawQuery);
+        state.filtered = results;
+        renderResults(results, {
+          query: rawQuery,
+          batchSize: 30,
+        });
+        return;
+      }
       const parsed = parseQuery(rawQuery);
       if (!parsed.normalized) {
         clearResultsArea();
@@ -7433,7 +7473,7 @@ function runSearch(rawQuery) {
       }
       clearSearchProgressAnimation();
       setProgress(0);
-      const results = state.cards
+      const results = filterInternalDebugCards(state.cards, rawQuery)
         .map(card => ({ card, score: computeScore(card, parsed) }))
         .filter(x => x.score > 0)
         .sort((a, b) => b.score - a.score)
@@ -7664,15 +7704,22 @@ function getCollectionStatusBlueprintId(card = {}) {
       }
     }
 async function openCardDetails(cardId) {
-      const card = state.cards.find(c => Number(c.id) === Number(cardId));
+      const wantedId = String(cardId ?? '').trim();
+      const card = state.cards.find(c => String(c.id ?? '').trim() === wantedId || Number(c.id) === Number(cardId));
       if (!card) return;
+      const isDebugCard = isInternalDebugCard(card);
       state.selectedCard = card;
       resetCardDetailTemporaryFields();
-      void updateCollectionStatusForCard(card, { resetBeforeCheck: true });
+      if (!isDebugCard) {
+        void updateCollectionStatusForCard(card, { resetBeforeCheck: true });
+      }
       const f = getDisplayFields(card);
-      const displayName = toTitleCase(f.name || 'Dettaglio carta');
-      const detailImageUrl = getCardFullUrl(card);
-      const setText = [f.setCode, f.setName ? `(${f.setName})` : ''].filter(Boolean).join(' ');
+      const debugInfo = card?.debugInfo || {};
+      const displayName = isDebugCard ? (card.title || 'Indice database attivo') : toTitleCase(f.name || 'Dettaglio carta');
+      const detailImageUrl = isDebugCard ? '' : getCardFullUrl(card);
+      const setText = isDebugCard
+        ? `Build ${debugInfo.finishedAtRome || state.meta?.finishedAtRome || '-'}`
+        : [f.setCode, f.setName ? `(${f.setName})` : ''].filter(Boolean).join(' ');
       if (el.detailTopName) el.detailTopName.textContent = displayName;
       const detailTopMeta = [f.setCode ? f.setCode.toUpperCase() : '', f.version].filter(Boolean).join(' - ');
       if (el.detailTopMeta) el.detailTopMeta.textContent = detailTopMeta ? `(${detailTopMeta})` : '';
@@ -7693,17 +7740,34 @@ async function openCardDetails(cardId) {
       state.market.rows = [];
       state.market.selected = { langKey: '', condKey: '', ctZero: false, manualCustom: false };
       state.market.loading = false;
-      setPriceResult('-', 'Prezzo non ancora caricato');
-      if (el.cardRarity) el.cardRarity.textContent = f.rarity || '';
+      setPriceResult('-', isDebugCard ? 'Record tecnico interno' : 'Prezzo non ancora caricato');
+      if (el.cardRarity) el.cardRarity.textContent = isDebugCard ? 'debug interno' : (f.rarity || '');
       if (el.cardSet) el.cardSet.textContent = setText || '';
-      if (el.cardVersion) el.cardVersion.textContent = f.version || '';
-      if (el.detailRaw) el.detailRaw.textContent = JSON.stringify(card, null, 2);
+      if (el.cardVersion) el.cardVersion.textContent = isDebugCard ? `Carta debug n° ${card.displayNumber || card.collector_number || '-'}` : (f.version || '');
+      if (isDebugCard) {
+        el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'true');
+        setCollectionStatusPill('missing', 0);
+      }
+      if (el.detailRaw) el.detailRaw.textContent = JSON.stringify({
+        ...card,
+        activeMeta: {
+          slot: state.currentIndexSlot,
+          indexUrl: state.currentIndexUrl,
+          metaUrl: state.currentMetaUrl,
+          indexSha256: state.meta?.indexSha256 || null,
+          finishedAtRome: state.meta?.finishedAtRome || null,
+          cardsCount: state.meta?.cardsCount ?? null,
+          expansionsCount: state.meta?.expansionsCount ?? null
+        }
+      }, null, 2);
       if (el.collapsibleContent && el.collapsibleTrigger) {
         el.collapsibleContent.classList.remove('open');
         el.collapsibleTrigger.setAttribute('aria-expanded', 'false');
       }
       openModal(el.detailModal);
-      await loadMarketSummary(card);
+      if (!isDebugCard) {
+        await loadMarketSummary(card);
+      }
     }
     let pendingOriginType = '';
     let pendingOriginDetail = '';
