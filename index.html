@@ -5045,7 +5045,7 @@ const POKEALBUM_LOCAL_OAUTH_RETURN_PARAMS = [
   }
 })();
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi537-price-active-meta';
+    const POKEALBUM_BUILD_VERSION = 'vi538-dropbox-device-session';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -12944,6 +12944,8 @@ function formatStorageBytes(bytes) {
         }
         const BACKUP_CLOUD_STATUS_KEY = "pokealbumBackupCloudStatus";
         const BACKUP_CLOUD_LAST_RUN_KEY = "pokealbumBackupCloudLastRun";
+        const BACKUP_CLOUD_ACCOUNT_KEY = "pokealbumBackupCloudAccount";
+        const DROPBOX_CLIENT_ID_KEY = "pokealbumDropboxClientId";
         const DROPBOX_REMOTE_BACKEND = "https://92-4-233-89.sslip.io";
         const DROPBOX_API_BASE = (() => {
           const host = window.location.hostname;
@@ -12960,6 +12962,54 @@ function formatStorageBytes(bytes) {
         }
         function isLocalPokAlbumFrontend() {
           return window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+        }
+        function makeDropboxClientId() {
+          const bytes = new Uint8Array(24);
+          if (window.crypto?.getRandomValues) {
+            window.crypto.getRandomValues(bytes);
+          } else {
+            for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+          }
+          return `pa_${Array.from(bytes).map((value) => value.toString(16).padStart(2, "0")).join("")}`;
+        }
+        function getDropboxClientId() {
+          let clientId = "";
+          try {
+            clientId = String(localStorage.getItem(DROPBOX_CLIENT_ID_KEY) || "");
+          } catch {}
+          if (!/^[a-zA-Z0-9_-]{16,128}$/.test(clientId)) {
+            clientId = makeDropboxClientId();
+            try { localStorage.setItem(DROPBOX_CLIENT_ID_KEY, clientId); } catch {}
+          }
+          return clientId;
+        }
+        function getBackupCloudAccount() {
+          try {
+            const account = JSON.parse(localStorage.getItem(BACKUP_CLOUD_ACCOUNT_KEY) || "null");
+            return account && typeof account === "object" ? account : null;
+          } catch {
+            return null;
+          }
+        }
+        function setBackupCloudAccount(account) {
+          try {
+            if (account && typeof account === "object") {
+              localStorage.setItem(BACKUP_CLOUD_ACCOUNT_KEY, JSON.stringify({
+                name: account.name || "Utente Dropbox",
+                email: account.email || "",
+                linked_at: account.linked_at || ""
+              }));
+            } else {
+              localStorage.removeItem(BACKUP_CLOUD_ACCOUNT_KEY);
+            }
+          } catch {}
+        }
+        function formatBackupCloudAccount(account = getBackupCloudAccount()) {
+          if (!account) return "";
+          const email = String(account.email || "").trim();
+          const name = String(account.name || "").trim();
+          if (email && name && email.toLowerCase() !== name.toLowerCase()) return `${name} · ${email}`;
+          return email || name || "";
         }
         function getDropboxOAuthReturnUrl() {
           const url = new URL(window.location.href);
@@ -12980,25 +13030,26 @@ function formatStorageBytes(bytes) {
             evitando il riuso automatico di credenziali già salvate lato backend.
           */
           url.searchParams.set("force_reapprove", "true");
+          url.searchParams.set("client_id", getDropboxClientId());
 
           /*
-            In locale il BAT apre 127.0.0.1, mentre l'OAuth Dropbox passa dal backend Oracle.
-            Passiamo quindi al backend l'URL locale dove deve riportare l'app dopo il login.
+            Il backend Oracle non ospita più il frontend. Passiamo sempre l'URL di ritorno
+            dell'app reale, così l'OAuth Dropbox torna su GitHub Pages o sul localhost del BAT.
           */
-          if (isLocalPokAlbumFrontend()) {
-            const returnTo = getDropboxOAuthReturnUrl();
+          const returnTo = getDropboxOAuthReturnUrl();
 
+          if (isLocalPokAlbumFrontend()) {
             try {
               window.name = JSON.stringify({
                 [POKEALBUM_LOCAL_OAUTH_WINDOW_NAME_KEY]: returnTo,
                 ts: Date.now()
               });
             } catch {}
-
-            url.searchParams.set("return_to", returnTo);
-            url.searchParams.set("redirect_to", returnTo);
-            url.searchParams.set("frontend_url", returnTo);
           }
+
+          url.searchParams.set("return_to", returnTo);
+          url.searchParams.set("redirect_to", returnTo);
+          url.searchParams.set("frontend_url", returnTo);
 
           return url.toString();
         }
@@ -13008,10 +13059,11 @@ function formatStorageBytes(bytes) {
           return new Promise((resolve) => setTimeout(resolve, ms));
         }
         async function fetchDropboxWithTimeout(path, options = {}) {
-          const { timeout = DROPBOX_FETCH_TIMEOUT_MS, retry = true, ...fetchOptions } = options || {};
+          const { timeout = DROPBOX_FETCH_TIMEOUT_MS, retry = true, headers = {}, ...fetchOptions } = options || {};
           const url = dropboxApiUrl(path);
           let lastError = null;
           const attempts = retry ? 2 : 1;
+          const clientId = getDropboxClientId();
 
           for (let attempt = 1; attempt <= attempts; attempt += 1) {
             const controller = new AbortController();
@@ -13020,6 +13072,10 @@ function formatStorageBytes(bytes) {
               return await fetch(url, {
                 cache: "no-store",
                 ...fetchOptions,
+                headers: {
+                  "X-PokeAlbum-Client-Id": clientId,
+                  ...headers
+                },
                 signal: controller.signal
               });
             } catch (error) {
@@ -13044,6 +13100,7 @@ function formatStorageBytes(bytes) {
             const isConnected = Boolean(result?.ok && result?.connected);
 
             localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, isConnected ? "active" : "inactive");
+            setBackupCloudAccount(isConnected ? result?.user : null);
 
             updateBackupCloudUi();
 
@@ -13129,9 +13186,10 @@ function formatStorageBytes(bytes) {
           els.homeBackupStatusBtn?.setAttribute("aria-label", aria);
           els.homeBackupStatusBtn?.setAttribute("title", aria);
           if (els.backupPopoverTitle) els.backupPopoverTitle.textContent = aria;
+          const accountLabel = formatBackupCloudAccount();
           if (els.backupPopoverText) {
             els.backupPopoverText.textContent = isActive
-              ? "Le tue carte sono al sicuro. I dati vengono salvati nel cloud e puoi ripristinarli quando vuoi."
+              ? (accountLabel ? `Backup attivo su ${accountLabel}. Puoi sincronizzare o ripristinare quando vuoi.` : "Le tue carte sono al sicuro. I dati vengono salvati nel cloud e puoi ripristinarli quando vuoi.")
               : isStale
                 ? "Il backup è attivo, ma non viene aggiornato da un po’. Esegui un backup per allineare i dati."
                 : isError
@@ -13153,7 +13211,7 @@ function formatStorageBytes(bytes) {
           }
           if (els.profileBackupNote) {
             els.profileBackupNote.textContent = isActive
-              ? lastRun
+              ? (accountLabel ? `${lastRun} · ${accountLabel}` : lastRun)
               : "Non sincronizzato";
           }
           if (els.profileDropboxCheck) {
@@ -13327,6 +13385,15 @@ function formatStorageBytes(bytes) {
               result = null;
             }
 
+            if (response.status === 401) {
+              localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
+              localStorage.removeItem(BACKUP_CLOUD_LAST_RUN_KEY);
+              setBackupCloudAccount(null);
+              updateBackupCloudUi();
+              if (toast) showCloudNotConnectedToast();
+              return null;
+            }
+
             if (!response.ok || !result?.ok) {
               throw new Error(result?.error ? JSON.stringify(result.error) : `HTTP ${response.status}`);
             }
@@ -13419,6 +13486,15 @@ function formatStorageBytes(bytes) {
               result = null;
             }
 
+            if (response.status === 401) {
+              localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
+              localStorage.removeItem(BACKUP_CLOUD_LAST_RUN_KEY);
+              setBackupCloudAccount(null);
+              updateBackupCloudUi();
+              showCloudNotConnectedToast();
+              return;
+            }
+
             if (!response.ok || !result?.ok) {
               throw new Error(result?.error ? JSON.stringify(result.error) : `HTTP ${response.status}`);
             }
@@ -13464,6 +13540,7 @@ function formatStorageBytes(bytes) {
 
           localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
           localStorage.removeItem(BACKUP_CLOUD_LAST_RUN_KEY);
+          setBackupCloudAccount(null);
           updateBackupCloudUi();
           setBackupPopoverOpen(false);
           closeProfileMenu?.();
