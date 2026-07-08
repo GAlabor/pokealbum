@@ -2918,6 +2918,7 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
 .sync-now-row[aria-disabled="true"]:active{
   background:transparent!important;
 }
+.profile-row-icon.trash svg{stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 </style>
 <style id="menu-font-enlarge-patch">
 .profile-menu-panel{
@@ -4595,7 +4596,13 @@ paint-order="stroke">
                   </span>
                   <span>Dropbox</span>
                   <span class="provider-service-actions">
-                    <span class="provider-check off provider-action" aria-hidden="true">Collega</span>
+                    <span class="provider-check off provider-action" id="profileCloudCheck" role="button" tabindex="0" aria-label="Collega">Collega</span>
+                    <button class="provider-more-btn is-hidden" id="profileCloudMoreBtn" type="button" aria-label="Azioni Dropbox" aria-haspopup="true" aria-expanded="false">•••</button>
+                    <div class="profile-provider-menu" id="profileCloudMenu" aria-hidden="true">
+                      <button type="button" id="profileCloudExportBtn">Esporta Backup</button>
+                      <button type="button" id="profileCloudImportBtn">Importa Backup</button>
+                      <button type="button" id="profileCloudDisconnectBtn">Disconnetti</button>
+                    </div>
                   </span>
                 </div>
                 <div class="profile-provider-separator"></div>
@@ -4629,7 +4636,7 @@ paint-order="stroke">
               </button>
               <button class="profile-menu-action profile-menu-row restore-backup-action" id="restoreDataBtn" type="button">
                 <span class="profile-row-icon clock" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.35-5.65"/><path d="M4 5v4h4"/><path d="M12 8v4l2.5 1.5"/></svg></span>
-                <span>Backup precedenti</span>
+                <span>Ripristino Backup</span>
                 <span class="profile-row-chevron" aria-hidden="true">›</span>
               </button>
               <button class="profile-menu-action profile-menu-row reset-app-action" id="resetAppBtn" type="button">
@@ -4969,7 +4976,7 @@ paint-order="stroke">
   </div>
     <script>
 const API_BASE = 'https://pokealbum-price-proxy.cardtrad-pokemon-cache.workers.dev';
-    const POKEALBUM_BUILD_VERSION = 'vi539-cloud-clean';
+    const POKEALBUM_BUILD_VERSION = 'vi541-dropbox-full-sync';
     const POKEALBUM_BUILD_PARAM = 'pa_build';
     const POKEALBUM_BUILD_STORAGE_KEY = 'pokealbum:last-app-shell-build';
     const POKEALBUM_HTML_FINGERPRINT_STORAGE_KEY = 'pokealbum:last-local-html-fingerprint';
@@ -9357,6 +9364,7 @@ const els = {
           profileCloudMoreBtn: $("#profileCloudMoreBtn"),
           profileCloudMenu: $("#profileCloudMenu"),
           profileCloudExportBtn: $("#profileCloudExportBtn"),
+          profileCloudImportBtn: $("#profileCloudImportBtn"),
           profileCloudDisconnectBtn: $("#profileCloudDisconnectBtn"),
           disconnectBackupBtn: $("#disconnectBackupBtn"),
           connectCloudBtn: $("#connectCloudBtn"),
@@ -12866,18 +12874,50 @@ function formatStorageBytes(bytes) {
           setProfileProviderMenuOpen(false);
           return disconnectBackupCloud(event);
         }
+        const BACKUP_API_BASE = "https://92-4-233-89.sslip.io/api";
         const BACKUP_CLOUD_STATUS_KEY = "pokealbumBackupCloudStatus";
         const BACKUP_CLOUD_LAST_RUN_KEY = "pokealbumBackupCloudLastRun";
         const BACKUP_CLOUD_ACCOUNT_KEY = "pokealbumBackupCloudAccount";
+        const POKEALBUM_CLIENT_ID_KEY = "pokealbumClientId";
+
+        function isBackupRuntimeLocalStorageKey(key) {
+          return [
+            POKEALBUM_CLIENT_ID_KEY,
+            BACKUP_CLOUD_STATUS_KEY,
+            BACKUP_CLOUD_LAST_RUN_KEY,
+            BACKUP_CLOUD_ACCOUNT_KEY
+          ].includes(String(key || ""));
+        }
 
         function getBackupCloudAccount() {
-          return null;
+          try {
+            const raw = localStorage.getItem(BACKUP_CLOUD_ACCOUNT_KEY);
+            if (!raw) return null;
+            const account = JSON.parse(raw);
+            return account && typeof account === "object" ? account : null;
+          } catch {
+            return null;
+          }
         }
-        function setBackupCloudAccount() {
-          try { localStorage.removeItem(BACKUP_CLOUD_ACCOUNT_KEY); } catch {}
+        function setBackupCloudAccount(account = null) {
+          try {
+            if (!account || typeof account !== "object") {
+              localStorage.removeItem(BACKUP_CLOUD_ACCOUNT_KEY);
+              return;
+            }
+            localStorage.setItem(BACKUP_CLOUD_ACCOUNT_KEY, JSON.stringify({
+              name: account.accountName || account.name || "",
+              email: account.accountEmail || account.email || "",
+              savePath: account.savePath || "",
+              connectedAt: account.connectedAt || "",
+              updatedAt: account.updatedAt || ""
+            }));
+          } catch {}
         }
         function formatBackupCloudAccount() {
-          return "";
+          const account = getBackupCloudAccount();
+          if (!account) return "";
+          return account.name || account.email || "Dropbox";
         }
         function wait(ms) {
           return new Promise((resolve) => setTimeout(resolve, ms));
@@ -12886,26 +12926,113 @@ function formatStorageBytes(bytes) {
           const raw = String(localStorage.getItem(BACKUP_CLOUD_STATUS_KEY) || "inactive").toLowerCase();
           return ["active", "stale", "error", "inactive", "connecting"].includes(raw) ? raw : "inactive";
         }
+function normalizePokeAlbumClientId(value) {
+          const raw = String(value || "").trim();
+          if (/^pa_[a-f0-9]{48}$/i.test(raw)) return raw.toLowerCase();
+          if (/^[a-f0-9]{48}$/i.test(raw)) return `pa_${raw.toLowerCase()}`;
+          return "";
+        }
+        function getPokeAlbumClientId() {
+          let clientId = normalizePokeAlbumClientId(localStorage.getItem(POKEALBUM_CLIENT_ID_KEY));
+          if (!clientId) {
+            const bytes = new Uint8Array(24);
+            crypto.getRandomValues(bytes);
+            clientId = "pa_" + Array.from(bytes, b => b.toString(16).padStart(2, "0")).join("");
+            localStorage.setItem(POKEALBUM_CLIENT_ID_KEY, clientId);
+          } else if (localStorage.getItem(POKEALBUM_CLIENT_ID_KEY) !== clientId) {
+            localStorage.setItem(POKEALBUM_CLIENT_ID_KEY, clientId);
+          }
+          return clientId;
+        }
+                async function callBackupApi(path, options = {}) {
+          const clientId = getPokeAlbumClientId();
+          const response = await fetch(`${BACKUP_API_BASE}${path}`, {
+            credentials: "include",
+            cache: "no-store",
+            ...options,
+            headers: {
+              "X-PokeAlbum-Client-Id": clientId,
+              ...(options.body ? { "Content-Type": "application/json" } : {}),
+              ...(options.headers || {})
+            }
+          });
+
+          let data = null;
+          try {
+            data = await response.json();
+          } catch {
+            data = null;
+          }
+
+          if (!response.ok || data?.ok === false) {
+            throw new Error(data?.error || `Errore API backup (${response.status})`);
+          }
+
+          return data || {};
+        }
         async function refreshBackupCloudStatusFromServer(options = {}) {
-          localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
-          localStorage.removeItem(BACKUP_CLOUD_LAST_RUN_KEY);
-          setBackupCloudAccount(null);
-          updateBackupCloudUi();
-          if (options.toast) showStorageToast("Backup cloud non configurato", true);
-          return false;
+          try {
+            const data = await callBackupApi("/dropbox/status");
+            if (data.connected) {
+              localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
+              setBackupCloudAccount(data);
+              if (data.updatedAt && !localStorage.getItem(BACKUP_CLOUD_LAST_RUN_KEY)) {
+                localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, data.updatedAt);
+              }
+              updateBackupCloudUi();
+              if (options.toast) showStorageToast("Sincronizzato");
+              return true;
+            }
+
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
+            localStorage.removeItem(BACKUP_CLOUD_LAST_RUN_KEY);
+            setBackupCloudAccount(null);
+            updateBackupCloudUi();
+            if (options.toast) showStorageToast("Dropbox non collegato", true);
+            return false;
+          } catch (error) {
+            console.error("Errore stato Dropbox", error);
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "error");
+            updateBackupCloudUi();
+            if (options.toast) showStorageToast(error?.message || "Errore stato Dropbox", true);
+            return false;
+          }
         }
         async function handleCloudReturnStatus() {
           const url = new URL(window.location.href);
+          const dropboxResult = url.searchParams.get("dropbox");
+          const message = url.searchParams.get("message");
           let changed = false;
-          for (const key of ["account_id"]) {
+
+          for (const key of ["dropbox", "message", "account_id"]) {
             if (url.searchParams.has(key)) {
               url.searchParams.delete(key);
               changed = true;
             }
           }
+
           if (changed) {
             window.history.replaceState({}, document.title, url.pathname + url.search + url.hash);
           }
+
+          if (dropboxResult === "connected") {
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
+            const connected = await refreshBackupCloudStatusFromServer();
+            if (connected) {
+              await syncBackupCloudAfterConnect();
+            } else {
+              showStorageToast("Dropbox collegato, ma stato non verificato", true);
+            }
+            return;
+          }
+
+          if (dropboxResult === "error") {
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "error");
+            updateBackupCloudUi();
+            showStorageToast(message ? decodeURIComponent(message) : "Errore collegamento Dropbox", true);
+            return;
+          }
+
           await refreshBackupCloudStatusFromServer();
         }
         function formatBackupLastRun(value) {
@@ -12935,30 +13062,28 @@ function formatStorageBytes(bytes) {
           const accountLabel = formatBackupCloudAccount();
           if (els.backupPopoverText) {
             els.backupPopoverText.textContent = isActive
-              ? (accountLabel ? `Backup attivo su ${accountLabel}. Puoi sincronizzare o ripristinare quando vuoi.` : "Le tue carte sono al sicuro. I dati vengono salvati nel cloud e puoi ripristinarli quando vuoi.")
+              ? (accountLabel ? `Backup attivo su ${accountLabel}. Puoi sincronizzare o ripristinare quando vuoi.` : "Le tue carte sono al sicuro. I dati vengono salvati su Dropbox e puoi ripristinarli quando vuoi.")
               : isStale
                 ? "Il backup è attivo, ma non viene aggiornato da un po’. Esegui un backup per allineare i dati."
                 : isError
                   ? "L’ultimo backup non è riuscito. Controlla la connessione e riprova."
                   : isConnecting
-                    ? "Collegamento al servizio in corso. Completa l’accesso per attivare il backup cloud."
-                    : "Le tue carte sono salvate solo su questo dispositivo. Attiva il backup cloud per proteggerle e ripristinarle quando vuoi.";
+                    ? "Collegamento a Dropbox in corso. Completa l’accesso per attivare il backup cloud."
+                    : "Le tue carte sono salvate solo su questo dispositivo. Usa il tasto Collega per proteggerle e ripristinarle quando vuoi.";
           }
           els.backupPopoverMeta?.classList.toggle("is-hidden", !isActive && !isStale && !isError);
           if (els.backupLastRunText) els.backupLastRunText.textContent = lastRun;
-          if (els.backupPrimaryBtn) els.backupPrimaryBtn.textContent = isActive ? "Esegui backup ora" : "Attiva Backup Cloud";
+          if (els.backupPrimaryBtn) els.backupPrimaryBtn.textContent = isActive ? "Esegui backup ora" : "Attiva Dropbox";
           els.backupLearnMoreBtn?.classList.toggle("is-hidden", isActive);
-          els.backupDisconnectBtn?.classList.toggle("is-hidden", !isActive && !isStale && !isError);
+          els.backupDisconnectBtn?.classList.add("is-hidden");
           if (els.profileBackupPill) {
             els.profileBackupPill.classList.toggle("is-active", isActive || isConnecting);
             els.profileBackupPill.classList.toggle("is-connecting", isConnecting);
             els.profileBackupPill.classList.toggle("is-error", isError);
-            els.profileBackupPill.textContent = isActive ? "Sincronizzato" : isStale ? "Da sincronizzare" : isError ? "Errore sincronizzazione" : isConnecting ? "Collegamento in corso" : "Non collegato";
+            els.profileBackupPill.textContent = isActive ? "Sincronizzato" : isStale ? "Da sincronizzare" : isError ? "Errore sincronizzazione" : isConnecting ? "Collegamento a Dropbox" : "Non collegato";
           }
           if (els.profileBackupNote) {
-            els.profileBackupNote.textContent = isActive
-              ? (accountLabel ? `${lastRun} · ${accountLabel}` : lastRun)
-              : "Non sincronizzato";
+            els.profileBackupNote.textContent = isActive ? lastRun : "Non sincronizzato";
           }
           if (els.profileCloudCheck) {
             els.profileCloudCheck.textContent = isActive ? "" : "Collega";
@@ -12968,19 +13093,22 @@ function formatStorageBytes(bytes) {
             els.profileCloudCheck.closest(".profile-provider-row")?.classList.toggle("is-disconnected", !isActive);
             els.profileCloudCheck.setAttribute("aria-disabled", isActive ? "true" : "false");
             els.profileCloudCheck.setAttribute("tabindex", isActive ? "-1" : "0");
-            els.profileCloudCheck.setAttribute("aria-label", "Backup cloud non configurato");
+            els.profileCloudCheck.setAttribute("aria-label", isActive ? "Dropbox collegato" : "Collega");
           }
           els.profileCloudMoreBtn?.classList.toggle("is-hidden", !isActive);
           if (!isActive) setProfileProviderMenuOpen(false);
           if (els.connectCloudBtn) {
-            els.connectCloudBtn.querySelector("span:nth-child(2)") ? (els.connectCloudBtn.querySelector("span:nth-child(2)").textContent = "Sincronizza ora") : (els.connectCloudBtn.textContent = "Sincronizza ora");
-            els.connectCloudBtn.classList.toggle("is-hidden", false);
+            const syncLabel = "Sincronizza ora";
+            const syncTextEl = els.connectCloudBtn.querySelector("span:nth-child(2)");
+            if (syncTextEl) syncTextEl.textContent = syncLabel;
+            else els.connectCloudBtn.textContent = syncLabel;
+            els.connectCloudBtn.classList.toggle("is-hidden", !isActive);
             els.connectCloudBtn.setAttribute("aria-disabled", isActive ? "false" : "true");
-            els.connectCloudBtn.setAttribute("title", "Backup cloud non configurato");
+            els.connectCloudBtn.setAttribute("title", isActive ? syncLabel : "");
           }
           els.restoreDataBtn?.classList.toggle("is-hidden", false);
           els.restoreDataBtn?.setAttribute("aria-disabled", isActive ? "false" : "true");
-          els.restoreDataBtn?.setAttribute("title", isActive ? "Backup precedenti" : "Non collegato");
+          els.restoreDataBtn?.setAttribute("title", isActive ? "Ripristino Backup" : "Non collegato");
           els.disconnectBackupBtn?.classList.toggle("is-hidden", !isActive);
           els.resetAppBtn?.classList.remove("is-hidden");
         }
@@ -13006,6 +13134,7 @@ function formatStorageBytes(bytes) {
         }
 
         function isPokeAlbumLocalStorageKey(key) {
+          if (isBackupRuntimeLocalStorageKey(key)) return false;
           return (
             key === "ownerName" ||
             String(key || "").startsWith("pokealbum") ||
@@ -13064,6 +13193,9 @@ function formatStorageBytes(bytes) {
             ? payload.localStorage
             : {};
 
+          const runtimeClientId = getPokeAlbumClientId();
+          const runtimeAccount = localStorage.getItem(BACKUP_CLOUD_ACCOUNT_KEY);
+
           const keysToRemove = [];
           for (let i = 0; i < localStorage.length; i += 1) {
             const key = localStorage.key(i);
@@ -13076,6 +13208,11 @@ function formatStorageBytes(bytes) {
               localStorage.setItem(key, String(value));
             }
           });
+
+          localStorage.setItem(POKEALBUM_CLIENT_ID_KEY, runtimeClientId);
+          if (runtimeAccount) {
+            localStorage.setItem(BACKUP_CLOUD_ACCOUNT_KEY, runtimeAccount);
+          }
 
           const exportedAt = payload.exportedAt || payload.createdAt || new Date().toISOString();
           localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
@@ -13110,8 +13247,61 @@ function formatStorageBytes(bytes) {
 
         async function loadBackupCloudDataFromCloud(options = {}) {
           const { toast = false } = options;
-          if (toast) showStorageToast("Backup cloud non configurato", true);
-          return null;
+          const data = await callBackupApi("/dropbox/load");
+          const payload = data?.data || data;
+          const summary = await importPokeAlbumBackupPayload(payload, options);
+          localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
+          localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, summary.exportedAt || new Date().toISOString());
+          updateBackupCloudUi();
+          if (toast) {
+            showStorageToast("Sincronizzato");
+          }
+          return summary;
+        }
+        function isMissingDropboxBackupError(error) {
+          const message = String(error?.message || error || "").toLowerCase();
+          return message.includes("nessun backup") || message.includes("not_found") || message.includes("path/not_found");
+        }
+        async function syncBackupCloudAfterConnect() {
+          try {
+            setBackupPopoverOpen(false);
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "stale");
+            updateBackupCloudUi();
+            showStorageToast("Sincronizzazione in corso");
+
+            const summary = await loadBackupCloudDataFromCloud({ toast: false });
+            await refreshBackupCloudStatusFromServer();
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
+            localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, summary.exportedAt || new Date().toISOString());
+            updateBackupCloudUi();
+            showStorageToast("Sincronizzato");
+            return summary;
+          } catch (error) {
+            if (isMissingDropboxBackupError(error)) {
+              try {
+                showStorageToast("Sincronizzazione in corso");
+                const result = await saveBackupCloudNow();
+                if (result) {
+                  localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
+                  updateBackupCloudUi();
+                  showStorageToast("Sincronizzato");
+                }
+                return result;
+              } catch (saveError) {
+                console.error("Errore creazione primo backup Dropbox", saveError);
+                localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "error");
+                updateBackupCloudUi();
+                showStorageToast(saveError?.message || "Dropbox collegato, ma primo backup non creato", true);
+                return null;
+              }
+            }
+
+            console.error("Errore sincronizzazione Dropbox post-login", error);
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "error");
+            updateBackupCloudUi();
+            showStorageToast(error?.message || "Dropbox collegato, ma backup non sincronizzato", true);
+            return null;
+          }
         }
         async function collectPokeAlbumBackupPayload() {
           const db = await openDb();
@@ -13126,7 +13316,7 @@ function formatStorageBytes(bytes) {
           for (let i = 0; i < localStorage.length; i += 1) {
             const key = localStorage.key(i);
             if (!key) continue;
-            if (key.startsWith("pokealbum") || key.startsWith("pokemon") || key === "ownerName") {
+            if (isPokeAlbumLocalStorageKey(key)) {
               local[key] = localStorage.getItem(key);
             }
           }
@@ -13147,11 +13337,37 @@ function formatStorageBytes(bytes) {
         async function saveBackupCloudNow(event) {
           event?.preventDefault?.();
           event?.stopPropagation?.();
-          localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
-          updateBackupCloudUi();
-          setBackupPopoverOpen(false);
-          showStorageToast("Backup cloud non configurato", true);
-          return null;
+
+          const connected = await refreshBackupCloudStatusFromServer();
+          if (!connected) {
+            return connectCloud(event);
+          }
+
+          try {
+            setBackupPopoverOpen(false);
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "stale");
+            updateBackupCloudUi();
+            showStorageToast("Sincronizzazione in corso");
+
+            const payload = await collectPokeAlbumBackupPayload();
+            const result = await callBackupApi("/dropbox/save", {
+              method: "POST",
+              body: JSON.stringify(payload)
+            });
+
+            const savedAt = result.savedAt || payload.exportedAt || new Date().toISOString();
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
+            localStorage.setItem(BACKUP_CLOUD_LAST_RUN_KEY, savedAt);
+            updateBackupCloudUi();
+            showStorageToast("Sincronizzato");
+            return result;
+          } catch (error) {
+            console.error("Errore backup Dropbox", error);
+            localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "error");
+            updateBackupCloudUi();
+            showStorageToast(error?.message || "Errore backup Dropbox", true);
+            return null;
+          }
         }
         function runBackupPrimaryAction(event) {
           event?.preventDefault?.();
@@ -13161,9 +13377,7 @@ function formatStorageBytes(bytes) {
           const canSync = status === "active" || status === "stale" || status === "error";
 
           if (!canSync) {
-            updateBackupCloudUi();
-            showCloudNotConnectedToast();
-            return;
+            return connectCloud(event);
           }
 
           return saveBackupCloudNow(event);
@@ -13172,25 +13386,40 @@ function formatStorageBytes(bytes) {
         async function disconnectBackupCloud(event) {
           event?.preventDefault?.();
           event?.stopPropagation?.();
+          try {
+            await callBackupApi("/dropbox/disconnect", { method: "POST" });
+          } catch (error) {
+            console.warn("Errore disconnessione Dropbox", error);
+          }
           localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
           localStorage.removeItem(BACKUP_CLOUD_LAST_RUN_KEY);
           setBackupCloudAccount(null);
           updateBackupCloudUi();
           setBackupPopoverOpen(false);
           closeProfileMenu?.();
-          showStorageToast("Backup cloud non configurato", true);
+          showStorageToast("Dropbox scollegato");
         }
         function showBackupInfo(event) {
           event?.preventDefault?.();
           event?.stopPropagation?.();
-          showStorageToast("Backup cloud non configurato", true);
+          showStorageToast("Usa il tasto Collega per salvare e ripristinare i dati.");
         }
         async function connectCloud(event) {
           event?.preventDefault?.();
           event?.stopPropagation?.();
-          localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
+          localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "connecting");
           updateBackupCloudUi();
-          showStorageToast("Backup cloud non configurato", true);
+          showStorageToast("Sincronizzazione in corso");
+
+          const returnTo = new URL(window.location.href);
+          for (const key of ["dropbox", "message", "account_id"]) {
+            returnTo.searchParams.delete(key);
+          }
+
+          const authUrl = new URL(`${BACKUP_API_BASE}/dropbox/auth`);
+          authUrl.searchParams.set("return_to", returnTo.toString());
+          authUrl.searchParams.set("pa_client_id", getPokeAlbumClientId());
+          window.location.href = authUrl.toString();
         }
         function openProfileMenu() {
           setProfileStorageMenuOpen(false);
@@ -14992,7 +15221,18 @@ els.priceToggleBtn.addEventListener("click", () => {
         });
         els.profileStorageToggle?.addEventListener("click", toggleProfileStorageMenu);
         els.profileCloudMoreBtn?.addEventListener("click", toggleProfileProviderMenu);
+        els.profileCloudCheck?.addEventListener("click", (event) => {
+          if (els.profileCloudCheck?.getAttribute("aria-disabled") === "true") return;
+          connectCloud(event);
+        });
+        els.profileCloudCheck?.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            if (els.profileCloudCheck?.getAttribute("aria-disabled") === "true") return;
+            connectCloud(event);
+          }
+        });
         els.profileCloudExportBtn?.addEventListener("click", exportBackupFromProviderMenu);
+        els.profileCloudImportBtn?.addEventListener("click", restoreBackupFromCloud);
         els.profileCloudDisconnectBtn?.addEventListener("click", disconnectBackupFromProviderMenu);
         els.homeBackupStatusBtn?.addEventListener("click", toggleBackupPopover);
         els.backupPrimaryBtn?.addEventListener("click", runBackupPrimaryAction);
