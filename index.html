@@ -2396,6 +2396,32 @@ body.album-card-dragging{user-select:none;-webkit-user-select:none;overscroll-be
   stroke:currentColor!important;
 }
 
+
+
+/* Ripristino backup: pagina intera coerente con i picker dell'app */
+.backup-restore-backdrop{position:fixed;inset:0;z-index:235;background:linear-gradient(180deg,rgba(241,246,255,.98),rgba(225,234,249,.98));padding:calc(var(--safe-top) + 8px) 16px calc(var(--safe-bottom) + 16px);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .22s ease,visibility .22s ease;color:#20345f}
+.backup-restore-backdrop.open{opacity:1;visibility:visible;pointer-events:auto}
+.backup-restore-sheet{height:100%;width:100%;max-width:720px;margin:0 auto;color:#20345f;display:flex;flex-direction:column;min-height:0;background:transparent;border:0;box-shadow:none;padding:0;transform:none}
+.backup-restore-backdrop.open .backup-restore-sheet{transform:none}
+.backup-restore-handle{display:none}
+.backup-restore-head{height:var(--topbar-control-size);position:relative;display:flex;align-items:flex-start;justify-content:center;margin-bottom:14px;flex:0 0 auto;padding:0}
+.backup-restore-head>div{position:absolute;left:58px;right:58px;top:0;margin:0;text-align:center;min-width:0}
+.backup-restore-title{margin:9px 0 0;color:#1c2e5a;font-size:clamp(18px,2.2vh,22px);font-weight:900;line-height:1.08;letter-spacing:-.045em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.backup-restore-subtitle{margin:4px 0 0;color:#7382a2;font-size:12px;font-weight:750;line-height:1.18;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.backup-restore-close{position:absolute;left:0;top:0;width:var(--topbar-control-size);height:var(--topbar-control-size);border:1px solid rgba(255,255,255,.56);border-radius:50%;background:rgba(255,255,255,.58);color:#5c6f99;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 12px 24px rgba(73,96,157,.14),inset 0 1px 0 rgba(255,255,255,.92);backdrop-filter:blur(20px) saturate(145%);-webkit-backdrop-filter:blur(20px) saturate(145%);cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent;transition:transform .18s ease,background-color .18s ease,color .18s ease,box-shadow .18s ease}
+.backup-restore-close:hover{color:#3157c9;background:rgba(255,255,255,.68);box-shadow:0 16px 28px rgba(73,96,157,.18),inset 0 1px 0 rgba(255,255,255,.96)}
+.backup-restore-close:active{transform:scale(.97)}
+.backup-restore-close svg{width:23px;height:23px;display:block;fill:none;stroke:currentColor;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round}
+.backup-restore-list{display:grid;gap:8px;overflow:auto;-webkit-overflow-scrolling:touch;padding:8px 0 14px;min-height:0;flex:1 1 auto;align-content:start}
+.backup-restore-option{width:100%;min-height:58px;border:0;border-radius:20px;background:rgba(255,255,255,.58);color:#20345f;font-family:inherit;padding:10px 14px;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;text-align:left;box-shadow:inset 0 1px 0 rgba(255,255,255,.8);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .16s ease,transform .16s ease,box-shadow .16s ease}
+.backup-restore-option:hover,.backup-restore-option:active{background:rgba(47,100,255,.08)}
+.backup-restore-option:active{transform:scale(.99)}
+.backup-restore-option-title{display:block;color:#243865;font-size:16px;font-weight:900;letter-spacing:-.03em;line-height:1.14;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.backup-restore-option-sub{display:block;margin-top:3px;color:#7382a2;font-size:12px;font-weight:750;letter-spacing:-.015em;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.backup-restore-option-arrow{width:28px;height:28px;border-radius:999px;background:rgba(235,241,255,.78);color:#3157c9;display:inline-flex;align-items:center;justify-content:center;font-size:21px;font-weight:900;line-height:1;box-shadow:inset 0 1px 0 rgba(255,255,255,.82);padding-bottom:2px}
+.backup-restore-empty{margin:0;padding:28px 16px;text-align:center;color:#7382a2;font-size:14px;font-weight:800;line-height:1.28}
+@media (max-width:420px){.backup-restore-backdrop{padding-left:16px;padding-right:16px}.backup-restore-title{font-size:19px}.backup-restore-head>div{left:58px;right:18px;text-align:left}.backup-restore-subtitle{font-size:11.5px}}
+
 /* Backup Cloud UX - stato discreto in home e menu dedicato */
 #homeView .home-stats-card{position:relative!important}
 #homeView .home-backup-status-btn{appearance:none;-webkit-appearance:none;position:relative;width:56px;height:56px;border:0;border-radius:21px;background:transparent;display:grid;place-items:center;padding:0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .16s ease,filter .16s ease}
@@ -4681,6 +4707,23 @@ paint-order="stroke">
             <div class="restore-sheet-actions">
               <button class="restore-sheet-btn cancel" id="restoreCancelBtn" type="button">Annulla</button>
               <button class="restore-sheet-btn confirm" id="restoreConfirmBtn" type="button">Ripristina</button>
+            </div>
+          </section>
+        </div>
+        <div class="backup-restore-backdrop" id="backupRestorePicker" aria-hidden="true">
+          <section class="backup-restore-sheet" role="dialog" aria-modal="true" aria-labelledby="backupRestoreTitle">
+            <div class="backup-restore-handle" aria-hidden="true"></div>
+            <div class="backup-restore-head">
+              <div>
+                <h2 class="backup-restore-title" id="backupRestoreTitle">Ripristino backup</h2>
+                <p class="backup-restore-subtitle">Scegli la sincronizzazione.</p>
+              </div>
+              <button class="backup-restore-close" id="backupRestoreBackBtn" type="button" aria-label="Torna indietro">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+              </button>
+            </div>
+            <div class="backup-restore-list" id="backupRestoreList">
+              <p class="backup-restore-empty">Caricamento sincronizzazioni…</p>
             </div>
           </section>
         </div>
@@ -9386,6 +9429,9 @@ const els = {
           restoreSheetText: $("#restoreSheetText"),
           restoreCancelBtn: $("#restoreCancelBtn"),
           restoreConfirmBtn: $("#restoreConfirmBtn"),
+          backupRestorePicker: $("#backupRestorePicker"),
+          backupRestoreBackBtn: $("#backupRestoreBackBtn"),
+          backupRestoreList: $("#backupRestoreList"),
           ownerNameBtn: $("#ownerNameBtn"),
           profileTrainerName: $("#profileTrainerName"),
           profileAvatarBtn: $("#profileAvatarBtn"),
@@ -13249,8 +13295,9 @@ function normalizePokeAlbumClientId(value) {
         }
 
         async function loadBackupCloudDataFromCloud(options = {}) {
-          const { toast = false } = options;
-          const data = await callBackupApi("/dropbox/load");
+          const { toast = false, backupPath = "" } = options;
+          const query = backupPath ? `?path=${encodeURIComponent(backupPath)}` : "";
+          const data = await callBackupApi(`/dropbox/load${query}`);
           const payload = data?.data || data;
           const summary = await importPokeAlbumBackupPayload(payload, options);
           localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
@@ -13423,9 +13470,20 @@ function normalizePokeAlbumClientId(value) {
           const authUrl = new URL(`${BACKUP_API_BASE}/dropbox/auth`);
           authUrl.searchParams.set("return_to", returnTo.toString());
           authUrl.searchParams.set("pa_client_id", getPokeAlbumClientId());
-          if (localStorage.getItem(BACKUP_CLOUD_FORCE_REAUTH_KEY) === "1") {
+
+          const isLocalDropboxAuth =
+            window.location.hostname === "127.0.0.1" ||
+            window.location.hostname === "localhost";
+
+          // In locale evitiamo la riapprovazione forzata: Dropbox può mandare
+          // l'utente al vecchio /1/oauth2/authorize_submit e mostrare
+          // "Your session has expired". Online resta disponibile come prima.
+          if (localStorage.getItem(BACKUP_CLOUD_FORCE_REAUTH_KEY) === "1" && !isLocalDropboxAuth) {
             authUrl.searchParams.set("force_reapprove", "true");
+          } else if (isLocalDropboxAuth) {
+            localStorage.removeItem(BACKUP_CLOUD_FORCE_REAUTH_KEY);
           }
+
           window.location.href = authUrl.toString();
         }
         function openProfileMenu() {
@@ -13440,6 +13498,77 @@ function normalizePokeAlbumClientId(value) {
           els.profileMenuBackdrop?.setAttribute("aria-hidden", "true");
         }
         let restoreSheetMode = "reset";
+        let selectedBackupRestorePath = "";
+
+        function closeBackupRestorePicker() {
+          els.backupRestorePicker?.classList.remove("open");
+          els.backupRestorePicker?.setAttribute("aria-hidden", "true");
+        }
+
+        function formatBackupRestoreSize(size) {
+          const bytes = Number(size || 0);
+          if (!Number.isFinite(bytes) || bytes <= 0) return "";
+          if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+          return `${(bytes / 1024 / 1024).toFixed(1).replace(".", ",")} MB`;
+        }
+
+        function renderBackupRestoreList(backups = []) {
+          if (!els.backupRestoreList) return;
+          if (!backups.length) {
+            els.backupRestoreList.innerHTML = '<p class="backup-restore-empty">Nessuna sincronizzazione trovata su Dropbox.</p>';
+            return;
+          }
+
+          els.backupRestoreList.innerHTML = backups.map((backup) => {
+            const id = String(backup.id || backup.path || "");
+            const path = String(backup.path || "");
+            const label = String(backup.label || "Sincronizzazione");
+            const size = formatBackupRestoreSize(backup.size);
+            const sub = size ? `${size} · Dropbox` : "Backup Dropbox";
+            return `
+              <button class="backup-restore-option" type="button" data-backup-path="${escapeHtml(path || id)}">
+                <span>
+                  <span class="backup-restore-option-title">${escapeHtml(label)}</span>
+                  <span class="backup-restore-option-sub">${escapeHtml(sub)}</span>
+                </span>
+                <span class="backup-restore-option-arrow" aria-hidden="true">›</span>
+              </button>
+            `;
+          }).join("");
+
+          els.backupRestoreList.querySelectorAll("[data-backup-path]").forEach((button) => {
+            button.addEventListener("click", () => {
+              selectedBackupRestorePath = button.getAttribute("data-backup-path") || "";
+              closeBackupRestorePicker();
+              window.setTimeout(() => openRestoreSheet("backup"), 40);
+            });
+          });
+        }
+
+        async function openBackupRestorePicker(event) {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          if (stopDisabledCloudMenuAction(event)) return;
+          closeProfileMenu();
+          selectedBackupRestorePath = "";
+          els.backupRestorePicker?.classList.add("open");
+          els.backupRestorePicker?.setAttribute("aria-hidden", "false");
+          if (els.backupRestoreList) {
+            els.backupRestoreList.innerHTML = '<p class="backup-restore-empty">Caricamento sincronizzazioni…</p>';
+          }
+
+          try {
+            const data = await callBackupApi("/dropbox/backups");
+            renderBackupRestoreList(Array.isArray(data.backups) ? data.backups : []);
+          } catch (error) {
+            console.error(error);
+            if (els.backupRestoreList) {
+              els.backupRestoreList.innerHTML = `<p class="backup-restore-empty">${escapeHtml(error?.message || "Errore caricamento sincronizzazioni")}</p>`;
+            }
+            showStorageToast(error?.message || "Errore caricamento sincronizzazioni", true);
+          }
+        }
+
         function openRestoreSheet(mode = "reset") {
           restoreSheetMode = mode;
           if (els.restoreSheetTitle) {
@@ -13447,7 +13576,7 @@ function normalizePokeAlbumClientId(value) {
           }
           if (els.restoreSheetText) {
             els.restoreSheetText.textContent = mode === "backup"
-              ? "Questa operazione sostituisce album, carte e impostazioni locali con i dati presenti nell’ultimo backup cloud."
+              ? "Questa operazione sostituisce album, carte e impostazioni locali con la sincronizzazione selezionata da Dropbox."
               : "Questa operazione cancella tutti i dati locali dell’app e la riporta allo stato iniziale.";
           }
           if (els.restoreConfirmBtn) {
@@ -13467,19 +13596,7 @@ function normalizePokeAlbumClientId(value) {
           window.setTimeout(() => openRestoreSheet("reset"), 40);
         }
         async function restoreBackupFromCloud(event) {
-          event?.preventDefault?.();
-          event?.stopPropagation?.();
-          if (stopDisabledCloudMenuAction(event)) return;
-          closeProfileMenu();
-          try {
-            const summary = await loadBackupCloudDataFromCloud({ toast: true });
-            if (!summary) return;
-            setProfileStorageValues("…", "…", "…", "Ripristino backup completato");
-            window.setTimeout(() => void updateProfileStorageInfo(), 250);
-          } catch (error) {
-            console.error(error);
-            showStorageToast(error?.message || "Errore ripristino backup", true);
-          }
+          return openBackupRestorePicker(event);
         }
         async function deleteBrowserCaches() {
           let deletedCaches = 0;
@@ -13636,7 +13753,12 @@ function normalizePokeAlbumClientId(value) {
           try {
             closeRestoreSheet();
             if (restoreSheetMode === "backup") {
-              const summary = await loadBackupCloudDataFromCloud({ toast: true });
+              if (!selectedBackupRestorePath) {
+                showStorageToast("Seleziona una sincronizzazione da ripristinare", true);
+                return;
+              }
+              const summary = await loadBackupCloudDataFromCloud({ toast: true, backupPath: selectedBackupRestorePath });
+              selectedBackupRestorePath = "";
               if (!summary) return;
               setProfileStorageValues("…", "…", "…", "Ripristino backup completato");
               window.setTimeout(() => void updateProfileStorageInfo(), 250);
@@ -15256,6 +15378,10 @@ els.priceToggleBtn.addEventListener("click", () => {
           restoreBackupFromCloud(event);
         });
         els.resetAppBtn?.addEventListener("click", requestResetApp);
+        els.backupRestoreBackBtn?.addEventListener("click", closeBackupRestorePicker);
+        els.backupRestorePicker?.addEventListener("click", (event) => {
+          if (event.target === els.backupRestorePicker) closeBackupRestorePicker();
+        });
         els.restoreCancelBtn?.addEventListener("click", closeRestoreSheet);
         els.restoreConfirmBtn?.addEventListener("click", confirmRestoreData);
         els.restoreSheetBackdrop?.addEventListener("click", (event) => {
