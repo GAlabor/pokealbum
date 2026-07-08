@@ -12878,6 +12878,7 @@ function formatStorageBytes(bytes) {
         const BACKUP_CLOUD_STATUS_KEY = "pokealbumBackupCloudStatus";
         const BACKUP_CLOUD_LAST_RUN_KEY = "pokealbumBackupCloudLastRun";
         const BACKUP_CLOUD_ACCOUNT_KEY = "pokealbumBackupCloudAccount";
+        const BACKUP_CLOUD_FORCE_REAUTH_KEY = "pokealbumBackupCloudForceReauth";
         const POKEALBUM_CLIENT_ID_KEY = "pokealbumClientId";
 
         function isBackupRuntimeLocalStorageKey(key) {
@@ -12885,7 +12886,8 @@ function formatStorageBytes(bytes) {
             POKEALBUM_CLIENT_ID_KEY,
             BACKUP_CLOUD_STATUS_KEY,
             BACKUP_CLOUD_LAST_RUN_KEY,
-            BACKUP_CLOUD_ACCOUNT_KEY
+            BACKUP_CLOUD_ACCOUNT_KEY,
+            BACKUP_CLOUD_FORCE_REAUTH_KEY
           ].includes(String(key || ""));
         }
 
@@ -13016,6 +13018,7 @@ function normalizePokeAlbumClientId(value) {
           }
 
           if (dropboxResult === "connected") {
+            localStorage.removeItem(BACKUP_CLOUD_FORCE_REAUTH_KEY);
             localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "active");
             const connected = await refreshBackupCloudStatusFromServer();
             if (connected) {
@@ -13392,6 +13395,7 @@ function normalizePokeAlbumClientId(value) {
             console.warn("Errore disconnessione Dropbox", error);
           }
           localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "inactive");
+          localStorage.setItem(BACKUP_CLOUD_FORCE_REAUTH_KEY, "1");
           localStorage.removeItem(BACKUP_CLOUD_LAST_RUN_KEY);
           setBackupCloudAccount(null);
           updateBackupCloudUi();
@@ -13409,7 +13413,7 @@ function normalizePokeAlbumClientId(value) {
           event?.stopPropagation?.();
           localStorage.setItem(BACKUP_CLOUD_STATUS_KEY, "connecting");
           updateBackupCloudUi();
-          showStorageToast("Sincronizzazione in corso");
+          showStorageToast("Collegamento a Dropbox");
 
           const returnTo = new URL(window.location.href);
           for (const key of ["dropbox", "message", "account_id"]) {
@@ -13419,6 +13423,9 @@ function normalizePokeAlbumClientId(value) {
           const authUrl = new URL(`${BACKUP_API_BASE}/dropbox/auth`);
           authUrl.searchParams.set("return_to", returnTo.toString());
           authUrl.searchParams.set("pa_client_id", getPokeAlbumClientId());
+          if (localStorage.getItem(BACKUP_CLOUD_FORCE_REAUTH_KEY) === "1") {
+            authUrl.searchParams.set("force_reapprove", "true");
+          }
           window.location.href = authUrl.toString();
         }
         function openProfileMenu() {
