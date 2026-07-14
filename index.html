@@ -3870,7 +3870,7 @@ paint-order="stroke">
             <div class="detail-price"><span class="detail-price-label">Prezzo</span><button type="button" class="price-dots-btn" id="manualSetPill" aria-label="Opzioni prezzo" aria-haspopup="menu" aria-expanded="false"><span aria-hidden="true"></span></button><div class="price-action-menu" id="priceActionMenu" role="menu" aria-hidden="true"><button type="button" class="price-action-item" id="priceActionEdit" role="menuitem">Modifica</button><button type="button" class="price-action-item danger" id="priceActionRestore" role="menuitem">Ripristina</button></div><span class="detail-price-source" id="detailPriceSource" aria-live="polite"></span><div class="detail-price-line"><span class="detail-price-currency">€</span> <span class="detail-price-value" id="detailPriceValue">-</span></div><div class="detail-offer" id="detailOfferLabel">Nessun prezzo caricato</div></div>
             <div class="detail-cards">
               <section class="info-card add-detail-card"><h3 class="info-card-title">Dettagli Carta</h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="cardRarity"></div></div><div class="info-row editable-info-row origin-info-row add-editable-row" data-add-edit-field="origin"><div class="info-label">Provenienza</div><button class="info-choice-btn" id="cardOriginBtn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="info-choice-value is-placeholder" id="cardOriginValue"></span><span class="info-choice-arrow" aria-hidden="true">&gt;</span></button><input id="cardOriginInput" type="hidden" value=""></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="cardSet"></div></div><div class="info-row static-info-row add-only-row"><div class="info-label">Numero carta</div><div class="info-value" id="cardVersion"></div></div><div class="info-row editable-info-row no-chevron-info-row add-only-row add-editable-row add-edit-pencil" data-add-edit-field="total-set"><div class="info-label">Totale Set</div><input class="info-edit-input" id="cardTotalSetInput" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 240"></div><div class="info-row editable-info-row no-chevron-info-row add-editable-row add-edit-pencil" data-add-edit-field="release-date"><div class="info-label">Uscita</div><input class="info-edit-input" id="cardDateInput" type="text" autocomplete="off" placeholder="es. 2023"></div><div class="info-row editable-info-row no-chevron-info-row add-editable-row add-edit-pencil" data-add-edit-field="artist"><div class="info-label">Illustratore</div><input class="info-edit-input" id="cardArtistInput" type="text" autocomplete="off" placeholder="es. HYOGONOSUKE"></div></div></section><section class="info-card saved-detail-card" aria-hidden="true"><h3 class="info-card-title saved-detail-card-title"><span class="info-card-title-text">Dettagli Carta</span><button class="saved-card-edit-toggle" id="savedCardEditToggleBtn" type="button" aria-pressed="false">Modifica</button></h3><div class="info-divider"></div><div class="info-list"><div class="info-row static-info-row"><div class="info-label">CARTA</div><div class="info-value" id="savedCardInsertedSummary"></div></div><div class="info-row static-info-row"><div class="info-label">Nome</div><div class="info-value" id="savedCardName"></div></div><div class="info-row static-info-row"><div class="info-label">Set</div><div class="info-value" id="savedCardSet"></div></div><div class="info-row static-info-row"><div class="info-label">Numero carta</div><div class="info-value" id="savedCardVersion"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="total-set"><div class="info-label">Totale Carte Set</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardTotalSet"></div><input class="saved-card-edit-input" id="savedCardTotalSetInput" data-saved-edit-input="total-set" type="text" inputmode="numeric" autocomplete="off" placeholder="es. 94"></div></div><div class="info-row static-info-row"><div class="info-label">Rarità</div><div class="info-value" id="savedCardRarity"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron saved-edit-chevron-down" id="savedCardTypeEditRow" data-saved-edit-field="card-type"><div class="info-label">Tipo carta</div><div class="info-value" id="savedCardVariantsSummary"></div></div><div class="saved-variant-editor-row" id="savedVariantEditorRow" aria-hidden="true"><div class="saved-variant-editor-card" aria-label="Selezione tipo carta salvata"><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantHolo" data-saved-variant="holo" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Holo</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantReverse" data-saved-variant="reverse" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Reverse</span></label><label class="saved-variant-option"><span class="saved-variant-radio"><input type="checkbox" id="savedVariantIllustration" data-saved-variant="illustration" autocomplete="off"><span class="saved-variant-circle"></span></span><span class="saved-variant-text">Illustration</span></label></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="release-date"><div class="info-label">Uscita</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardDate"></div><input class="saved-card-edit-input" id="savedCardDateInput" data-saved-edit-input="release-date" type="text" autocomplete="off" placeholder="es. 2026"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-pencil" data-saved-edit-field="artist"><div class="info-label">Illustratore</div><div class="saved-edit-value-wrap"><div class="info-value" id="savedCardArtist"></div><input class="saved-card-edit-input" id="savedCardArtistInput" data-saved-edit-input="artist" type="text" autocomplete="off" placeholder="es. Mitsuhiro Arita"></div></div><div class="info-row static-info-row"><div class="info-label">Data inserimento</div><div class="info-value" id="savedCardInsertedAt"></div></div><div class="info-row static-info-row"><div class="info-label">Valore iniziale</div><div class="info-value" id="savedCardInitialValue"></div></div><div class="info-row static-info-row saved-editable-row saved-edit-chevron" data-saved-edit-field="origin"><div class="info-label">Provenienza</div><div class="info-value" id="savedCardOriginValue"></div></div></div></section>
-              <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>JSON <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia JSON" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
+              <section class="info-card json-info-card"><button class="collapsible-trigger" type="button" aria-expanded="false" aria-controls="jsonCardContent"><span>String <span id="copyMsg" style="color:#87f5a3; font-size:13px; margin-left:8px; display:none;">Copiato negli appunti</span></span><span class="json-header-actions"><span class="copy-icon-btn" role="button" aria-label="Copia String" tabindex="0"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2"></rect><rect x="5" y="5" width="10" height="10" rx="2"></rect></svg></span><span class="collapsible-arrow">⌄</span></span></button><div class="collapsible-content" id="jsonCardContent"><div class="info-list"><pre class="info-value raw-block" id="detailRaw"></pre></div></div></section>
             </div>
           </div>
         </div></div>
@@ -5914,6 +5914,23 @@ function normalizeIndexMetaValue(value) {
       if (typeof value === 'number' || typeof value === 'boolean') return String(value);
       try { return JSON.stringify(value); } catch (_) { return String(value); }
     }
+    function getDatabaseSyncString(record) {
+      if (!record || typeof record !== 'object') return 'NON_DISPONIBILE_NEL_DATABASE';
+
+      const candidates = [
+        record.sync_string,
+        record.rawCard?.sync_string,
+        record.card?.sync_string,
+        record.sourceCard?.sync_string
+      ];
+
+      for (const value of candidates) {
+        if (typeof value === 'string' && value.trim()) return value.trim();
+      }
+
+      return 'NON_DISPONIBILE_NEL_DATABASE';
+    }
+
     function getIndexMetaSignature(meta) {
       if (!meta || typeof meta !== 'object') return '';
       const updatedAt = getIndexUpdatedValue(meta);
@@ -6901,18 +6918,7 @@ async function openCardDetails(cardId) {
         el.detailModal?.querySelector('.add-detail-card')?.setAttribute('aria-hidden', 'true');
         setCollectionStatusPill('missing', 0);
       }
-      if (el.detailRaw) el.detailRaw.textContent = JSON.stringify({
-        ...card,
-        activeMeta: {
-          slot: state.currentIndexSlot,
-          indexUrl: state.currentIndexUrl,
-          metaUrl: state.currentMetaUrl,
-          indexSha256: state.meta?.indexSha256 || null,
-          finishedAtRome: state.meta?.finishedAtRome || null,
-          cardsCount: state.meta?.cardsCount ?? null,
-          expansionsCount: state.meta?.expansionsCount ?? null
-        }
-      }, null, 2);
+      if (el.detailRaw) el.detailRaw.textContent = getDatabaseSyncString(card);
       if (el.collapsibleContent && el.collapsibleTrigger) {
         el.collapsibleContent.classList.remove('open');
         el.collapsibleTrigger.setAttribute('aria-expanded', 'false');
@@ -7182,7 +7188,7 @@ function openOriginChoiceSheet() {
       if (!cardId || typeof window.PokeAlbumStorage?.updateSavedCardDetails !== 'function') return null;
       try {
         const updatedCard = await window.PokeAlbumStorage.updateSavedCardDetails(cardId, patch);
-        if (updatedCard && el.detailRaw) el.detailRaw.textContent = JSON.stringify(updatedCard, null, 2);
+        if (updatedCard && el.detailRaw) el.detailRaw.textContent = getDatabaseSyncString(updatedCard);
         return updatedCard;
       } catch (error) {
         console.error('Errore aggiornamento carta salvata', error);
@@ -9285,7 +9291,7 @@ async function openSavedAlbumCardDetails(savedCardId = '', slotNumber = '') {
             el.cardOriginBtn.setAttribute('aria-disabled', 'true');
             el.cardOriginBtn.setAttribute('tabindex', '-1');
           }
-          if (el.detailRaw) el.detailRaw.textContent = JSON.stringify(savedCard, null, 2);
+          if (el.detailRaw) el.detailRaw.textContent = getDatabaseSyncString(savedCard);
           if (el.savedLocationPill) {
             const albumName = getAlbumPublicName(state.currentAlbum?.albumData || {}) || '';
             const slotInfo = getSavedDetailSlotInfo(id);
