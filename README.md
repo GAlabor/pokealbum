@@ -1,3 +1,3 @@
-# Pokemon CardTrader DB
+# Pokemon Card DB
 
-Sistema automatico per creare e aggiornare un database locale delle carte Pokémon da CardTrader, con aggiornamento schedulato e ricerca rapida.
+App per conservare le proprie carte Pokemon e visualizzare i prezzi in tempo reale.
