@@ -1534,7 +1534,6 @@
         <div class="cloud-detail-row">
           <div class="cloud-detail-label">Spazio Google utilizzato</div>
           <div class="cloud-detail-value" id="cloudDriveUsage">—</div>
-          <div class="cloud-detail-hint">Include Drive, Gmail e Foto Google, quando Google rende disponibile il dato.</div>
         </div>
         <div class="cloud-detail-row">
           <div class="cloud-detail-label">Percorso di salvataggio</div>
@@ -1727,7 +1726,7 @@
       setDrawer(false);
       const sessionToken = localStorage.getItem(GOOGLE_SESSION_KEY);
       if (!sessionToken) {
-        setGoogleGate(true, "Collega Google Drive per vedere i dettagli del cloud.");
+        setGoogleGate(true, "");
         return;
       }
 
@@ -1819,7 +1818,7 @@
       attempt.unlock = window.setTimeout(() => {
         if (googleLoginAttempt !== attempt) return;
         googleConnect.disabled = false;
-        googleStatus.textContent = "Completa l’accesso nella finestra Google. Se non si è aperta, riprova.";
+        googleStatus.textContent = "Completa l’accesso nella finestra Google.";
       }, 1200);
       attempt.poll = window.setInterval(() => {
         if (googleLoginAttempt !== attempt) return;
