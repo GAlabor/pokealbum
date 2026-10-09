@@ -1090,6 +1090,139 @@
       text-align: center;
     }
 
+    /* Dettagli del collegamento Google Drive */
+    .cloud-details[hidden] { display: none; }
+
+    .cloud-details {
+      position: fixed;
+      z-index: 120;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(5, 8, 14, .70);
+      backdrop-filter: blur(11px);
+    }
+
+    .cloud-details-card {
+      width: min(100%, 470px);
+      max-height: min(760px, calc(100dvh - 40px));
+      overflow: auto;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 25px;
+      color: #f5f7fb;
+      background: linear-gradient(150deg, rgba(39, 44, 62, .99), rgba(18, 21, 31, .99));
+      box-shadow: 0 28px 90px rgba(0, 0, 0, .52);
+    }
+
+    .cloud-details-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .cloud-details-heading {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .cloud-details-drive-logo {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+    }
+
+    .cloud-details-kicker {
+      margin: 0 0 3px;
+      color: #aeb9d6;
+      font-size: .72rem;
+      font-weight: 760;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .cloud-details-title { margin: 0; font-size: 1.22rem; letter-spacing: -.02em; }
+
+    .cloud-close {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 12px;
+      color: #dce4fb;
+      background: rgba(255,255,255,.06);
+      font-size: 1.4rem;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .cloud-account {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin: 22px 0 18px;
+      padding: 14px;
+      border: 1px solid rgba(73, 136, 245, .23);
+      border-radius: 17px;
+      background: rgba(73, 136, 245, .10);
+    }
+
+    .cloud-account-avatar {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 38px;
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(135deg, #4988f5, #6b4ce6);
+      font-weight: 800;
+    }
+
+    .cloud-account-label, .cloud-detail-label { color: #aeb9d6; font-size: .76rem; }
+    .cloud-account-email { margin-top: 2px; color: #fff; font-size: .95rem; font-weight: 700; overflow-wrap: anywhere; }
+
+    .cloud-detail-grid { display: grid; gap: 10px; }
+
+    .cloud-detail-row {
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .035);
+    }
+
+    .cloud-detail-value { margin-top: 5px; color: #f3f6ff; font-size: .92rem; font-weight: 650; line-height: 1.38; overflow-wrap: anywhere; }
+    .cloud-detail-hint { margin-top: 3px; color: #8f9ab4; font-size: .75rem; line-height: 1.36; }
+
+    .cloud-details-status {
+      min-height: 1.35em;
+      margin: 15px 2px 0;
+      color: #aeb9d6;
+      font-size: .84rem;
+      text-align: center;
+    }
+
+    .cloud-details-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 21px; }
+
+    .cloud-action {
+      min-height: 45px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 13px;
+      color: #f6f8ff;
+      background: rgba(255,255,255,.07);
+      font: inherit;
+      font-weight: 720;
+      cursor: pointer;
+    }
+
+    .cloud-action.disconnect { border-color: rgba(255, 126, 126, .25); color: #ffb5b5; background: rgba(198, 64, 64, .10); }
+    .cloud-action:disabled { cursor: wait; opacity: .60; }
+
     /* Responsive */
 
     @media (min-width: 700px) {
@@ -1436,6 +1569,53 @@
     </div>
   </section>
 
+  <section class="cloud-details" id="cloudDetails" aria-labelledby="cloudDetailsTitle" hidden>
+    <div class="cloud-details-card" role="dialog" aria-modal="true">
+      <div class="cloud-details-head">
+        <div class="cloud-details-heading">
+          <img class="cloud-details-drive-logo" src="google-drive-2026.svg" alt="">
+          <div>
+            <p class="cloud-details-kicker">Salvataggio cloud</p>
+            <h2 class="cloud-details-title" id="cloudDetailsTitle">Google Drive</h2>
+          </div>
+        </div>
+        <button class="cloud-close" id="closeCloudDetails" type="button" aria-label="Chiudi">×</button>
+      </div>
+
+      <div class="cloud-account">
+        <span class="cloud-account-avatar" id="cloudAccountInitial">G</span>
+        <div>
+          <div class="cloud-account-label">Account collegato</div>
+          <div class="cloud-account-email" id="cloudAccountEmail">Caricamento…</div>
+        </div>
+      </div>
+
+      <div class="cloud-detail-grid">
+        <div class="cloud-detail-row">
+          <div class="cloud-detail-label">Dati PokeAlbum salvati</div>
+          <div class="cloud-detail-value" id="cloudAppDataUsage">—</div>
+          <div class="cloud-detail-hint">Nello spazio privato dell’app.</div>
+        </div>
+        <div class="cloud-detail-row">
+          <div class="cloud-detail-label">Spazio Google utilizzato</div>
+          <div class="cloud-detail-value" id="cloudDriveUsage">—</div>
+          <div class="cloud-detail-hint">Include Drive, Gmail e Foto Google, quando Google rende disponibile il dato.</div>
+        </div>
+        <div class="cloud-detail-row">
+          <div class="cloud-detail-label">Percorso di salvataggio</div>
+          <div class="cloud-detail-value" id="cloudFolderPath">—</div>
+          <div class="cloud-detail-hint">L’area è privata: PokeAlbum non vede i tuoi altri file.</div>
+        </div>
+      </div>
+
+      <p class="cloud-details-status" id="cloudDetailsStatus" role="status" aria-live="polite"></p>
+      <div class="cloud-details-actions">
+        <button class="cloud-action" id="changeGoogleAccount" type="button">Cambia account</button>
+        <button class="cloud-action disconnect" id="disconnectGoogle" type="button">Disconnetti</button>
+      </div>
+    </div>
+  </section>
+
   <script>
     const splash = document.getElementById("splash");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -1494,6 +1674,16 @@
     const googleStatus = document.getElementById("googleStatus");
     const connectCloud = document.getElementById("connectCloud");
     const cloudConnectionStatus = document.getElementById("cloudConnectionStatus");
+    const cloudDetails = document.getElementById("cloudDetails");
+    const closeCloudDetails = document.getElementById("closeCloudDetails");
+    const cloudAccountInitial = document.getElementById("cloudAccountInitial");
+    const cloudAccountEmail = document.getElementById("cloudAccountEmail");
+    const cloudAppDataUsage = document.getElementById("cloudAppDataUsage");
+    const cloudDriveUsage = document.getElementById("cloudDriveUsage");
+    const cloudFolderPath = document.getElementById("cloudFolderPath");
+    const cloudDetailsStatus = document.getElementById("cloudDetailsStatus");
+    const changeGoogleAccount = document.getElementById("changeGoogleAccount");
+    const disconnectGoogle = document.getElementById("disconnectGoogle");
 
     let pendingProfileImage = "";
 
@@ -1511,6 +1701,75 @@
       connectCloud.classList.toggle("is-connected", connected);
       cloudConnectionStatus.textContent = connected ? "Google Drive collegato" : (checking ? "Verifica Drive in corso…" : "Nessun Drive collegato");
       connectCloud.setAttribute("aria-label", connected ? "Google Drive collegato" : (checking ? "Verifica Google Drive in corso" : "Nessun Drive collegato"));
+    }
+
+    function formatBytes(value) {
+      const bytes = Number(value || 0);
+      if (!Number.isFinite(bytes) || bytes < 0) return "Non disponibile";
+      if (bytes < 1024) return `${bytes} B`;
+      const units = ["KB", "MB", "GB", "TB"];
+      let size = bytes;
+      let unit = -1;
+      do { size /= 1024; unit += 1; } while (size >= 1024 && unit < units.length - 1);
+      return `${new Intl.NumberFormat("it-IT", { maximumFractionDigits: 1 }).format(size)} ${units[unit]}`;
+    }
+
+    function setCloudDetailsVisible(visible) {
+      cloudDetails.hidden = !visible;
+    }
+
+    function setCloudDetailsLoading() {
+      cloudAccountInitial.textContent = "G";
+      cloudAccountEmail.textContent = "Caricamento…";
+      cloudAppDataUsage.textContent = "—";
+      cloudDriveUsage.textContent = "—";
+      cloudFolderPath.textContent = "—";
+      cloudDetailsStatus.textContent = "Verifica connessione e dati di Drive…";
+      changeGoogleAccount.disabled = true;
+      disconnectGoogle.disabled = true;
+    }
+
+    function showCloudDetails(data) {
+      const email = data?.account?.email || "Account Google";
+      cloudAccountInitial.textContent = email.slice(0, 1).toUpperCase();
+      cloudAccountEmail.textContent = email;
+      cloudAppDataUsage.textContent = formatBytes(data?.appData?.bytes);
+      const usage = data?.storage?.usage;
+      const limit = data?.storage?.limit;
+      cloudDriveUsage.textContent = usage == null ? "Non disponibile" : `${formatBytes(usage)}${limit ? ` di ${formatBytes(limit)}` : ""}`;
+      cloudFolderPath.textContent = data?.appData?.folderPath || "Google Drive › Dati dell’app › PokeAlbum";
+      cloudDetailsStatus.textContent = "Google Drive collegato e verificato.";
+      changeGoogleAccount.disabled = false;
+      disconnectGoogle.disabled = false;
+    }
+
+    async function openCloudDetails() {
+      const sessionToken = localStorage.getItem(GOOGLE_SESSION_KEY);
+      if (!sessionToken) {
+        setGoogleGate(true, "Collega Google Drive per vedere i dettagli del cloud.");
+        return;
+      }
+
+      setCloudDetailsVisible(true);
+      setCloudDetailsLoading();
+      try {
+        const response = await fetch(`${GOOGLE_API_URL}/api/google/account`, {
+          headers: { Authorization: `Bearer ${sessionToken}` }
+        });
+        if (response.status === 401) {
+          localStorage.removeItem(GOOGLE_SESSION_KEY);
+          setCloudDetailsVisible(false);
+          setCloudConnection(false);
+          setGoogleGate(true, "La connessione Google va ripristinata per continuare.");
+          return;
+        }
+        if (!response.ok) throw new Error("details unavailable");
+        showCloudDetails(await response.json());
+      } catch {
+        cloudDetailsStatus.textContent = "Impossibile leggere ora i dettagli di Drive. Riprova tra poco.";
+        changeGoogleAccount.disabled = false;
+        disconnectGoogle.disabled = false;
+      }
     }
 
     async function checkGoogleConnection() {
@@ -1550,7 +1809,7 @@
       }
     }
 
-    googleConnect.addEventListener("click", () => {
+    function openGoogleLogin() {
       googleStatus.textContent = "Apertura di Google…";
       googleConnect.disabled = true;
       const popup = window.open(
@@ -1561,6 +1820,40 @@
       if (!popup) {
         googleStatus.textContent = "Il browser ha bloccato la finestra. Consenti i popup e riprova.";
         googleConnect.disabled = false;
+      }
+    }
+
+    googleConnect.addEventListener("click", openGoogleLogin);
+    connectCloud.addEventListener("click", openCloudDetails);
+    closeCloudDetails.addEventListener("click", () => setCloudDetailsVisible(false));
+    cloudDetails.addEventListener("click", (event) => {
+      if (event.target === cloudDetails) setCloudDetailsVisible(false);
+    });
+
+    changeGoogleAccount.addEventListener("click", () => {
+      setCloudDetailsVisible(false);
+      setGoogleGate(false);
+      openGoogleLogin();
+    });
+
+    disconnectGoogle.addEventListener("click", async () => {
+      const sessionToken = localStorage.getItem(GOOGLE_SESSION_KEY);
+      if (!sessionToken) return;
+      disconnectGoogle.disabled = true;
+      cloudDetailsStatus.textContent = "Disconnessione in corso…";
+      try {
+        const response = await fetch(`${GOOGLE_API_URL}/api/google/session`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${sessionToken}` }
+        });
+        if (!response.ok) throw new Error("disconnect failed");
+        localStorage.removeItem(GOOGLE_SESSION_KEY);
+        setCloudDetailsVisible(false);
+        setCloudConnection(false);
+        setGoogleGate(true, "Google Drive è stato disconnesso.");
+      } catch {
+        cloudDetailsStatus.textContent = "Disconnessione non riuscita. Riprova.";
+        disconnectGoogle.disabled = false;
       }
     });
 
@@ -1573,6 +1866,7 @@
         localStorage.setItem(GOOGLE_SESSION_KEY, message.sessionToken);
         setCloudConnection(true);
         setGoogleGate(false);
+        setCloudDetailsVisible(false);
         return;
       }
 
