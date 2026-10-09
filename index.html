@@ -36,7 +36,6 @@
       --color-nav-active: #4da3ff;
       --color-nav-indicator: rgba(255, 255, 255, .12);
       --color-nav-indicator-border: rgba(255, 255, 255, .045);
-      --color-menu-hover: rgba(255, 255, 255, .045);
       --color-input: rgba(255, 255, 255, .055);
       --color-modal: rgba(11, 18, 32, .98);
 
@@ -61,7 +60,6 @@
       --size-control: 44px;
       --size-tabbar: 74px;
       --size-drawer: 340px;
-      --size-avatar: 38px;
       --size-menu-icon: 38px;
       --size-profile-avatar: 92px;
 
@@ -71,7 +69,6 @@
       --radius-panel: 24px;
 
       /* Shadows */
-      --shadow-control: 0 8px 24px rgba(0, 0, 0, .22);
       --shadow-floating: 0 16px 44px rgba(0, 0, 0, .34);
       --shadow-accent:
         inset 0 0 0 1px rgba(255, 255, 255, .08),
@@ -98,8 +95,6 @@
       --icon-stroke: 1.9;
       --icon-stroke-nav: 2.15;
       --icon-stroke-menu: 1.35;
-
-      /* Effects */
 
       /* Motion */
       --duration-fast: .18s;
@@ -236,15 +231,6 @@
       display: block;
     }
 
-    /* Reusable UI primitives */
-
-    .panel {
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-panel);
-      background: var(--color-surface-1);
-      box-shadow: var(--shadow-floating);
-    }
-
     /* Button variants */
     .button {
       min-height: var(--size-control);
@@ -276,7 +262,6 @@
       border: 1px solid var(--color-border);
       border-radius: var(--radius-control);
       background: var(--color-surface-2);
-      box-shadow: var(--shadow-control);
       transition:
         border-color var(--duration-fast) ease,
         background var(--duration-fast) ease;
@@ -521,18 +506,21 @@
       box-shadow: none;
     }
 
-    .menu-item-avatar img {
+    .menu-item-avatar img,
+    .profile-avatar img {
       width: 100%;
       height: 100%;
       display: none;
       object-fit: cover;
     }
 
-    .menu-item-avatar.has-image img {
+    .menu-item-avatar.has-image img,
+    .profile-avatar.has-image img {
       display: block;
     }
 
-    .menu-item-avatar.has-image .avatar-initial {
+    .menu-item-avatar.has-image .avatar-initial,
+    .profile-avatar.has-image .avatar-initial {
       display: none;
     }
 
@@ -578,12 +566,11 @@
       border-radius: 50%;
       background: var(--color-muted);
       box-shadow: none;
-      transition: background .2s ease, box-shadow .2s ease;
+      transition: background .2s ease;
     }
 
     .cloud-menu-item.is-connected .cloud-connection-dot {
       background: #20cf76;
-      box-shadow: none;
     }
 
     .drive-menu-logo {
@@ -634,21 +621,6 @@
 
     .profile-avatar.has-image {
       background: var(--color-surface-2);
-    }
-
-    .profile-avatar img {
-      width: 100%;
-      height: 100%;
-      display: none;
-      object-fit: cover;
-    }
-
-    .profile-avatar.has-image img {
-      display: block;
-    }
-
-    .profile-avatar.has-image .avatar-initial {
-      display: none;
     }
 
     .profile-avatar-badge {
@@ -736,10 +708,6 @@
       margin: 0;
       font-size: var(--font-title-size);
       font-weight: var(--font-title-weight);
-    }
-
-    .modal-field {
-      margin-top: var(--space-5);
     }
 
     .text-input {
@@ -919,156 +887,104 @@
       }
     }
 
-    /* Google cloud connection */
-    .google-gate[hidden] {
-      display: none;
-    }
+    /* Accesso e scelta del salvataggio */
+    .google-gate[hidden] { display: none; }
 
     .google-gate {
       position: fixed;
-      z-index: 110;
       inset: 0;
-      display: grid;
-      place-items: center;
+      z-index: 110;
       overflow-y: auto;
-      padding: 24px;
-      background:
-        radial-gradient(circle at 18% 12%, rgba(91, 104, 255, .20), transparent 36%),
-        radial-gradient(circle at 84% 86%, rgba(17, 166, 120, .13), transparent 34%),
-        rgba(10, 12, 18, .96);
-      backdrop-filter: blur(18px);
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 18px calc(12px + env(safe-area-inset-bottom, 0px));
+      color: #fff;
+      background: radial-gradient(ellipse at 50% 0%, #0d1c3b 0%, transparent 42%), radial-gradient(ellipse at 50% 100%, #09172f 0%, transparent 42%), #03060b;
     }
 
     .google-card {
       width: min(100%, 460px);
-      padding: 28px;
-      border: 1px solid rgba(255, 255, 255, .12);
-      border-radius: 28px;
-      color: #f5f7fb;
-      background: linear-gradient(145deg, rgba(39, 44, 61, .98), rgba(19, 22, 32, .98));
-      box-shadow: 0 28px 90px rgba(0, 0, 0, .45);
+      min-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
 
     .google-cloud-mark {
+      width: 64px;
+      height: 64px;
+      margin: 0 0 10px;
       display: grid;
       place-items: center;
-      width: 58px;
-      height: 58px;
-      margin-bottom: 22px;
-      border-radius: 18px;
-      color: #fff;
-      background: linear-gradient(135deg, #4988f5, #6b4ce6);
-      box-shadow: 0 12px 28px rgba(58, 96, 214, .32);
-    }
-
-    .google-cloud-mark .icon {
-      width: 30px;
-      height: 30px;
-    }
-
-    .google-eyebrow {
-      margin: 0 0 8px;
-      color: #aeb9d6;
-      font-size: .78rem;
-      font-weight: 760;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-    }
-
-    .google-card h2 {
-      margin: 0;
-      font-size: clamp(1.65rem, 6vw, 2.2rem);
-      line-height: 1.08;
-      letter-spacing: -.04em;
-    }
-
-    .google-intro {
-      margin: 16px 0 22px;
-      color: #c3cadb;
-      font-size: .98rem;
-      line-height: 1.55;
-    }
-
-    .google-permission {
-      display: flex;
-      gap: 13px;
-      margin: 0 0 24px;
-      padding: 15px;
-      border: 1px solid rgba(119, 143, 220, .22);
-      border-radius: 17px;
-      color: #dce4fb;
-      background: rgba(80, 100, 157, .16);
-      font-size: .9rem;
-      line-height: 1.45;
-    }
-
-    .google-permission strong {
-      display: block;
-      margin-bottom: 3px;
-      color: #fff;
-    }
-
-    .google-check {
-      flex: 0 0 auto;
-      display: grid;
-      place-items: center;
-      width: 22px;
-      height: 22px;
-      margin-top: 1px;
+      border: 1px solid rgba(64, 116, 225, .25);
       border-radius: 50%;
-      color: #8cb4ff;
-      background: rgba(106, 145, 247, .16);
-      font-weight: 900;
+      background: linear-gradient(145deg, rgba(20, 58, 127, .42), rgba(36, 25, 80, .22));
     }
 
-    .google-connect-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 11px;
+    .google-cloud-mark svg { width: 46px; height: 46px; }
+    .google-app-name { margin: 0 0 22px; font-size: clamp(30px, 8vw, 38px); font-weight: 760; letter-spacing: -.04em; }
+    .google-eyebrow { margin: 0 0 12px; color: #91a8d3; font-size: 10px; font-weight: 650; letter-spacing: .22em; text-transform: uppercase; }
+    .google-card h2 { margin: 0; font-size: clamp(23px, 6vw, 29px); font-weight: 750; line-height: 1.2; letter-spacing: -.035em; }
+    .google-intro { margin: 10px 0 20px; color: #a2b0d5; font-size: 16px; line-height: 1.5; }
+
+    .google-connect-button,
+    .google-local-button {
       width: 100%;
-      min-height: 54px;
-      border: 0;
-      border-radius: 15px;
-      color: #202124;
-      background: #fff;
-      font: inherit;
-      font-weight: 760;
-      cursor: pointer;
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
-    }
-
-    .google-connect-button:hover { box-shadow: 0 10px 28px rgba(255, 255, 255, .16); transform: translateY(-1px); }
-    .google-connect-button:active { transform: translateY(1px); }
-    .google-connect-button:disabled { cursor: wait; opacity: .72; transform: none; }
-
-    .google-g {
+      min-height: 50px;
+      padding: 10px 12px;
       display: grid;
-      place-items: center;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
+      grid-template-columns: 26px 1fr 12px;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #00b5ff;
+      border-radius: 14px;
       color: #fff;
-      background: conic-gradient(from -42deg, #4285f4 0 25%, #34a853 0 43%, #fbbc05 0 68%, #ea4335 0 100%);
-      font-weight: 900;
-      font-size: .84rem;
+      background: rgba(10, 24, 43, .5);
+      font-size: 16px;
+      font-weight: 650;
+      line-height: 1.3;
+      transition: background .18s ease;
     }
 
-    .google-status {
-      min-height: 1.3em;
-      margin: 15px 2px 0;
-      color: #aeb9d6;
-      font-size: .84rem;
-      line-height: 1.4;
-      text-align: center;
-    }
+    .google-connect-button:hover { background: rgba(27, 62, 110, .5); }
+    .google-connect-button:disabled { cursor: wait; opacity: .65; }
+    .google-local-button { font-size: clamp(11px, 3.5vw, 15px); white-space: nowrap; color: #a2b0d5; border-color: #46566e; background: rgba(11, 17, 27, .45); }
+    .google-local-button span { color: #fff; }
+    .google-local-button:hover { background: rgba(30, 40, 58, .5); }
+    .google-button-icon { width: 26px; height: 26px; }
+    .google-chevron { width: 10px; height: 16px; color: #9badd9; }
 
-    .google-privacy-note {
-      margin: 18px 3px 0;
-      color: #8590aa;
-      font-size: .76rem;
-      line-height: 1.45;
-      text-align: center;
+    .google-permission { width: 90%; margin: 12px 0 0; display: flex; align-items: flex-start; gap: 12px; color: #8297c2; text-align: left; font-size: 12px; line-height: 1.4; }
+    .google-check { width: 19px; height: 19px; flex: 0 0 19px; display: grid; place-items: center; border-radius: 50%; color: #fff; background: linear-gradient(140deg, #67b5ff, #207bf5); font-size: 13px; }
+    .google-divider { width: 100%; margin: 20px 0 16px; display: flex; align-items: center; gap: 14px; color: #8198c8; font-size: 10px; letter-spacing: .2em; }
+    .google-divider::before, .google-divider::after { content: ''; flex: 1; height: 1px; background: #2e3d55; }
+    .google-local-note { margin: 12px 0 0; color: #8297c2; font-size: 12px; line-height: 1.4; }
+    .google-status { margin: 12px 0 0; color: #a2b0d5; font-size: 12px; line-height: 1.4; }
+    .google-status:empty { display: none; }
+    .google-privacy-note { margin: 24px 0 0; color: #8297c2; font-size: 11px; line-height: 1.5; }
+    .google-lock { display: block; width: 18px; height: 20px; margin: 0 auto 8px; color: #8297c2; }
+    .google-legal { margin: 14px 0 0; color: #8297c2; font-size: 10px; line-height: 1.5; }
+    .google-legal button { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+    .google-legal-dialog { width: min(90vw, 420px); padding: 24px; border: 1px solid #46566e; border-radius: 18px; color: #fff; background: #101a2b; }
+    .google-legal-dialog::backdrop { background: rgba(0, 0, 0, .7); }
+    .google-legal-dialog h2 { margin: 0 0 12px; font-size: 20px; }
+    .google-legal-dialog p { color: #a2b0d5; line-height: 1.5; }
+    .google-legal-dialog button { padding: 10px 16px; border-radius: 10px; background: #1260d1; }
+
+    /* Spazi più compatti sui telefoni con meno altezza disponibile. */
+    @media (max-height: 740px) {
+      .google-cloud-mark { width: 48px; height: 48px; margin-bottom: 8px; }
+      .google-cloud-mark svg { width: 32px; height: 32px; }
+      .google-app-name { margin-bottom: 14px; font-size: 28px; }
+      .google-eyebrow { margin-bottom: 10px; }
+      .google-card h2 { font-size: 22px; }
+      .google-intro { margin: 8px 0 16px; font-size: 14px; }
+      .google-permission { margin-top: 10px; }
+      .google-divider { margin: 16px 0 12px; }
+      .google-local-note { margin-top: 10px; font-size: 11px; }
+      .google-privacy-note { margin-top: 18px; }
+      .google-legal { margin-top: 12px; }
     }
 
     /* Dettagli del collegamento Google Drive */
@@ -1532,23 +1448,42 @@
   <section class="google-gate" id="googleGate" aria-labelledby="googleGateTitle" hidden>
     <div class="google-card" role="dialog" aria-modal="true">
       <div class="google-cloud-mark" aria-hidden="true">
-        <svg class="icon"><use href="#icon-cloud"></use></svg>
+        <svg viewBox="0 0 48 48" fill="none"><defs><linearGradient id="loginCloudGradient"><stop stop-color="#26c7ff"/><stop offset="1" stop-color="#9471ff"/></linearGradient></defs><path d="M14 38h22a9 9 0 0 0 1-18 13 13 0 0 0-25-2A10 10 0 0 0 14 38Z" stroke="url(#loginCloudGradient)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
+      <p class="google-app-name">PokeAlbum</p>
       <p class="google-eyebrow">Salvataggio cloud</p>
-      <h2 id="googleGateTitle">Collega il tuo Google Drive</h2>
-      <p class="google-intro">Il tuo album viene salvato nel tuo spazio Google personale, così puoi ritrovarlo anche da un altro dispositivo.</p>
+      <h2 id="googleGateTitle">Attiva il salvataggio cloud</h2>
+      <p class="google-intro">Collega il tuo account Google per ritrovare<br>i tuoi Album anche su altri dispositivi.</p>
+      <button class="google-connect-button" id="googleConnect" type="button">
+        <svg class="google-button-icon" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285f4" d="M43.6 24.5c0-1.4-.1-2.8-.4-4.1H24v7.9h11a9.4 9.4 0 0 1-4.1 6.2v5.2h6.7c3.9-3.6 6-8.9 6-15.2z"/><path fill="#34a853" d="M24 44c5.5 0 10.1-1.8 13.5-4.9l-6.7-5.2c-1.8 1.2-4.1 1.9-6.8 1.9-5.3 0-9.8-3.6-11.4-8.4H5.7v5.4A20.4 20.4 0 0 0 24 44z"/><path fill="#fbbc05" d="M12.6 27.4a12.1 12.1 0 0 1 0-7.8v-5.4H5.7a20 20 0 0 0 0 18.6z"/><path fill="#ea4335" d="M24 11.2c3 0 5.6 1 7.7 3l5.8-5.8A19.4 19.4 0 0 0 24 3a20.4 20.4 0 0 0-18.3 11.2l6.9 5.4c1.6-4.8 6.1-8.4 11.4-8.4z"/></svg>
+        <span>Continua con Google</span>
+        <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m3 3 6 7-6 7"/></svg>
+      </button>
       <div class="google-permission">
         <span class="google-check" aria-hidden="true">✓</span>
-        <div><strong>Importante: spunta “Accesso a Drive”</strong> nella schermata Google. È il permesso necessario per salvare e riaprire i dati nel cloud.</div>
+        <span>Se richiesto nella schermata Google, spunta la casella “Accesso a Drive”.</span>
       </div>
-      <button class="google-connect-button" id="googleConnect" type="button">
-        <span class="google-g" aria-hidden="true">G</span>
-        <span>Connetti con Google</span>
-      </button>
       <p class="google-status" id="googleStatus" role="status" aria-live="polite"></p>
-      <p class="google-privacy-note">PokeAlbum usa solo l’area privata dell’app nel tuo Drive. I dati restano nel tuo account.</p>
+      <div class="google-divider">OPPURE</div>
+      <button class="google-local-button" id="continueLocal" type="button">
+        <svg class="google-button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-cloud"></use><path d="m3 3 18 18"/></svg>
+        <span>Continua senza salvataggio cloud</span>
+        <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m3 3 6 7-6 7"/></svg>
+      </button>
+      <p class="google-local-note">I dati saranno salvati esclusivamente su questo dispositivo.</p>
+      <p class="google-privacy-note">
+        <svg class="google-lock" viewBox="0 0 20 24" fill="currentColor" aria-hidden="true"><path d="M4 9V6a6 6 0 0 1 12 0v3h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2Zm3 0h6V6a3 3 0 0 0-6 0Zm3 5a2 2 0 0 0-1 3.7V20h2v-2.3A2 2 0 0 0 10 14Z"/></svg>
+        PokeAlbum usa solo l’area privata dell’app nel tuo Drive.<br>I dati restano nel tuo account.
+      </p>
+      <p class="google-legal">Accedendo accetti i <button type="button" data-legal="Termini di servizio">Termini di servizio</button> e la <button type="button" data-legal="Privacy Policy">Privacy Policy</button>.</p>
     </div>
   </section>
+
+  <dialog class="google-legal-dialog" id="legalDialog" aria-labelledby="legalTitle">
+    <h2 id="legalTitle"></h2>
+    <p>Questo documento non è ancora stato pubblicato. L’app è in fase di sviluppo.</p>
+    <form method="dialog"><button type="submit">Chiudi</button></form>
+  </dialog>
 
   <section class="cloud-details" id="cloudDetails" aria-labelledby="cloudDetailsTitle" hidden>
     <div class="cloud-details-card" role="dialog" aria-modal="true">
@@ -1649,6 +1584,7 @@
     const PROFILE_IMAGE_KEY = "pokealbum.profileImage";
     const GOOGLE_API_URL = "https://pokealbum-google.duckdns.org";
     const GOOGLE_SESSION_KEY = "pokealbum.googleSessionToken";
+    const LOCAL_MODE_KEY = "pokealbum.localMode";
 
     const googleGate = document.getElementById("googleGate");
     const googleConnect = document.getElementById("googleConnect");
@@ -1760,7 +1696,7 @@
       const sessionToken = localStorage.getItem(GOOGLE_SESSION_KEY);
       if (!sessionToken) {
         setCloudConnection(false);
-        setGoogleGate(true);
+        setGoogleGate(localStorage.getItem(LOCAL_MODE_KEY) !== "true");
         return;
       }
 
@@ -1807,6 +1743,18 @@
       }
     }
 
+    document.getElementById("continueLocal").addEventListener("click", () => {
+      localStorage.setItem(LOCAL_MODE_KEY, "true");
+      setGoogleGate(false);
+    });
+
+    document.querySelectorAll("[data-legal]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.getElementById("legalTitle").textContent = button.dataset.legal;
+        document.getElementById("legalDialog").showModal();
+      });
+    });
+
     googleConnect.addEventListener("click", openGoogleLogin);
     connectCloud.addEventListener("click", openCloudDetails);
     closeCloudDetails.addEventListener("click", () => setCloudDetailsVisible(false));
@@ -1849,6 +1797,7 @@
 
       if (message.type === "pokealbum-google-connected" && message.sessionToken) {
         localStorage.setItem(GOOGLE_SESSION_KEY, message.sessionToken);
+        localStorage.removeItem(LOCAL_MODE_KEY);
         setCloudConnection(true);
         setGoogleGate(false);
         setCloudDetailsVisible(false);
