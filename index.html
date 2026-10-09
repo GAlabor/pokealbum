@@ -112,6 +112,7 @@
       --splash-bg: #020713;
       --splash-glow: #1274ff;
       --splash-title: #f7f9ff;
+      --splash-duration: 2.45s;
       --splash-icon-size: min(62vw, 310px);
     }
 
@@ -762,6 +763,7 @@
       align-items: center;
       justify-content: center;
       gap: clamp(44px, 7svh, 72px);
+      transform: translateY(-2svh);
     }
 
     .splash-logo {
@@ -772,15 +774,23 @@
       place-items: center;
     }
 
-    .splash-logo::before {
+    .splash-logo::before,
+    .splash-logo::after {
       content: "";
       position: absolute;
       inset: 12%;
       border-radius: 50%;
       background: var(--splash-glow);
-      opacity: .18;
+      opacity: 0;
       filter: blur(42px);
+      transform: scale(.72);
       pointer-events: none;
+    }
+
+    .splash-logo::after {
+      inset: 24%;
+      filter: blur(72px);
+      animation-delay: .12s;
     }
 
     .splash-logo img {
@@ -789,12 +799,12 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      opacity: 0;
-    }
-
-    .splash.is-ready .splash-logo img,
-    .splash.is-ready .splash-title {
-      animation: splash-reveal .3s ease both;
+      opacity: .78;
+      transform: scale(.91);
+      filter:
+        brightness(.72)
+        saturate(.82)
+        drop-shadow(0 0 0 rgba(18, 116, 255, 0));
     }
 
     .splash-title {
@@ -806,14 +816,87 @@
       letter-spacing: .34em;
       text-indent: .34em;
       opacity: 0;
+      transform: translateY(12px);
       text-shadow:
         0 0 16px rgba(255, 255, 255, .16),
         0 0 30px rgba(18, 116, 255, .22);
     }
 
-    @keyframes splash-reveal {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    /* Tutte le animazioni partono insieme, dopo la decodifica del logo. */
+    .splash-content { visibility: hidden; }
+    .splash.is-ready .splash-content { visibility: visible; }
+
+    .splash.is-ready .splash-logo::before,
+    .splash.is-ready .splash-logo::after {
+      animation: splash-aura var(--splash-duration) var(--ease-standard) forwards;
+    }
+
+    .splash.is-ready .splash-logo::after {
+      animation-delay: .12s;
+    }
+
+    .splash.is-ready .splash-logo img {
+      animation: splash-logo var(--splash-duration) var(--ease-standard) forwards;
+    }
+
+    .splash.is-ready .splash-title {
+      animation: splash-title 1s var(--ease-standard) 1.05s forwards;
+    }
+
+    @keyframes splash-logo {
+      0% {
+        opacity: .72;
+        transform: scale(.91);
+        filter:
+          brightness(.65)
+          saturate(.78)
+          drop-shadow(0 0 0 rgba(18, 116, 255, 0));
+      }
+
+      48% {
+        opacity: 1;
+        transform: scale(1.025);
+        filter:
+          brightness(1.14)
+          saturate(1.10)
+          drop-shadow(0 0 18px rgba(18, 116, 255, .72))
+          drop-shadow(0 0 42px rgba(18, 116, 255, .50));
+      }
+
+      72%,
+      100% {
+        opacity: 1;
+        transform: scale(1);
+        filter:
+          brightness(1.05)
+          saturate(1.04)
+          drop-shadow(0 0 14px rgba(18, 116, 255, .58))
+          drop-shadow(0 0 34px rgba(18, 116, 255, .36));
+      }
+    }
+
+    @keyframes splash-aura {
+      0% {
+        opacity: 0;
+        transform: scale(.72);
+      }
+
+      50% {
+        opacity: .34;
+        transform: scale(1.04);
+      }
+
+      100% {
+        opacity: .20;
+        transform: scale(.96);
+      }
+    }
+
+    @keyframes splash-title {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     @keyframes splash-exit {
@@ -1087,7 +1170,7 @@
   <div class="splash" id="splash" aria-hidden="true">
     <div class="splash-content">
       <div class="splash-logo">
-        <img src="image/splash-logo.webp" width="560" height="560" loading="eager" decoding="async" fetchpriority="high" alt="">
+        <img src="image/splash-logo.webp" loading="eager" decoding="async" fetchpriority="high" alt="">
       </div>
 
       <p class="splash-title">POKEALBUM</p>
@@ -1473,32 +1556,40 @@
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     function dismissSplash() {
-      if (!splash?.isConnected || splash.classList.contains("is-leaving")) return;
+      if (!splash.isConnected || splash.classList.contains("is-leaving")) return;
       splash.classList.add("is-leaving");
-      // Removal also works when iOS pauses animations in the background.
       splash.addEventListener("animationend", (event) => {
+        // Gli eventi delle animazioni del logo non devono chiudere lo splash.
         if (event.target === splash) splash.remove();
       });
       window.setTimeout(() => splash.remove(), 550);
     }
 
-    async function startSplash() {
+    async function playOpening() {
       const logo = splash.querySelector("img");
-      const imageReady = logo.decode().catch(() => {});
-      // A missing or slow image must never block access to the app.
-      await Promise.race([
-        imageReady,
-        new Promise((resolve) => window.setTimeout(resolve, 1800))
-      ]);
-      if (document.hidden) {
+      let imageTimeout;
+      try {
+        await Promise.race([
+          logo.decode().catch(() => {}),
+          new Promise((resolve) => { imageTimeout = window.setTimeout(resolve, 2500); })
+        ]);
+      } finally {
+        window.clearTimeout(imageTimeout);
+      }
+      if (document.hidden || !splash.isConnected) {
         splash.remove();
         return;
       }
-      splash.classList.add("is-ready");
-      await new Promise((resolve) => window.setTimeout(resolve, prefersReducedMotion.matches ? 100 : 1100));
+      // Il primo fotogramma e il conteggio della durata iniziano insieme.
+      await new Promise((resolve) => requestAnimationFrame(() => {
+        splash.classList.add("is-ready");
+        resolve();
+      }));
+      await new Promise((resolve) => window.setTimeout(resolve, prefersReducedMotion.matches ? 150 : 2450));
       dismissSplash();
     }
 
+    // Al ritorno dall'Home non si rigioca un'animazione interrotta.
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) splash.remove();
     });
@@ -2000,7 +2091,7 @@
     requestAnimationFrame(syncIndicator);
 
     renderProfile();
-    startSplash().finally(checkGoogleConnection);
+    playOpening().finally(checkGoogleConnection);
   </script>
 </body>
 </html>
