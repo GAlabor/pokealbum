@@ -1692,6 +1692,9 @@
     function setGoogleGate(visible, message = "") {
       googleGate.hidden = !visible;
       googleStatus.textContent = message;
+      // Quando la schermata torna visibile deve essere sempre possibile
+      // avviare un nuovo collegamento, anche dopo una disconnessione.
+      if (visible) googleConnect.disabled = false;
       document.body.style.overflow = visible ? "hidden" : "";
     }
 
@@ -1850,6 +1853,7 @@
         localStorage.removeItem(GOOGLE_SESSION_KEY);
         setCloudDetailsVisible(false);
         setCloudConnection(false);
+        googleConnect.disabled = false;
         setGoogleGate(true, "Google Drive è stato disconnesso.");
       } catch {
         cloudDetailsStatus.textContent = "Disconnessione non riuscita. Riprova.";
