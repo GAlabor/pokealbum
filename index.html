@@ -36,12 +36,9 @@
       --color-nav-active: #4da3ff;
       --color-nav-indicator: rgba(255, 255, 255, .12);
       --color-nav-indicator-border: rgba(255, 255, 255, .045);
-      --color-profile-surface: rgba(16, 26, 43, .92);
       --color-menu-hover: rgba(255, 255, 255, .045);
       --color-input: rgba(255, 255, 255, .055);
       --color-modal: rgba(11, 18, 32, .98);
-      --color-glow-top: rgba(52, 119, 222, .20);
-      --color-glow-bottom: rgba(0, 55, 162, .12);
 
       /* Gradients */
       --gradient-accent: linear-gradient(
@@ -62,10 +59,8 @@
       /* Sizes */
       --size-icon: 22px;
       --size-control: 44px;
-      --size-topbar: 72px;
       --size-tabbar: 74px;
       --size-drawer: 340px;
-      --size-page-bottom: 112px;
       --size-avatar: 38px;
       --size-menu-icon: 38px;
       --size-profile-avatar: 92px;
@@ -105,8 +100,6 @@
       --icon-stroke-menu: 1.35;
 
       /* Effects */
-      --blur-control: 18px;
-      --blur-navigation: 24px;
 
       /* Motion */
       --duration-fast: .18s;
@@ -197,28 +190,23 @@
     /* App shell */
 
     .app {
-      position: relative;
-      height: 100dvh;
+      position: fixed;
+      inset: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
       overflow: hidden;
-      background:
-        radial-gradient(circle at 78% -12%, var(--color-glow-top), transparent 34%),
-        radial-gradient(circle at 12% 108%, var(--color-glow-bottom), transparent 36%),
-        var(--color-bg);
+      background: var(--color-bg);
     }
 
     .topbar {
-      position: absolute;
-      inset: 0 0 auto;
+      position: relative;
       z-index: 10;
-      height: calc(var(--size-topbar) + env(safe-area-inset-top));
-      padding:
-        calc(var(--space-4) + env(safe-area-inset-top))
-        var(--space-5)
-        var(--space-3);
+      min-width: 0;
+      padding: calc(16px + env(safe-area-inset-top, 0px)) 20px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      pointer-events: none;
+      gap: 16px;
     }
 
     .brand {
@@ -231,12 +219,11 @@
     }
 
     .pages {
-      position: absolute;
-      inset: 0;
-      padding:
-        calc(var(--size-topbar) + env(safe-area-inset-top))
-        var(--space-5)
-        calc(var(--size-page-bottom) + env(safe-area-inset-bottom));
+      position: relative;
+      min-height: 0;
+      min-width: 0;
+      padding: 0 20px 12px;
+      overflow: hidden;
     }
 
     .page {
@@ -297,15 +284,11 @@
 
 
     .profile-button {
+      flex: 0 0 var(--size-control);
       color: var(--brand-blue-bright);
-      border-color: var(--color-border-accent);
-      background: var(--color-profile-surface);
-      position: relative;
-      z-index: 1;
-      backdrop-filter: none;
-      -webkit-backdrop-filter: none;
+      border: 1px solid rgba(71, 153, 255, .55);
+      background: transparent;
       box-shadow: none;
-      pointer-events: auto;
     }
 
     .close-button {
@@ -317,13 +300,10 @@
     /* Bottom navigation */
 
     .bottom-wrap {
-      position: absolute;
-      inset: auto 0 0;
+      position: relative;
       z-index: 12;
-      padding:
-        var(--space-3)
-        var(--space-4)
-        calc(var(--space-3) + env(safe-area-inset-bottom));
+      min-width: 0;
+      padding: 8px 16px max(8px, env(safe-area-inset-bottom, 0px));
       display: flex;
       justify-content: center;
       pointer-events: none;
@@ -343,9 +323,7 @@
       border: 1px solid var(--color-border);
       border-radius: var(--radius-panel);
       background: var(--color-nav);
-      box-shadow: var(--shadow-floating);
-      backdrop-filter: blur(var(--blur-navigation)) saturate(145%);
-      -webkit-backdrop-filter: blur(var(--blur-navigation)) saturate(145%);
+      box-shadow: none;
       pointer-events: auto;
     }
 
@@ -1225,28 +1203,6 @@
 
     .cloud-action.disconnect { border-color: rgba(255, 126, 126, .25); color: #ffb5b5; background: rgba(198, 64, 64, .10); }
     .cloud-action:disabled { cursor: wait; opacity: .60; }
-
-    /* i40: small position adjustments on phones. */
-    @media (max-width: 699px) {
-      .topbar .profile-button {
-        position: relative;
-        top: 0;
-        z-index: 2;
-        background: #0d1828;
-        border: 1px solid #30619b;
-        box-shadow: none;
-        filter: none;
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        overflow: visible;
-      }
-
-      .bottom-wrap {
-        position: fixed;
-        bottom: 0;
-        padding-bottom: max(8px, calc(env(safe-area-inset-bottom) - 20px));
-      }
-    }
 
     /* Responsive */
 
