@@ -1230,11 +1230,21 @@
     @media (max-width: 699px) {
       .topbar .profile-button {
         position: relative;
-        top: 4px;
+        top: 0;
+        z-index: 2;
+        background: #0d1828;
+        border: 1px solid #30619b;
+        box-shadow: none;
+        filter: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        overflow: visible;
       }
 
       .bottom-wrap {
-        padding-bottom: max(8px, env(safe-area-inset-bottom));
+        position: fixed;
+        bottom: 0;
+        padding-bottom: max(8px, calc(env(safe-area-inset-bottom) - 20px));
       }
     }
 
