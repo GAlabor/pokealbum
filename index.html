@@ -1505,10 +1505,12 @@
       document.body.style.overflow = visible ? "hidden" : "";
     }
 
-    function setCloudConnection(connected) {
+    function setCloudConnection(state) {
+      const connected = state === true;
+      const checking = state === "checking";
       connectCloud.classList.toggle("is-connected", connected);
-      cloudConnectionStatus.textContent = connected ? "Google Drive collegato" : "Nessun Drive collegato";
-      connectCloud.setAttribute("aria-label", connected ? "Google Drive collegato" : "Nessun Drive collegato");
+      cloudConnectionStatus.textContent = connected ? "Google Drive collegato" : (checking ? "Verifica Drive in corso…" : "Nessun Drive collegato");
+      connectCloud.setAttribute("aria-label", connected ? "Google Drive collegato" : (checking ? "Verifica Google Drive in corso" : "Nessun Drive collegato"));
     }
 
     async function checkGoogleConnection() {
@@ -1523,13 +1525,28 @@
         const response = await fetch(`${GOOGLE_API_URL}/api/google/status`, {
           headers: { Authorization: `Bearer ${sessionToken}` }
         });
-        if (!response.ok) throw new Error("sessione non valida");
+        if (response.status === 401) {
+          // Solo il server può dichiarare scaduta/revocata una sessione.
+          // Un problema temporaneo di rete non deve scollegare l'utente.
+          localStorage.removeItem(GOOGLE_SESSION_KEY);
+          setCloudConnection(false);
+          setGoogleGate(true, "La connessione Google va ripristinata per continuare.");
+          return;
+        }
+        if (!response.ok) {
+          setCloudConnection("checking");
+          setGoogleGate(false);
+          window.setTimeout(checkGoogleConnection, 10000);
+          return;
+        }
         setCloudConnection(true);
         setGoogleGate(false);
       } catch {
-        localStorage.removeItem(GOOGLE_SESSION_KEY);
-        setCloudConnection(false);
-        setGoogleGate(true, "La connessione Google va ripristinata per continuare.");
+        // VM o rete momentaneamente non raggiungibili: mantieni la sessione
+        // e riprova in background, senza richiedere un nuovo login.
+        setCloudConnection("checking");
+        setGoogleGate(false);
+        window.setTimeout(checkGoogleConnection, 10000);
       }
     }
 
