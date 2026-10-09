@@ -1646,6 +1646,22 @@
     const changeGoogleAccount = document.getElementById("changeGoogleAccount");
     const disconnectGoogle = document.getElementById("disconnectGoogle");
 
+    let googleLoginAttempt = null;
+
+    function finishGoogleLogin(closePopup = false) {
+      const attempt = googleLoginAttempt;
+      googleLoginAttempt = null;
+      if (attempt) {
+        window.clearInterval(attempt.poll);
+        window.clearTimeout(attempt.unlock);
+        window.clearTimeout(attempt.timeout);
+        if (closePopup) {
+          try { attempt.popup.close(); } catch { /* Finestra già chiusa. */ }
+        }
+      }
+      googleConnect.disabled = false;
+    }
+
     let pendingProfileImage = "";
 
     let pressedButton = null;
@@ -1708,6 +1724,7 @@
     }
 
     async function openCloudDetails() {
+      setDrawer(false);
       const sessionToken = localStorage.getItem(GOOGLE_SESSION_KEY);
       if (!sessionToken) {
         setGoogleGate(true, "Collega Google Drive per vedere i dettagli del cloud.");
@@ -1774,20 +1791,53 @@
     }
 
     function openGoogleLogin() {
-      googleStatus.textContent = "Apertura di Google…";
+      // Ogni click avvia un tentativo nuovo, senza riutilizzare finestre OAuth vecchie.
+      finishGoogleLogin(true);
+      setGoogleGate(true, "Apertura di Google…");
       googleConnect.disabled = true;
-      const popup = window.open(
-        `${GOOGLE_API_URL}/oauth/google/start`,
-        "pokealbumGoogleLogin",
-        "popup=yes,width=520,height=720"
-      );
-      if (!popup) {
-        googleStatus.textContent = "Il browser ha bloccato la finestra. Consenti i popup e riprova.";
-        googleConnect.disabled = false;
+      let popup;
+      try {
+        popup = window.open(
+          `${GOOGLE_API_URL}/oauth/google/start`,
+          `pokealbumGoogleLogin_${Date.now()}`,
+          "popup=yes,width=520,height=720"
+        );
+      } catch {
+        popup = null;
       }
+      if (!popup) {
+        finishGoogleLogin();
+        googleStatus.textContent = "Il browser ha bloccato la finestra. Consenti i popup e riprova.";
+        return;
+      }
+
+      const attempt = { popup, poll: null, unlock: null, timeout: null };
+      googleLoginAttempt = attempt;
+      try { popup.focus(); } catch { /* Alcuni browser gestiscono il focus da soli. */ }
+
+      // Il ritorno da Google può mancare: non bloccare indefinitamente il pulsante.
+      attempt.unlock = window.setTimeout(() => {
+        if (googleLoginAttempt !== attempt) return;
+        googleConnect.disabled = false;
+        googleStatus.textContent = "Completa l’accesso nella finestra Google. Se non si è aperta, riprova.";
+      }, 1200);
+      attempt.poll = window.setInterval(() => {
+        if (googleLoginAttempt !== attempt) return;
+        let closed = false;
+        try { closed = popup.closed; } catch { return; }
+        if (!closed) return;
+        finishGoogleLogin();
+        googleStatus.textContent = "La finestra Google è stata chiusa. Se non hai completato l’accesso, puoi riprovare.";
+      }, 500);
+      attempt.timeout = window.setTimeout(() => {
+        if (googleLoginAttempt !== attempt) return;
+        finishGoogleLogin();
+        googleStatus.textContent = "Se l’accesso non è terminato, premi di nuovo Continua con Google.";
+      }, 120000);
     }
 
     document.getElementById("continueLocal").addEventListener("click", () => {
+      finishGoogleLogin(true);
       localStorage.setItem(LOCAL_MODE_KEY, "true");
       setGoogleGate(false);
     });
@@ -1837,7 +1887,8 @@
     window.addEventListener("message", (event) => {
       if (event.origin !== GOOGLE_API_URL) return;
       const message = event.data || {};
-      googleConnect.disabled = false;
+      if (message.type !== "pokealbum-google-connected" && message.type !== "pokealbum-google-error") return;
+      finishGoogleLogin();
 
       if (message.type === "pokealbum-google-connected" && message.sessionToken) {
         localStorage.setItem(GOOGLE_SESSION_KEY, message.sessionToken);
