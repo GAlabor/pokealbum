@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Informativa sulla privacy di PokeAlbum: dati trattati, collegamento Google Drive, conservazione e cancellazione.">
+  <title>Informativa sulla privacy · PokeAlbum</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #edf3ff; background: #0a1120; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .shell { max-width: 880px; margin: auto; padding: 32px 24px 48px; }
+    .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 30px; }
+    .brand { font-size: 23px; font-weight: 750; text-decoration: none; color: #edf3ff; letter-spacing: -.04em; }
+    nav { display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; }
+    a { color: #8dc8ff; text-underline-offset: 4px; }
+    a:focus-visible { outline: 2px solid #8dc8ff; outline-offset: 5px; border-radius: 2px; }
+    article { border: 1px solid #263650; border-radius: 22px; background: #111d30; padding: 38px; }
+    h1 { margin: 0 0 10px; font-size: clamp(28px, 5vw, 38px); line-height: 1.15; letter-spacing: -.04em; }
+    h2 { margin: 32px 0 12px; font-size: 21px; line-height: 1.35; letter-spacing: -.02em; }
+    p, li { color: #c4d2e8; font-size: 16px; line-height: 1.75; }
+    p { margin: 10px 0; }
+    strong { color: #edf3ff; }
+    ul, ol { padding-left: 23px; }
+    li + li { margin-top: 8px; }
+    .date { color: #9cacc7; font-size: 13px; }
+    .lead { border-left: 3px solid #70baff; padding-left: 17px; margin: 24px 0; }
+    .toc { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; margin: 22px 0; padding: 20px; background: #0c1628; border-radius: 12px; font-size: 14px; }
+    .toc a { line-height: 1.5; }
+    section { scroll-margin-top: 20px; }
+    code { overflow-wrap: anywhere; font-size: .9em; color: #d7e8ff; }
+    footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin-top: 24px; color: #9cacc7; font-size: 13px; }
+    @media (max-width: 600px) { .shell { padding: 22px 16px 32px; } article { padding: 25px 20px; border-radius: 16px; } .toc { grid-template-columns: 1fr; padding: 16px; } h2 { font-size: 20px; } }
+    @media print { :root { color-scheme: light; color: #111; background: white; } article { border: 0; background: white; padding: 0; } p, li, strong, code, .brand, .date, footer { color: #111; } a { color: #111; } .toc { display: none; } .shell { max-width: none; padding: 0; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <a class="brand" href="https://galabor.github.io/pokealbum/">PokeAlbum</a>
+      <nav aria-label="Navigazione documenti">
+        <a href="https://galabor.github.io/pokealbum/">Apri PokeAlbum</a>
+        <a href="termini.html">Termini di servizio</a>
+      </nav>
+    </header>
+    <main>
+      <article>
+        <h1>Informativa sulla privacy</h1>
+        <p class="date">Ultimo aggiornamento: <time datetime="2026-10-11">11 ottobre 2026</time></p>
+        <p class="lead">PokeAlbum è una webapp gratuita dedicata alla gestione degli Album e della collezione. Il collegamento a Google è facoltativo. Il servizio non contiene pubblicità e non vende i dati degli utenti.</p>
+        <nav class="toc" aria-label="Indice dell’informativa">
+          <a href="#titolare">1. Titolare e contatti</a>
+          <a href="#dati">2. Dati trattati</a>
+          <a href="#finalita">3. Finalità e basi giuridiche</a>
+          <a href="#google">4. Google e uso limitato</a>
+          <a href="#conservazione">5. Conservazione</a>
+          <a href="#fornitori">6. Fornitori e trasferimenti</a>
+          <a href="#sicurezza">7. Sicurezza</a>
+          <a href="#cancellazione">8. Disconnessione e cancellazione</a>
+          <a href="#diritti">9. Diritti dell’utente</a>
+          <a href="#modifiche">10. Modifiche</a>
+        </nav>
+
+        <section id="titolare">
+          <h2>1. Titolare e contatti</h2>
+          <p>Il titolare del trattamento è <strong>Giuseppe Aquilano</strong>, gestore di PokeAlbum. Per assistenza o richieste relative ai dati personali: <a href="mailto:g.aquilano@gmail.com">g.aquilano@gmail.com</a>.</p>
+          <p>L’applicazione è disponibile all’indirizzo <a href="https://galabor.github.io/pokealbum/">galabor.github.io/pokealbum/</a>.</p>
+        </section>
+
+        <section id="dati">
+          <h2>2. Dati trattati</h2>
+          <ul>
+            <li><strong>Collegamento Google:</strong> identificativo univoco dell’account, indirizzo email, credenziali tecniche OAuth, identificativo della sessione e date di creazione e aggiornamento del collegamento. La password Google non viene acquisita da PokeAlbum.</li>
+            <li><strong>Dati dell’app su Drive:</strong> contenuto e metadati dei file di stato dell’applicazione inviati o recuperati nell’area riservata a PokeAlbum, inclusi nome, identificativo, tipo e dimensione dei file. Il pannello Cloud può mostrare gli indicatori di spazio utilizzato e disponibile restituiti da Google.</li>
+            <li><strong>Dati sul dispositivo:</strong> token della sessione, preferenza per l’uso locale, nome visualizzato e immagine del profilo eventualmente scelti dall’utente. Questi dati sono memorizzati nel browser; nome e immagine personalizzati non vengono inviati al server dal modulo profilo.</li>
+            <li><strong>Dati tecnici:</strong> i servizi di hosting e i server possono registrare indirizzo IP, data e ora, richieste HTTP, informazioni sul browser, codici di risposta ed errori per il funzionamento e la diagnosi del servizio.</li>
+            <li><strong>Assistenza:</strong> indirizzo email e informazioni che l’utente invia volontariamente nelle richieste al gestore.</li>
+          </ul>
+          <p>Non vengono utilizzati strumenti pubblicitari o di profilazione commerciale. Le memorie locali del browser sono impiegate per le funzioni dell’app e per mantenere il collegamento scelto dall’utente.</p>
+        </section>
+
+        <section id="finalita">
+          <h2>3. Finalità e basi giuridiche</h2>
+          <p>I dati di account, sessione e stato dell’app sono trattati per fornire le funzioni richieste dall’utente, associare il collegamento al corretto account e consentire il trasferimento dei dati dell’app su Drive. La base giuridica è l’esecuzione del servizio richiesto, ai sensi dell’articolo 6, paragrafo 1, lettera b), del GDPR.</p>
+          <p>I dati tecnici necessari a proteggere il servizio, individuare abusi e diagnosticare problemi sono trattati sulla base del legittimo interesse alla sicurezza e al corretto funzionamento, ai sensi dell’articolo 6, paragrafo 1, lettera f), del GDPR. Eventuali trattamenti imposti dalla legge si basano sull’articolo 6, paragrafo 1, lettera c).</p>
+          <p>Il collegamento Google è facoltativo e avviene dopo l’autorizzazione nella schermata Google. Senza collegamento si possono utilizzare le funzioni locali disponibili; le funzioni Drive richiedono invece i relativi dati e permessi. Non sono effettuate decisioni automatizzate con effetti giuridici né profilazione commerciale.</p>
+        </section>
+
+        <section id="google">
+          <h2>4. Google e uso limitato dei dati</h2>
+          <p>Il collegamento utilizza <code>openid</code> ed <code>email</code> per identificare l’account e il permesso <code>https://www.googleapis.com/auth/drive.appdata</code> per accedere ai dati propri dell’applicazione nella cartella nascosta <code>appDataFolder</code>.</p>
+          <p>Questo permesso non concede l’accesso generale ai documenti personali di Drive. I file dell’app transitano attraverso il server PokeAlbum per le operazioni richieste e sono archiviati nello spazio dell’app nel Drive dell’utente.</p>
+          <p>L’uso delle informazioni ricevute dalle API Google rispetta la <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, comprese le prescrizioni sull’uso limitato dei dati (<em>Limited Use</em>). I dati sono usati per le funzioni dell’app richieste dall’utente, non sono venduti e non sono utilizzati per pubblicità o per addestrare modelli di intelligenza artificiale.</p>
+          <p>Il gestore non consulta i contenuti dei file dell’utente per finalità estranee al servizio. Eventuali accessi umani ai contenuti sono limitati all’assistenza autorizzata dall’utente, alla sicurezza o agli obblighi di legge.</p>
+        </section>
+
+        <section id="conservazione">
+          <h2>5. Conservazione</h2>
+          <ul>
+            <li><strong>Account e credenziali sul server:</strong> sono conservati per mantenere il collegamento richiesto, fino alla disconnessione tramite l’app o alla cancellazione richiesta al gestore. La sessione non ha una scadenza fissa di 30 giorni. La revoca dell’autorizzazione presso Google può impedire l’accesso a Drive, ma non elimina automaticamente il record conservato da PokeAlbum.</li>
+            <li><strong>Dati sul dispositivo:</strong> rimangono nel browser fino alla rimozione tramite le funzioni dell’app o alla cancellazione dei dati del sito da parte dell’utente. Disconnettere Google non elimina automaticamente le preferenze del profilo locale.</li>
+            <li><strong>File su Drive:</strong> rimangono nell’area dell’app nell’account Google fino alla loro eliminazione. La disconnessione da PokeAlbum non li cancella.</li>
+            <li><strong>Log Nginx delle VM:</strong> la configurazione prevede rotazione giornaliera e conservazione di 14 archivi, oltre al registro corrente. Gli eventuali registri diagnostici applicativi sono conservati secondo la loro rotazione e per la gestione dei problemi cui si riferiscono.</li>
+            <li><strong>Backup del gestore:</strong> sono effettuati manualmente, senza un programma automatico. Possono includere dati di account e credenziali cifrate; sono destinati al ripristino del servizio e non hanno una scadenza automatica. Per la cancellazione di dati personali da eventuali copie manuali è necessario contattare il gestore.</li>
+            <li><strong>Richieste di assistenza:</strong> sono conservate per gestire la richiesta e le eventuali esigenze successive strettamente connesse, salvo obblighi di legge.</li>
+          </ul>
+        </section>
+
+        <section id="fornitori">
+          <h2>6. Fornitori e trasferimenti</h2>
+          <p>I dati sono trattati dal gestore e dai servizi necessari al funzionamento dell’app, nell’ambito dei rispettivi ruoli:</p>
+          <ul>
+            <li><strong>Oracle Cloud:</strong> ospita i server PokeAlbum. Le due VM utilizzate sono nella regione Milano, Italia (<code>eu-milan-1</code>).</li>
+            <li><strong>Google:</strong> gestisce l’identificazione dell’account, l’autorizzazione e lo spazio Drive dell’utente.</li>
+            <li><strong>GitHub Pages:</strong> ospita il sito e le pagine pubbliche e può trattare i dati tecnici delle visite.</li>
+          </ul>
+          <p>La collocazione delle VM in Italia non implica che tutti i trattamenti di Google o GitHub avvengano in Italia. Questi fornitori utilizzano infrastrutture internazionali e descrivono nelle proprie informative i trasferimenti e le garanzie applicabili, comprese, ove pertinenti, decisioni di adeguatezza e clausole contrattuali standard.</p>
+          <p>Ulteriori informazioni: <a href="https://www.oracle.com/legal/privacy/">privacy Oracle</a>, <a href="https://policies.google.com/privacy?hl=it">privacy Google</a> e <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">privacy GitHub</a>. Non sono ceduti dati a inserzionisti o intermediari commerciali.</p>
+        </section>
+
+        <section id="sicurezza">
+          <h2>7. Sicurezza</h2>
+          <p>I collegamenti pubblici utilizzano HTTPS. Sul server PokeAlbum le credenziali OAuth sono cifrate con AES-256-GCM e il token di sessione è verificato tramite un’impronta SHA-256. Email e identificativo dell’account sono conservati nel record di collegamento e non sono cifrati da questo meccanismo.</p>
+          <p>Il token della sessione sul dispositivo deve essere protetto come una credenziale. Su dispositivi condivisi è opportuno disconnettere l’account e rimuovere i dati del sito al termine dell’uso.</p>
+        </section>
+
+        <section id="cancellazione">
+          <h2>8. Disconnessione e cancellazione</h2>
+          <ol>
+            <li><strong>Eliminare il collegamento sul server:</strong> aprire il pannello Cloud di PokeAlbum e premere <strong>Disconnetti</strong>. L’operazione elimina il record dell’account, comprese le credenziali Google e la sessione, dal database operativo del servizio.</li>
+            <li><strong>Revocare l’autorizzazione Google:</strong> gestire o rimuovere il collegamento a PokeAlbum nella pagina <a href="https://myaccount.google.com/connections">Connessioni dell’Account Google</a>. Questa operazione è distinta dalla disconnessione nell’app.</li>
+            <li><strong>Eliminare i file dell’app su Drive:</strong> da Google Drive su computer aprire Impostazioni → Gestisci applicazioni → PokeAlbum → Opzioni → Elimina dati nascosti dell’applicazione, quando la voce è disponibile. <a href="https://support.google.com/googleone/answer/9004014?hl=it">Guida Google</a>.</li>
+            <li><strong>Eliminare i dati locali:</strong> cancellare i dati del sito dalle impostazioni del browser. Questa operazione non elimina, da sola, il record sul server né i file su Drive.</li>
+          </ol>
+          <p>Se l’account non è più accessibile, oppure per richiedere cancellazione completa, assistenza o intervento sulle eventuali copie manuali, scrivere a <a href="mailto:g.aquilano@gmail.com">g.aquilano@gmail.com</a>. Il gestore può richiedere le informazioni strettamente necessarie a verificare che la richiesta provenga dall’interessato.</p>
+        </section>
+
+        <section id="diritti">
+          <h2>9. Diritti dell’utente</h2>
+          <p>Nei casi previsti dal GDPR è possibile chiedere accesso, rettifica, cancellazione, limitazione del trattamento, portabilità dei dati e opposizione ai trattamenti basati sul legittimo interesse. Le richieste vanno inviate al contatto del titolare e sono gestite nei termini previsti dalla normativa.</p>
+          <p>È possibile proporre reclamo al <a href="https://www.garanteprivacy.it/">Garante per la protezione dei dati personali</a> o all’autorità di controllo competente. Le informazioni sui diritti non limitano le altre tutele previste dalla legge.</p>
+        </section>
+
+        <section id="modifiche">
+          <h2>10. Modifiche all’informativa</h2>
+          <p>Gli aggiornamenti sono pubblicati su questa pagina con la relativa data. Le modifiche sostanziali alle finalità o all’uso dei dati Google vengono comunicate agli utenti prima del nuovo trattamento e, quando necessario, viene richiesta una nuova autorizzazione.</p>
+        </section>
+      </article>
+    </main>
+    <footer><span>© PokeAlbum · Giuseppe Aquilano</span><a href="termini.html">Termini di servizio</a></footer>
+  </div>
+</body>
+</html>
