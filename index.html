@@ -272,16 +272,16 @@
     .profile-button {
       position: relative;
       flex: 0 0 var(--size-control);
-      color: var(--brand-blue-bright);
-      border: 1px solid rgba(71, 153, 255, .55);
+      color: #8e9ab0;
+      border: 0;
       background: transparent;
       box-shadow: none;
     }
 
-    .profile-account-dot { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: #20cf76; display: none; pointer-events: none; }
-    .profile-button.is-google-connected .profile-account-dot { display: block; }
-    .profile-cloud-badge { position: absolute; bottom: 3px; right: 3px; width: 13px; height: 13px; padding: 1px; border-radius: 4px; color: #4da3ff; background: var(--color-bg); display: none; pointer-events: none; }
-    .profile-button.is-google-connected.is-drive-connected .profile-cloud-badge { display: block; }
+    .profile-button > .icon { width: 28px; height: 28px; }
+    .profile-button.is-google-connected { color: #1598ff; }
+    .profile-backup-check { position: absolute; right: 3px; bottom: 6px; width: 15px; height: 15px; display: none; overflow: visible; pointer-events: none; }
+    .profile-button.is-google-connected.is-drive-connected .profile-backup-check { display: block; }
 
     .close-button {
       color: var(--color-muted);
@@ -620,7 +620,6 @@
     #profileLastSync { color: #b3c0d5; font-size: 13px; }
     .profile-account-actions { display: grid; gap: 10px; }
     .profile-account-actions .cloud-action { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; font-weight: 650; }
-    .profile-account-actions .cloud-action > span { font-size: 22px; line-height: 1; }
     #signOutGoogle { color: #ff8585; background: var(--color-input); border-color: #49556a; }
     #profileModal .modal-panel { width: min(100%, 420px); padding: 22px; }
     .profile-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
@@ -1270,8 +1269,7 @@
         <svg class="icon" aria-hidden="true">
           <use href="#icon-profile"></use>
         </svg>
-        <span class="profile-account-dot" aria-hidden="true"></span>
-        <svg class="profile-cloud-badge" aria-hidden="true"><use href="#icon-cloud"></use></svg>
+        <svg class="profile-backup-check" viewBox="0 0 16 16" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 4 4 8-9" stroke="var(--color-bg)" stroke-width="7"/><path d="m2 8 4 4 8-9" stroke="#20cf76" stroke-width="3"/></svg>
       </button>
     </header>
 
@@ -1508,7 +1506,7 @@
                 <div class="profile-google-row"><img src="image/Google_Favicon_2025.svg" alt="" width="32" height="32"><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span></span>Collegato</span></div></div>
                 <div class="profile-sync-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7a9 9 0 0 0-15-2L2 8m0-5v5h5M4 17a9 9 0 0 0 15 2l3-3m0 5v-5h-5"/></svg><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
               </div>
-              <div class="profile-account-actions"><button class="cloud-action" id="profileChangeGoogle" type="button"><span aria-hidden="true">⇄</span> Cambia account</button><button class="cloud-action" id="signOutGoogle" type="button"><span aria-hidden="true">↪</span> Esci</button></div>
+              <div class="profile-account-actions"><button class="cloud-action" id="profileChangeGoogle" type="button">Cambia account</button><button class="cloud-action" id="signOutGoogle" type="button">Esci</button></div>
             </div>
             <p class="profile-login-status" id="profileLoginStatus" role="status" aria-live="polite"></p>
           </div>
