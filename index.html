@@ -589,7 +589,16 @@
       transform: scale(1);
     }
 
+    .profile-sync-status { display: flex; align-items: center; gap: 6px; }
+    .profile-sync-status::before { content: ""; width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: #8e9ab0; }
     .profile-sync-status.is-active { color: #4da3ff; }
+    .profile-sync-status.is-active::before { background: #20cf76; }
+    .profile-email-row { display: flex; align-items: center; gap: 10px; }
+    .profile-email-row .profile-account-value { flex: 1; min-width: 0; }
+    .profile-google-badge { position: relative; flex: 0 0 22px; width: 22px; height: 22px; }
+    .profile-google-badge img { width: 100%; height: 100%; object-fit: contain; }
+    .profile-google-badge::after { content: ""; position: absolute; right: -3px; bottom: -2px; width: 7px; height: 7px; border: 2px solid var(--color-input); border-radius: 50%; background: #20cf76; }
+    .profile-account-actions { display: flex; gap: 10px; flex-wrap: wrap; }
     .profile-account { width: 100%; }
     .profile-google-button { width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; color: #fff; font-size: 16px; font-weight: 650; }
     .profile-google-button .google-button-icon { flex: 0 0 26px; object-fit: contain; }
@@ -1462,21 +1471,13 @@
           <div class="profile-account">
             <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><img class="google-button-icon" src="image/Google_Favicon_2025.svg" alt="" aria-hidden="true" width="26" height="26"><span>Accedi</span></button>
             <div class="profile-account-details" id="profileAccountDetails" hidden>
-              <div><span class="profile-account-label">Email</span><span class="profile-account-value" id="profileAccountEmail">—</span></div>
+              <div><span class="profile-account-label">Email</span><div class="profile-email-row"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-google-badge" aria-label="Account Google collegato"><img src="image/Google_Favicon_2025.svg" alt="" width="22" height="22"></span></div></div>
               <div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div>
+              <div class="profile-account-actions"><button class="cloud-action" id="profileChangeGoogle" type="button">Cambia account</button><button class="cloud-action" id="signOutGoogle" type="button">Esci</button></div>
             </div>
             <p class="profile-login-status" id="profileLoginStatus" role="status" aria-live="polite"></p>
           </div>
 
-          <div class="modal-actions">
-            <button class="button secondary app-button" id="cancelProfile" type="button">
-              Annulla
-            </button>
-
-            <button class="button app-button" type="submit">
-              Salva
-            </button>
-          </div>
         </form>
       </div>
     </div>
@@ -1551,7 +1552,7 @@
         <button class="cloud-action" id="connectGoogleDrive" type="button" hidden>Collega Drive</button>
         <button class="cloud-action disconnect" id="disconnectGoogle" type="button" hidden>Scollega Drive</button>
         <button class="cloud-action" id="changeGoogleAccount" type="button">Cambia account</button>
-        <button class="cloud-action" id="signOutGoogle" type="button">Esci dall’account</button>
+        
       </div>
     </div>
   </section>
@@ -1627,7 +1628,6 @@
     const profileNameInput = document.getElementById("profileNameInput");
     const profileImageInput = document.getElementById("profileImageInput");
     const changeProfileImage = document.getElementById("changeProfileImage");
-    const cancelProfile = document.getElementById("cancelProfile");
 
     const DISPLAY_NAME_KEY = "pokealbum.displayName";
     const PROFILE_IMAGE_KEY = "pokealbum.profileImage";
@@ -1657,6 +1657,7 @@
     const profileSyncStatus = document.getElementById("profileSyncStatus");
     const profileConnectGoogle = document.getElementById("profileConnectGoogle");
     const profileAccountDetails = document.getElementById("profileAccountDetails");
+    const profileChangeGoogle = document.getElementById("profileChangeGoogle");
     const profileAccountEmail = document.getElementById("profileAccountEmail");
     const profileLastSync = document.getElementById("profileLastSync");
     const profileLoginStatus = document.getElementById("profileLoginStatus");
@@ -1684,6 +1685,7 @@
     let googleLoginAttempt = null;
     let lastGoogleLoginAttempt = null;
     let googleConnectionRetry = null;
+    let googleAccountCheck = 0;
     let pendingProfileImage = "";
     let pressedButton = null;
 
@@ -1778,6 +1780,7 @@
     }
 
     async function openCloudDetails() {
+      const check = ++googleAccountCheck;
       setDrawer(false);
       const sessionToken = localStorage.getItem(GOOGLE_SESSION_KEY);
       if (!sessionToken) {
@@ -1788,22 +1791,22 @@
       setCloudDetailsLoading();
       try {
         const response = await fetch(`${GOOGLE_API_URL}/api/google/account`, {
-          headers: { Authorization: `Bearer ${sessionToken}` }
+          cache: "no-store", headers: { Authorization: `Bearer ${sessionToken}` }
         });
-        if (localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
+        if (check !== googleAccountCheck || localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
         if (response.status === 401) {
           clearGoogleSession("Accedi nuovamente a Google.");
           return;
         }
         const data = await response.json();
-        if (localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
+        if (check !== googleAccountCheck || localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
         if (!response.ok) {
           if (data.authenticated) showCloudDetails(data);
           throw new Error("details unavailable");
         }
         showCloudDetails(data);
       } catch {
-        if (localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
+        if (check !== googleAccountCheck || localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
         cloudDetailsStatus.textContent = "Collegamento temporaneamente non disponibile. Riprova.";
         changeGoogleAccount.disabled = false;
         signOutGoogle.disabled = false;
@@ -1811,6 +1814,7 @@
     }
 
     async function checkGoogleConnection() {
+      const check = ++googleAccountCheck;
       window.clearTimeout(googleConnectionRetry);
       const sessionToken = localStorage.getItem(GOOGLE_SESSION_KEY);
       if (!sessionToken) {
@@ -1820,22 +1824,22 @@
         return;
       }
       try {
-        const response = await fetch(`${GOOGLE_API_URL}/api/google/status`, {
-          headers: { Authorization: `Bearer ${sessionToken}` }
+        const response = await fetch(`${GOOGLE_API_URL}/api/google/account`, {
+          cache: "no-store", headers: { Authorization: `Bearer ${sessionToken}` }
         });
-        if (localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
+        if (check !== googleAccountCheck || localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
         if (response.status === 401) {
           clearGoogleSession("Accedi nuovamente a Google.");
           return;
         }
         if (!response.ok) throw new Error("status unavailable");
         const data = await response.json();
-        if (localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
+        if (check !== googleAccountCheck || localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
         updateAccountProfile(data);
         setCloudConnection(data?.drive?.connected === true);
         setGoogleGate(false);
       } catch {
-        if (localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
+        if (check !== googleAccountCheck || localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
         setCloudConnection("checking");
         setGoogleGate(false);
         googleConnectionRetry = window.setTimeout(checkGoogleConnection, 10000);
@@ -1937,13 +1941,15 @@
       profileLoginPending = false;
       openGoogleLogin("login");
     });
-    profileConnectGoogle.addEventListener("click", () => {
+    function loginFromProfile() {
       openGoogleLogin("login");
       profileLoginPending = true;
       profileConnectGoogle.disabled = Boolean(googleLoginAttempt);
       setGoogleGate(false);
       profileLoginStatus.textContent = googleLoginAttempt ? "Completa l’accesso nella finestra Google." : googleStatus.textContent;
-    });
+    }
+    profileConnectGoogle.addEventListener("click", loginFromProfile);
+    profileChangeGoogle.addEventListener("click", loginFromProfile);
     connectGoogleDrive.addEventListener("click", () => openGoogleLogin("drive"));
     connectCloud.addEventListener("click", openCloudDetails);
     closeCloudDetails.addEventListener("click", () => setCloudDetailsVisible(false));
@@ -1982,10 +1988,11 @@
         const response = await fetch(`${GOOGLE_API_URL}/api/google/session`, { method: "DELETE", headers: { Authorization: `Bearer ${sessionToken}` } });
         if (localStorage.getItem(GOOGLE_SESSION_KEY) !== sessionToken) return;
         if (!response.ok && response.status !== 401) throw new Error("logout failed");
+        setProfileModal(false);
         localStorage.removeItem(LOCAL_MODE_KEY);
         clearGoogleSession("");
       } catch {
-        cloudDetailsStatus.textContent = "Uscita non riuscita. Riprova.";
+        profileLoginStatus.textContent = "Uscita non riuscita. Riprova.";
         signOutGoogle.disabled = false;
       }
     });
@@ -2006,12 +2013,12 @@
         profileLoginPending = false;
         updateAccountProfile({ authenticated: true, account: message.account });
         checkGoogleConnection();
-        setCloudConnection(message?.drive?.connected === true);
+        setCloudConnection("checking");
         setGoogleGate(false);
         setCloudDetailsVisible(false);
         if (attempt.sessionToken && attempt.sessionToken !== message.sessionToken) fetch(`${GOOGLE_API_URL}/api/google/session`, { method: "DELETE", headers: { Authorization: `Bearer ${attempt.sessionToken}` } }).catch(() => {});
       } else if (message.type === "pokealbum-google-drive-connected" && attempt.mode === "drive") {
-        setCloudConnection(true);
+        setCloudConnection("checking");
         openCloudDetails();
       } else if (message.type === "pokealbum-google-error") {
         showLoginMessage(attempt.mode, message.message || "Collegamento non completato. Riprova.");
@@ -2141,6 +2148,7 @@
     }
 
     function setProfileModal(open) {
+      if (!open && profileModal.classList.contains("open")) saveProfile(profileNameInput.value, pendingProfileImage);
       profileModal.classList.toggle("open", open);
       profileModal.setAttribute("aria-hidden", String(!open));
 
@@ -2223,7 +2231,6 @@
     });
 
     openProfileEditor.addEventListener("click", () => setProfileModal(true));
-    cancelProfile.addEventListener("click", () => setProfileModal(false));
 
     changeProfileImage.addEventListener("click", () => {
       profileImageInput.click();
@@ -2234,7 +2241,9 @@
 
       if (!file) return;
 
-      pendingProfileImage = await resizeProfileImage(file);
+      const resizedImage = await resizeProfileImage(file);
+      pendingProfileImage = resizedImage;
+      if (!profileModal.classList.contains("open")) saveProfile(localStorage.getItem(DISPLAY_NAME_KEY) || "", resizedImage);
 
       profileAvatarLarge.classList.add("has-image");
       profileImageLarge.src = pendingProfileImage;
@@ -2248,7 +2257,6 @@
 
     profileForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      saveProfile(profileNameInput.value, pendingProfileImage);
       setProfileModal(false);
     });
 
