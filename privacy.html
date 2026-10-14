@@ -50,7 +50,7 @@
     <main>
       <article>
         <h1>Informativa sulla privacy</h1>
-        <p class="date">Ultimo aggiornamento: <time datetime="2026-10-11">11 ottobre 2026</time></p>
+        <p class="date">Ultimo aggiornamento: <time datetime="2026-10-14">14 ottobre 2026</time></p>
         <p class="lead">PokeAlbum è una webapp gratuita dedicata alla gestione degli Album e della collezione. Il collegamento a Google è facoltativo. Il servizio non contiene pubblicità e non vende i dati degli utenti.</p>
         <nav class="toc" aria-label="Indice dell’informativa">
           <a href="#titolare">1. Titolare e contatti</a>
@@ -74,34 +74,37 @@
         <section id="dati">
           <h2>2. Dati trattati</h2>
           <ul>
-            <li><strong>Collegamento Google:</strong> identificativo univoco dell’account, indirizzo email, credenziali tecniche OAuth, identificativo della sessione e date di creazione e aggiornamento del collegamento. La password Google non viene acquisita da PokeAlbum.</li>
-            <li><strong>Dati dell’app su Drive:</strong> contenuto e metadati dei file di stato dell’applicazione inviati o recuperati nell’area riservata a PokeAlbum, inclusi nome, identificativo, tipo e dimensione dei file. Il pannello Cloud può mostrare gli indicatori di spazio utilizzato e disponibile restituiti da Google.</li>
-            <li><strong>Dati sul dispositivo:</strong> token della sessione, preferenza per l’uso locale, nome visualizzato e immagine del profilo eventualmente scelti dall’utente. Questi dati sono memorizzati nel browser; nome e immagine personalizzati non vengono inviati al server dal modulo profilo.</li>
-            <li><strong>Dati tecnici:</strong> i servizi di hosting e i server possono registrare indirizzo IP, data e ora, richieste HTTP, informazioni sul browser, codici di risposta ed errori per il funzionamento e la diagnosi del servizio.</li>
+            <li><strong>Accesso con Google:</strong> identificativo univoco dell’account Google, indirizzo email, dati necessari a verificare l’identità, impronte dei token delle sessioni e date di creazione e aggiornamento. Il gestore può conoscere quali account risultano registrati nel servizio. PokeAlbum non acquisisce la password Google.</li>
+            <li><strong>Collegamento facoltativo a Drive:</strong> credenziali OAuth, comprese quelle necessarie a mantenere il collegamento, stato di attivazione per sessione e dati tecnici di autorizzazione. Le credenziali Drive sono conservate cifrate sul server.</li>
+            <li><strong>Dati dell’app su Drive:</strong> contenuto e metadati dei file dell’app inviati o recuperati nell’area privata di PokeAlbum, inclusi nome, identificativo, tipo e dimensione. Il pannello Cloud può mostrare lo spazio complessivo utilizzato e il limite di archiviazione restituiti da Google; questi indicatori non comportano l’accesso al contenuto degli altri file personali.</li>
+            <li><strong>Dati sul dispositivo:</strong> token della sessione, preferenza per l’uso senza account, nome visualizzato e immagine del profilo eventualmente scelti dall’utente. Sono memorizzati nel browser. Nome e immagine personalizzati nel profilo non vengono inviati al server da questa funzione.</li>
+            <li><strong>Dati tecnici:</strong> i servizi di hosting e i server possono registrare indirizzo IP, data e ora, richieste HTTP, informazioni sul browser, codici di risposta ed errori per il funzionamento e la diagnosi del servizio. Durante l’accesso viene utilizzato anche un cookie tecnico temporaneo sul dominio del servizio Google di PokeAlbum, per verificare la procedura OAuth; la sua durata massima è di dieci minuti.</li>
             <li><strong>Assistenza:</strong> indirizzo email e informazioni che l’utente invia volontariamente nelle richieste al gestore.</li>
           </ul>
-          <p>Non vengono utilizzati strumenti pubblicitari o di profilazione commerciale. Le memorie locali del browser sono impiegate per le funzioni dell’app e per mantenere il collegamento scelto dall’utente.</p>
+          <p>Non sono utilizzati strumenti pubblicitari o di profilazione commerciale. Cookie tecnici e memorie locali del browser servono al funzionamento dell’app e al mantenimento delle scelte dell’utente.</p>
         </section>
 
         <section id="finalita">
           <h2>3. Finalità e basi giuridiche</h2>
-          <p>I dati di account, sessione e stato dell’app sono trattati per fornire le funzioni richieste dall’utente, associare il collegamento al corretto account e consentire il trasferimento dei dati dell’app su Drive. La base giuridica è l’esecuzione del servizio richiesto, ai sensi dell’articolo 6, paragrafo 1, lettera b), del GDPR.</p>
+          <p>I dati di identità e sessione sono trattati per consentire l’accesso richiesto, riconoscere l’account e mantenere sessioni distinte. Quando l’utente sceglie il collegamento a Drive, i dati necessari sono trattati anche per le operazioni sui file dell’app e per visualizzare gli indicatori di archiviazione. La base giuridica è l’esecuzione del servizio richiesto, ai sensi dell’articolo 6, paragrafo 1, lettera b), del GDPR.</p>
           <p>I dati tecnici necessari a proteggere il servizio, individuare abusi e diagnosticare problemi sono trattati sulla base del legittimo interesse alla sicurezza e al corretto funzionamento, ai sensi dell’articolo 6, paragrafo 1, lettera f), del GDPR. Eventuali trattamenti imposti dalla legge si basano sull’articolo 6, paragrafo 1, lettera c).</p>
-          <p>Il collegamento Google è facoltativo e avviene dopo l’autorizzazione nella schermata Google. Senza collegamento si possono utilizzare le funzioni locali disponibili; le funzioni Drive richiedono invece i relativi dati e permessi. Non sono effettuate decisioni automatizzate con effetti giuridici né profilazione commerciale.</p>
+          <p>L’accesso Google e il collegamento Drive sono facoltativi. L’autorizzazione mostrata da Google consente l’accesso ai permessi richiesti e non equivale a un consenso generico a ulteriori utilizzi dei dati. Senza account si possono utilizzare le funzioni locali disponibili; senza autorizzazione Drive non sono disponibili le relative operazioni cloud.</p>
+          <p>L’accesso all’account, da solo, non comporta il salvataggio o la sincronizzazione delle collezioni sui server PokeAlbum. I trasferimenti dei dati dell’app avvengono attraverso le funzioni di salvataggio effettivamente disponibili e attivate. Non sono effettuate decisioni automatizzate con effetti giuridici né profilazione commerciale.</p>
         </section>
 
         <section id="google">
           <h2>4. Google e uso limitato dei dati</h2>
-          <p>Il collegamento utilizza <code>openid</code> ed <code>email</code> per identificare l’account e il permesso <code>https://www.googleapis.com/auth/drive.appdata</code> per accedere ai dati propri dell’applicazione nella cartella nascosta <code>appDataFolder</code>.</p>
-          <p>Questo permesso non concede l’accesso generale ai documenti personali di Drive. I file dell’app transitano attraverso il server PokeAlbum per le operazioni richieste e sono archiviati nello spazio dell’app nel Drive dell’utente.</p>
+          <p>L’accesso iniziale e l’accesso dal profilo utilizzano i permessi <code>openid</code> ed <code>email</code> per identificare l’account, senza richiedere nuovi permessi Drive.</p>
+          <p>Il collegamento dal pannello Cloud richiede separatamente il permesso <code>https://www.googleapis.com/auth/drive.appdata</code>. Se non è già presente una sessione, dal Cloud si può avviare una procedura che comprende sia l’accesso Google sia l’autorizzazione Drive. L’attivazione Drive è associata alla sessione utilizzata: un nuovo accesso al solo account non eredita automaticamente l’attivazione di un altro dispositivo.</p>
+          <p>Il permesso Drive riguarda la cartella nascosta <code>appDataFolder</code> riservata ai dati dell’applicazione e non concede l’accesso generale ai documenti personali. I file dell’app transitano attraverso il server PokeAlbum per le operazioni richieste e sono archiviati nello spazio privato dell’app nel Drive dell’utente. Le credenziali tecniche Drive sono associate all’account; la possibilità di usarle tramite l’app è verificata per ogni sessione.</p>
           <p>L’uso delle informazioni ricevute dalle API Google rispetta la <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, comprese le prescrizioni sull’uso limitato dei dati (<em>Limited Use</em>). I dati sono usati per le funzioni dell’app richieste dall’utente, non sono venduti e non sono utilizzati per pubblicità o per addestrare modelli di intelligenza artificiale.</p>
-          <p>Il gestore non consulta i contenuti dei file dell’utente per finalità estranee al servizio. Eventuali accessi umani ai contenuti sono limitati all’assistenza autorizzata dall’utente, alla sicurezza o agli obblighi di legge.</p>
+          <p>Il gestore non consulta i contenuti dei file per finalità estranee al servizio. Eventuali accessi umani ai dati Google sono limitati ai casi consentiti dalle relative policy, quali assistenza con autorizzazione specifica dell’utente, sicurezza o obblighi di legge.</p>
         </section>
 
         <section id="conservazione">
           <h2>5. Conservazione</h2>
           <ul>
-            <li><strong>Account e credenziali sul server:</strong> sono conservati per mantenere il collegamento richiesto, fino alla disconnessione tramite l’app o alla cancellazione richiesta al gestore. La sessione non ha una scadenza fissa di 30 giorni. La revoca dell’autorizzazione presso Google può impedire l’accesso a Drive, ma non elimina automaticamente il record conservato da PokeAlbum.</li>
+            <li><strong>Account, sessioni e credenziali sul server:</strong> il record dell’account e le credenziali Drive eventualmente presenti sono conservati per mantenere i collegamenti e consentire la riattivazione del servizio richiesto, fino alla cancellazione richiesta al gestore. Le sessioni non hanno una scadenza fissa di 30 giorni; la sessione utilizzata viene rimossa con “Esci”. “Esci” e “Scollega” non cancellano automaticamente il record dell’account o le credenziali cifrate. La revoca presso Google può rendere inutilizzabili le credenziali Drive; quando il servizio rileva un’autorizzazione non più valida, ne rimuove il collegamento operativo, senza eliminare automaticamente l’account PokeAlbum.</li>
             <li><strong>Dati sul dispositivo:</strong> rimangono nel browser fino alla rimozione tramite le funzioni dell’app o alla cancellazione dei dati del sito da parte dell’utente. Disconnettere Google non elimina automaticamente le preferenze del profilo locale.</li>
             <li><strong>File su Drive:</strong> rimangono nell’area dell’app nell’account Google fino alla loro eliminazione. La disconnessione da PokeAlbum non li cancella.</li>
             <li><strong>Log Nginx delle VM:</strong> la configurazione prevede rotazione giornaliera e conservazione di 14 archivi, oltre al registro corrente. Gli eventuali registri diagnostici applicativi sono conservati secondo la loro rotazione e per la gestione dei problemi cui si riferiscono.</li>
@@ -131,12 +134,14 @@
         <section id="cancellazione">
           <h2>8. Disconnessione e cancellazione</h2>
           <ol>
-            <li><strong>Eliminare il collegamento sul server:</strong> aprire il pannello Cloud di PokeAlbum e premere <strong>Disconnetti</strong>. L’operazione elimina il record dell’account, comprese le credenziali Google e la sessione, dal database operativo del servizio.</li>
-            <li><strong>Revocare l’autorizzazione Google:</strong> gestire o rimuovere il collegamento a PokeAlbum nella pagina <a href="https://myaccount.google.com/connections">Connessioni dell’Account Google</a>. Questa operazione è distinta dalla disconnessione nell’app.</li>
-            <li><strong>Eliminare i file dell’app su Drive:</strong> da Google Drive su computer aprire Impostazioni → Gestisci applicazioni → PokeAlbum → Opzioni → Elimina dati nascosti dell’applicazione, quando la voce è disponibile. <a href="https://support.google.com/googleone/answer/9004014?hl=it">Guida Google</a>.</li>
-            <li><strong>Eliminare i dati locali:</strong> cancellare i dati del sito dalle impostazioni del browser. Questa operazione non elimina, da sola, il record sul server né i file su Drive.</li>
+            <li><strong>Scollegare Drive nella sessione utilizzata:</strong> aprire Cloud e premere <strong>Scollega</strong>. Il servizio disattiva l’accesso a Drive per quella sessione, mantenendo l’accesso all’account. Il collegamento attivo nelle altre sessioni non viene disattivato.</li>
+            <li><strong>Uscire dall’account:</strong> aprire Profilo e premere <strong>Esci</strong>. L’app disattiva Drive nella sessione utilizzata e chiude quella sessione PokeAlbum. Le altre sessioni dell’account restano disponibili. Un successivo accesso dal profilo abilita solo l’account; per Drive occorre scegliere il collegamento dal Cloud.</li>
+            <li><strong>Cancellare il record dell’account e le credenziali conservate da PokeAlbum:</strong> richiedere la cancellazione a <a href="mailto:g.aquilano@gmail.com">g.aquilano@gmail.com</a>. La semplice uscita o lo scollegamento Drive non equivalgono alla cancellazione completa. La richiesta può comprendere anche le eventuali copie manuali conservate dal gestore.</li>
+            <li><strong>Revocare l’autorizzazione Google:</strong> gestire o rimuovere il collegamento a PokeAlbum nella pagina <a href="https://myaccount.google.com/connections">Connessioni dell’Account Google</a>. La revoca è distinta dall’uscita nell’app e può influire sui collegamenti Drive dello stesso account anche su altri dispositivi. Non elimina automaticamente il record PokeAlbum né le sessioni già create dall’app.</li>
+            <li><strong>Eliminare i file dell’app su Drive:</strong> da Google Drive su computer aprire Impostazioni → Gestisci applicazioni → PokeAlbum → Opzioni → Elimina dati nascosti dell’applicazione, quando la voce è disponibile. I file appartengono allo spazio dell’app nello stesso account Drive: eliminarli può influire su tutti i dispositivi che lo utilizzano. Uscire o scollegare Drive non elimina questi file.</li>
+            <li><strong>Eliminare i dati locali:</strong> cancellare i dati del sito dalle impostazioni del browser. Questa operazione elimina i dati conservati su quel browser, ma non elimina, da sola, il record sul server né i file su Drive. Nome e immagine del profilo locali non vengono rimossi automaticamente con “Esci”.</li>
           </ol>
-          <p>Se l’account non è più accessibile, oppure per richiedere cancellazione completa, assistenza o intervento sulle eventuali copie manuali, scrivere a <a href="mailto:g.aquilano@gmail.com">g.aquilano@gmail.com</a>. Il gestore può richiedere le informazioni strettamente necessarie a verificare che la richiesta provenga dall’interessato.</p>
+          <p>Per assistenza, cancellazione completa o richieste relative ai dati, scrivere al titolare. Possono essere richieste le informazioni strettamente necessarie a verificare che la richiesta provenga dall’interessato.</p>
         </section>
 
         <section id="diritti">
