@@ -1148,7 +1148,7 @@
       }
     }
 
-    /* i76 - modali Profilo e Cloud più compatte e uniformi */
+    /* i77 - proporzioni modali ottimizzate rispetto al display */
     #profileModal {
       padding:
         calc(18px + env(safe-area-inset-top, 0px))
@@ -1160,21 +1160,13 @@
     #profileModal .modal-panel {
       width: min(77vw, 300px);
       max-height: calc(100dvh - 36px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-      padding: 10px;
+      padding: 8px;
       border-radius: 22px;
     }
 
-    #profileModal .profile-heading {
-      margin-bottom: 5px;
-    }
-
-    #profileModal .profile-editor {
-      gap: 8px;
-    }
-
-    #profileModal .profile-summary {
-      gap: 9px;
-    }
+    #profileModal .profile-heading { margin-bottom: 3px; }
+    #profileModal .profile-editor { gap: 7px; }
+    #profileModal .profile-summary { gap: 9px; }
 
     /* L'avatar resta volutamente invariato */
     #profileModal .profile-avatar-button {
@@ -1189,36 +1181,20 @@
       font-size: 21px;
     }
 
-    #profileModal .profile-fields {
-      gap: 8px;
-    }
-
-    #profileModal #profileNameInput {
-      height: 37px;
-    }
-
-    #profileModal .profile-account-details {
-      gap: 6px;
-    }
-
-    #profileModal .profile-account-card {
-      padding: 8px;
-    }
+    #profileModal .profile-fields { gap: 7px; }
+    #profileModal #profileNameInput { height: 35px; }
+    #profileModal .profile-account-details { gap: 5px; }
+    #profileModal .profile-account-card { padding: 7px; }
 
     #profileModal .profile-sync-row {
-      margin-top: 6px;
-      padding-top: 6px;
+      margin-top: 5px;
+      padding-top: 5px;
     }
 
-    #profileModal .profile-account-actions {
-      gap: 5px;
-    }
+    #profileModal .profile-account-actions { gap: 5px; }
+    #profileModal .profile-account-actions .cloud-action { min-height: 38px; }
 
-    #profileModal .profile-account-actions .cloud-action {
-      min-height: 40px;
-    }
-
-    /* Cloud: stessa logica visiva del Profilo, con la Home leggibile dietro */
+    /* Cloud: stessa larghezza, ma meno sviluppo verticale sul display */
     .cloud-details {
       padding:
         calc(18px + env(safe-area-inset-top, 0px))
@@ -1232,65 +1208,51 @@
     .cloud-details-card {
       width: min(77vw, 300px);
       max-height: calc(100dvh - 36px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-      padding: 10px;
+      padding: 8px;
       border-radius: 22px;
     }
 
     .cloud-details-heading {
-      gap: 9px;
-      margin: 3px 0 7px;
+      gap: 8px;
+      margin: 1px 0 5px;
     }
 
     .cloud-details-drive-logo {
-      width: 30px;
-      height: 30px;
-      flex-basis: 30px;
+      width: 28px;
+      height: 28px;
+      flex-basis: 28px;
     }
 
     .cloud-saved-section {
-      gap: 4px;
-      margin-bottom: 7px;
+      gap: 3px;
+      margin-bottom: 5px;
     }
 
-    .cloud-saved-section .cloud-detail-row {
-      padding: 7px 9px;
-    }
+    .cloud-saved-section .cloud-detail-row { padding: 6px 8px; }
 
     .cloud-account {
-      margin: 4px 0;
-      padding: 8px;
+      margin: 3px 0;
+      padding: 7px;
     }
 
-    .cloud-account-inner {
-      gap: 9px;
-    }
+    .cloud-account-inner { gap: 8px; }
 
     .cloud-info-row {
-      gap: 9px;
-      margin-top: 6px;
-      padding-top: 6px;
+      gap: 8px;
+      margin-top: 4px;
+      padding-top: 4px;
     }
 
-    .cloud-storage-track {
-      margin-top: 5px;
-    }
-
-    .cloud-private-note {
-      gap: 7px;
-    }
-
-    .cloud-details-status {
-      margin-top: 9px;
-    }
+    .cloud-storage-track { margin-top: 4px; }
+    .cloud-private-note { gap: 6px; }
+    .cloud-details-status { margin-top: 7px; }
 
     .cloud-details-actions {
       gap: 5px;
-      margin-top: 7px;
+      margin-top: 6px;
     }
 
-    .cloud-details-actions .cloud-action {
-      min-height: 40px;
-    }
+    .cloud-details-actions .cloud-action { min-height: 38px; }
 
     @media (max-width: 360px) {
       #profileModal .modal-panel,
@@ -1777,7 +1739,7 @@
       const active = googleAccountState.authenticated;
       openProfile.classList.toggle("is-google-connected", active);
       if (!active) openProfile.classList.remove("is-drive-connected");
-      profileSyncStatus.textContent = active ? "Sincronizzazione attiva" : (googleAccountState.checking ? "Verifica sincronizzazione…" : "Sincronizzazione non attiva");
+      profileSyncStatus.textContent = active ? "Account collegato" : (googleAccountState.checking ? "Verifica account…" : "Account non collegato");
       profileSyncStatus.classList.toggle("is-active", active);
       profileConnectGoogle.hidden = active;
       profileAccountDetails.hidden = !active;
