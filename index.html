@@ -1147,6 +1147,158 @@
         animation-delay: 0s !important;
       }
     }
+
+    /* i76 - modali Profilo e Cloud più compatte e uniformi */
+    #profileModal {
+      padding:
+        calc(18px + env(safe-area-inset-top, 0px))
+        18px
+        calc(18px + env(safe-area-inset-bottom, 0px));
+      background: rgba(0, 0, 0, .56);
+    }
+
+    #profileModal .modal-panel {
+      width: min(77vw, 300px);
+      max-height: calc(100dvh - 36px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      padding: 10px;
+      border-radius: 22px;
+    }
+
+    #profileModal .profile-heading {
+      margin-bottom: 5px;
+    }
+
+    #profileModal .profile-editor {
+      gap: 8px;
+    }
+
+    #profileModal .profile-summary {
+      gap: 9px;
+    }
+
+    /* L'avatar resta volutamente invariato */
+    #profileModal .profile-avatar-button {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+    }
+
+    #profileModal .profile-avatar {
+      width: 44px;
+      height: 44px;
+      font-size: 21px;
+    }
+
+    #profileModal .profile-fields {
+      gap: 8px;
+    }
+
+    #profileModal #profileNameInput {
+      height: 37px;
+    }
+
+    #profileModal .profile-account-details {
+      gap: 6px;
+    }
+
+    #profileModal .profile-account-card {
+      padding: 8px;
+    }
+
+    #profileModal .profile-sync-row {
+      margin-top: 6px;
+      padding-top: 6px;
+    }
+
+    #profileModal .profile-account-actions {
+      gap: 5px;
+    }
+
+    #profileModal .profile-account-actions .cloud-action {
+      min-height: 40px;
+    }
+
+    /* Cloud: stessa logica visiva del Profilo, con la Home leggibile dietro */
+    .cloud-details {
+      padding:
+        calc(18px + env(safe-area-inset-top, 0px))
+        18px
+        calc(18px + env(safe-area-inset-bottom, 0px));
+      background: rgba(0, 0, 0, .56);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .cloud-details-card {
+      width: min(77vw, 300px);
+      max-height: calc(100dvh - 36px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      padding: 10px;
+      border-radius: 22px;
+    }
+
+    .cloud-details-heading {
+      gap: 9px;
+      margin: 3px 0 7px;
+    }
+
+    .cloud-details-drive-logo {
+      width: 30px;
+      height: 30px;
+      flex-basis: 30px;
+    }
+
+    .cloud-saved-section {
+      gap: 4px;
+      margin-bottom: 7px;
+    }
+
+    .cloud-saved-section .cloud-detail-row {
+      padding: 7px 9px;
+    }
+
+    .cloud-account {
+      margin: 4px 0;
+      padding: 8px;
+    }
+
+    .cloud-account-inner {
+      gap: 9px;
+    }
+
+    .cloud-info-row {
+      gap: 9px;
+      margin-top: 6px;
+      padding-top: 6px;
+    }
+
+    .cloud-storage-track {
+      margin-top: 5px;
+    }
+
+    .cloud-private-note {
+      gap: 7px;
+    }
+
+    .cloud-details-status {
+      margin-top: 9px;
+    }
+
+    .cloud-details-actions {
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .cloud-details-actions .cloud-action {
+      min-height: 40px;
+    }
+
+    @media (max-width: 360px) {
+      #profileModal .modal-panel,
+      .cloud-details-card {
+        width: min(82vw, 294px);
+      }
+    }
+
   </style>
 </head>
 
