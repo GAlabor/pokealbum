@@ -1619,6 +1619,66 @@
       }
     }
 
+
+    /* i79 - Cloud ridisegnato */
+    .cloud-screen-body { padding-top: 16px; }
+    .i79-cloud-grid { gap: 12px; }
+    .i79-drive-card { display: flex; align-items: center; gap: 16px; padding: 18px; }
+    .i79-drive-logo { width: 52px; height: 52px; flex: 0 0 52px; object-fit: contain; }
+    .i79-drive-copy { min-width: 0; }
+    .i79-drive-copy h3 { margin: 0 0 4px; font-size: 17px; line-height: 1.2; }
+    .i79-drive-copy p { margin: 0; color: #aebbd0; font-size: 13px; line-height: 1.35; }
+    .i79-connection-state { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: #9aa8bd; font-size: 13px; }
+    .i79-status-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #8e9ab0; }
+    .cloud-details.is-drive-connected .i79-status-dot { background: #20cf76; }
+    .cloud-details.is-drive-connected .i79-connection-state { color: #20cf76; }
+
+    .i79-section-card { padding: 12px; }
+    .i79-section-heading { margin: 0 0 10px; display: flex; align-items: center; gap: 9px; color: #f3f6fb; font-size: 15px; font-weight: 720; }
+    .i79-section-heading > svg { width: 23px; height: 23px; flex: 0 0 23px; color: #dbe7fb; }
+    .i79-list-panel { overflow: hidden; border: 1px solid var(--color-border); border-radius: 14px; background: rgba(255,255,255,.025); }
+    .i79-info-row, .i79-action-row { width: 100%; min-height: 58px; padding: 10px 12px; display: grid; grid-template-columns: 26px minmax(0,1fr) auto; align-items: center; gap: 10px; border: 0; border-bottom: 1px solid var(--color-border); background: transparent; color: inherit; text-align: left; }
+    .i79-list-panel > :last-child { border-bottom: 0; }
+    .i79-info-row > svg, .i79-action-row > svg:not(.i79-chevron) { width: 22px; height: 22px; color: #b9c9e8; }
+    .i79-row-copy { min-width: 0; display: grid; gap: 3px; }
+    .i79-row-copy strong { color: #f1f5f9; font-size: 13px; font-weight: 680; line-height: 1.25; }
+    .i79-row-copy span { min-width: 0; overflow: hidden; color: #aebbd0; font-size: 12px; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
+    .i79-row-value, .i79-action-value { color: #f1f5f9; font-size: 13px; white-space: nowrap; }
+    .i79-action-row { grid-template-columns: 26px minmax(0,1fr) auto 16px; cursor: pointer; }
+    .i79-action-row:active { background: rgba(255,255,255,.04); }
+    .i79-chevron { width: 16px !important; height: 16px !important; color: #b9c9e8 !important; }
+    .i79-storage-row { align-items: start; }
+    .i79-storage-copy { padding-top: 1px; }
+    .i79-storage-percent { align-self: end; padding-bottom: 2px; color: #b9c9e8; font-size: 12px; }
+    .i79-storage-copy .cloud-storage-track { width: 100%; height: 6px; margin-top: 7px; }
+
+    .i79-disconnect { width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #ff525f; border-radius: 15px; background: rgba(120, 20, 31, .28); color: #ff6974; font-size: 14px; font-weight: 720; }
+    .i79-disconnect svg { width: 21px; height: 21px; }
+    .i79-connect-drive { width: 100%; }
+    .i79-private-note { border: 0; background: transparent; padding: 0 8px 4px; color: #aebbd0; }
+    .i79-private-note svg { width: 19px; height: 19px; }
+    .i79-status-message:empty { display: none; }
+    .i79-status-message { padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 12px; background: rgba(255,255,255,.03); }
+
+    .i79-sheet[hidden] { display: none; }
+    .i79-sheet { position: fixed; inset: 0; z-index: 140; display: flex; align-items: flex-end; justify-content: center; }
+    .i79-sheet-backdrop { position: absolute; inset: 0; width: 100%; height: 100%; background: rgba(0,0,0,.58); }
+    .i79-sheet-panel { position: relative; z-index: 1; width: min(100%, 680px); padding: 10px 18px calc(18px + env(safe-area-inset-bottom, 0px)); border: 1px solid var(--color-border); border-bottom: 0; border-radius: 22px 22px 0 0; background: #0b1220; box-shadow: 0 -18px 50px rgba(0,0,0,.38); }
+    .i79-sheet-handle { width: 42px; height: 4px; margin: 0 auto 14px; border-radius: 4px; background: #445168; }
+    .i79-sheet-panel h3 { margin: 0 0 10px; font-size: 17px; }
+    .i79-choice { width: 100%; min-height: 64px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--color-border); color: inherit; text-align: left; }
+    .i79-choice > span:first-child { display: grid; gap: 3px; }
+    .i79-choice strong { font-size: 14px; }
+    .i79-choice small { color: #9daac1; font-size: 12px; line-height: 1.35; }
+    .i79-choice-check { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; color: transparent; background: rgba(255,255,255,.06); }
+    .i79-choice.is-selected .i79-choice-check { color: #fff; background: var(--brand-blue-bright); }
+
+    @media (max-width: 390px) {
+      .i79-drive-card { gap: 13px; padding: 15px; }
+      .i79-drive-logo { width: 46px; height: 46px; flex-basis: 46px; }
+      .i79-info-row, .i79-action-row { padding-left: 10px; padding-right: 10px; }
+    }
+
   </style>
 </head>
 
@@ -1982,42 +2042,104 @@
           <span class="screen-spacer" aria-hidden="true"></span>
         </header>
 
-        <div class="screen-body">
-          <div class="cloud-page-grid">
-            <section class="screen-card">
-              <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-                <img class="cloud-details-drive-logo" src="image/google-drive-2026.svg" alt="" width="30" height="30">
-                <div>
-                  <h3 style="margin:0 0 3px; font-size:16px; line-height:1.2;">Google Drive</h3>
-                  <p class="screen-section-text">Salvataggio cloud della tua collezione</p>
+        <div class="screen-body cloud-screen-body">
+          <div class="cloud-page-grid i79-cloud-grid">
+            <section class="screen-card i79-drive-card">
+              <img class="i79-drive-logo" src="image/google-drive-2026.svg" alt="" width="54" height="54">
+              <div class="i79-drive-copy">
+                <h3>Google Drive</h3>
+                <p>Salvataggio cloud della tua collezione</p>
+                <div class="i79-connection-state"><span class="i79-status-dot" aria-hidden="true"></span><span id="cloudAccountLabel">Verifica collegamento…</span></div>
+              </div>
+            </section>
+
+            <section class="screen-card i79-section-card" id="cloudArchiveSection">
+              <h3 class="i79-section-heading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>
+                Archivio PokeAlbum
+              </h3>
+              <div class="i79-list-panel">
+                <div class="i79-info-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg>
+                  <div class="i79-row-copy"><strong>Dati salvati</strong></div>
+                  <div class="i79-row-value" id="cloudAppDataUsage">—</div>
+                </div>
+                <div class="i79-info-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>
+                  <div class="i79-row-copy"><strong>Posizione</strong><span id="cloudFolderPath">/AppData/PokeAlbum/</span></div>
+                </div>
+                <div class="i79-info-row i79-storage-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m6 3-4 12v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5L18 3Z"/><path d="M2 15h20M6 18h3"/></svg>
+                  <div class="i79-row-copy i79-storage-copy">
+                    <strong>Spazio Drive libero</strong>
+                    <span id="cloudDriveUsage">—</span>
+                    <div class="cloud-storage-track" id="cloudStorageTrack" hidden><div id="cloudStorageFill"></div></div>
+                  </div>
+                  <div class="i79-storage-percent" id="cloudStoragePercent"></div>
                 </div>
               </div>
-              <div class="cloud-saved-section"><h3 class="screen-section-title">Dati PokeAlbum salvati</h3><div class="cloud-detail-row"><div class="cloud-detail-value" id="cloudAppDataUsage">—</div><div class="cloud-detail-hint">Nell’area privata dell’app</div></div></div>
             </section>
 
-            <section class="screen-card">
-              <h3 class="screen-section-title">Account Google</h3>
-              <div class="cloud-account">
-                <div class="cloud-account-inner"><img class="cloud-google-logo" src="image/Google_Favicon_2025.svg" alt="" width="32" height="32"><span id="cloudAccountInitial" hidden>G</span><div class="cloud-account-copy"><div class="cloud-account-email" id="cloudAccountEmail">Caricamento…</div><div class="cloud-account-label" id="cloudAccountLabel">Verifica collegamento…</div></div></div>
-                <div class="cloud-detail-grid" id="cloudDetailGrid">
-                  <div class="cloud-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="m6 3-4 12v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5L18 3Z"/><path d="M2 15h20M6 18h3"/></svg><div class="cloud-info-copy"><div class="cloud-row-title">Spazio Drive utilizzato</div><div class="cloud-detail-hint" id="cloudDriveUsage">—</div><div class="cloud-storage-track" id="cloudStorageTrack" hidden><div id="cloudStorageFill"></div></div></div></div>
-                  <div class="cloud-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg><div class="cloud-info-copy"><div class="cloud-row-title">Area privata PokeAlbum</div><div class="cloud-detail-hint" id="cloudFolderPath">Google Drive › Dati dell’app › PokeAlbum</div></div></div>
+            <section class="screen-card i79-section-card" id="cloudBackupSection">
+              <h3 class="i79-section-heading">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+                Backup e ripristino
+              </h3>
+              <div class="i79-list-panel">
+                <button class="i79-action-row" id="backupModeButton" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></svg>
+                  <span class="i79-row-copy"><strong>Tipo di backup</strong></span>
+                  <span class="i79-action-value" id="backupModeValue">Automatico</span>
+                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                <div class="i79-info-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+                  <div class="i79-row-copy"><strong>Ultimo backup</strong><span id="lastBackupValue">Mai</span></div>
                 </div>
+                <button class="i79-action-row" id="runBackupNow" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M6 20h12a4 4 0 0 0 .7-7.9A7 7 0 0 0 5.2 10.5 4.8 4.8 0 0 0 6 20Z"/></svg>
+                  <span class="i79-row-copy"><strong>Esegui backup adesso</strong><span>Salva subito la tua collezione</span></span>
+                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                <button class="i79-action-row" id="restoreBackup" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 8v8M8 12l4 4 4-4"/><path d="M6 4h12a4 4 0 0 1 .7 7.9A7 7 0 0 1 5.2 13.5 4.8 4.8 0 0 1 6 4Z"/></svg>
+                  <span class="i79-row-copy"><strong>Ripristina da backup</strong><span>Scegli un salvataggio precedente</span></span>
+                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
+                <button class="i79-action-row" id="backupHistory" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3.5" cy="6" r=".8" fill="currentColor" stroke="none"/><circle cx="3.5" cy="12" r=".8" fill="currentColor" stroke="none"/><circle cx="3.5" cy="18" r=".8" fill="currentColor" stroke="none"/></svg>
+                  <span class="i79-row-copy"><strong>Cronologia backup</strong><span>Visualizza tutti i backup</span></span>
+                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
               </div>
             </section>
 
-            <p class="cloud-private-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>Accesso limitato ai dati di PokeAlbum.</p>
+            <p class="cloud-details-status i79-status-message" id="cloudDetailsStatus" role="status" aria-live="polite"></p>
 
-            <section class="screen-card flat">
-              <p class="cloud-details-status" id="cloudDetailsStatus" role="status" aria-live="polite"></p>
-              <div class="cloud-details-actions">
-                <button class="cloud-action" id="connectGoogleDrive" type="button" hidden>Collega Drive</button>
-                <button class="cloud-action disconnect" id="disconnectGoogle" type="button" hidden>Scollega</button>
-                <button class="cloud-action" id="changeGoogleAccount" type="button">Cambia account</button>
-              </div>
-            </section>
+            <button class="i79-disconnect" id="disconnectGoogle" type="button" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg>
+              Scollega Google Drive
+            </button>
+            <button class="cloud-action i79-connect-drive" id="connectGoogleDrive" type="button" hidden>Collega Google Drive</button>
+
+            <p class="cloud-private-note i79-private-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 10v7M12 7h.01"/></svg>Accesso limitato ai dati di PokeAlbum.</p>
+
+            <div hidden aria-hidden="true">
+              <span id="cloudAccountInitial">G</span><span id="cloudAccountEmail"></span><div id="cloudDetailGrid"></div>
+              <button id="changeGoogleAccount" type="button"></button>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="i79-sheet" id="backupModeSheet" hidden>
+      <button class="i79-sheet-backdrop" type="button" aria-label="Chiudi"></button>
+      <div class="i79-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="backupModeTitle">
+        <div class="i79-sheet-handle" aria-hidden="true"></div>
+        <h3 id="backupModeTitle">Tipo di backup</h3>
+        <button class="i79-choice" type="button" data-backup-mode="Automatico"><span><strong>Automatico</strong><small>Salva le modifiche senza intervento manuale</small></span><span class="i79-choice-check">✓</span></button>
+        <button class="i79-choice" type="button" data-backup-mode="Manuale"><span><strong>Manuale</strong><small>Il backup viene eseguito solo quando lo richiedi</small></span><span class="i79-choice-check">✓</span></button>
       </div>
     </div>
   </section>
@@ -2118,6 +2240,15 @@
     const connectGoogleDrive = document.getElementById("connectGoogleDrive");
     const signOutGoogle = document.getElementById("signOutGoogle");
     const cloudDetailGrid = document.getElementById("cloudDetailGrid");
+    const cloudStoragePercent = document.getElementById("cloudStoragePercent");
+    const backupModeButton = document.getElementById("backupModeButton");
+    const backupModeValue = document.getElementById("backupModeValue");
+    const backupModeSheet = document.getElementById("backupModeSheet");
+    const runBackupNow = document.getElementById("runBackupNow");
+    const restoreBackup = document.getElementById("restoreBackup");
+    const backupHistory = document.getElementById("backupHistory");
+    const lastBackupValue = document.getElementById("lastBackupValue");
+    const BACKUP_MODE_KEY = "pokealbum.backupMode";
 
     const profileSyncStatus = document.getElementById("profileSyncStatus");
     const profileConnectGoogle = document.getElementById("profileConnectGoogle");
@@ -2222,6 +2353,9 @@
       cloudDetailsStatus.textContent = "Verifica collegamento…";
       changeGoogleAccount.disabled = true;
       signOutGoogle.disabled = true;
+      cloudDriveUsage.textContent = "—";
+      cloudStoragePercent.textContent = "";
+      document.getElementById("cloudStorageTrack").hidden = true;
     }
 
     function showCloudGuest() {
@@ -2235,7 +2369,12 @@
       connectGoogleDrive.hidden = false;
       connectGoogleDrive.disabled = false;
       connectGoogleDrive.innerHTML = '<img class="google-button-icon" src="image/Google_Favicon_2025.svg" alt="" width="26" height="26"><span>Accedi</span>';
-      cloudDetailsStatus.textContent = "Collega il tuo account Google e abilita Drive per i backup della tua collezione.";
+      cloudAppDataUsage.textContent = "—";
+      cloudDriveUsage.textContent = "—";
+      cloudFolderPath.textContent = "/AppData/PokeAlbum/";
+      cloudStoragePercent.textContent = "";
+      document.getElementById("cloudStorageTrack").hidden = true;
+      cloudDetailsStatus.textContent = "Collega Google Drive per usare backup e ripristino.";
       setCloudConnection(false);
     }
 
@@ -2254,12 +2393,15 @@
       cloudAppDataUsage.textContent = formatBytes(data?.appData?.bytes);
       const usage = data?.storage?.usage;
       const limit = data?.storage?.limit;
-      cloudDriveUsage.textContent = usage == null ? "Non disponibile" : `${formatGoogleStorage(usage)}${limit ? ` di ${formatGoogleStorage(limit, false)}` : ""}`;
-      cloudFolderPath.textContent = "Google Drive › Dati dell’app › PokeAlbum";
-      const track = document.getElementById("cloudStorageTrack");
       const validQuota = usage != null && Number.isFinite(Number(usage)) && Number(usage) >= 0 && Number(limit) > 0;
+      const free = validQuota ? Math.max(0, Number(limit) - Number(usage)) : null;
+      const freePercent = validQuota ? Math.max(0, Math.min(100, free / Number(limit) * 100)) : null;
+      cloudDriveUsage.textContent = validQuota ? `${formatGoogleStorage(free)} di ${formatGoogleStorage(limit)}` : "Non disponibile";
+      cloudFolderPath.textContent = "/AppData/PokeAlbum/";
+      const track = document.getElementById("cloudStorageTrack");
       track.hidden = !validQuota;
-      document.getElementById("cloudStorageFill").style.width = validQuota ? `${Math.min(100, Number(usage) / Number(limit) * 100)}%` : "0%";
+      document.getElementById("cloudStorageFill").style.width = validQuota ? `${freePercent}%` : "0%";
+      cloudStoragePercent.textContent = validQuota ? `${Math.round(freePercent)}%` : "";
       cloudDetailsStatus.textContent = connected ? "" : "Nessun Drive collegato.";
       changeGoogleAccount.disabled = false;
       signOutGoogle.disabled = false;
@@ -2457,6 +2599,37 @@
     changeGoogleAccount.addEventListener("click", () => {
       setCloudDetailsVisible(false);
       openGoogleLogin("login");
+    });
+
+    function setBackupMode(mode) {
+      const value = mode === "Manuale" ? "Manuale" : "Automatico";
+      localStorage.setItem(BACKUP_MODE_KEY, value);
+      backupModeValue.textContent = value;
+      backupModeSheet.querySelectorAll("[data-backup-mode]").forEach((button) => {
+        button.classList.toggle("is-selected", button.dataset.backupMode === value);
+      });
+    }
+
+    function setBackupModeSheetVisible(visible) {
+      backupModeSheet.hidden = !visible;
+    }
+
+    setBackupMode(localStorage.getItem(BACKUP_MODE_KEY) || "Automatico");
+    backupModeButton.addEventListener("click", () => setBackupModeSheetVisible(true));
+    backupModeSheet.querySelector(".i79-sheet-backdrop").addEventListener("click", () => setBackupModeSheetVisible(false));
+    backupModeSheet.querySelectorAll("[data-backup-mode]").forEach((button) => button.addEventListener("click", () => {
+      setBackupMode(button.dataset.backupMode);
+      setBackupModeSheetVisible(false);
+    }));
+
+    runBackupNow.addEventListener("click", () => {
+      cloudDetailsStatus.textContent = "Il backup manuale richiede il relativo endpoint sul backend Google.";
+    });
+    restoreBackup.addEventListener("click", () => {
+      cloudDetailsStatus.textContent = "Il ripristino richiede l’elenco dei backup salvati dal backend Google.";
+    });
+    backupHistory.addEventListener("click", () => {
+      cloudDetailsStatus.textContent = "Nessuna cronologia disponibile finché il backend backup non viene collegato.";
     });
 
     disconnectGoogle.addEventListener("click", async () => {
