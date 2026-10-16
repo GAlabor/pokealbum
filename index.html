@@ -249,12 +249,7 @@
       opacity: .92;
     }
 
-    .button.secondary {
-      background: var(--color-surface-2);
-      color: var(--color-text);
-      border: 1px solid var(--color-border);
-      box-shadow: none;
-    }
+    
 
     .icon-button {
       width: var(--size-control);
@@ -590,7 +585,7 @@
     .profile-google-button .google-button-icon { flex: 0 0 26px; object-fit: contain; }
     .profile-google-button[hidden], .profile-account-details[hidden] { display: none; }
     .profile-account-details { display: grid; gap: 8px; }
-    .profile-section-label { color: #cbd5e1; font-size: 13px; font-weight: 650; }
+    
     .profile-account-card { padding: 10px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-input); }
     .profile-google-row { display: flex; align-items: center; gap: 10px; }
     .profile-google-row > img { flex: 0 0 32px; object-fit: contain; }
@@ -605,25 +600,25 @@
     .profile-account-actions { display: grid; gap: 6px; }
     .profile-account-actions .cloud-action { width: 100%; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 13px; font-weight: 650; }
     #signOutGoogle { color: #ff8585; background: var(--color-input); border-color: #49556a; }
-    #profileModal .modal-panel { width: min(100%, 310px); padding: 12px;  border-radius: var(--radius-panel);}
-    #profileModal .modal-title { font-size: 16px; font-weight: 700; }
-    .profile-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-    .profile-close { border: 0; background: transparent; color: #b3c0d5; width: 36px; height: 36px; font-size: 32px; cursor: pointer; }
+    
+    
+    
+    
     .profile-summary { width: 100%; display: flex; align-items: center; gap: 10px; }
     .profile-summary-copy { min-width: 0; display: grid; gap: 4px; }
     .profile-summary-copy strong { font-size: 17px; line-height: 1.2; overflow-wrap: anywhere; }
     .profile-summary-copy > span { color: #b3c0d5; font-size: 12px; }
-    #profileModal .profile-avatar-button { width: 44px; height: 44px; flex: 0 0 44px; }
-    #profileModal .profile-avatar { width: 44px; height: 44px; font-size: 21px; }
+    
+    
     #profileModal .field-label { font-size: 13px; }
     .profile-login-status { margin: 10px 0 0; color: #cbd5e1; font-size: 13px; line-height: 1.4; }
     .profile-login-status:empty { display: none; }
 
     /* Profile editor */
 
-    #profileModal .profile-editor { gap: 10px; }
+    
     #profileNameInput { height: 40px; font-size: 16px; }
-    #profileModal .profile-avatar-badge { width: 20px; height: 20px; }
+    
     .profile-editor {
       display: grid;
       justify-items: center;
@@ -743,11 +738,7 @@
       transform: scale(1);
     }
 
-    .modal-title {
-      margin: 0;
-      font-size: var(--font-title-size);
-      font-weight: var(--font-title-weight);
-    }
+    
 
     .text-input {
       width: 100%;
@@ -766,12 +757,7 @@
       box-shadow: 0 0 0 3px rgba(52, 119, 222, .14);
     }
 
-    .modal-actions {
-      margin-top: var(--space-5);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-2);
-    }
+    
 
     /* Splash screen */
 
@@ -1005,7 +991,7 @@
     .google-button-icon { display: block; width: 26px; height: 26px; flex: 0 0 26px; object-fit: contain; }
     #connectGoogleDrive { display: flex; align-items: center; justify-content: center; gap: 10px; }
     #connectGoogleDrive[hidden] { display: none; }
-    .profile-google-row > img, .cloud-google-logo { display: block; width: 28px; height: 28px; flex: 0 0 28px; object-fit: contain; }
+    .profile-google-row > img, .cloud-google-logo { display: block; object-fit: contain; }
     .google-chevron { width: 10px; height: 16px; color: #9badd9; }
 
     .google-divider { width: 100%; margin: 20px 0 16px; display: flex; align-items: center; gap: 14px; color: #8198c8; font-size: 10px; letter-spacing: .2em; }
@@ -1033,72 +1019,58 @@
     }
 
     /* Dettagli del collegamento Google Drive */
-    .cloud-details[hidden] { display: none; }
+    
 
     .cloud-details {
-      position: fixed;
-      z-index: 120;
-      inset: 0;
       display: grid;
       place-items: center;
-      padding: max(10px, env(safe-area-inset-top)) 14px max(10px, env(safe-area-inset-bottom));
-      background: rgba(5, 8, 14, .70);
-      backdrop-filter: blur(11px);
     }
 
     .cloud-details-card {
-      width: min(100%, 310px);
-      max-height: calc(100dvh - max(10px, env(safe-area-inset-top)) - max(10px, env(safe-area-inset-bottom)));
-      overflow: auto;
-      padding: 12px;
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-panel);
       color: #f5f7fb;
-      background: var(--color-modal);
-      box-shadow: var(--shadow-floating);
     }
 
-    .cloud-details-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-    .cloud-details-title { margin: 0; font-size: 16px; font-weight: 700; }
-    .cloud-close { width: 36px; height: 36px; border: 0; background: transparent; color: #b3c0d5; font-size: 32px; cursor: pointer; }
-    .cloud-details-heading { display: flex; align-items: center; gap: 10px; margin: 6px 0 10px; }
-    .cloud-details-drive-logo { width: 30px; height: 30px; flex: 0 0 30px; object-fit: contain; background: transparent; }
-    .cloud-details-heading h3 { margin: 0 0 4px; font-size: 17px; line-height: 1.2; }
-    .cloud-details-heading p { margin: 0; color: #b3c0d5; font-size: 12px; }
-    .cloud-section-title { margin: 0; color: #f1f5f9; font-size: 13px; font-weight: 700; }
-    .cloud-account { margin: 6px 0; padding: 10px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-input); }
-    .cloud-account-inner { display: flex; align-items: center; gap: 10px; }
-    .cloud-google-logo { width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     .profile-google-row > img, .cloud-google-logo { width: 28px; height: 28px; flex: 0 0 28px; }
-    .cloud-account-copy { min-width: 0; }
-    .cloud-account-email { color: #f1f5f9; font-size: 13px; font-weight: 650; line-height: 1.5; overflow-wrap: anywhere; }
-    .cloud-account-label { display: flex; align-items: center; gap: 6px; margin-top: 3px; color: #b3c0d5; font-size: 13px; }
-    .cloud-account-label::before { content: ""; width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: #8e9ab0; }
-    .cloud-details.is-drive-connected .cloud-account-label::before { background: #20cf76; }
-    .cloud-detail-grid { display: grid; gap: 0; }
+    
+    
+    
+    
+    
+    
     .cloud-detail-grid[hidden], .cloud-action[hidden], .cloud-storage-track[hidden] { display: none; }
-    .cloud-detail-row { padding: 12px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-input); }
-    .cloud-detail-label { color: #b3c0d5; font-size: 13px; }
-    .cloud-detail-value { margin-top: 5px; color: #f1f5f9; font-size: 14px; font-weight: 650; line-height: 1.4; overflow-wrap: anywhere; }
-    .cloud-detail-hint { margin-top: 4px; color: #b3c0d5; font-size: 12px; line-height: 1.4; }
-    .cloud-saved-section { display: none; gap: 5px; margin-bottom: 10px; }
-    .cloud-details.is-drive-connected .cloud-saved-section { display: grid; }
-    .cloud-saved-section .cloud-detail-row { padding: 8px 10px; }
-    .cloud-saved-section .cloud-detail-value { margin: 0; }
-    .cloud-info-row { display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--color-border); margin-top: 8px; padding-top: 8px; }
-    .cloud-info-row > svg { width: 20px; height: 20px; flex: 0 0 20px; color: #b3c0d5; }
-    .cloud-info-copy { flex: 1; min-width: 0; }
-    .cloud-row-title { color: #f1f5f9; font-size: 13px; font-weight: 650; }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
-    .cloud-storage-track { height: 7px; margin-top: 7px; border-radius: 7px; overflow: hidden; background: #283347; }
+    .cloud-storage-track { height: 7px; border-radius: 7px; overflow: hidden; background: #283347; }
     #cloudStorageFill { height: 100%; width: 0; border-radius: inherit; background: #3477de; }
-    .cloud-private-note { display: flex; align-items: center; gap: 8px; margin: 0; color: #b3c0d5; font-size: 12px; line-height: 1.4; }
+    .cloud-private-note { display: flex; align-items: center; color: #b3c0d5; font-size: 12px; line-height: 1.4; }
     .cloud-private-note svg { width: 18px; height: 18px; flex: 0 0 18px; }
-    .cloud-details-status { margin: 14px 0 0; color: #b3c0d5; font-size: 13px; line-height: 1.4; }
+    .cloud-details-status { color: #b3c0d5; font-size: 13px; }
     .cloud-details-status:empty { display: none; }
-    .cloud-details-actions { display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 10px; }
-    .cloud-details-actions .cloud-action { min-height: 44px; font-size: 13px; background: var(--color-input); border-color: #49556a; }
-    .cloud-details-actions .disconnect { order: 3; color: #ff8585; }
+    
+    
+    
 
     .cloud-action {
       min-height: 45px;
@@ -1116,12 +1088,12 @@
 
     @media (max-height: 640px) {
       .cloud-details-card { padding: 12px; }
-      .cloud-details-heading { margin: 6px 0 10px; }
-      .cloud-details-drive-logo { width: 30px; height: 30px; flex-basis: 30px; }
-      .cloud-saved-section { margin-bottom: 10px; }
-      .cloud-account { padding: 10px; }
-      .cloud-info-row { margin-top: 8px; padding-top: 8px; }
-      .cloud-details-actions { margin-top: 10px; gap: 6px; }
+      
+      
+      
+      
+      
+      
     }
 
     /* Responsive */
@@ -1149,43 +1121,22 @@
       }
     }
 
-    /* i77 - proporzioni modali ottimizzate rispetto al display */
-    #profileModal {
-      padding:
-        calc(18px + env(safe-area-inset-top, 0px))
-        18px
-        calc(18px + env(safe-area-inset-bottom, 0px));
-      background: rgba(0, 0, 0, .56);
-    }
+    
 
-    #profileModal .modal-panel {
-      width: min(77vw, 300px);
-      max-height: calc(100dvh - 36px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-      padding: 8px;
-      border-radius: 22px;
-    }
+    
 
-    #profileModal .profile-heading { margin-bottom: 3px; }
-    #profileModal .profile-editor { gap: 7px; }
-    #profileModal .profile-summary { gap: 9px; }
+    
+    
+    
 
-    /* L'avatar resta volutamente invariato */
-    #profileModal .profile-avatar-button {
-      width: 44px;
-      height: 44px;
-      flex: 0 0 44px;
-    }
+    
 
-    #profileModal .profile-avatar {
-      width: 44px;
-      height: 44px;
-      font-size: 21px;
-    }
+    
 
-    #profileModal .profile-fields { gap: 7px; }
-    #profileModal #profileNameInput { height: 35px; }
-    #profileModal .profile-account-details { gap: 5px; }
-    #profileModal .profile-account-card { padding: 7px; }
+    
+    
+    
+    
 
     #profileModal .profile-sync-row {
       margin-top: 5px;
@@ -1197,63 +1148,33 @@
 
     /* Cloud: stessa larghezza, ma meno sviluppo verticale sul display */
     .cloud-details {
-      padding:
-        calc(18px + env(safe-area-inset-top, 0px))
-        18px
-        calc(18px + env(safe-area-inset-bottom, 0px));
-      background: rgba(0, 0, 0, .56);
       backdrop-filter: none;
       -webkit-backdrop-filter: none;
     }
 
-    .cloud-details-card {
-      width: min(77vw, 300px);
-      max-height: calc(100dvh - 36px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-      padding: 8px;
-      border-radius: 22px;
-    }
+    
 
-    .cloud-details-heading {
-      gap: 8px;
-      margin: 1px 0 5px;
-    }
+    
 
-    .cloud-details-drive-logo {
-      width: 28px;
-      height: 28px;
-      flex-basis: 28px;
-    }
+    
 
-    .cloud-saved-section {
-      gap: 3px;
-      margin-bottom: 5px;
-    }
+    
 
-    .cloud-saved-section .cloud-detail-row { padding: 6px 8px; }
+    
 
-    .cloud-account {
-      margin: 3px 0;
-      padding: 7px;
-    }
+    
 
-    .cloud-account-inner { gap: 8px; }
+    
 
-    .cloud-info-row {
-      gap: 8px;
-      margin-top: 4px;
-      padding-top: 4px;
-    }
+    
 
-    .cloud-storage-track { margin-top: 4px; }
+    
     .cloud-private-note { gap: 6px; }
     .cloud-details-status { margin-top: 7px; }
 
-    .cloud-details-actions {
-      gap: 5px;
-      margin-top: 6px;
-    }
+    
 
-    .cloud-details-actions .cloud-action { min-height: 38px; }
+    
 
     @media (max-width: 360px) {
       #profileModal .modal-panel,
@@ -1264,7 +1185,6 @@
 
   
 
-    /* i78 - Profilo e Cloud come pagine intere */
     #profileModal {
       padding: 0;
       display: block;
@@ -1372,10 +1292,7 @@
       box-shadow: 0 10px 26px rgba(0, 0, 0, .18);
     }
 
-    .screen-card.flat {
-      background: var(--color-input);
-      box-shadow: none;
-    }
+    
 
     .screen-section-title {
       margin: 0 0 10px;
@@ -1385,12 +1302,7 @@
       letter-spacing: .01em;
     }
 
-    .screen-section-text {
-      margin: 0;
-      color: #b3c0d5;
-      font-size: 13px;
-      line-height: 1.45;
-    }
+    
 
     #profileModal .profile-editor {
       width: 100%;
@@ -1399,9 +1311,7 @@
       gap: 14px;
     }
 
-    #profileModal .profile-heading {
-      display: none;
-    }
+    
 
     #profileModal .profile-summary {
       align-items: center;
@@ -1531,26 +1441,13 @@
       gap: 14px;
     }
 
-    .cloud-details-head,
-    .cloud-details-heading {
-      display: none;
-    }
+    
 
-    .cloud-account {
-      margin: 0;
-      padding: 14px;
-      border-radius: 16px;
-      background: var(--color-input);
-    }
+    
 
-    .cloud-account-inner {
-      gap: 10px;
-    }
+    
 
-    .cloud-account-email {
-      font-size: 14px;
-      font-weight: 650;
-    }
+    
 
     .cloud-account-label,
     .cloud-detail-hint,
@@ -1559,33 +1456,15 @@
       font-size: 12px;
     }
 
-    .cloud-detail-grid {
-      gap: 10px;
-      margin-top: 10px;
-    }
+    
 
-    .cloud-info-row,
-    .cloud-detail-row {
-      margin: 0;
-      padding: 12px;
-      border: 1px solid var(--color-border);
-      border-radius: 14px;
-      background: rgba(255, 255, 255, .03);
-    }
+    
 
-    .cloud-saved-section {
-      gap: 8px;
-      margin: 0;
-    }
+    
 
-    .cloud-saved-section .cloud-detail-row {
-      padding: 12px;
-    }
+    
 
-    .cloud-detail-value {
-      margin-top: 4px;
-      font-size: 14px;
-    }
+    
 
     .cloud-storage-track {
       margin-top: 6px;
@@ -1599,10 +1478,7 @@
       background: var(--color-input);
     }
 
-    .cloud-details-actions {
-      gap: 8px;
-      margin-top: 0;
-    }
+    
 
     .cloud-details-status {
       margin: 0;
@@ -1621,7 +1497,6 @@
     }
 
 
-    /* i79 - Cloud ridisegnato */
     .cloud-screen-body { padding-top: 16px; }
     .i79-cloud-grid { gap: 12px; }
     .i79-drive-card { display: flex; align-items: center; gap: 16px; padding: 18px; }
@@ -1681,7 +1556,6 @@
     }
 
 
-    /* i80 - Cloud compatto, stato connessione univoco e icone aggiornate */
     .cloud-details .screen-header {
       padding-top: calc(9px + env(safe-area-inset-top, 0px));
       padding-bottom: 9px;
@@ -2443,6 +2317,8 @@
       document.getElementById("cloudStorageTrack").hidden = true;
     }
 
+    const GOOGLE_DRIVE_BUTTON_HTML = '<img class="google-button-icon" src="image/google-drive-2026.svg" alt="" width="22" height="22"><span>Collega Google Drive</span>';
+
     function showCloudGuest() {
       setCloudDetailsVisible(true);
       cloudAccountInitial.textContent = "G";
@@ -2453,7 +2329,7 @@
       changeGoogleAccount.hidden = true;
       connectGoogleDrive.hidden = false;
       connectGoogleDrive.disabled = false;
-      connectGoogleDrive.innerHTML = '<img class="google-button-icon" src="image/google-drive-2026.svg" alt="" width="22" height="22"><span>Collega Google Drive</span>';
+      connectGoogleDrive.innerHTML = GOOGLE_DRIVE_BUTTON_HTML;
       cloudAppDataUsage.textContent = "—";
       cloudDriveUsage.textContent = "—";
       cloudFolderPath.textContent = "/AppData/PokeAlbum/";
@@ -2467,7 +2343,7 @@
       updateAccountProfile(data);
       document.getElementById("cloudAccountLabel").textContent = data?.drive?.connected === true ? "Collegato" : "Collega";
       changeGoogleAccount.hidden = false;
-      connectGoogleDrive.innerHTML = '<img class="google-button-icon" src="image/google-drive-2026.svg" alt="" width="22" height="22"><span>Collega Google Drive</span>';
+      connectGoogleDrive.innerHTML = GOOGLE_DRIVE_BUTTON_HTML;
       const email = data?.account?.email || "Account Google";
       const connected = data?.drive?.connected === true;
       cloudAccountInitial.textContent = email.slice(0, 1).toUpperCase();
