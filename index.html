@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
   <link rel="preload" as="image" href="image/splash-logo.webp" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i82: spazio Google Drive e azioni connessione rifinite -->
+  <!-- i82: storage Drive e pulsanti collegamento rifiniti -->
 
   <style>
     :root {
@@ -1653,11 +1653,9 @@
     .i79-storage-percent { align-self: end; padding-bottom: 2px; color: #b9c9e8; font-size: 12px; }
     .i79-storage-copy .cloud-storage-track { width: 100%; height: 6px; margin-top: 7px; }
 
-    .i79-disconnect { width: 100%; min-height: 38px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 0; background: transparent; color: #d86f78; font-size: 13px; font-weight: 650; box-shadow: none; opacity: .86; }
-    .i79-disconnect svg { width: 19px; height: 19px; }
-    .i79-disconnect:hover { opacity: 1; }
-    .i79-disconnect:active { opacity: .72; }
-    .i79-connect-drive { width: 100%; }
+    .i79-disconnect { width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #49556a; border-radius: 15px; background: var(--color-input); color: #d87880; font-size: 14px; font-weight: 720; box-shadow: none; }
+    .i79-disconnect svg { width: 21px; height: 21px; }
+    .i79-connect-drive { width: 100%; color: #9fc4ee; }
     .i79-private-note { border: 0; background: transparent; padding: 0 8px 4px; color: #aebbd0; }
     .i79-private-note svg { width: 19px; height: 19px; }
     .i79-status-message:empty { display: none; }
@@ -1720,33 +1718,22 @@
     .cloud-details .i79-row-value,
     .cloud-details .i79-action-value { font-size: 12.5px; }
     .cloud-details .i79-storage-copy .cloud-storage-track { margin-top: 5px; }
-    .cloud-details .i79-storage-copy .i82-storage-available {
-      color: #8997ad;
-      font-size: 10.8px;
-    }
 
-    .cloud-details .i79-disconnect {
-      min-height: 38px;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      color: #d86f78;
-      font-size: 13px;
-      font-weight: 650;
-      box-shadow: none;
-    }
+    .cloud-details .i79-disconnect,
     .cloud-details .i79-connect-drive {
       min-height: 46px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 720;
+    }
+    .cloud-details .i79-connect-drive {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 9px;
       border: 1px solid #526079;
-      border-radius: 14px;
       background: var(--color-input);
       color: #9fc4ee;
-      font-size: 13px;
-      font-weight: 720;
       box-shadow: none;
     }
     .cloud-details .i79-connect-drive .google-button-icon { width: 22px; height: 22px; flex-basis: 22px; }
@@ -1773,7 +1760,7 @@
       .cloud-details .i79-section-heading { margin-bottom: 5px; }
       .cloud-details .i79-info-row,
       .cloud-details .i79-action-row { min-height: 45px; padding-top: 5px; padding-bottom: 5px; }
-      .cloud-details .i79-disconnect { min-height: 34px; }
+      .cloud-details .i79-disconnect,
       .cloud-details .i79-connect-drive { min-height: 43px; }
     }
 
@@ -2169,12 +2156,10 @@
                 <div class="i79-info-row i79-storage-row">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m6 3-4 12v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5L18 3Z"/><path d="M2 15h20M6 18h3"/></svg>
                   <div class="i79-row-copy i79-storage-copy">
-                    <strong>Spazio Google Drive</strong>
                     <span id="cloudDriveUsage">—</span>
-                    <span class="i82-storage-available" id="cloudDriveAvailable"></span>
                     <div class="cloud-storage-track" id="cloudStorageTrack" hidden><div id="cloudStorageFill"></div></div>
                   </div>
-                  <div class="i79-storage-percent" id="cloudStoragePercent"></div>
+                  <div class="i79-storage-percent" id="cloudStoragePercent" hidden></div>
                 </div>
               </div>
             </section>
@@ -2332,7 +2317,6 @@
     const cloudAccountEmail = document.getElementById("cloudAccountEmail");
     const cloudAppDataUsage = document.getElementById("cloudAppDataUsage");
     const cloudDriveUsage = document.getElementById("cloudDriveUsage");
-    const cloudDriveAvailable = document.getElementById("cloudDriveAvailable");
     const cloudFolderPath = document.getElementById("cloudFolderPath");
     const cloudDetailsStatus = document.getElementById("cloudDetailsStatus");
     const changeGoogleAccount = document.getElementById("changeGoogleAccount");
@@ -2454,7 +2438,6 @@
       changeGoogleAccount.disabled = true;
       signOutGoogle.disabled = true;
       cloudDriveUsage.textContent = "—";
-      cloudDriveAvailable.textContent = "";
       cloudStoragePercent.textContent = "";
       document.getElementById("cloudStorageTrack").hidden = true;
     }
@@ -2472,7 +2455,6 @@
       connectGoogleDrive.innerHTML = '<img class="google-button-icon" src="image/google-drive-2026.svg" alt="" width="22" height="22"><span>Collega Google Drive</span>';
       cloudAppDataUsage.textContent = "—";
       cloudDriveUsage.textContent = "—";
-      cloudDriveAvailable.textContent = "";
       cloudFolderPath.textContent = "/AppData/PokeAlbum/";
       cloudStoragePercent.textContent = "";
       document.getElementById("cloudStorageTrack").hidden = true;
@@ -2497,15 +2479,13 @@
       const limit = data?.storage?.limit;
       const validQuota = usage != null && Number.isFinite(Number(usage)) && Number(usage) >= 0 && Number(limit) > 0;
       const used = validQuota ? Math.max(0, Math.min(Number(limit), Number(usage))) : null;
-      const free = validQuota ? Math.max(0, Number(limit) - used) : null;
       const usedPercent = validQuota ? Math.max(0, Math.min(100, used / Number(limit) * 100)) : null;
       cloudDriveUsage.textContent = validQuota ? `${formatGoogleStorage(used)} utilizzati su ${formatGoogleStorage(limit)}` : "Non disponibile";
-      cloudDriveAvailable.textContent = validQuota ? `${formatGoogleStorage(free)} disponibili nel tuo account` : "";
       cloudFolderPath.textContent = "/AppData/PokeAlbum/";
       const track = document.getElementById("cloudStorageTrack");
       track.hidden = !validQuota;
       document.getElementById("cloudStorageFill").style.width = validQuota ? `${usedPercent}%` : "0%";
-      cloudStoragePercent.textContent = validQuota ? `${Math.round(usedPercent)}%` : "";
+      cloudStoragePercent.textContent = "";
       cloudDetailsStatus.textContent = "";
       changeGoogleAccount.disabled = false;
       signOutGoogle.disabled = false;
