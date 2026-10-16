@@ -1507,38 +1507,38 @@
     }
 
 
-    /* i92: profilo, account Google e CardTrader separati. */
+    /* i93: profilo, account Google e CardTrader separati. */
     #profileModal .screen-back { border: 0; background: transparent; border-radius: 50%; }
-    #profileModal .screen-body { padding: 8px 18px calc(10px + env(safe-area-inset-bottom, 0px)); container: profile-space / size; }
-    #profileModal .profile-editor { width: 100%; display: grid; justify-items: stretch; gap: 10px; align-content: start; }
-    #profileModal .profile-summary { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0; text-align: center; }
-    #profileModal .profile-avatar-button { width: 56px; height: 56px; flex: 0 0 56px; }
-    #profileModal .profile-avatar { font-size: 26px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
-    #profileModal .profile-avatar-badge { width: 24px; height: 24px; border-width: 2px; border-color: var(--color-bg); }
-    #profileModal .profile-summary-copy { display: grid; gap: 3px; min-width: 0; max-width: 100%; }
-    #profileModal .profile-summary-copy > strong { font-size: 22px; font-weight: 720; line-height: 1.2; overflow-wrap: anywhere; }
+    #profileModal .screen-body { padding: 10px 18px calc(12px + env(safe-area-inset-bottom, 0px)); }
+    #profileModal .profile-editor { width: 100%; display: grid; justify-items: stretch; align-content: start; gap: calc(24px - 14px * var(--profile-fit, 0)); }
+    #profileModal .profile-summary { display: flex; flex-direction: column; align-items: center; gap: calc(14px - 6px * var(--profile-fit, 0)); padding: 0 0 2px; text-align: center; }
+    #profileModal .profile-avatar-button { width: calc(80px - 16px * var(--profile-fit, 0)); height: calc(80px - 16px * var(--profile-fit, 0)); flex: 0 0 auto; }
+    #profileModal .profile-avatar { font-size: 36px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
+    #profileModal .profile-avatar-badge { width: 30px; height: 30px; border-color: var(--color-bg); }
+    #profileModal .profile-summary-copy { display: grid; gap: calc(6px - 2px * var(--profile-fit, 0)); min-width: 0; max-width: 100%; }
+    #profileModal .profile-summary-copy > strong { font-size: 23px; font-weight: 720; line-height: 1.2; overflow-wrap: anywhere; }
     #profileModal .profile-summary-copy > span { font-size: 13px; line-height: 1.4; color: #aebdd3; }
     #profileModal .profile-summary-copy .profile-card-total { font-size: 12px; }
     #profileModal .profile-card-total b { font-weight: 650; color: #d7e1f5; }
     #profileModal .profile-section { min-width: 0; }
-    #profileModal .profile-section-title { margin: 0 4px 6px; font-size: 11px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; color: #aebdd3; }
-    #profileModal .screen-card { padding: 10px 12px; border-radius: 16px; background: var(--color-surface-1); box-shadow: none; }
-    #profileModal .profile-fields { gap: 4px; }
+    #profileModal .profile-section-title { margin: 0 4px calc(10px - 4px * var(--profile-fit, 0)); font-size: 11px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; color: #aebdd3; }
+    #profileModal .screen-card { padding: calc(14px - 4px * var(--profile-fit, 0)) 14px; border-radius: 16px; background: var(--color-surface-1); box-shadow: none; }
+    #profileModal .profile-fields { gap: calc(8px - 4px * var(--profile-fit, 0)); }
     #profileModal .field-label { font-size: 13px; font-weight: 500; letter-spacing: 0; color: #aebdd3; }
-    #profileModal #profileNameInput { height: 40px; border-radius: 10px; font-size: 16px; }
-    #profileModal .profile-account { width: 100%; padding: 0 12px; }
+    #profileModal #profileNameInput { height: calc(46px - 4px * var(--profile-fit, 0)); border-radius: 10px; font-size: 17px; }
+    #profileModal .profile-account { width: 100%; padding: 0 14px; }
     #profileModal .profile-account-details { display: grid; gap: 0; }
     #profileModal .profile-account-details[hidden], #profileModal .profile-google-button[hidden] { display: none; }
-    #profileModal .profile-row { display: flex; align-items: center; gap: 12px; min-height: 40px; width: 100%; margin: 0; padding: 6px 2px; text-align: left; }
+    #profileModal .profile-row { display: flex; align-items: center; gap: 16px; min-height: 44px; width: 100%; margin: 0; padding: calc(14px - 10px * var(--profile-fit, 0)) 2px; text-align: left; }
     #profileModal .profile-row + .profile-row { border-top: 1px solid rgba(255,255,255,.12); }
-    #profileModal .profile-google-row, #profileModal .profile-cardtrader-row { min-height: 56px; }
+    #profileModal .profile-google-row, #profileModal .profile-cardtrader-row { min-height: calc(72px - 16px * var(--profile-fit, 0)); }
     #profileModal .profile-google-row > img, #profileModal .profile-cardtrader-row > img { width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; }
     #profileModal .profile-google-copy, #profileModal .profile-sync-row > div { min-width: 0; }
     #profileModal .profile-row > .icon { width: 24px; height: 24px; flex: 0 0 24px; margin: 0 4px; color: #b8c9e8; }
     #profileModal .profile-account-value { display: block; font-size: 14px; line-height: 1.45; font-weight: 500; overflow-wrap: anywhere; }
     #profileModal .profile-account-label { display: block; font-size: 14px; line-height: 1.4; font-weight: 600; color: var(--color-text); margin-bottom: 3px; }
     #profileModal #profileLastSync { color: #aebdd3; font-weight: 400; }
-    #profileModal .profile-connected { display: flex; align-items: center; gap: 7px; margin-top: 3px; color: #aebdd3; font-size: 13px; line-height: 1.4; }
+    #profileModal .profile-connected { display: flex; align-items: center; gap: 7px; margin-top: 4px; color: #aebdd3; font-size: 13px; line-height: 1.4; }
     #profileModal .profile-connected > span { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #20cf76; }
     #profileModal .profile-connected.is-disconnected > span { background: #8e9ab0; }
     #profileModal .profile-action { border: 0; border-radius: 0; background: transparent; color: var(--color-text); font-size: 14px; font-weight: 550; box-shadow: none; }
@@ -1547,36 +1547,10 @@
     #profileModal #signOutGoogle, #profileModal #signOutGoogle > .icon { color: #ff777b; }
     #profileModal .profile-link-action { justify-content: center; color: #4da3ff; }
     #profileModal .profile-link-action > .icon { color: inherit; margin: 0; }
-    #profileModal .profile-google-button { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 56px; border: 0; border-radius: 14px; background: transparent; color: var(--color-text); font-size: 14px; box-shadow: none; }
+    #profileModal .profile-google-button { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 60px; border: 0; border-radius: 14px; background: transparent; color: var(--color-text); font-size: 14px; box-shadow: none; }
     #profileModal .profile-login-status { margin: 0; padding: 0 2px 8px; color: #aebdd3; font-size: 12px; line-height: 1.45; }
     #profileModal .profile-login-status:empty { display: none; }
     #profileModal .profile-action:focus-visible, #profileModal .profile-google-button:focus-visible { outline: 2px solid #4da3ff; outline-offset: -2px; border-radius: 8px; }
-
-
-    #profileModal .screen-header { flex-shrink: 0; padding-top: calc(8px + env(safe-area-inset-top, 0px)); padding-bottom: 8px; }
-    #profileModal .profile-avatar-badge .icon { width: 12px; height: 12px; }
-    #profileModal .profile-account-actions { display: grid; border-top: 1px solid rgba(255,255,255,.12); }
-    /* La densità segue lo spazio reale rimasto, comprese le aree sicure iPhone. */
-    @container profile-space (max-height: 680px) {
-      #profileModal .profile-summary { flex-direction: row; justify-content: center; gap: 14px; padding: 2px 0; text-align: left; }
-      #profileModal .profile-summary-copy > strong { font-size: 20px; }
-    }
-    @container profile-space (max-height: 600px) {
-      #profileModal .profile-editor { gap: 8px; }
-      #profileModal .profile-section-title { margin-bottom: 5px; }
-      #profileModal .profile-account-actions { grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
-      #profileModal .profile-account-actions .profile-row { justify-content: center; gap: 7px; font-size: 12px; }
-      #profileModal .profile-account-actions .profile-row + .profile-row { border-top: 0; border-left: 1px solid rgba(255,255,255,.12); }
-      #profileModal .profile-account-actions .profile-row > .icon { width: 19px; height: 19px; flex-basis: 19px; margin: 0; }
-    }
-    @container profile-space (max-height: 520px) {
-      #profileModal .profile-fields { grid-template-columns: minmax(0,1fr) minmax(0,1.5fr); align-items: center; gap: 8px; }
-      #profileModal .profile-cardtrader-card { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 8px; }
-      #profileModal .profile-cardtrader-card .profile-cardtrader-row { gap: 8px; }
-      #profileModal .profile-cardtrader-card .profile-link-action { border-top: 0; border-left: 1px solid rgba(255,255,255,.12); gap: 6px; padding-left: 10px; font-size: 12px; }
-      #profileModal .profile-cardtrader-card .profile-link-action > .icon { width: 18px; height: 18px; flex-basis: 18px; }
-      #profileModal #profileCardTraderStatus { grid-column: 1 / -1; }
-    }
 
   </style>
 </head>
@@ -1892,10 +1866,8 @@
                   <div class="profile-account-details" id="profileAccountDetails" hidden>
                     <div class="profile-google-row profile-row"><img src="image/Google_Favicon_2025.svg" alt="" width="32" height="32"><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span aria-hidden="true"></span>Collegato</span></div></div>
                     <div class="profile-sync-row profile-row"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7a9 9 0 0 0-15-2L2 8m0-5v5h5M4 17a9 9 0 0 0 15 2l3-3m0 5v-5h-5"/></svg><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
-                    <div class="profile-account-actions">
                     <button class="profile-action profile-row" id="profileChangeGoogle" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-switch-account"></use></svg><span>Cambia account</span></button>
                     <button class="profile-action profile-row" id="signOutGoogle" type="button"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg><span>Esci da Google</span></button>
-                    </div>
                   </div>
                   <p class="profile-login-status" id="profileLoginStatus" role="status" aria-live="polite"></p>
                 </div>
@@ -1903,7 +1875,7 @@
 
               <section class="profile-section" aria-labelledby="profileCardTraderTitle">
                 <h3 class="profile-section-title" id="profileCardTraderTitle">Account CardTrader</h3>
-                <div class="screen-card profile-account profile-cardtrader-card">
+                <div class="screen-card profile-account">
                   <div class="profile-row profile-cardtrader-row"><img src="image/ico_cd.svg" alt="" width="32" height="32"><div class="profile-google-copy"><span class="profile-account-label">CardTrader</span><span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span></div></div>
                   <button class="profile-action profile-row profile-link-action" id="profileConnectCardTrader" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-link"></use></svg><span>Collega account</span></button>
                   <p class="profile-login-status" id="profileCardTraderStatus" role="status" aria-live="polite"></p>
@@ -2746,6 +2718,39 @@
       renderProfile();
     }
 
+    // Riduce solo gli spazi necessari: avatar sempre centrale, testi e azioni separati.
+    let profileFitFrame = 0;
+    function fitProfileToScreen() {
+      if (!profileModal.classList.contains("open")) return;
+      const body = profileForm.parentElement;
+      const style = getComputedStyle(body);
+      const available = body.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+      if (available <= 0) return;
+      const apply = (value) => profileForm.style.setProperty("--profile-fit", String(value));
+      const fits = () => profileForm.getBoundingClientRect().height <= available - 2;
+      apply(0);
+      if (fits()) return;
+      apply(1);
+      // In presenza di tastiera o zoom, mantiene tutti i contenuti accessibili.
+      if (!fits()) return;
+      let low = 0, high = 1;
+      for (let step = 0; step < 8; step++) {
+        const middle = (low + high) / 2;
+        apply(middle);
+        if (fits()) high = middle;
+        else low = middle;
+      }
+      apply(high);
+    }
+    function scheduleProfileFit() {
+      cancelAnimationFrame(profileFitFrame);
+      profileFitFrame = requestAnimationFrame(fitProfileToScreen);
+    }
+    const profileSizeObserver = new ResizeObserver(scheduleProfileFit);
+    profileSizeObserver.observe(profileForm.parentElement);
+    const profileContentObserver = new MutationObserver(scheduleProfileFit);
+    profileContentObserver.observe(profileForm, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden"] });
+
     function setProfileModal(open) {
       if (!open && profileModal.classList.contains("open")) saveProfile(profileNameInput.value, pendingProfileImage);
       profileModal.classList.toggle("open", open);
@@ -2765,6 +2770,7 @@
         pendingProfileImage = localStorage.getItem(PROFILE_IMAGE_KEY) || "";
 
         requestAnimationFrame(() => {
+          fitProfileToScreen();
           if (window.matchMedia("(pointer: fine)").matches) profileNameInput.focus({ preventScroll: true });
         });
       }
