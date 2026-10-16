@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Icone PokeAlbum</title>
+<style>
+  :root{
+    --bg:#060a12;
+    --panel:#0b1220;
+    --border:rgba(255,255,255,.08);
+    --text:#f4f5f7;
+    --muted:#b3c0d5;
+    --icon:#c7d3ea;
+  }
+  *{box-sizing:border-box}
+  html,body{
+    margin:0;
+    min-height:100%;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,sans-serif;
+  }
+  body{padding:28px}
+  .grid{
+    width:min(1100px,100%);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:16px;
+  }
+  .card{
+    min-height:170px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:var(--panel);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    padding:20px;
+  }
+  .card svg{
+    width:58px;
+    height:58px;
+    color:var(--icon);
+    display:block;
+  }
+  .label{
+    color:var(--muted);
+    font-size:14px;
+    font-weight:650;
+    text-align:center;
+    line-height:1.25;
+  }
+</style>
+</head>
+<body>
+
+<svg id="pokealbum-icons" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+
+  <symbol id="icon-back" viewBox="0 0 24 24">
+    <path d="m15 18-6-6 6-6"
+      fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+
+  <symbol id="icon-archive" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8">
+      <ellipse cx="12" cy="5" rx="7" ry="3"/>
+      <path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-position" viewBox="0 0 24 24">
+    <path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"
+      fill="none" stroke="currentColor" stroke-width="1.8"/>
+  </symbol>
+
+  <symbol id="icon-storage" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round">
+      <path d="m6 3-4 12v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5L18 3Z"/>
+      <path d="M2 15h20M6 18h3"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-backup-section" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+      <path d="M3 3v5h5"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-last-backup" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8">
+      <rect x="4" y="5" width="16" height="16" rx="2"/>
+      <path d="M8 3v4M16 3v4M4 10h16"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-shield" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6z"/>
+      <path d="m9.5 12 1.7 1.7 3.6-4"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-saved-data" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 3.5h8.5L19 8v12.5H6z"/>
+      <path d="M14.5 3.5V8H19"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-backup-type" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 7h5"/>
+      <path d="M13 7h7"/>
+      <path d="M9 4v6"/>
+      <path d="M4 17h9"/>
+      <path d="M17 17h3"/>
+      <path d="M13 14v6"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-history" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 8V4h4"/>
+      <path d="M5 6.5A8 8 0 1 1 4.6 16"/>
+      <path d="M12 8v4.5l3 1.8"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-backup-now" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 18.5h9.5a4 4 0 0 0 .6-7.95A5.8 5.8 0 0 0 6.05 9.1 4.8 4.8 0 0 0 7 18.5Z"/>
+      <path d="M12 16V9"/>
+      <path d="M9.5 11.5 12 9l2.5 2.5"/>
+    </g>
+  </symbol>
+
+  <symbol id="icon-restore" viewBox="0 0 24 24">
+    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 18.5h9.5a4 4 0 0 0 .6-7.95A5.8 5.8 0 0 0 6.05 9.1 4.8 4.8 0 0 0 7 18.5Z"/>
+      <path d="M12 9v7"/>
+      <path d="M9.5 13.5 12 16l2.5-2.5"/>
+    </g>
+  </symbol>
+
+
+<symbol id="icon-profile" viewBox="0 0 24 24">
+      <path d="M12 12.25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Z" fill="none" stroke="currentColor" />
+      <path d="M4.5 20.25c.7-3.45 3.55-5.75 7.5-5.75s6.8 2.3 7.5 5.75" fill="none" stroke="currentColor" />
+    </symbol>
+<symbol id="icon-home" viewBox="0 0 24 24">
+      <path d="M4 10.5 12 4l8 6.5v8.25A1.25 1.25 0 0 1 18.75 20h-13.5A1.25 1.25 0 0 1 4 18.75V10.5Z" fill="none" stroke="currentColor" />
+      <path d="M9 20v-5.5h6V20" fill="none" stroke="currentColor" />
+    </symbol>
+<symbol id="icon-search" viewBox="0 0 24 24">
+      <circle cx="10.75" cy="10.75" r="6.25" fill="none" stroke="currentColor" />
+      <path d="m15.4 15.4 4.1 4.1" fill="none" stroke="currentColor" />
+    </symbol>
+<symbol id="icon-collection" viewBox="0 0 24 24">
+      <rect x="4" y="5" width="11" height="14" rx="2.1" fill="none" stroke="currentColor" />
+      <path d="M8 5.1V4.5A1.5 1.5 0 0 1 9.5 3h8A2.5 2.5 0 0 1 20 5.5v10A1.5 1.5 0 0 1 18.5 17H15" fill="none" stroke="currentColor" />
+    </symbol>
+<symbol id="icon-close" viewBox="0 0 24 24">
+      <path d="M6 6 18 18M18 6 6 18" fill="none" stroke="currentColor" />
+    </symbol>
+<symbol id="icon-cloud" viewBox="0 0 24 24">
+      <path
+        d="M7.5 18.5h9.25a4.25 4.25 0 0 0 .55-8.46A5.75 5.75 0 0 0 6.15 8.65 4.95 4.95 0 0 0 7.5 18.5Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </symbol>
+<symbol id="icon-camera" viewBox="0 0 24 24">
+      <path d="M8.5 6.5 10 4.5h4l1.5 2H18A2.5 2.5 0 0 1 20.5 9v8A2.5 2.5 0 0 1 18 19.5H6A2.5 2.5 0 0 1 3.5 17V9A2.5 2.5 0 0 1 6 6.5h2.5Z" fill="none" stroke="currentColor" />
+      <circle cx="12" cy="13" r="3.25" fill="none" stroke="currentColor" />
+    </symbol>
+<symbol id="app-icon-1" viewBox="0 0 16 16"><path d="m2 8 4 4 8-9" stroke="var(--color-bg)" stroke-width="7"/><path d="m2 8 4 4 8-9" stroke="#20cf76" stroke-width="3"/></symbol>
+<symbol id="app-icon-2" viewBox="0 0 24 24"><path
+                d="
+                  M10.45 2.2
+                  C10.56 1.5 11.17 1 11.88 1
+                  H12.12
+                  C12.83 1 13.44 1.5 13.55 2.2
+                  L13.8 3.78
+
+                  C14.42 3.98 15.01 4.29 15.54 4.68
+                  L17.02 4.08
+                  C17.68 3.81 18.44 4.04 18.79 4.66
+                  L18.91 4.87
+                  C19.27 5.49 19.12 6.27 18.56 6.72
+                  L17.33 7.71
+
+                  C17.47 8.34 17.47 9 17.33 9.63
+                  L18.56 10.62
+                  C19.12 11.07 19.27 11.85 18.91 12.47
+                  L18.79 12.68
+                  C18.44 13.3 17.68 13.53 17.02 13.26
+                  L15.54 12.66
+
+                  C15.01 13.05 14.42 13.36 13.8 13.56
+                  L13.55 15.14
+                  C13.44 15.84 12.83 16.34 12.12 16.34
+                  H11.88
+                  C11.17 16.34 10.56 15.84 10.45 15.14
+                  L10.2 13.56
+
+                  C9.58 13.36 8.99 13.05 8.46 12.66
+                  L6.98 13.26
+                  C6.32 13.53 5.56 13.3 5.21 12.68
+                  L5.09 12.47
+                  C4.73 11.85 4.88 11.07 5.44 10.62
+                  L6.67 9.63
+
+                  C6.53 9 6.53 8.34 6.67 7.71
+                  L5.44 6.72
+                  C4.88 6.27 4.73 5.49 5.09 4.87
+                  L5.21 4.66
+                  C5.56 4.04 6.32 3.81 6.98 4.08
+                  L8.46 4.68
+
+                  C8.99 4.29 9.58 3.98 10.2 3.78
+                  L10.45 2.2
+
+                  Z
+
+                  M12 6.35
+                  C10.72 6.35 9.68 7.39 9.68 8.67
+                  C9.68 9.95 10.72 10.99 12 10.99
+                  C13.28 10.99 14.32 9.95 14.32 8.67
+                  C14.32 7.39 13.28 6.35 12 6.35
+                  Z
+                "
+                transform="translate(12 12) scale(1.27) translate(-12 -12) translate(0 3.33)"
+                fill="none"
+                stroke="#FFFFFF"
+                stroke-width="1.35"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+              /></symbol>
+<symbol id="app-icon-3" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+<symbol id="app-icon-4" viewBox="0 0 24 24"><path d="M20 7a9 9 0 0 0-15-2L2 8m0-5v5h5M4 17a9 9 0 0 0 15 2l3-3m0 5v-5h-5"/></symbol>
+<symbol id="app-icon-5" viewBox="0 0 12 20"><path d="m3 3 6 7-6 7"/></symbol>
+<symbol id="app-icon-6" viewBox="0 0 20 24"><path d="M4 9V6a6 6 0 0 1 12 0v3h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2Zm3 0h6V6a3 3 0 0 0-6 0Zm3 5a2 2 0 0 0-1 3.7V20h2v-2.3A2 2 0 0 0 10 14Z"/></symbol>
+<symbol id="app-icon-7" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></symbol>
+<symbol id="app-icon-8" viewBox="0 0 24 24"><path d="M6 3.5h8.5L19 8v12.5H6z"/><path d="M14.5 3.5V8H19"/></symbol>
+<symbol id="app-icon-9" viewBox="0 0 24 24"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/></symbol>
+<symbol id="app-icon-10" viewBox="0 0 24 24"><path d="m6 3-4 12v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5L18 3Z"/><path d="M2 15h20M6 18h3"/></symbol>
+<symbol id="app-icon-11" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+<symbol id="app-icon-12" viewBox="0 0 24 24"><path d="M4 7h5"/><path d="M13 7h7"/><path d="M9 4v6"/><path d="M4 17h9"/><path d="M17 17h3"/><path d="M13 14v6"/></symbol>
+<symbol id="app-icon-13" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="app-icon-14" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></symbol>
+<symbol id="app-icon-15" viewBox="0 0 24 24"><path d="M7 18.5h9.5a4 4 0 0 0 .6-7.95A5.8 5.8 0 0 0 6.05 9.1 4.8 4.8 0 0 0 7 18.5Z"/><path d="M12 16V9"/><path d="M9.5 11.5 12 9l2.5 2.5"/></symbol>
+<symbol id="app-icon-16" viewBox="0 0 24 24"><path d="M7 18.5h9.5a4 4 0 0 0 .6-7.95A5.8 5.8 0 0 0 6.05 9.1 4.8 4.8 0 0 0 7 18.5Z"/><path d="M12 9v7"/><path d="M9.5 13.5 12 16l2.5-2.5"/></symbol>
+<symbol id="app-icon-17" viewBox="0 0 24 24"><path d="M4 8V4h4"/><path d="M5 6.5A8 8 0 1 1 4.6 16"/><path d="M12 8v4.5l3 1.8"/></symbol>
+<symbol id="app-icon-18" viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></symbol>
+<symbol id="app-icon-19" viewBox="0 0 24 24"><path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6z"/><path d="m9.5 12 1.7 1.7 3.6-4"/></symbol>
+</svg>
+
+<div class="grid">
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-back"/></svg>
+    <div class="label">Indietro</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-archive"/></svg>
+    <div class="label">Archivio PokeAlbum</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-saved-data"/></svg>
+    <div class="label">Dati salvati</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-position"/></svg>
+    <div class="label">Posizione</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-storage"/></svg>
+    <div class="label">Spazio Drive libero</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-backup-section"/></svg>
+    <div class="label">Backup e ripristino</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-backup-type"/></svg>
+    <div class="label">Tipo di backup</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-last-backup"/></svg>
+    <div class="label">Ultimo backup</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-backup-now"/></svg>
+    <div class="label">Esegui backup adesso</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-restore"/></svg>
+    <div class="label">Ripristina da backup</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-history"/></svg>
+    <div class="label">Cronologia backup</div>
+  </div>
+
+  <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-shield"/></svg>
+    <div class="label">Accesso limitato</div>
+  </div>
+
+</div>
+</body>
+</html>
