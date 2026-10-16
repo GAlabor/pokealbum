@@ -1549,46 +1549,7 @@
     </div>
   </div>
 
-  <svg class="icon-sprite" aria-hidden="true">
-    <symbol id="icon-profile" viewBox="0 0 24 24">
-      <path d="M12 12.25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Z" fill="none" stroke="currentColor" />
-      <path d="M4.5 20.25c.7-3.45 3.55-5.75 7.5-5.75s6.8 2.3 7.5 5.75" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-home" viewBox="0 0 24 24">
-      <path d="M4 10.5 12 4l8 6.5v8.25A1.25 1.25 0 0 1 18.75 20h-13.5A1.25 1.25 0 0 1 4 18.75V10.5Z" fill="none" stroke="currentColor" />
-      <path d="M9 20v-5.5h6V20" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-search" viewBox="0 0 24 24">
-      <circle cx="10.75" cy="10.75" r="6.25" fill="none" stroke="currentColor" />
-      <path d="m15.4 15.4 4.1 4.1" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-collection" viewBox="0 0 24 24">
-      <rect x="4" y="5" width="11" height="14" rx="2.1" fill="none" stroke="currentColor" />
-      <path d="M8 5.1V4.5A1.5 1.5 0 0 1 9.5 3h8A2.5 2.5 0 0 1 20 5.5v10A1.5 1.5 0 0 1 18.5 17H15" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-close" viewBox="0 0 24 24">
-      <path d="M6 6 18 18M18 6 6 18" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-cloud" viewBox="0 0 24 24">
-      <path
-        d="M7.5 18.5h9.25a4.25 4.25 0 0 0 .55-8.46A5.75 5.75 0 0 0 6.15 8.65 4.95 4.95 0 0 0 7.5 18.5Z"
-        fill="none"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </symbol>
-
-    <symbol id="icon-camera" viewBox="0 0 24 24">
-      <path d="M8.5 6.5 10 4.5h4l1.5 2H18A2.5 2.5 0 0 1 20.5 9v8A2.5 2.5 0 0 1 18 19.5H6A2.5 2.5 0 0 1 3.5 17V9A2.5 2.5 0 0 1 6 6.5h2.5Z" fill="none" stroke="currentColor" />
-      <circle cx="12" cy="13" r="3.25" fill="none" stroke="currentColor" />
-    </symbol>
-  </svg>
+  <svg id="app-icons" class="icon-sprite" aria-hidden="true" focusable="false"></svg>
 
   <main class="app">
     <header class="topbar">
@@ -1605,7 +1566,7 @@
         <svg class="icon" aria-hidden="true">
           <use href="#icon-profile"></use>
         </svg>
-        <svg class="profile-backup-check" viewBox="0 0 16 16" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 4 4 8-9" stroke="var(--color-bg)" stroke-width="7"/><path d="m2 8 4 4 8-9" stroke="#20cf76" stroke-width="3"/></svg>
+        <svg class="profile-backup-check" viewBox="0 0 16 16" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-1" /></svg>
       </button>
     </header>
 
@@ -1704,70 +1665,7 @@
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
-            >
-              <path
-                d="
-                  M10.45 2.2
-                  C10.56 1.5 11.17 1 11.88 1
-                  H12.12
-                  C12.83 1 13.44 1.5 13.55 2.2
-                  L13.8 3.78
-
-                  C14.42 3.98 15.01 4.29 15.54 4.68
-                  L17.02 4.08
-                  C17.68 3.81 18.44 4.04 18.79 4.66
-                  L18.91 4.87
-                  C19.27 5.49 19.12 6.27 18.56 6.72
-                  L17.33 7.71
-
-                  C17.47 8.34 17.47 9 17.33 9.63
-                  L18.56 10.62
-                  C19.12 11.07 19.27 11.85 18.91 12.47
-                  L18.79 12.68
-                  C18.44 13.3 17.68 13.53 17.02 13.26
-                  L15.54 12.66
-
-                  C15.01 13.05 14.42 13.36 13.8 13.56
-                  L13.55 15.14
-                  C13.44 15.84 12.83 16.34 12.12 16.34
-                  H11.88
-                  C11.17 16.34 10.56 15.84 10.45 15.14
-                  L10.2 13.56
-
-                  C9.58 13.36 8.99 13.05 8.46 12.66
-                  L6.98 13.26
-                  C6.32 13.53 5.56 13.3 5.21 12.68
-                  L5.09 12.47
-                  C4.73 11.85 4.88 11.07 5.44 10.62
-                  L6.67 9.63
-
-                  C6.53 9 6.53 8.34 6.67 7.71
-                  L5.44 6.72
-                  C4.88 6.27 4.73 5.49 5.09 4.87
-                  L5.21 4.66
-                  C5.56 4.04 6.32 3.81 6.98 4.08
-                  L8.46 4.68
-
-                  C8.99 4.29 9.58 3.98 10.2 3.78
-                  L10.45 2.2
-
-                  Z
-
-                  M12 6.35
-                  C10.72 6.35 9.68 7.39 9.68 8.67
-                  C9.68 9.95 10.72 10.99 12 10.99
-                  C13.28 10.99 14.32 9.95 14.32 8.67
-                  C14.32 7.39 13.28 6.35 12 6.35
-                  Z
-                "
-                transform="translate(12 12) scale(1.27) translate(-12 -12) translate(0 3.33)"
-                fill="none"
-                stroke="#FFFFFF"
-                stroke-width="1.35"
-                stroke-linejoin="round"
-                stroke-linecap="round"
-              />
-            </svg>
+            ><use href="#app-icon-2" /></svg>
           </span>
 
           <span class="menu-item-label">Impostazioni</span>
@@ -1789,7 +1687,7 @@
       <div class="modal-panel">
         <div class="screen-shell">
           <header class="screen-header">
-            <button class="screen-back app-button" id="closeProfileEditor" type="button" aria-label="Torna indietro"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button class="screen-back app-button" id="closeProfileEditor" type="button" aria-label="Torna indietro"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-3" /></svg></button>
             <h2 class="screen-title" id="profileModalTitle">Profilo</h2>
             <span class="screen-spacer" aria-hidden="true"></span>
           </header>
@@ -1848,7 +1746,7 @@
                   <div class="profile-account-details" id="profileAccountDetails" hidden>
                     <div class="profile-account-card">
                       <div class="profile-google-row"><img src="image/Google_Favicon_2025.svg" alt="" width="32" height="32"><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span></span>Collegato</span></div></div>
-                      <div class="profile-sync-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7a9 9 0 0 0-15-2L2 8m0-5v5h5M4 17a9 9 0 0 0 15 2l3-3m0 5v-5h-5"/></svg><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
+                      <div class="profile-sync-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-4" /></svg><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
                     </div>
                     <div class="profile-account-actions"><button class="cloud-action" id="profileChangeGoogle" type="button">Cambia account</button><button class="cloud-action" id="signOutGoogle" type="button">Esci</button></div>
                   </div>
@@ -1871,18 +1769,18 @@
       <button class="google-connect-button" id="googleConnect" type="button">
         <img class="google-button-icon" src="image/Google_Favicon_2025.svg" alt="" width="26" height="26">
         <span>Continua con Google</span>
-        <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m3 3 6 7-6 7"/></svg>
+        <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><use href="#app-icon-5" /></svg>
       </button>
       <p class="google-status" id="googleStatus" role="status" aria-live="polite"></p>
       <div class="google-divider">OPPURE</div>
       <button class="google-local-button" id="continueLocal" type="button">
         <svg class="google-button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-profile"></use></svg>
         <span>Continua senza account</span>
-        <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m3 3 6 7-6 7"/></svg>
+        <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><use href="#app-icon-5" /></svg>
       </button>
       <p class="google-local-note">I dati saranno salvati esclusivamente su questo dispositivo.</p>
       <p class="google-privacy-note">
-        <svg class="google-lock" viewBox="0 0 20 24" fill="currentColor" aria-hidden="true"><path d="M4 9V6a6 6 0 0 1 12 0v3h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2Zm3 0h6V6a3 3 0 0 0-6 0Zm3 5a2 2 0 0 0-1 3.7V20h2v-2.3A2 2 0 0 0 10 14Z"/></svg>
+        <svg class="google-lock" viewBox="0 0 20 24" fill="currentColor" aria-hidden="true"><use href="#app-icon-6" /></svg>
         PokeAlbum usa l’email per collegare il tuo account
       </p>
       <p class="google-legal">Accedendo accetti i <a href="termini.html" target="_blank" rel="noopener">Termini di servizio</a>.<br>Leggi l’<a href="privacy.html" target="_blank" rel="noopener">Informativa sulla privacy</a>.</p>
@@ -1893,7 +1791,7 @@
     <div class="cloud-details-card">
       <div class="screen-shell">
         <header class="screen-header">
-          <button class="screen-back app-button" id="closeCloudDetails" type="button" aria-label="Torna indietro"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
+          <button class="screen-back app-button" id="closeCloudDetails" type="button" aria-label="Torna indietro"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-3" /></svg></button>
           <h2 class="screen-title" id="cloudDetailsTitle">Cloud</h2>
           <span class="screen-spacer" aria-hidden="true"></span>
         </header>
@@ -1911,21 +1809,21 @@
 
             <section class="screen-card i79-section-card" id="cloudArchiveSection">
               <h3 class="i79-section-heading">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#app-icon-7" /></svg>
                 Archivio PokeAlbum
               </h3>
               <div class="i79-list-panel">
                 <div class="i79-info-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h8.5L19 8v12.5H6z"/><path d="M14.5 3.5V8H19"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-8" /></svg>
                   <div class="i79-row-copy"><strong>Dati salvati</strong></div>
                   <div class="i79-row-value" id="cloudAppDataUsage">—</div>
                 </div>
                 <div class="i79-info-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#app-icon-9" /></svg>
                   <div class="i79-row-copy"><strong>Posizione</strong><span id="cloudFolderPath">/AppData/PokeAlbum/</span></div>
                 </div>
                 <div class="i79-info-row i79-storage-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m6 3-4 12v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5L18 3Z"/><path d="M2 15h20M6 18h3"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-10" /></svg>
                   <div class="i79-row-copy i79-storage-copy">
                     <strong>Spazio</strong>
                     <span id="cloudDriveUsage">—</span>
@@ -1938,34 +1836,34 @@
 
             <section class="screen-card i79-section-card" id="cloudBackupSection">
               <h3 class="i79-section-heading">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-11" /></svg>
                 Backup e ripristino
               </h3>
               <div class="i79-list-panel">
                 <button class="i79-action-row" id="backupModeButton" type="button">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h5"/><path d="M13 7h7"/><path d="M9 4v6"/><path d="M4 17h9"/><path d="M17 17h3"/><path d="M13 14v6"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-12" /></svg>
                   <span class="i79-row-copy"><strong>Tipo di backup</strong></span>
                   <span class="i79-action-value" id="backupModeValue">Automatico</span>
-                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><use href="#app-icon-13" /></svg>
                 </button>
                 <div class="i79-info-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><use href="#app-icon-14" /></svg>
                   <div class="i79-row-copy"><strong>Ultimo backup</strong><span id="lastBackupValue">Mai</span></div>
                 </div>
                 <button class="i79-action-row" id="runBackupNow" type="button">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h9.5a4 4 0 0 0 .6-7.95A5.8 5.8 0 0 0 6.05 9.1 4.8 4.8 0 0 0 7 18.5Z"/><path d="M12 16V9"/><path d="M9.5 11.5 12 9l2.5 2.5"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-15" /></svg>
                   <span class="i79-row-copy"><strong>Esegui backup adesso</strong><span>Salva subito la tua collezione</span></span>
-                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><use href="#app-icon-13" /></svg>
                 </button>
                 <button class="i79-action-row" id="restoreBackup" type="button">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h9.5a4 4 0 0 0 .6-7.95A5.8 5.8 0 0 0 6.05 9.1 4.8 4.8 0 0 0 7 18.5Z"/><path d="M12 9v7"/><path d="M9.5 13.5 12 16l2.5-2.5"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-16" /></svg>
                   <span class="i79-row-copy"><strong>Ripristina da backup</strong><span>Scegli un salvataggio precedente</span></span>
-                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><use href="#app-icon-13" /></svg>
                 </button>
                 <button class="i79-action-row" id="backupHistory" type="button">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V4h4"/><path d="M5 6.5A8 8 0 1 1 4.6 16"/><path d="M12 8v4.5l3 1.8"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-17" /></svg>
                   <span class="i79-row-copy"><strong>Cronologia backup</strong><span>Visualizza tutti i backup</span></span>
-                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><use href="#app-icon-13" /></svg>
                 </button>
               </div>
             </section>
@@ -1973,12 +1871,12 @@
             <p class="cloud-details-status i79-status-message" id="cloudDetailsStatus" role="status" aria-live="polite"></p>
 
             <button class="i79-disconnect" id="disconnectGoogle" type="button" hidden>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-18" /></svg>
               Scollega Google Drive
             </button>
             <button class="cloud-action i79-connect-drive" id="connectGoogleDrive" type="button" hidden>Collega Google Drive</button>
 
-            <p class="cloud-private-note i79-private-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6z"/><path d="m9.5 12 1.7 1.7 3.6-4"/></svg>Accesso limitato ai dati di PokeAlbum</p>
+            <p class="cloud-private-note i79-private-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#app-icon-19" /></svg>Accesso limitato ai dati di PokeAlbum</p>
 
             <div hidden aria-hidden="true">
               <span id="cloudAccountInitial">G</span><span id="cloudAccountEmail"></span><div id="cloudDetailGrid"></div>
@@ -2001,6 +1899,22 @@
   </section>
 
   <script>
+    (async function loadIcons() {
+      try {
+        const response = await fetch("image/icons.html");
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const icons = new DOMParser().parseFromString(await response.text(), "text/html");
+        const sprite = icons.getElementById("pokealbum-icons");
+        if (!sprite) throw new Error("Raccolta icone non disponibile");
+        const target = document.getElementById("app-icons");
+        for (const symbol of sprite.children) {
+          if (symbol.localName === "symbol") target.appendChild(document.importNode(symbol, true));
+        }
+      } catch (error) {
+        console.error("Caricamento icone PokeAlbum non riuscito:", error);
+      }
+    })();
+
     const splash = document.getElementById("splash");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
