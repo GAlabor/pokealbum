@@ -1507,31 +1507,31 @@
     }
 
 
-    /* i93: profilo, account Google e CardTrader separati. */
+    /* i94: profilo, account Google e CardTrader separati. */
     #profileModal .screen-back { border: 0; background: transparent; border-radius: 50%; }
     #profileModal .screen-body { padding: 10px 18px calc(12px + env(safe-area-inset-bottom, 0px)); }
-    #profileModal .profile-editor { width: 100%; display: grid; justify-items: stretch; align-content: start; gap: calc(24px - 14px * var(--profile-fit, 0)); }
-    #profileModal .profile-summary { display: flex; flex-direction: column; align-items: center; gap: calc(14px - 6px * var(--profile-fit, 0)); padding: 0 0 2px; text-align: center; }
-    #profileModal .profile-avatar-button { width: calc(80px - 16px * var(--profile-fit, 0)); height: calc(80px - 16px * var(--profile-fit, 0)); flex: 0 0 auto; }
+    #profileModal .profile-editor { width: 100%; display: grid; justify-items: stretch; align-content: start; gap: 14px; }
+    #profileModal .profile-summary { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 0; text-align: center; }
+    #profileModal .profile-avatar-button { width: 72px; height: 72px; flex: 0 0 72px; }
     #profileModal .profile-avatar { font-size: 36px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.12); }
     #profileModal .profile-avatar-badge { width: 30px; height: 30px; border-color: var(--color-bg); }
-    #profileModal .profile-summary-copy { display: grid; gap: calc(6px - 2px * var(--profile-fit, 0)); min-width: 0; max-width: 100%; }
+    #profileModal .profile-summary-copy { display: grid; gap: 4px; min-width: 0; max-width: 100%; }
     #profileModal .profile-summary-copy > strong { font-size: 23px; font-weight: 720; line-height: 1.2; overflow-wrap: anywhere; }
     #profileModal .profile-summary-copy > span { font-size: 13px; line-height: 1.4; color: #aebdd3; }
     #profileModal .profile-summary-copy .profile-card-total { font-size: 12px; }
     #profileModal .profile-card-total b { font-weight: 650; color: #d7e1f5; }
     #profileModal .profile-section { min-width: 0; }
-    #profileModal .profile-section-title { margin: 0 4px calc(10px - 4px * var(--profile-fit, 0)); font-size: 11px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; color: #aebdd3; }
-    #profileModal .screen-card { padding: calc(14px - 4px * var(--profile-fit, 0)) 14px; border-radius: 16px; background: var(--color-surface-1); box-shadow: none; }
-    #profileModal .profile-fields { gap: calc(8px - 4px * var(--profile-fit, 0)); }
+    #profileModal .profile-section-title { margin: 0 4px 6px; font-size: 11px; font-weight: 650; letter-spacing: .16em; text-transform: uppercase; color: #aebdd3; }
+    #profileModal .screen-card { padding: 12px 14px; border-radius: 16px; background: var(--color-surface-1); box-shadow: none; }
+    #profileModal .profile-fields { gap: 6px; }
     #profileModal .field-label { font-size: 13px; font-weight: 500; letter-spacing: 0; color: #aebdd3; }
-    #profileModal #profileNameInput { height: calc(46px - 4px * var(--profile-fit, 0)); border-radius: 10px; font-size: 17px; }
+    #profileModal #profileNameInput { height: 44px; border-radius: 10px; font-size: 17px; }
     #profileModal .profile-account { width: 100%; padding: 0 14px; }
     #profileModal .profile-account-details { display: grid; gap: 0; }
     #profileModal .profile-account-details[hidden], #profileModal .profile-google-button[hidden] { display: none; }
-    #profileModal .profile-row { display: flex; align-items: center; gap: 16px; min-height: 44px; width: 100%; margin: 0; padding: calc(14px - 10px * var(--profile-fit, 0)) 2px; text-align: left; }
+    #profileModal .profile-row { display: flex; align-items: center; gap: 16px; min-height: 44px; width: 100%; margin: 0; padding: 8px 2px; text-align: left; }
     #profileModal .profile-row + .profile-row { border-top: 1px solid rgba(255,255,255,.12); }
-    #profileModal .profile-google-row, #profileModal .profile-cardtrader-row { min-height: calc(72px - 16px * var(--profile-fit, 0)); }
+    #profileModal .profile-google-row, #profileModal .profile-cardtrader-row { min-height: 60px; }
     #profileModal .profile-google-row > img, #profileModal .profile-cardtrader-row > img { width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; }
     #profileModal .profile-google-copy, #profileModal .profile-sync-row > div { min-width: 0; }
     #profileModal .profile-row > .icon { width: 24px; height: 24px; flex: 0 0 24px; margin: 0 4px; color: #b8c9e8; }
@@ -1551,6 +1551,25 @@
     #profileModal .profile-login-status { margin: 0; padding: 0 2px 8px; color: #aebdd3; font-size: 12px; line-height: 1.45; }
     #profileModal .profile-login-status:empty { display: none; }
     #profileModal .profile-action:focus-visible, #profileModal .profile-google-button:focus-visible { outline: 2px solid #4da3ff; outline-offset: -2px; border-radius: 8px; }
+
+    #profileModal .screen-header { flex-shrink: 0; padding-top: calc(9px + env(safe-area-inset-top, 0px)); padding-bottom: 9px; }
+
+    /* Come Cloud: una variante CSS predefinita per i display meno alti. */
+    @media (max-height: 860px) {
+      #profileModal .screen-header { padding-top: calc(6px + env(safe-area-inset-top, 0px)); padding-bottom: 6px; }
+      #profileModal .screen-body { padding-top: 6px; padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); }
+      #profileModal .profile-editor { gap: 10px; }
+      #profileModal .profile-summary { gap: 8px; }
+      #profileModal .profile-summary-copy { gap: 3px; }
+      #profileModal .profile-avatar-button { width: 64px; height: 64px; flex-basis: 64px; }
+      #profileModal .profile-avatar { font-size: 30px; }
+      #profileModal .profile-avatar-badge { width: 27px; height: 27px; }
+      #profileModal .profile-section-title { margin-bottom: 4px; }
+      #profileModal .profile-fields { padding-top: 8px; padding-bottom: 8px; gap: 4px; }
+      #profileModal #profileNameInput { height: 40px; }
+      #profileModal .profile-row { padding-top: 4px; padding-bottom: 4px; }
+      #profileModal .profile-google-row, #profileModal .profile-cardtrader-row { min-height: 52px; }
+    }
 
   </style>
 </head>
@@ -2718,39 +2737,6 @@
       renderProfile();
     }
 
-    // Riduce solo gli spazi necessari: avatar sempre centrale, testi e azioni separati.
-    let profileFitFrame = 0;
-    function fitProfileToScreen() {
-      if (!profileModal.classList.contains("open")) return;
-      const body = profileForm.parentElement;
-      const style = getComputedStyle(body);
-      const available = body.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
-      if (available <= 0) return;
-      const apply = (value) => profileForm.style.setProperty("--profile-fit", String(value));
-      const fits = () => profileForm.getBoundingClientRect().height <= available - 2;
-      apply(0);
-      if (fits()) return;
-      apply(1);
-      // In presenza di tastiera o zoom, mantiene tutti i contenuti accessibili.
-      if (!fits()) return;
-      let low = 0, high = 1;
-      for (let step = 0; step < 8; step++) {
-        const middle = (low + high) / 2;
-        apply(middle);
-        if (fits()) high = middle;
-        else low = middle;
-      }
-      apply(high);
-    }
-    function scheduleProfileFit() {
-      cancelAnimationFrame(profileFitFrame);
-      profileFitFrame = requestAnimationFrame(fitProfileToScreen);
-    }
-    const profileSizeObserver = new ResizeObserver(scheduleProfileFit);
-    profileSizeObserver.observe(profileForm.parentElement);
-    const profileContentObserver = new MutationObserver(scheduleProfileFit);
-    profileContentObserver.observe(profileForm, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ["hidden"] });
-
     function setProfileModal(open) {
       if (!open && profileModal.classList.contains("open")) saveProfile(profileNameInput.value, pendingProfileImage);
       profileModal.classList.toggle("open", open);
@@ -2770,7 +2756,6 @@
         pendingProfileImage = localStorage.getItem(PROFILE_IMAGE_KEY) || "";
 
         requestAnimationFrame(() => {
-          fitProfileToScreen();
           if (window.matchMedia("(pointer: fine)").matches) profileNameInput.focus({ preventScroll: true });
         });
       }
