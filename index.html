@@ -94,9 +94,6 @@
       --font-tab-weight: 650;
 
       /* Icons */
-      --icon-stroke: 1.9;
-      --icon-stroke-nav: 2.15;
-      --icon-stroke-menu: 1.35;
 
       /* Motion */
       --duration-fast: .18s;
@@ -168,21 +165,6 @@
       filter: brightness(.90);
     }
 
-    .icon-sprite {
-      position: absolute;
-      width: 0;
-      height: 0;
-      overflow: hidden;
-    }
-
-    .icon {
-      width: var(--size-icon);
-      height: var(--size-icon);
-      display: block;
-      stroke-width: var(--icon-stroke);
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
 
     /* App shell */
 
@@ -274,10 +256,8 @@
       box-shadow: none;
     }
 
-    .profile-button > .icon { width: 28px; height: 28px; }
     .profile-button.is-google-connected { color: #1598ff; }
-    .profile-backup-check { position: absolute; right: 4px; bottom: 7px; width: 11px; height: 11px; display: none; overflow: visible; pointer-events: none; }
-    .profile-button.is-google-connected.is-drive-connected .profile-backup-check { display: block; }
+
 
     .close-button {
       color: var(--color-muted);
@@ -353,9 +333,6 @@
         transform var(--duration-tab-feedback) var(--ease-feedback);
     }
 
-    .tab .icon {
-      stroke-width: var(--icon-stroke-nav);
-    }
 
     .tab span {
       max-width: 100%;
@@ -462,7 +439,7 @@
       min-height: 52px;
       padding: var(--space-2);
       display: grid;
-      grid-template-columns: var(--size-menu-icon) 1fr;
+      grid-template-columns: var(--size-menu-icon) minmax(0, 1fr) var(--icon-chevron);
       align-items: center;
       gap: var(--space-3);
       border: 1px solid transparent;
@@ -485,15 +462,6 @@
       color: var(--color-text);
     }
 
-    .menu-item-icon .icon,
-    .menu-item-icon > svg {
-      width: 20px;
-      height: 20px;
-    }
-
-    .menu-item-icon .icon {
-      stroke-width: var(--icon-stroke-menu);
-    }
 
     .menu-item-avatar {
       border-radius: 50%;
@@ -553,7 +521,7 @@
     }
 
     .cloud-menu-item {
-      grid-template-columns: var(--size-menu-icon) minmax(0, 1fr);
+      grid-template-columns: var(--size-menu-icon) minmax(0, 1fr) var(--icon-chevron);
     }
 
     .cloud-connection-value {
@@ -633,12 +601,6 @@
       color: white;
     }
 
-    .profile-avatar-badge .icon {
-      width: 14px;
-      height: 14px;
-      flex: 0 0 auto;
-      transform: translateY(-.25px);
-    }
 
     .profile-fields {
       width: 100%;
@@ -959,11 +921,10 @@
     .google-local-button { font-size: clamp(11px, 3.5vw, 15px); white-space: nowrap; color: #a2b0d5; border-color: #46566e; background: rgba(11, 17, 27, .45); }
     .google-local-button span { color: #fff; }
     .google-local-button:hover { background: rgba(30, 40, 58, .5); }
-    .google-button-icon { display: block; width: 26px; height: 26px; flex: 0 0 26px; object-fit: contain; }
+
     #connectGoogleDrive { display: flex; align-items: center; justify-content: center; gap: 10px; }
     #connectGoogleDrive[hidden] { display: none; }
-    .profile-google-row > .brand-icon, .cloud-google-logo { display: block; object-fit: contain; }
-    .google-chevron { width: 10px; height: 16px; color: #9badd9; }
+
 
     .google-divider { width: 100%; margin: 20px 0 16px; display: flex; align-items: center; gap: 14px; color: #8198c8; font-size: 10px; letter-spacing: .2em; }
     .google-divider::before, .google-divider::after { content: ''; flex: 1; height: 1px; background: #2e3d55; }
@@ -971,7 +932,7 @@
     .google-status { margin: 12px 0 0; color: #a2b0d5; font-size: 12px; line-height: 1.4; }
     .google-status:empty { display: none; }
     .google-privacy-note { margin: 24px 0 0; color: #8297c2; font-size: 11px; line-height: 1.5; }
-    .google-lock { display: block; width: 18px; height: 20px; margin: 0 auto 8px; color: #8297c2; }
+    .google-lock { margin: 0 auto 8px; color: #8297c2; }
     .google-legal { margin: 14px 0 0; color: #8297c2; font-size: 10px; line-height: 1.5; }
     .google-legal a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
     .google-legal a:focus-visible, .drawer-legal a:focus-visible { outline: 2px solid #67b5ff; outline-offset: 4px; }
@@ -1007,18 +968,6 @@
     
     
     
-    
-    
-    
-    
-    
-    .profile-google-row > .brand-icon, .cloud-google-logo { width: 28px; height: 28px; flex: 0 0 28px; }
-    
-    
-    
-    
-    
-    
     .cloud-detail-grid[hidden], .cloud-action[hidden], .cloud-storage-track[hidden] { display: none; }
     
     
@@ -1036,7 +985,7 @@
     .cloud-storage-track { height: 7px; border-radius: 7px; overflow: hidden; background: #283347; }
     #cloudStorageFill { height: 100%; width: 0; border-radius: inherit; background: #3477de; }
     .cloud-private-note { display: flex; align-items: center; color: #b3c0d5; font-size: 12px; line-height: 1.4; }
-    .cloud-private-note svg { width: 18px; height: 18px; flex: 0 0 18px; }
+
     .cloud-details-status { color: #b3c0d5; font-size: 13px; }
     .cloud-details-status:empty { display: none; }
     
@@ -1368,7 +1317,7 @@
     .cloud-screen-body { padding-top: 16px; }
     .i79-cloud-grid { gap: 12px; }
     .i79-drive-card { display: flex; align-items: center; gap: 16px; padding: 18px; }
-    .i79-drive-logo { width: 52px; height: 52px; flex: 0 0 52px; object-fit: contain; }
+
     .i79-drive-copy { min-width: 0; }
     .i79-drive-copy h3 { margin: 0 0 4px; font-size: 17px; line-height: 1.2; }
     .i79-drive-copy p { margin: 0; color: #aebbd0; font-size: 13px; line-height: 1.35; }
@@ -1379,28 +1328,28 @@
 
     .i79-section-card { padding: 12px; }
     .i79-section-heading { margin: 0 0 10px; display: flex; align-items: center; gap: 9px; color: #f3f6fb; font-size: 15px; font-weight: 720; }
-    .i79-section-heading > svg { width: 23px; height: 23px; flex: 0 0 23px; color: #dbe7fb; }
+
     .i79-list-panel { overflow: hidden; border: 1px solid var(--color-border); border-radius: 14px; background: rgba(255,255,255,.025); }
     .i79-info-row, .i79-action-row { width: 100%; min-height: 58px; padding: 10px 12px; display: grid; grid-template-columns: 26px minmax(0,1fr) auto; align-items: center; gap: 10px; border: 0; border-bottom: 1px solid var(--color-border); background: transparent; color: inherit; text-align: left; }
     .i79-list-panel > :last-child { border-bottom: 0; }
-    .i79-info-row > svg, .i79-action-row > svg:not(.i79-chevron) { width: 22px; height: 22px; color: #b9c9e8; }
+
     .i79-row-copy { min-width: 0; display: grid; gap: 3px; }
     .i79-row-copy strong { color: #f1f5f9; font-size: 13px; font-weight: 680; line-height: 1.25; }
     .i79-row-copy span { min-width: 0; overflow: hidden; color: #aebbd0; font-size: 12px; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
     .i79-row-value, .i79-action-value { color: #f1f5f9; font-size: 13px; white-space: nowrap; }
     .i79-action-row { grid-template-columns: 26px minmax(0,1fr) auto 16px; cursor: pointer; }
     .i79-action-row:active { background: rgba(255,255,255,.04); }
-    .i79-chevron { width: 16px !important; height: 16px !important; color: #b9c9e8 !important; }
+
     .i79-storage-row { align-items: start; }
     .i79-storage-copy { padding-top: 1px; }
     .i79-storage-percent { align-self: end; padding-bottom: 2px; color: #b9c9e8; font-size: 12px; }
     .i79-storage-copy .cloud-storage-track { width: 100%; height: 6px; margin-top: 7px; }
 
     .i79-disconnect { width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #49556a; border-radius: 15px; background: var(--color-input); color: #d87880; font-size: 14px; font-weight: 720; box-shadow: none; }
-    .i79-disconnect svg { width: 21px; height: 21px; }
+
     .i79-connect-drive { width: 100%; color: #9fc4ee; }
     .i79-private-note { border: 0; background: transparent; padding: 0 8px 4px; color: #aebbd0; }
-    .i79-private-note svg { width: 19px; height: 19px; }
+
     .i79-status-message:empty { display: none; }
     .i79-status-message { padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 12px; background: rgba(255,255,255,.03); }
 
@@ -1419,7 +1368,7 @@
 
     @media (max-width: 390px) {
       .i79-drive-card { gap: 13px; padding: 15px; }
-      .i79-drive-logo { width: 46px; height: 46px; flex-basis: 46px; }
+
       .i79-info-row, .i79-action-row { padding-left: 10px; padding-right: 10px; }
     }
 
@@ -1433,14 +1382,14 @@
     }
     .cloud-details .i79-cloud-grid { gap: 8px; }
     .cloud-details .i79-drive-card { gap: 13px; padding: 12px 14px; }
-    .cloud-details .i79-drive-logo { width: 44px; height: 44px; flex: 0 0 44px; }
+
     .cloud-details .i79-drive-copy h3 { margin-bottom: 2px; font-size: 16px; }
     .cloud-details .i79-drive-copy p { font-size: 12px; }
     .cloud-details .i79-connection-state { margin-top: 5px; font-size: 12px; }
 
     .cloud-details .i79-section-card { padding: 9px 10px; }
     .cloud-details .i79-section-heading { margin-bottom: 7px; gap: 8px; font-size: 14px; }
-    .cloud-details .i79-section-heading > svg { width: 21px; height: 21px; flex-basis: 21px; }
+
     .cloud-details .i79-info-row,
     .cloud-details .i79-action-row {
       min-height: 49px;
@@ -1449,11 +1398,7 @@
       gap: 9px;
     }
     .cloud-details .i79-action-row { grid-template-columns: 24px minmax(0,1fr) auto 15px; }
-    .cloud-details .i79-info-row > svg,
-    .cloud-details .i79-action-row > svg:not(.i79-chevron) {
-      width: 22px;
-      height: 22px;
-    }
+
     .cloud-details .i79-row-copy { gap: 2px; }
     .cloud-details .i79-row-copy strong { font-size: 12.5px; }
     .cloud-details .i79-row-copy span { font-size: 11.5px; }
@@ -1478,7 +1423,7 @@
       color: #9fc4ee;
       box-shadow: none;
     }
-    .cloud-details .i79-connect-drive .google-button-icon { width: 22px; height: 22px; flex-basis: 22px; }
+
     .cloud-details #disconnectGoogle[hidden],
     .cloud-details #connectGoogleDrive[hidden] { display: none !important; }
 
@@ -1488,7 +1433,7 @@
       gap: 7px;
       font-size: 11.5px;
     }
-    .cloud-details .i79-private-note svg { width: 18px; height: 18px; flex: 0 0 18px; }
+
 
     /* Il messaggio di stato resta disponibile solo per errori reali. */
     .cloud-details .i79-status-message:empty { display: none; }
@@ -1497,7 +1442,7 @@
       .cloud-details .screen-body { padding-top: 8px; }
       .cloud-details .i79-cloud-grid { gap: 6px; }
       .cloud-details .i79-drive-card { padding: 10px 12px; }
-      .cloud-details .i79-drive-logo { width: 40px; height: 40px; flex-basis: 40px; }
+
       .cloud-details .i79-section-card { padding: 8px 9px; }
       .cloud-details .i79-section-heading { margin-bottom: 5px; }
       .cloud-details .i79-info-row,
@@ -1531,9 +1476,9 @@
     #profileModal .profile-row { display: flex; align-items: center; gap: 16px; min-height: 44px; width: 100%; margin: 0; padding: 8px 2px; text-align: left; }
     #profileModal .profile-row + .profile-row { border-top: 1px solid var(--color-border); }
     #profileModal .profile-google-row, #profileModal .profile-cardtrader-row { min-height: 56px; }
-    #profileModal .profile-google-row > .brand-icon, #profileModal .profile-cardtrader-row > .brand-icon { width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; }
+
     #profileModal .profile-google-copy, #profileModal .profile-sync-row > div { min-width: 0; }
-    #profileModal .profile-row > .icon { width: 24px; height: 24px; flex: 0 0 24px; margin: 0 4px; color: #b8c9e8; }
+
     #profileModal .profile-account-value { display: block; font-size: 14px; line-height: 1.45; font-weight: 500; overflow-wrap: anywhere; }
     #profileModal .profile-account-label { display: block; font-size: 14px; line-height: 1.4; font-weight: 600; color: var(--color-text); margin-bottom: 3px; }
     #profileModal #profileLastSync { color: #aebdd3; font-weight: 400; }
@@ -1543,9 +1488,9 @@
     #profileModal .profile-action { border: 0; border-radius: 0; background: transparent; color: var(--color-text); font-size: 14px; font-weight: 550; box-shadow: none; }
     #profileModal .profile-action:active { background: rgba(255,255,255,.04); }
     #profileModal .profile-action:disabled { opacity: .5; cursor: wait; }
-    #profileModal #signOutGoogle, #profileModal #signOutGoogle > .icon { color: #ff777b; }
+    #profileModal #signOutGoogle { color: #ff777b; }
     #profileModal .profile-link-action { justify-content: center; color: #4da3ff; }
-    #profileModal .profile-link-action > .icon { color: inherit; margin: 0; }
+
     #profileModal .profile-google-button { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 60px; border: 0; border-radius: 14px; background: transparent; color: var(--color-text); font-size: 14px; box-shadow: none; }
     #profileModal .profile-login-status { margin: 0; padding: 0 2px 8px; color: #aebdd3; font-size: 12px; line-height: 1.45; }
     #profileModal .profile-login-status:empty { display: none; }
@@ -1570,6 +1515,88 @@
       #profileModal .profile-google-row, #profileModal .profile-cardtrader-row { min-height: 52px; }
     }
 
+
+    /* i98: dimensioni comuni per ruolo, tutti i disegni da image/icons.html. */
+    :root {
+      --icon-page: 28px;
+      --icon-heading: 24px;
+      --icon-row: 22px;
+      --icon-menu: 24px;
+      --icon-nav: 28px;
+      --icon-control: 22px;
+      --icon-chevron: 16px;
+      --icon-note: 18px;
+      --icon-button: 26px;
+      --icon-logo-row: 32px;
+      --icon-feature: 44px;
+      --icon-status: 32px;
+      --icon-badge: 16px;
+      --icon-check: 16px;
+    }
+    .app-icon {
+      display: inline-block;
+      width: var(--icon-size, var(--icon-row));
+      height: var(--icon-size, var(--icon-row));
+      flex: 0 0 var(--icon-size, var(--icon-row));
+      vertical-align: middle;
+      pointer-events: none;
+      background-color: currentColor;
+      -webkit-mask-image: var(--icon-image);
+      mask-image: var(--icon-image);
+      -webkit-mask-size: contain;
+      mask-size: contain;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      mask-position: center;
+      /* Nessun rettangolo di colore mentre il catalogo è in caricamento. */
+      visibility: hidden;
+    }
+    .app-icon[style] { visibility: visible; }
+    .app-icon.is-brand {
+      background-color: transparent;
+      background-image: var(--icon-image);
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .icon-size-page { --icon-size: var(--icon-page); }
+    .icon-size-heading { --icon-size: var(--icon-heading); color: #dbe7fb; }
+    .icon-size-row { --icon-size: var(--icon-row); }
+    .icon-size-menu { --icon-size: var(--icon-menu); }
+    .icon-size-nav { --icon-size: var(--icon-nav); }
+    .icon-size-control { --icon-size: var(--icon-control); }
+    .icon-size-chevron { --icon-size: var(--icon-chevron); color: #9badd0; }
+    .icon-size-note { --icon-size: var(--icon-note); }
+    .icon-size-button { --icon-size: var(--icon-button); }
+    .icon-size-logo-row { --icon-size: var(--icon-logo-row); }
+    .icon-size-feature { --icon-size: var(--icon-feature); }
+    .icon-size-status { --icon-size: var(--icon-status); }
+    .icon-size-badge { --icon-size: var(--icon-badge); }
+    .icon-size-check { --icon-size: var(--icon-check); }
+    .screen-title, #profileModal .profile-section-title, #backupModeTitle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .screen-title { justify-content: center; }
+    .i79-section-heading { gap: 8px; }
+    #profileModal .profile-section-title { min-height: var(--icon-heading); }
+    #profileModal .field-label { display: flex; align-items: center; gap: 8px; }
+    #profileModal .profile-row > .icon-size-row { margin: 0 5px; }
+    #profileModal .profile-link-action > .app-icon { margin: 0; }
+    .profile-sync-row > .app-icon, .i79-info-row > .app-icon,
+    .i79-action-row > .icon-size-row { color: #b9c9e8; }
+    .tab .app-icon { max-width: none; overflow: visible; }
+    .menu-item > .menu-chevron { margin-left: auto; }
+    .menu-item > .menu-item-copy, .menu-item > .menu-item-label { min-width: 0; flex: 1; }
+    .i79-choice-check > .app-icon { opacity: 0; }
+    .i79-choice.is-selected .i79-choice-check > .app-icon { opacity: 1; }
+    @media (max-height: 760px) {
+      :root { --icon-feature: 40px; }
+    }
   </style>
 </head>
 
@@ -1584,62 +1611,6 @@
     </div>
   </div>
 
-  <!-- i97: Google, Drive e CardTrader provengono da image/icons.html. -->
-  <svg id="brand-icon-sprite" class="icon-sprite" aria-hidden="true" focusable="false"></svg>
-
-  <svg class="icon-sprite" aria-hidden="true">
-    <symbol id="icon-switch-account" viewBox="0 0 24 24">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3 7h18m-4-4 4 4-4 4"/>
-      <path d="M21 17H3m4-4-4 4 4 4"/>
-    </g>
-  </symbol>
-<symbol id="icon-link" viewBox="0 0 24 24">
-    <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-    </g>
-  </symbol>
-    <symbol id="icon-profile" viewBox="0 0 24 24">
-      <path d="M12 12.25a4.25 4.25 0 1 0 0-8.5 4.25 4.25 0 0 0 0 8.5Z" fill="none" stroke="currentColor" />
-      <path d="M4.5 20.25c.7-3.45 3.55-5.75 7.5-5.75s6.8 2.3 7.5 5.75" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-home" viewBox="0 0 24 24">
-      <path d="M4 10.5 12 4l8 6.5v8.25A1.25 1.25 0 0 1 18.75 20h-13.5A1.25 1.25 0 0 1 4 18.75V10.5Z" fill="none" stroke="currentColor" />
-      <path d="M9 20v-5.5h6V20" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-search" viewBox="0 0 24 24">
-      <circle cx="10.75" cy="10.75" r="6.25" fill="none" stroke="currentColor" />
-      <path d="m15.4 15.4 4.1 4.1" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-collection" viewBox="0 0 24 24">
-      <rect x="4" y="5" width="11" height="14" rx="2.1" fill="none" stroke="currentColor" />
-      <path d="M8 5.1V4.5A1.5 1.5 0 0 1 9.5 3h8A2.5 2.5 0 0 1 20 5.5v10A1.5 1.5 0 0 1 18.5 17H15" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-close" viewBox="0 0 24 24">
-      <path d="M6 6 18 18M18 6 6 18" fill="none" stroke="currentColor" />
-    </symbol>
-
-    <symbol id="icon-cloud" viewBox="0 0 24 24">
-      <path
-        d="M7.5 18.5h9.25a4.25 4.25 0 0 0 .55-8.46A5.75 5.75 0 0 0 6.15 8.65 4.95 4.95 0 0 0 7.5 18.5Z"
-        fill="none"
-        stroke="currentColor"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </symbol>
-
-    <symbol id="icon-camera" viewBox="0 0 24 24">
-      <path d="M8.5 6.5 10 4.5h4l1.5 2H18A2.5 2.5 0 0 1 20.5 9v8A2.5 2.5 0 0 1 18 19.5H6A2.5 2.5 0 0 1 3.5 17V9A2.5 2.5 0 0 1 6 6.5h2.5Z" fill="none" stroke="currentColor" />
-      <circle cx="12" cy="13" r="3.25" fill="none" stroke="currentColor" />
-    </symbol>
-  </svg>
-
   <main class="app">
     <header class="topbar">
       <h1 class="brand" id="greeting">Ciao</h1>
@@ -1652,10 +1623,8 @@
         aria-controls="profileDrawer"
         aria-expanded="false"
       >
-        <svg class="icon" aria-hidden="true">
-          <use href="#icon-profile"></use>
-        </svg>
-        <svg class="profile-backup-check" viewBox="0 0 16 16" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 8 4 4 8-9" stroke="var(--color-bg)" stroke-width="7"/><path d="m2 8 4 4 8-9" stroke="#20cf76" stroke-width="3"/></svg>
+        <span id="profileStatusIcon" class="app-icon icon-size-status" data-icon="icon-user-disconnected" aria-hidden="true"></span>
+        
       </button>
     </header>
 
@@ -1670,23 +1639,17 @@
         <div class="tab-indicator" id="tabIndicator" aria-hidden="true"></div>
 
         <button class="tab active" type="button" data-target="home" aria-current="page">
-          <svg class="icon" aria-hidden="true">
-            <use href="#icon-home"></use>
-          </svg>
+          <span class="app-icon icon-size-nav" data-icon="icon-home" aria-hidden="true"></span>
           <span>Home</span>
         </button>
 
         <button class="tab" type="button" data-target="search">
-          <svg class="icon" aria-hidden="true">
-            <use href="#icon-search"></use>
-          </svg>
+          <span class="app-icon icon-size-nav" data-icon="icon-search" aria-hidden="true"></span>
           <span>Cerca</span>
         </button>
 
         <button class="tab" type="button" data-target="collection">
-          <svg class="icon" aria-hidden="true">
-            <use href="#icon-collection"></use>
-          </svg>
+          <span class="app-icon icon-size-nav" data-icon="icon-collection" aria-hidden="true"></span>
           <span>Collezione</span>
         </button>
       </nav>
@@ -1710,9 +1673,7 @@
           type="button"
           aria-label="Chiudi menu"
         >
-          <svg class="icon" aria-hidden="true">
-            <use href="#icon-close"></use>
-          </svg>
+          <span class="app-icon icon-size-control" data-icon="icon-close" aria-hidden="true"></span>
         </button>
       </div>
 
@@ -1727,13 +1688,12 @@
             <span class="menu-item-label" id="profileMenuLabel">Nome visualizzato</span>
             <span class="menu-item-value profile-sync-status" id="profileSyncStatus" role="status" aria-live="polite">Account non collegato</span>
           </span>
+          <span class="app-icon icon-size-chevron menu-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
         </button>
 
         <button class="menu-item cloud-menu-item app-button" id="connectCloud" type="button" aria-label="Stato collegamento Google Drive">
           <span class="menu-item-icon">
-            <svg class="icon" aria-hidden="true">
-              <use href="#icon-cloud"></use>
-            </svg>
+            <span class="app-icon icon-size-menu" data-icon="icon-cloud" aria-hidden="true"></span>
           </span>
 
           <span class="menu-item-copy">
@@ -1743,84 +1703,16 @@
               <span id="cloudConnectionStatus">Nessun Drive collegato</span>
             </span>
           </span>
+          <span class="app-icon icon-size-chevron menu-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
         </button>
 
         <button class="menu-item app-button" id="openSettings" type="button">
           <span class="menu-item-icon">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                d="
-                  M10.45 2.2
-                  C10.56 1.5 11.17 1 11.88 1
-                  H12.12
-                  C12.83 1 13.44 1.5 13.55 2.2
-                  L13.8 3.78
-
-                  C14.42 3.98 15.01 4.29 15.54 4.68
-                  L17.02 4.08
-                  C17.68 3.81 18.44 4.04 18.79 4.66
-                  L18.91 4.87
-                  C19.27 5.49 19.12 6.27 18.56 6.72
-                  L17.33 7.71
-
-                  C17.47 8.34 17.47 9 17.33 9.63
-                  L18.56 10.62
-                  C19.12 11.07 19.27 11.85 18.91 12.47
-                  L18.79 12.68
-                  C18.44 13.3 17.68 13.53 17.02 13.26
-                  L15.54 12.66
-
-                  C15.01 13.05 14.42 13.36 13.8 13.56
-                  L13.55 15.14
-                  C13.44 15.84 12.83 16.34 12.12 16.34
-                  H11.88
-                  C11.17 16.34 10.56 15.84 10.45 15.14
-                  L10.2 13.56
-
-                  C9.58 13.36 8.99 13.05 8.46 12.66
-                  L6.98 13.26
-                  C6.32 13.53 5.56 13.3 5.21 12.68
-                  L5.09 12.47
-                  C4.73 11.85 4.88 11.07 5.44 10.62
-                  L6.67 9.63
-
-                  C6.53 9 6.53 8.34 6.67 7.71
-                  L5.44 6.72
-                  C4.88 6.27 4.73 5.49 5.09 4.87
-                  L5.21 4.66
-                  C5.56 4.04 6.32 3.81 6.98 4.08
-                  L8.46 4.68
-
-                  C8.99 4.29 9.58 3.98 10.2 3.78
-                  L10.45 2.2
-
-                  Z
-
-                  M12 6.35
-                  C10.72 6.35 9.68 7.39 9.68 8.67
-                  C9.68 9.95 10.72 10.99 12 10.99
-                  C13.28 10.99 14.32 9.95 14.32 8.67
-                  C14.32 7.39 13.28 6.35 12 6.35
-                  Z
-                "
-                transform="translate(12 12) scale(1.27) translate(-12 -12) translate(0 3.33)"
-                fill="none"
-                stroke="#FFFFFF"
-                stroke-width="1.35"
-                stroke-linejoin="round"
-                stroke-linecap="round"
-              />
-            </svg>
+            <span class="app-icon icon-size-menu" data-icon="icon-settings" aria-hidden="true"></span>
           </span>
 
           <span class="menu-item-label">Impostazioni</span>
+          <span class="app-icon icon-size-chevron menu-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
         </button>
       </nav>
       <nav class="drawer-legal" aria-label="Documenti legali">
@@ -1839,8 +1731,8 @@
       <div class="modal-panel">
         <div class="screen-shell">
           <header class="screen-header">
-            <button class="screen-back app-button" id="closeProfileEditor" type="button" aria-label="Torna indietro"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-            <h2 class="screen-title" id="profileModalTitle">Profilo</h2>
+            <button class="screen-back app-button" id="closeProfileEditor" type="button" aria-label="Torna indietro"><span class="app-icon icon-size-control" data-icon="icon-back" aria-hidden="true"></span></button>
+            <h2 class="screen-title" id="profileModalTitle"><span class="app-icon icon-size-page" data-icon="icon-profile-section" aria-hidden="true"></span><span>Profilo</span></h2>
             <span class="screen-spacer" aria-hidden="true"></span>
           </header>
 
@@ -1859,9 +1751,7 @@
                     </span>
 
                     <span class="profile-avatar-badge">
-                      <svg class="icon" aria-hidden="true">
-                        <use href="#icon-camera"></use>
-                      </svg>
+                      <span class="app-icon icon-size-badge" data-icon="icon-camera" aria-hidden="true"></span>
                     </span>
                   </button>
                 <div class="profile-summary-copy">
@@ -1873,32 +1763,32 @@
               <input class="image-input" id="profileImageInput" type="file" accept="image/*">
 
               <section class="profile-section" aria-labelledby="profileFieldsTitle">
-                <h3 class="profile-section-title" id="profileFieldsTitle">Profilo</h3>
+                <h3 class="profile-section-title" id="profileFieldsTitle"><span class="app-icon icon-size-heading" data-icon="icon-profile-section" aria-hidden="true"></span><span>Profilo</span></h3>
                 <div class="screen-card profile-fields">
-                  <label class="field-label" for="profileNameInput">Nome visualizzato</label>
+                  <label class="field-label" for="profileNameInput"><span class="app-icon icon-size-note" data-icon="icon-name" aria-hidden="true"></span><span>Nome visualizzato</span></label>
                   <input class="text-input" id="profileNameInput" type="text" maxlength="24" autocomplete="name" placeholder="Inserisci il nome">
                 </div>
               </section>
 
               <section class="profile-section" aria-labelledby="profileGoogleTitle">
-                <h3 class="profile-section-title" id="profileGoogleTitle">Account Google</h3>
+                <h3 class="profile-section-title" id="profileGoogleTitle"><span class="app-icon icon-size-heading" data-icon="icon-user-google" aria-hidden="true"></span><span>Account Google</span></h3>
                 <div class="profile-account screen-card">
-                  <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><svg class="brand-icon google-button-icon" width="28" height="28" viewBox="0 0 268.1522 273.8827" aria-hidden="true" focusable="false"><use href="#icon-brand-google"></use></svg><span>Accedi con Google</span></button>
+                  <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><span class="app-icon icon-size-button is-brand google-button-icon" data-icon="icon-brand-google" aria-hidden="true"></span><span>Accedi con Google</span></button>
                   <div class="profile-account-details" id="profileAccountDetails" hidden>
-                    <div class="profile-google-row profile-row"><svg class="brand-icon" width="32" height="32" viewBox="0 0 268.1522 273.8827" aria-hidden="true" focusable="false"><use href="#icon-brand-google"></use></svg><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span aria-hidden="true"></span>Collegato</span></div></div>
-                    <div class="profile-sync-row profile-row"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7a9 9 0 0 0-15-2L2 8m0-5v5h5M4 17a9 9 0 0 0 15 2l3-3m0 5v-5h-5"/></svg><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
-                    <button class="profile-action profile-row" id="profileChangeGoogle" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-switch-account"></use></svg><span>Cambia account</span></button>
-                    <button class="profile-action profile-row" id="signOutGoogle" type="button"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg><span>Esci da Google</span></button>
+                    <div class="profile-google-row profile-row"><span class="app-icon icon-size-logo-row is-brand brand-icon" data-icon="icon-brand-google" aria-hidden="true"></span><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span aria-hidden="true"></span>Collegato</span></div></div>
+                    <div class="profile-sync-row profile-row"><span class="app-icon icon-size-row" data-icon="app-icon-4" aria-hidden="true"></span><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
+                    <button class="profile-action profile-row" id="profileChangeGoogle" type="button"><span class="app-icon icon-size-row" data-icon="icon-switch-account" aria-hidden="true"></span><span>Cambia account</span></button>
+                    <button class="profile-action profile-row" id="signOutGoogle" type="button"><span class="app-icon icon-size-row" data-icon="icon-logout" aria-hidden="true"></span><span>Esci da Google</span></button>
                   </div>
                   <p class="profile-login-status" id="profileLoginStatus" role="status" aria-live="polite"></p>
                 </div>
               </section>
 
               <section class="profile-section" aria-labelledby="profileCardTraderTitle">
-                <h3 class="profile-section-title" id="profileCardTraderTitle">Account CardTrader</h3>
+                <h3 class="profile-section-title" id="profileCardTraderTitle"><span class="app-icon icon-size-heading" data-icon="icon-user-cardtrader" aria-hidden="true"></span><span>Account CardTrader</span></h3>
                 <div class="screen-card profile-account">
-                  <div class="profile-row profile-cardtrader-row"><svg class="brand-icon" width="32" height="32" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><use href="#icon-brand-cardtrader"></use></svg><div class="profile-google-copy"><span class="profile-account-label">CardTrader</span><span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span></div></div>
-                  <button class="profile-action profile-row profile-link-action" id="profileConnectCardTrader" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-link"></use></svg><span>Collega account</span></button>
+                  <div class="profile-row profile-cardtrader-row"><span class="app-icon icon-size-logo-row is-brand brand-icon" data-icon="icon-brand-cardtrader" aria-hidden="true"></span><div class="profile-google-copy"><span class="profile-account-label">CardTrader</span><span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span></div></div>
+                  <button class="profile-action profile-row profile-link-action" id="profileConnectCardTrader" type="button"><span class="app-icon icon-size-row" data-icon="icon-link" aria-hidden="true"></span><span>Collega account</span></button>
                   <p class="profile-login-status" id="profileCardTraderStatus" role="status" aria-live="polite"></p>
                 </div>
               </section>
@@ -1915,20 +1805,20 @@
       <h2 class="google-app-name" id="googleGateTitle">PokeAlbum</h2>
       <p class="google-intro">Collega il tuo account Google per ritrovare<br>i tuoi Album anche su altri dispositivi.</p>
       <button class="google-connect-button" id="googleConnect" type="button">
-        <svg class="brand-icon google-button-icon" width="26" height="26" viewBox="0 0 268.1522 273.8827" aria-hidden="true" focusable="false"><use href="#icon-brand-google"></use></svg>
+        <span class="app-icon icon-size-button is-brand google-button-icon" data-icon="icon-brand-google" aria-hidden="true"></span>
         <span>Continua con Google</span>
-        <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m3 3 6 7-6 7"/></svg>
+        <span class="app-icon icon-size-chevron google-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
       </button>
       <p class="google-status" id="googleStatus" role="status" aria-live="polite"></p>
       <div class="google-divider">OPPURE</div>
       <button class="google-local-button" id="continueLocal" type="button">
-        <svg class="google-button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#icon-profile"></use></svg>
+        <span class="app-icon icon-size-button google-button-icon" data-icon="icon-user-disconnected" aria-hidden="true"></span>
         <span>Continua senza account</span>
-        <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m3 3 6 7-6 7"/></svg>
+        <span class="app-icon icon-size-chevron google-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
       </button>
       <p class="google-local-note">I dati saranno salvati esclusivamente su questo dispositivo.</p>
       <p class="google-privacy-note">
-        <svg class="google-lock" viewBox="0 0 20 24" fill="currentColor" aria-hidden="true"><path d="M4 9V6a6 6 0 0 1 12 0v3h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2Zm3 0h6V6a3 3 0 0 0-6 0Zm3 5a2 2 0 0 0-1 3.7V20h2v-2.3A2 2 0 0 0 10 14Z"/></svg>
+        <span class="app-icon icon-size-note google-lock" data-icon="app-icon-6" aria-hidden="true"></span>
         PokeAlbum usa l’email per collegare il tuo account
       </p>
       <p class="google-legal">Accedendo accetti i <a href="termini.html" target="_blank" rel="noopener">Termini di servizio</a>.<br>Leggi l’<a href="privacy.html" target="_blank" rel="noopener">Informativa sulla privacy</a>.</p>
@@ -1939,15 +1829,15 @@
     <div class="cloud-details-card">
       <div class="screen-shell">
         <header class="screen-header">
-          <button class="screen-back app-button" id="closeCloudDetails" type="button" aria-label="Torna indietro"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button>
-          <h2 class="screen-title" id="cloudDetailsTitle">Cloud</h2>
+          <button class="screen-back app-button" id="closeCloudDetails" type="button" aria-label="Torna indietro"><span class="app-icon icon-size-control" data-icon="icon-back" aria-hidden="true"></span></button>
+          <h2 class="screen-title" id="cloudDetailsTitle"><span class="app-icon icon-size-page" data-icon="icon-cloud" aria-hidden="true"></span><span>Cloud</span></h2>
           <span class="screen-spacer" aria-hidden="true"></span>
         </header>
 
         <div class="screen-body cloud-screen-body">
           <div class="cloud-page-grid i79-cloud-grid">
             <section class="screen-card i79-drive-card">
-              <svg class="brand-icon i79-drive-logo" width="54" height="54" viewBox="0 0 192 192" aria-hidden="true" focusable="false"><use href="#icon-brand-drive"></use></svg>
+              <span class="app-icon icon-size-feature is-brand i79-drive-logo" data-icon="icon-brand-drive" aria-hidden="true"></span>
               <div class="i79-drive-copy">
                 <h3>Google Drive</h3>
                 <p>Salvataggio cloud della tua collezione</p>
@@ -1957,21 +1847,21 @@
 
             <section class="screen-card i79-section-card" id="cloudArchiveSection">
               <h3 class="i79-section-heading">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><ellipse cx="12" cy="5" rx="7" ry="3"/><path d="M5 5v6c0 1.7 3.1 3 7 3s7-1.3 7-3V5M5 11v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>
+                <span class="app-icon icon-size-heading" data-icon="icon-archive" aria-hidden="true"></span>
                 Archivio PokeAlbum
               </h3>
               <div class="i79-list-panel">
                 <div class="i79-info-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5h8.5L19 8v12.5H6z"/><path d="M14.5 3.5V8H19"/></svg>
+                  <span class="app-icon icon-size-row" data-icon="icon-file" aria-hidden="true"></span>
                   <div class="i79-row-copy"><strong>Dati salvati</strong></div>
                   <div class="i79-row-value" id="cloudAppDataUsage">—</div>
                 </div>
                 <div class="i79-info-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4H10l2 2h6.5A2.5 2.5 0 0 1 21 8.5v9A2.5 2.5 0 0 1 18.5 20h-13A2.5 2.5 0 0 1 3 17.5z"/></svg>
+                  <span class="app-icon icon-size-row" data-icon="icon-position" aria-hidden="true"></span>
                   <div class="i79-row-copy"><strong>Posizione</strong><span id="cloudFolderPath">/AppData/PokeAlbum/</span></div>
                 </div>
                 <div class="i79-info-row i79-storage-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="m6 3-4 12v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5L18 3Z"/><path d="M2 15h20M6 18h3"/></svg>
+                  <span class="app-icon icon-size-row" data-icon="icon-storage" aria-hidden="true"></span>
                   <div class="i79-row-copy i79-storage-copy">
                     <strong>Spazio</strong>
                     <span id="cloudDriveUsage">—</span>
@@ -1984,34 +1874,34 @@
 
             <section class="screen-card i79-section-card" id="cloudBackupSection">
               <h3 class="i79-section-heading">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+                <span class="app-icon icon-size-heading" data-icon="icon-backup-section" aria-hidden="true"></span>
                 Backup e ripristino
               </h3>
               <div class="i79-list-panel">
                 <button class="i79-action-row" id="backupModeButton" type="button">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h5"/><path d="M13 7h7"/><path d="M9 4v6"/><path d="M4 17h9"/><path d="M17 17h3"/><path d="M13 14v6"/></svg>
+                  <span class="app-icon icon-size-row" data-icon="icon-backup-type" aria-hidden="true"></span>
                   <span class="i79-row-copy"><strong>Tipo di backup</strong></span>
                   <span class="i79-action-value" id="backupModeValue">Automatico</span>
-                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  <span class="app-icon icon-size-chevron i79-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
                 </button>
                 <div class="i79-info-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>
+                  <span class="app-icon icon-size-row" data-icon="icon-last-backup" aria-hidden="true"></span>
                   <div class="i79-row-copy"><strong>Ultimo backup</strong><span id="lastBackupValue">Mai</span></div>
                 </div>
                 <button class="i79-action-row" id="runBackupNow" type="button">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h9.5a4 4 0 0 0 .6-7.95A5.8 5.8 0 0 0 6.05 9.1 4.8 4.8 0 0 0 7 18.5Z"/><path d="M12 16V9"/><path d="M9.5 11.5 12 9l2.5 2.5"/></svg>
+                  <span class="app-icon icon-size-row" data-icon="icon-backup-now" aria-hidden="true"></span>
                   <span class="i79-row-copy"><strong>Esegui backup adesso</strong><span>Salva subito la tua collezione</span></span>
-                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  <span class="app-icon icon-size-chevron i79-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
                 </button>
                 <button class="i79-action-row" id="restoreBackup" type="button">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18.5h9.5a4 4 0 0 0 .6-7.95A5.8 5.8 0 0 0 6.05 9.1 4.8 4.8 0 0 0 7 18.5Z"/><path d="M12 9v7"/><path d="M9.5 13.5 12 16l2.5-2.5"/></svg>
+                  <span class="app-icon icon-size-row" data-icon="icon-restore" aria-hidden="true"></span>
                   <span class="i79-row-copy"><strong>Ripristina da backup</strong><span>Scegli un salvataggio precedente</span></span>
-                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  <span class="app-icon icon-size-chevron i79-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
                 </button>
                 <button class="i79-action-row" id="backupHistory" type="button">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V4h4"/><path d="M5 6.5A8 8 0 1 1 4.6 16"/><path d="M12 8v4.5l3 1.8"/></svg>
+                  <span class="app-icon icon-size-row" data-icon="icon-history" aria-hidden="true"></span>
                   <span class="i79-row-copy"><strong>Cronologia backup</strong><span>Visualizza tutti i backup</span></span>
-                  <svg class="i79-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                  <span class="app-icon icon-size-chevron i79-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
                 </button>
               </div>
             </section>
@@ -2019,12 +1909,12 @@
             <p class="cloud-details-status i79-status-message" id="cloudDetailsStatus" role="status" aria-live="polite"></p>
 
             <button class="i79-disconnect" id="disconnectGoogle" type="button" hidden>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg>
+              <span class="app-icon icon-size-row" data-icon="icon-logout" aria-hidden="true"></span>
               Scollega Google Drive
             </button>
             <button class="cloud-action i79-connect-drive" id="connectGoogleDrive" type="button" hidden>Collega Google Drive</button>
 
-            <p class="cloud-private-note i79-private-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 19 6v5c0 4.6-2.8 8.1-7 10-4.2-1.9-7-5.4-7-10V6z"/><path d="m9.5 12 1.7 1.7 3.6-4"/></svg>Accesso limitato ai dati di PokeAlbum</p>
+            <p class="cloud-private-note i79-private-note"><span class="app-icon icon-size-note" data-icon="icon-shield" aria-hidden="true"></span>Accesso limitato ai dati di PokeAlbum</p>
 
             <div hidden aria-hidden="true">
               <span id="cloudAccountInitial">G</span><span id="cloudAccountEmail"></span><div id="cloudDetailGrid"></div>
@@ -2039,31 +1929,93 @@
       <button class="i79-sheet-backdrop" type="button" aria-label="Chiudi"></button>
       <div class="i79-sheet-panel" role="dialog" aria-modal="true" aria-labelledby="backupModeTitle">
         <div class="i79-sheet-handle" aria-hidden="true"></div>
-        <h3 id="backupModeTitle">Tipo di backup</h3>
-        <button class="i79-choice" type="button" data-backup-mode="Automatico"><span><strong>Automatico</strong><small>Salva le modifiche senza intervento manuale</small></span><span class="i79-choice-check">✓</span></button>
-        <button class="i79-choice" type="button" data-backup-mode="Manuale"><span><strong>Manuale</strong><small>Il backup viene eseguito solo quando lo richiedi</small></span><span class="i79-choice-check">✓</span></button>
+        <h3 id="backupModeTitle"><span class="app-icon icon-size-heading" data-icon="icon-backup-type" aria-hidden="true"></span><span>Tipo di backup</span></h3>
+        <button class="i79-choice" type="button" data-backup-mode="Automatico"><span><strong>Automatico</strong><small>Salva le modifiche senza intervento manuale</small></span><span class="i79-choice-check" aria-hidden="true"><span class="app-icon icon-size-check" data-icon="app-icon-1" aria-hidden="true"></span></span></button>
+        <button class="i79-choice" type="button" data-backup-mode="Manuale"><span><strong>Manuale</strong><small>Il backup viene eseguito solo quando lo richiedi</small></span><span class="i79-choice-check" aria-hidden="true"><span class="app-icon icon-size-check" data-icon="app-icon-1" aria-hidden="true"></span></span></button>
       </div>
     </div>
   </section>
 
   <script>
 
-    // Importa solo i tre loghi a colori; le altre icone restano indipendenti.
-    async function loadBrandIcons() {
-      const response = await fetch("image/icons.html");
-      if (!response.ok) throw new Error(`Icone: HTTP ${response.status}`);
-      const catalog = new DOMParser().parseFromString(await response.text(), "text/html");
-      const symbols = document.createDocumentFragment();
-      for (const name of ["google", "drive", "cardtrader"]) {
-        const id = `icon-brand-${name}`;
-        const symbol = catalog.getElementById(id);
-        if (!symbol || symbol.localName !== "symbol") throw new Error(`Icona mancante: ${id}`);
-        symbols.appendChild(document.importNode(symbol, true));
+    // Unico catalogo: disegni, maschere e loghi vengono letti da questo file.
+    const ICON_CATALOG_URL = "image/icons.html";
+    const iconSymbols = new Map();
+    const iconAssets = new Map();
+
+    function getIconAsset(name) {
+      if (iconAssets.has(name)) return iconAssets.get(name);
+      const symbol = iconSymbols.get(name);
+      if (!symbol) throw new Error(`Icona non presente nel catalogo: ${name}`);
+      const namespace = symbol.namespaceURI;
+      const drawing = document.createElementNS(namespace, "svg");
+      // Mantiene viewBox, colori, spessori e definizioni del catalogo originale.
+      for (const attribute of symbol.attributes) {
+        if (attribute.name !== "id") drawing.setAttributeNS(attribute.namespaceURI, attribute.name, attribute.value);
       }
-      document.getElementById("brand-icon-sprite").replaceChildren(symbols);
+      const box = symbol.getAttribute("viewBox").trim().split(/\s+/).map(Number);
+      drawing.setAttribute("width", box[2]);
+      drawing.setAttribute("height", box[3]);
+      for (const child of symbol.childNodes) drawing.appendChild(child.cloneNode(true));
+      // Alcune voci del catalogo riutilizzano un altro simbolo tramite riferimento.
+      const definitions = document.createElementNS(namespace, "defs");
+      const included = new Set([name]);
+      function includeReferences(node) {
+        for (const reference of node.querySelectorAll("use")) {
+          const href = reference.getAttribute("href") || reference.getAttributeNS("http://www.w3.org/1999/xlink", "href") || "";
+          const id = href.startsWith("#") ? href.slice(1) : "";
+          if (!iconSymbols.has(id) || included.has(id)) continue;
+          included.add(id);
+          const dependency = iconSymbols.get(id);
+          definitions.appendChild(dependency.cloneNode(true));
+          includeReferences(dependency);
+        }
+      }
+      includeReferences(symbol);
+      if (definitions.hasChildNodes()) drawing.appendChild(definitions);
+      const bytes = new XMLSerializer().serializeToString(drawing);
+      const asset = URL.createObjectURL(new Blob([bytes], { type: "image/svg+xml" }));
+      iconAssets.set(name, asset);
+      return asset;
     }
 
-    loadBrandIcons().catch((error) => console.error("Caricamento loghi non riuscito:", error));
+    function applyCatalogIcon(element) {
+      if (!iconSymbols.size) return;
+      const name = element.dataset.icon;
+      element.classList.toggle("is-brand", name.startsWith("icon-brand-"));
+      try {
+        element.style.setProperty("--icon-image", `url("${getIconAsset(name)}")`);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function refreshCatalogIcons(root = document) {
+      if (root.nodeType === Node.ELEMENT_NODE && root.matches("[data-icon]")) applyCatalogIcon(root);
+      root.querySelectorAll("[data-icon]").forEach(applyCatalogIcon);
+    }
+
+    // Gestisce anche il pulsante Drive ricreato da innerHTML e i cambi di stato.
+    const iconObserver = new MutationObserver((records) => {
+      for (const record of records) {
+        if (record.type === "attributes") applyCatalogIcon(record.target);
+        else for (const node of record.addedNodes) {
+          if (node.nodeType === Node.ELEMENT_NODE) refreshCatalogIcons(node);
+        }
+      }
+    });
+    iconObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-icon"] });
+
+    const iconsReady = fetch(ICON_CATALOG_URL).then(async (response) => {
+      if (!response.ok) throw new Error(`Catalogo icone: HTTP ${response.status}`);
+      const catalog = new DOMParser().parseFromString(await response.text(), "text/html");
+      const sprite = catalog.getElementById("pokealbum-icons");
+      if (!sprite) throw new Error("Catalogo icone non valido");
+      sprite.querySelectorAll("symbol[id]").forEach((symbol) => iconSymbols.set(symbol.id, symbol));
+      refreshCatalogIcons();
+    }).catch((error) => console.error("Caricamento icone non riuscito:", error));
+
+
     const splash = document.getElementById("splash");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -2179,10 +2131,19 @@
     let profileLoginPending = false;
     let googleAccountState = { authenticated: false, checking: Boolean(localStorage.getItem(GOOGLE_SESSION_KEY)), account: null, lastSyncAt: null };
 
+    function renderProfileStatusIcon() {
+      const active = openProfile.classList.contains("is-google-connected");
+      const drive = openProfile.classList.contains("is-drive-connected");
+      document.getElementById("profileStatusIcon").dataset.icon = !active
+        ? "icon-user-disconnected"
+        : (drive ? "icon-user-cloud" : "icon-user-cloud-disconnected");
+    }
+
     function renderAccountProfile() {
       const active = googleAccountState.authenticated;
       openProfile.classList.toggle("is-google-connected", active);
       if (!active) openProfile.classList.remove("is-drive-connected");
+      renderProfileStatusIcon();
       profileSyncStatus.textContent = active ? "Account collegato" : (googleAccountState.checking ? "Verifica account…" : "Account non collegato");
       profileSyncStatus.classList.toggle("is-active", active);
       profileConnectGoogle.hidden = active;
@@ -2238,6 +2199,7 @@
       openProfile.classList.toggle("is-drive-connected", connected && googleAccountState.authenticated);
       cloudConnectionStatus.textContent = connected ? "Google Drive collegato" : (checking ? "Verifica collegamento…" : "Nessun Drive collegato");
       connectCloud.setAttribute("aria-label", cloudConnectionStatus.textContent);
+      renderProfileStatusIcon();
     }
 
     function formatBytes(value) {
@@ -2277,7 +2239,7 @@
       document.getElementById("cloudStorageTrack").hidden = true;
     }
 
-    const GOOGLE_DRIVE_BUTTON_HTML = '<svg class="brand-icon google-button-icon" width="22" height="22" viewBox="0 0 192 192" aria-hidden="true" focusable="false"><use href="#icon-brand-drive"></use></svg><span>Collega Google Drive</span>';
+    const GOOGLE_DRIVE_BUTTON_HTML = '<span class="app-icon icon-size-button is-brand google-button-icon" data-icon="icon-brand-drive" aria-hidden="true"></span><span>Collega Google Drive</span>';
 
     function showCloudGuest() {
       setCloudDetailsVisible(true);
