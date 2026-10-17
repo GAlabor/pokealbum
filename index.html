@@ -962,7 +962,7 @@
     .google-button-icon { display: block; width: 26px; height: 26px; flex: 0 0 26px; object-fit: contain; }
     #connectGoogleDrive { display: flex; align-items: center; justify-content: center; gap: 10px; }
     #connectGoogleDrive[hidden] { display: none; }
-    .profile-google-row > img, .cloud-google-logo { display: block; object-fit: contain; }
+    .profile-google-row > .brand-icon, .cloud-google-logo { display: block; object-fit: contain; }
     .google-chevron { width: 10px; height: 16px; color: #9badd9; }
 
     .google-divider { width: 100%; margin: 20px 0 16px; display: flex; align-items: center; gap: 14px; color: #8198c8; font-size: 10px; letter-spacing: .2em; }
@@ -1012,7 +1012,7 @@
     
     
     
-    .profile-google-row > img, .cloud-google-logo { width: 28px; height: 28px; flex: 0 0 28px; }
+    .profile-google-row > .brand-icon, .cloud-google-logo { width: 28px; height: 28px; flex: 0 0 28px; }
     
     
     
@@ -1531,7 +1531,7 @@
     #profileModal .profile-row { display: flex; align-items: center; gap: 16px; min-height: 44px; width: 100%; margin: 0; padding: 8px 2px; text-align: left; }
     #profileModal .profile-row + .profile-row { border-top: 1px solid var(--color-border); }
     #profileModal .profile-google-row, #profileModal .profile-cardtrader-row { min-height: 56px; }
-    #profileModal .profile-google-row > img, #profileModal .profile-cardtrader-row > img { width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; }
+    #profileModal .profile-google-row > .brand-icon, #profileModal .profile-cardtrader-row > .brand-icon { width: 32px; height: 32px; flex: 0 0 32px; object-fit: contain; }
     #profileModal .profile-google-copy, #profileModal .profile-sync-row > div { min-width: 0; }
     #profileModal .profile-row > .icon { width: 24px; height: 24px; flex: 0 0 24px; margin: 0 4px; color: #b8c9e8; }
     #profileModal .profile-account-value { display: block; font-size: 14px; line-height: 1.45; font-weight: 500; overflow-wrap: anywhere; }
@@ -1583,6 +1583,9 @@
       <p class="splash-title">POKEALBUM</p>
     </div>
   </div>
+
+  <!-- i97: Google, Drive e CardTrader provengono da image/icons.html. -->
+  <svg id="brand-icon-sprite" class="icon-sprite" aria-hidden="true" focusable="false"></svg>
 
   <svg class="icon-sprite" aria-hidden="true">
     <symbol id="icon-switch-account" viewBox="0 0 24 24">
@@ -1880,9 +1883,9 @@
               <section class="profile-section" aria-labelledby="profileGoogleTitle">
                 <h3 class="profile-section-title" id="profileGoogleTitle">Account Google</h3>
                 <div class="profile-account screen-card">
-                  <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><img class="google-button-icon" src="image/Google_Favicon_2025.svg" alt="" width="28" height="28"><span>Accedi con Google</span></button>
+                  <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><svg class="brand-icon google-button-icon" width="28" height="28" viewBox="0 0 268.1522 273.8827" aria-hidden="true" focusable="false"><use href="#icon-brand-google"></use></svg><span>Accedi con Google</span></button>
                   <div class="profile-account-details" id="profileAccountDetails" hidden>
-                    <div class="profile-google-row profile-row"><img src="image/Google_Favicon_2025.svg" alt="" width="32" height="32"><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span aria-hidden="true"></span>Collegato</span></div></div>
+                    <div class="profile-google-row profile-row"><svg class="brand-icon" width="32" height="32" viewBox="0 0 268.1522 273.8827" aria-hidden="true" focusable="false"><use href="#icon-brand-google"></use></svg><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span aria-hidden="true"></span>Collegato</span></div></div>
                     <div class="profile-sync-row profile-row"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7a9 9 0 0 0-15-2L2 8m0-5v5h5M4 17a9 9 0 0 0 15 2l3-3m0 5v-5h-5"/></svg><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
                     <button class="profile-action profile-row" id="profileChangeGoogle" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-switch-account"></use></svg><span>Cambia account</span></button>
                     <button class="profile-action profile-row" id="signOutGoogle" type="button"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/></svg><span>Esci da Google</span></button>
@@ -1894,7 +1897,7 @@
               <section class="profile-section" aria-labelledby="profileCardTraderTitle">
                 <h3 class="profile-section-title" id="profileCardTraderTitle">Account CardTrader</h3>
                 <div class="screen-card profile-account">
-                  <div class="profile-row profile-cardtrader-row"><img src="image/ico_cd.svg" alt="" width="32" height="32"><div class="profile-google-copy"><span class="profile-account-label">CardTrader</span><span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span></div></div>
+                  <div class="profile-row profile-cardtrader-row"><svg class="brand-icon" width="32" height="32" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><use href="#icon-brand-cardtrader"></use></svg><div class="profile-google-copy"><span class="profile-account-label">CardTrader</span><span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span></div></div>
                   <button class="profile-action profile-row profile-link-action" id="profileConnectCardTrader" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-link"></use></svg><span>Collega account</span></button>
                   <p class="profile-login-status" id="profileCardTraderStatus" role="status" aria-live="polite"></p>
                 </div>
@@ -1912,7 +1915,7 @@
       <h2 class="google-app-name" id="googleGateTitle">PokeAlbum</h2>
       <p class="google-intro">Collega il tuo account Google per ritrovare<br>i tuoi Album anche su altri dispositivi.</p>
       <button class="google-connect-button" id="googleConnect" type="button">
-        <img class="google-button-icon" src="image/Google_Favicon_2025.svg" alt="" width="26" height="26">
+        <svg class="brand-icon google-button-icon" width="26" height="26" viewBox="0 0 268.1522 273.8827" aria-hidden="true" focusable="false"><use href="#icon-brand-google"></use></svg>
         <span>Continua con Google</span>
         <svg class="google-chevron" viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="m3 3 6 7-6 7"/></svg>
       </button>
@@ -1944,7 +1947,7 @@
         <div class="screen-body cloud-screen-body">
           <div class="cloud-page-grid i79-cloud-grid">
             <section class="screen-card i79-drive-card">
-              <img class="i79-drive-logo" src="image/google-drive-2026.svg" alt="" width="54" height="54">
+              <svg class="brand-icon i79-drive-logo" width="54" height="54" viewBox="0 0 192 192" aria-hidden="true" focusable="false"><use href="#icon-brand-drive"></use></svg>
               <div class="i79-drive-copy">
                 <h3>Google Drive</h3>
                 <p>Salvataggio cloud della tua collezione</p>
@@ -2044,6 +2047,23 @@
   </section>
 
   <script>
+
+    // Importa solo i tre loghi a colori; le altre icone restano indipendenti.
+    async function loadBrandIcons() {
+      const response = await fetch("image/icons.html");
+      if (!response.ok) throw new Error(`Icone: HTTP ${response.status}`);
+      const catalog = new DOMParser().parseFromString(await response.text(), "text/html");
+      const symbols = document.createDocumentFragment();
+      for (const name of ["google", "drive", "cardtrader"]) {
+        const id = `icon-brand-${name}`;
+        const symbol = catalog.getElementById(id);
+        if (!symbol || symbol.localName !== "symbol") throw new Error(`Icona mancante: ${id}`);
+        symbols.appendChild(document.importNode(symbol, true));
+      }
+      document.getElementById("brand-icon-sprite").replaceChildren(symbols);
+    }
+
+    loadBrandIcons().catch((error) => console.error("Caricamento loghi non riuscito:", error));
     const splash = document.getElementById("splash");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -2257,7 +2277,7 @@
       document.getElementById("cloudStorageTrack").hidden = true;
     }
 
-    const GOOGLE_DRIVE_BUTTON_HTML = '<img class="google-button-icon" src="image/google-drive-2026.svg" alt="" width="22" height="22"><span>Collega Google Drive</span>';
+    const GOOGLE_DRIVE_BUTTON_HTML = '<svg class="brand-icon google-button-icon" width="22" height="22" viewBox="0 0 192 192" aria-hidden="true" focusable="false"><use href="#icon-brand-drive"></use></svg><span>Collega Google Drive</span>';
 
     function showCloudGuest() {
       setCloudDetailsVisible(true);
