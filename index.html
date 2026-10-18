@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
   <link rel="preload" as="image" href="image/splash-logo.webp" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i83: spazio Drive mostra disponibile, barra mostra utilizzato -->
+  <!-- i100: profilo rifinito; spazio Drive mostra disponibile, barra mostra utilizzato -->
 
   <style>
     :root {
@@ -1694,6 +1694,28 @@
       #profileModal .profile-link-action { min-height: 44px; height: 44px; }
       #profileModal .profile-disconnected-row { min-height: 29px; padding-bottom: 6px; }
     }
+
+
+    /* i100: rifiniture profilo e account. */
+    #profileModal .profile-main-icon { color: #4da3ff; }
+    #profileModal .profile-account-brand { --icon-size: 25px; }
+    #profileModal .profile-name-input-wrap { position: relative; }
+    #profileModal .profile-name-input-wrap #profileNameInput { padding-left: 16px; }
+    #profileModal .profile-name-placeholder {
+      position: absolute;
+      inset: 0 auto 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #aebdd0;
+      font-size: 16px;
+      font-weight: 500;
+      pointer-events: none;
+      transition: opacity .14s ease;
+    }
+    #profileModal .profile-name-placeholder .app-icon { color: #aebdd0; }
+    #profileModal .profile-name-input-wrap.has-value .profile-name-placeholder { opacity: 0; }
+    #profileModal .profile-google-button { gap: 0; }
 </style>
 </head>
 
@@ -1860,21 +1882,24 @@
               <input class="image-input" id="profileImageInput" type="file" accept="image/*">
 
               <section class="profile-section" aria-labelledby="profileFieldsTitle">
-                <h3 class="profile-section-title" id="profileFieldsTitle"><span class="app-icon icon-size-heading" data-icon="icon-profile-section" aria-hidden="true"></span><span>Profilo</span></h3>
+                <h3 class="profile-section-title" id="profileFieldsTitle"><span class="app-icon icon-size-heading profile-main-icon" data-icon="icon-profile-section" aria-hidden="true"></span><span>Profilo</span></h3>
                 <div class="screen-card profile-fields">
-                  <label class="field-label" for="profileNameInput"><span class="app-icon icon-size-note" data-icon="icon-name" aria-hidden="true"></span><span>Nome visualizzato</span></label>
-                  <input class="text-input" id="profileNameInput" type="text" maxlength="24" autocomplete="name" placeholder="Inserisci il nome">
+                  <label class="field-label" for="profileNameInput"><span>Nome visualizzato</span></label>
+                  <div class="profile-name-input-wrap" id="profileNameInputWrap">
+                    <input class="text-input" id="profileNameInput" type="text" maxlength="24" autocomplete="name" placeholder="">
+                    <span class="profile-name-placeholder" aria-hidden="true"><span class="app-icon icon-size-note" data-icon="icon-name"></span><span>Inserisci il nome</span></span>
+                  </div>
                 </div>
               </section>
 
               <section class="profile-section profile-account-section" aria-labelledby="profileGoogleTitle">
-                <h3 class="profile-section-title" id="profileGoogleTitle"><span class="app-icon icon-size-heading" data-icon="icon-user-google" aria-hidden="true"></span><span>Account Google</span></h3>
+                <h3 class="profile-section-title" id="profileGoogleTitle"><span class="app-icon icon-size-heading is-brand profile-account-brand" data-icon="icon-brand-google" aria-hidden="true"></span><span>Account Google</span></h3>
                 <p class="profile-section-subtitle">Accedi per sincronizzare i tuoi dati</p>
                 <div class="profile-account screen-card">
                   <div class="profile-disconnected-row" id="profileGoogleDisconnected">
                     <span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span>
                   </div>
-                  <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><span class="app-icon icon-size-button is-brand google-button-icon" data-icon="icon-brand-google" aria-hidden="true"></span><span>Accedi con Google</span></button>
+                  <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><span>Accedi con Google</span></button>
                   <div class="profile-account-details" id="profileAccountDetails" hidden>
                     <div class="profile-google-row profile-row"><span class="app-icon icon-size-logo-row is-brand brand-icon" data-icon="icon-brand-google" aria-hidden="true"></span><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span aria-hidden="true"></span>Collegato</span></div></div>
                     <div class="profile-sync-row profile-row"><span class="app-icon icon-size-row" data-icon="app-icon-4" aria-hidden="true"></span><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
@@ -1886,7 +1911,7 @@
               </section>
 
               <section class="profile-section profile-account-section" aria-labelledby="profileCardTraderTitle">
-                <h3 class="profile-section-title" id="profileCardTraderTitle"><span class="app-icon icon-size-heading" data-icon="icon-user-cardtrader" aria-hidden="true"></span><span>Account CardTrader</span></h3>
+                <h3 class="profile-section-title" id="profileCardTraderTitle"><span class="app-icon icon-size-heading is-brand profile-account-brand" data-icon="icon-brand-cardtrader" aria-hidden="true"></span><span>Account CardTrader</span></h3>
                 <p class="profile-section-subtitle">Collega il tuo account CardTrader</p>
                 <div class="screen-card profile-account">
                   <div class="profile-disconnected-row">
@@ -2188,6 +2213,7 @@
     const profileModal = document.getElementById("profileModal");
     const profileForm = document.getElementById("profileForm");
     const profileNameInput = document.getElementById("profileNameInput");
+    const profileNameInputWrap = document.getElementById("profileNameInputWrap");
     const profileImageInput = document.getElementById("profileImageInput");
     const changeProfileImage = document.getElementById("changeProfileImage");
 
@@ -2840,6 +2866,7 @@
         renderAccountProfile();
         checkGoogleConnection();
         profileNameInput.value = localStorage.getItem(DISPLAY_NAME_KEY) || "";
+        profileNameInputWrap.classList.toggle("has-value", Boolean(profileNameInput.value.trim()));
         pendingProfileImage = localStorage.getItem(PROFILE_IMAGE_KEY) || "";
 
         requestAnimationFrame(() => {
@@ -2911,7 +2938,10 @@
 
     openProfileEditor.addEventListener("click", () => setProfileModal(true));
     document.getElementById("closeProfileEditor").addEventListener("click", () => setProfileModal(false));
-    profileNameInput.addEventListener("input", () => { document.getElementById("profileDisplayName").textContent = normalizeDisplayName(profileNameInput.value) || "Nome visualizzato"; });
+    profileNameInput.addEventListener("input", () => {
+      profileNameInputWrap.classList.toggle("has-value", Boolean(profileNameInput.value.trim()));
+      document.getElementById("profileDisplayName").textContent = normalizeDisplayName(profileNameInput.value) || "Nome visualizzato";
+    });
 
     changeProfileImage.addEventListener("click", () => {
       profileImageInput.click();
