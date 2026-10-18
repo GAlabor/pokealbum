@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
   <link rel="preload" as="image" href="image/splash-logo.webp" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i100: profilo rifinito; spazio Drive mostra disponibile, barra mostra utilizzato -->
+  <!-- i101: pannello Google connesso semplificato; spazio Drive mostra disponibile, barra mostra utilizzato -->
 
   <style>
     :root {
@@ -1696,6 +1696,36 @@
     }
 
 
+
+    /* i101: stato Google connesso compatto, email sotto il titolo e azioni nel solo pannello inferiore. */
+    #profileModal .profile-connected-summary {
+      margin: 5px 0 10px 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: #aebdd3;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    #profileModal .profile-connected-summary[hidden] { display: none; }
+    #profileModal .profile-connected-dot {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+      border-radius: 50%;
+      background: #20cf76;
+    }
+    #profileModal .profile-connected-email {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #profileModal .profile-account-details .profile-sync-row { min-height: 58px; }
+    #profileModal .profile-account-details .profile-action { min-height: 50px; }
+    #profileModal .profile-account-details .profile-row:first-child { border-top: 0; }
+
     /* i100: rifiniture profilo e account. */
     #profileModal .profile-main-icon { color: #4da3ff; }
     #profileModal .profile-account-brand { --icon-size: 25px; }
@@ -1894,14 +1924,17 @@
 
               <section class="profile-section profile-account-section" aria-labelledby="profileGoogleTitle">
                 <h3 class="profile-section-title" id="profileGoogleTitle"><span class="app-icon icon-size-heading is-brand profile-account-brand" data-icon="icon-brand-google" aria-hidden="true"></span><span>Account Google</span></h3>
-                <p class="profile-section-subtitle">Accedi per sincronizzare i tuoi dati</p>
+                <p class="profile-section-subtitle" id="profileGoogleSubtitle">Accedi per sincronizzare i tuoi dati</p>
+                <div class="profile-connected-summary" id="profileGoogleConnectedSummary" hidden>
+                  <span class="profile-connected-dot" aria-hidden="true"></span>
+                  <span class="profile-connected-email" id="profileAccountEmail">—</span>
+                </div>
                 <div class="profile-account screen-card">
                   <div class="profile-disconnected-row" id="profileGoogleDisconnected">
                     <span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span>
                   </div>
                   <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><span>Accedi con Google</span></button>
                   <div class="profile-account-details" id="profileAccountDetails" hidden>
-                    <div class="profile-google-row profile-row"><span class="app-icon icon-size-logo-row is-brand brand-icon" data-icon="icon-brand-google" aria-hidden="true"></span><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span aria-hidden="true"></span>Collegato</span></div></div>
                     <div class="profile-sync-row profile-row"><span class="app-icon icon-size-row" data-icon="app-icon-4" aria-hidden="true"></span><div><span class="profile-account-label">Ultima sincronizzazione</span><span class="profile-account-value" id="profileLastSync">Non ancora effettuata</span></div></div>
                     <button class="profile-action profile-row" id="profileChangeGoogle" type="button"><span class="app-icon icon-size-row" data-icon="icon-switch-account" aria-hidden="true"></span><span>Cambia account</span></button>
                     <button class="profile-action profile-row" id="signOutGoogle" type="button"><span class="app-icon icon-size-row" data-icon="icon-logout" aria-hidden="true"></span><span>Esci da Google</span></button>
@@ -2256,6 +2289,8 @@
     const profileAccountDetails = document.getElementById("profileAccountDetails");
     const profileChangeGoogle = document.getElementById("profileChangeGoogle");
     const profileAccountEmail = document.getElementById("profileAccountEmail");
+    const profileGoogleSubtitle = document.getElementById("profileGoogleSubtitle");
+    const profileGoogleConnectedSummary = document.getElementById("profileGoogleConnectedSummary");
     const profileLastSync = document.getElementById("profileLastSync");
     const profileLoginStatus = document.getElementById("profileLoginStatus");
     let profileLoginPending = false;
@@ -2279,6 +2314,8 @@
       profileConnectGoogle.hidden = active;
       const profileGoogleDisconnected = document.getElementById("profileGoogleDisconnected");
       if (profileGoogleDisconnected) profileGoogleDisconnected.hidden = active;
+      if (profileGoogleSubtitle) profileGoogleSubtitle.hidden = active;
+      if (profileGoogleConnectedSummary) profileGoogleConnectedSummary.hidden = !active;
       profileAccountDetails.hidden = !active;
       profileAccountEmail.textContent = active ? (googleAccountState.account?.email || "Verifica account…") : "—";
       const date = googleAccountState.lastSyncAt ? new Date(googleAccountState.lastSyncAt) : null;
