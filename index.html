@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
   <link rel="preload" as="image" href="image/splash-logo.webp" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i107: azione Collega/Scollega Google Drive integrata nel pannello superiore -->
+  <!-- i108: pannello Google Drive compatto; azioni Connetti/Disconnetti; stato testuale rimosso -->
 
   <style>
     :root {
@@ -1344,11 +1344,7 @@
       box-shadow: none;
     }
     .i79-drive-copy h3 { margin: 0 0 4px; font-size: 17px; line-height: 1.2; }
-    .i79-drive-copy p { margin: 0; color: #aebbd0; font-size: 13px; line-height: 1.35; }
-    .i79-connection-state { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: #9aa8bd; font-size: 13px; }
-    .i79-status-dot { width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: #8e9ab0; }
-    .cloud-details.is-drive-connected .i79-status-dot { background: #20cf76; }
-    .cloud-details.is-drive-connected .i79-connection-state { color: #20cf76; }
+    .i79-drive-copy p { margin: 0; color: #aebbd0; font-size: 13px; line-height: 1.35; white-space: nowrap; }
 
     .i79-section-card { padding: 18px 18px 12px; }
     .i79-section-heading { margin: 0 0 12px; display: flex; align-items: center; gap: 10px; color: #f3f6fb; font-size: 17px; font-weight: 720; }
@@ -1412,7 +1408,6 @@
 
     .cloud-details .i79-drive-copy h3 { margin-bottom: 2px; font-size: 16px; }
     .cloud-details .i79-drive-copy p { font-size: 12px; }
-    .cloud-details .i79-connection-state { margin-top: 5px; font-size: 12px; }
     .cloud-details .i79-drive-action .i79-connect-drive,
     .cloud-details .i79-drive-action .i79-disconnect {
       width: auto;
@@ -2039,12 +2034,12 @@
               <span class="app-icon icon-size-feature is-brand i79-drive-logo" data-icon="icon-brand-drive" aria-hidden="true"></span>
               <div class="i79-drive-copy">
                 <h3>Google Drive</h3>
-                <p>Salvataggio cloud della tua collezione</p>
-                <div class="i79-connection-state"><span class="i79-status-dot" aria-hidden="true"></span><span id="cloudAccountLabel">Verifica collegamento…</span></div>
+                <p>Salva la tua collezione nel cloud</p>
+                <span id="cloudAccountLabel" hidden></span>
               </div>
               <div class="i79-drive-action">
-                <button class="cloud-action i79-connect-drive" id="connectGoogleDrive" type="button" hidden>Collega</button>
-                <button class="i79-disconnect" id="disconnectGoogle" type="button" hidden>Scollega</button>
+                <button class="cloud-action i79-connect-drive" id="connectGoogleDrive" type="button" hidden>Connetti</button>
+                <button class="i79-disconnect" id="disconnectGoogle" type="button" hidden>Disconnetti</button>
               </div>
             </section>
 
@@ -2446,7 +2441,7 @@
       document.getElementById("cloudStorageTrack").hidden = true;
     }
 
-    const GOOGLE_DRIVE_BUTTON_HTML = 'Collega';
+    const GOOGLE_DRIVE_BUTTON_HTML = 'Connetti';
 
     function showCloudGuest() {
       setCloudDetailsVisible(true);
@@ -2459,7 +2454,7 @@
       connectGoogleDrive.hidden = false;
       connectGoogleDrive.disabled = false;
       connectGoogleDrive.innerHTML = GOOGLE_DRIVE_BUTTON_HTML;
-      disconnectGoogle.textContent = "Scollega";
+      disconnectGoogle.textContent = "Disconnetti";
       cloudAppDataUsage.textContent = "—";
       cloudDriveUsage.textContent = "—";
       cloudFolderPath.textContent = "/AppData/PokeAlbum/";
@@ -2474,7 +2469,7 @@
       document.getElementById("cloudAccountLabel").textContent = data?.drive?.connected === true ? "Collegato" : "Non collegato";
       changeGoogleAccount.hidden = false;
       connectGoogleDrive.innerHTML = GOOGLE_DRIVE_BUTTON_HTML;
-      disconnectGoogle.textContent = "Scollega";
+      disconnectGoogle.textContent = "Disconnetti";
       const email = data?.account?.email || "Account Google";
       const connected = data?.drive?.connected === true;
       cloudAccountInitial.textContent = email.slice(0, 1).toUpperCase();
