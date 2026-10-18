@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
   <link rel="preload" as="image" href="image/splash-logo.webp" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i106: gerarchia titoli pannelli Cloud migliorata; icone sezione blu; chevron allineate -->
+  <!-- i107: azione Collega/Scollega Google Drive integrata nel pannello superiore -->
 
   <style>
     :root {
@@ -1318,7 +1318,31 @@
     .i79-cloud-grid { gap: 12px; }
     .i79-drive-card { display: flex; align-items: center; gap: 16px; padding: 18px; }
 
-    .i79-drive-copy { min-width: 0; }
+    .i79-drive-copy { min-width: 0; flex: 1 1 auto; }
+    .i79-drive-action { flex: 0 0 auto; margin-left: auto; }
+    .i79-drive-action .i79-connect-drive,
+    .i79-drive-action .i79-disconnect {
+      width: auto;
+      min-width: 92px;
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 13px;
+      font-size: 14px;
+      font-weight: 720;
+      white-space: nowrap;
+    }
+    .i79-drive-action .i79-connect-drive {
+      border: 0;
+      background: var(--gradient-accent);
+      color: #fff;
+      box-shadow: var(--shadow-accent);
+    }
+    .i79-drive-action .i79-disconnect {
+      border: 1px solid #49556a;
+      background: var(--color-input);
+      color: #ff8585;
+      box-shadow: none;
+    }
     .i79-drive-copy h3 { margin: 0 0 4px; font-size: 17px; line-height: 1.2; }
     .i79-drive-copy p { margin: 0; color: #aebbd0; font-size: 13px; line-height: 1.35; }
     .i79-connection-state { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: #9aa8bd; font-size: 13px; }
@@ -1368,7 +1392,9 @@
     .i79-choice.is-selected .i79-choice-check { color: #fff; background: var(--brand-blue-bright); }
 
     @media (max-width: 390px) {
-      .i79-drive-card { gap: 13px; padding: 15px; }
+      .i79-drive-card { gap: 11px; padding: 15px; }
+      .i79-drive-action .i79-connect-drive,
+      .i79-drive-action .i79-disconnect { min-width: 78px; padding: 0 12px; }
 
       .i79-info-row, .i79-action-row { padding-left: 10px; padding-right: 10px; }
     }
@@ -1387,6 +1413,15 @@
     .cloud-details .i79-drive-copy h3 { margin-bottom: 2px; font-size: 16px; }
     .cloud-details .i79-drive-copy p { font-size: 12px; }
     .cloud-details .i79-connection-state { margin-top: 5px; font-size: 12px; }
+    .cloud-details .i79-drive-action .i79-connect-drive,
+    .cloud-details .i79-drive-action .i79-disconnect {
+      width: auto;
+      min-width: 88px;
+      min-height: 40px;
+      padding: 0 16px;
+      border-radius: 12px;
+      font-size: 13.5px;
+    }
 
     .cloud-details .i79-section-card { padding: 14px 16px 10px; }
     .cloud-details .i79-section-heading { margin-bottom: 10px; gap: 9px; font-size: 17px; font-weight: 740; }
@@ -2007,6 +2042,10 @@
                 <p>Salvataggio cloud della tua collezione</p>
                 <div class="i79-connection-state"><span class="i79-status-dot" aria-hidden="true"></span><span id="cloudAccountLabel">Verifica collegamento…</span></div>
               </div>
+              <div class="i79-drive-action">
+                <button class="cloud-action i79-connect-drive" id="connectGoogleDrive" type="button" hidden>Collega</button>
+                <button class="i79-disconnect" id="disconnectGoogle" type="button" hidden>Scollega</button>
+              </div>
             </section>
 
             <section class="screen-card i79-section-card" id="cloudArchiveSection">
@@ -2074,12 +2113,6 @@
             </section>
 
             <p class="cloud-details-status i79-status-message" id="cloudDetailsStatus" role="status" aria-live="polite"></p>
-
-            <button class="i79-disconnect" id="disconnectGoogle" type="button" hidden>
-              <span class="app-icon icon-size-row" data-icon="icon-logout" aria-hidden="true"></span>
-              Scollega Google Drive
-            </button>
-            <button class="cloud-action i79-connect-drive" id="connectGoogleDrive" type="button" hidden>Collega Google Drive</button>
 
             <p class="cloud-private-note i79-private-note"><span class="app-icon icon-size-note" data-icon="icon-shield" aria-hidden="true"></span>Accesso limitato ai dati di PokeAlbum</p>
 
@@ -2413,7 +2446,7 @@
       document.getElementById("cloudStorageTrack").hidden = true;
     }
 
-    const GOOGLE_DRIVE_BUTTON_HTML = '<span class="app-icon icon-size-button is-brand google-button-icon" data-icon="icon-brand-drive" aria-hidden="true"></span><span>Collega Google Drive</span>';
+    const GOOGLE_DRIVE_BUTTON_HTML = 'Collega';
 
     function showCloudGuest() {
       setCloudDetailsVisible(true);
@@ -2426,6 +2459,7 @@
       connectGoogleDrive.hidden = false;
       connectGoogleDrive.disabled = false;
       connectGoogleDrive.innerHTML = GOOGLE_DRIVE_BUTTON_HTML;
+      disconnectGoogle.textContent = "Scollega";
       cloudAppDataUsage.textContent = "—";
       cloudDriveUsage.textContent = "—";
       cloudFolderPath.textContent = "/AppData/PokeAlbum/";
@@ -2440,6 +2474,7 @@
       document.getElementById("cloudAccountLabel").textContent = data?.drive?.connected === true ? "Collegato" : "Non collegato";
       changeGoogleAccount.hidden = false;
       connectGoogleDrive.innerHTML = GOOGLE_DRIVE_BUTTON_HTML;
+      disconnectGoogle.textContent = "Scollega";
       const email = data?.account?.email || "Account Google";
       const connected = data?.drive?.connected === true;
       cloudAccountInitial.textContent = email.slice(0, 1).toUpperCase();
