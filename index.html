@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
   <link rel="preload" as="image" href="image/splash-logo.webp" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i109: più aria al pannello Google Drive; sezioni Cloud più compatte; icona privacy resa più nitida -->
+  <!-- i110: pannello Google Drive più arioso; nota accesso limitato rimossa -->
 
   <style>
     :root {
@@ -1316,7 +1316,7 @@
 
     .cloud-screen-body { padding-top: 16px; }
     .i79-cloud-grid { gap: 12px; }
-    .i79-drive-card { display: flex; align-items: center; gap: 16px; padding: 20px 18px; }
+    .i79-drive-card { display: flex; align-items: center; gap: 18px; padding: 24px 20px; }
 
     .i79-drive-copy { min-width: 0; flex: 1 1 auto; }
     .i79-drive-action { flex: 0 0 auto; margin-left: auto; }
@@ -1388,7 +1388,7 @@
     .i79-choice.is-selected .i79-choice-check { color: #fff; background: var(--brand-blue-bright); }
 
     @media (max-width: 390px) {
-      .i79-drive-card { gap: 11px; padding: 17px 15px; }
+      .i79-drive-card { gap: 13px; padding: 20px 16px; }
       .i79-drive-action .i79-connect-drive,
       .i79-drive-action .i79-disconnect { min-width: 78px; padding: 0 12px; }
 
@@ -1404,7 +1404,7 @@
       padding: 10px 18px calc(12px + env(safe-area-inset-bottom, 0px));
     }
     .cloud-details .i79-cloud-grid { gap: 8px; }
-    .cloud-details .i79-drive-card { gap: 13px; padding: 17px 16px; }
+    .cloud-details .i79-drive-card { gap: 16px; padding: 22px 18px; }
 
     .cloud-details .i79-drive-copy h3 { margin-bottom: 2px; font-size: 16px; }
     .cloud-details .i79-drive-copy p { font-size: 12px; }
@@ -1478,7 +1478,7 @@
     @media (max-height: 760px) {
       .cloud-details .screen-body { padding-top: 8px; }
       .cloud-details .i79-cloud-grid { gap: 6px; }
-      .cloud-details .i79-drive-card { padding: 14px 13px; }
+      .cloud-details .i79-drive-card { padding: 18px 14px; }
 
       .cloud-details .i79-section-card { padding: 8px 9px; }
       .cloud-details .i79-section-heading { margin-bottom: 2px; }
@@ -2113,8 +2113,6 @@
             </section>
 
             <p class="cloud-details-status i79-status-message" id="cloudDetailsStatus" role="status" aria-live="polite"></p>
-
-            <p class="cloud-private-note i79-private-note"><span class="app-icon icon-size-note" data-icon="icon-shield" aria-hidden="true"></span>Accesso limitato ai dati di PokeAlbum</p>
 
             <div hidden aria-hidden="true">
               <span id="cloudAccountInitial">G</span><span id="cloudAccountEmail"></span><div id="cloudDetailGrid"></div>
