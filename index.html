@@ -1597,7 +1597,104 @@
     @media (max-height: 760px) {
       :root { --icon-feature: 40px; }
     }
-  </style>
+  
+
+    /* i99: Profilo ridisegnato, meno "matrioska" e gerarchia più pulita. */
+    #profileModal .screen-body { padding: 14px 18px calc(18px + env(safe-area-inset-bottom, 0px)); }
+    #profileModal .profile-editor { gap: 14px; }
+    #profileModal .profile-summary { gap: 7px; padding: 2px 0 4px; }
+    #profileModal .profile-avatar-button { width: 76px; height: 76px; flex-basis: 76px; }
+    #profileModal .profile-avatar { font-size: 34px; }
+    #profileModal .profile-avatar-badge { right: -3px; bottom: -2px; width: 30px; height: 30px; }
+    #profileModal .profile-summary-copy { gap: 4px; }
+    #profileModal .profile-summary-copy > strong { font-size: 24px; font-weight: 760; }
+    #profileModal .profile-summary-copy > span { font-size: 13.5px; }
+    #profileModal .profile-summary-copy .profile-card-total { font-size: 13px; }
+
+    #profileModal .profile-section {
+      padding: 14px 14px 15px;
+      border-radius: 20px;
+      background: #0b1220;
+      border-color: rgba(145, 166, 200, .14);
+      box-shadow: 0 10px 26px rgba(0,0,0,.16);
+    }
+    #profileModal .profile-section-title { margin: 0; min-height: 28px; gap: 10px; font-size: 15px; }
+    #profileModal .profile-section-subtitle { margin: 5px 0 10px 36px; color: #aebdd3; font-size: 13px; line-height: 1.35; }
+
+    #profileModal .screen-card {
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+    #profileModal .profile-fields { gap: 8px; margin-top: 8px; }
+    #profileModal .field-label { padding: 0 3px; gap: 9px; font-size: 13px; }
+    #profileModal #profileNameInput {
+      height: 48px;
+      padding: 0 16px;
+      border-radius: 13px;
+      border-color: rgba(145,166,200,.17);
+      background: rgba(255,255,255,.055);
+      font-size: 16px;
+    }
+
+    #profileModal .profile-account { padding: 0; }
+    #profileModal .profile-disconnected-row {
+      min-height: 34px;
+      padding: 0 4px 9px;
+      display: flex;
+      align-items: center;
+    }
+    #profileModal .profile-disconnected-row[hidden] { display: none; }
+    #profileModal .profile-disconnected-row .profile-connected { margin: 0; font-size: 13.5px; }
+
+    #profileModal .profile-google-button {
+      min-height: 50px;
+      border: 1px solid rgba(77,163,255,.48);
+      border-radius: 14px;
+      background: linear-gradient(180deg, #2f86f5, #176ddd);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 20px rgba(18,96,209,.16);
+    }
+    #profileModal .profile-link-action {
+      min-height: 50px;
+      padding: 0 14px;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid #268ff4;
+      border-radius: 14px;
+      background: rgba(18,96,209,.04);
+      color: #4da3ff;
+      font-size: 14px;
+      font-weight: 650;
+    }
+    #profileModal .profile-row + .profile-row { border-top-color: rgba(145,166,200,.12); }
+    #profileModal .profile-account-details {
+      overflow: hidden;
+      border: 1px solid rgba(145,166,200,.14);
+      border-radius: 14px;
+      background: rgba(255,255,255,.025);
+    }
+    #profileModal .profile-account-details .profile-row { padding-left: 10px; padding-right: 10px; }
+    #profileModal .profile-login-status { padding: 8px 2px 0; }
+
+    @media (max-height: 760px) {
+      #profileModal .screen-body { padding-top: 8px; }
+      #profileModal .profile-editor { gap: 10px; }
+      #profileModal .profile-summary { gap: 5px; padding-top: 0; }
+      #profileModal .profile-avatar-button { width: 64px; height: 64px; flex-basis: 64px; }
+      #profileModal .profile-summary-copy > strong { font-size: 21px; }
+      #profileModal .profile-summary-copy > span { font-size: 12.5px; }
+      #profileModal .profile-section { padding: 10px 12px 11px; border-radius: 17px; }
+      #profileModal .profile-section-subtitle { margin-top: 3px; margin-bottom: 7px; }
+      #profileModal #profileNameInput,
+      #profileModal .profile-google-button,
+      #profileModal .profile-link-action { min-height: 44px; height: 44px; }
+      #profileModal .profile-disconnected-row { min-height: 29px; padding-bottom: 6px; }
+    }
+</style>
 </head>
 
 <body>
@@ -1746,7 +1843,7 @@
                     aria-label="Modifica immagine profilo"
                   >
                     <span class="profile-avatar" id="profileAvatarLarge">
-                      <span class="avatar-initial" id="profileInitialLarge">?</span>
+                      <span class="avatar-initial" id="profileInitialLarge"></span>
                       <img id="profileImageLarge" alt="">
                     </span>
 
@@ -1770,9 +1867,13 @@
                 </div>
               </section>
 
-              <section class="profile-section" aria-labelledby="profileGoogleTitle">
+              <section class="profile-section profile-account-section" aria-labelledby="profileGoogleTitle">
                 <h3 class="profile-section-title" id="profileGoogleTitle"><span class="app-icon icon-size-heading" data-icon="icon-user-google" aria-hidden="true"></span><span>Account Google</span></h3>
+                <p class="profile-section-subtitle">Accedi per sincronizzare i tuoi dati</p>
                 <div class="profile-account screen-card">
+                  <div class="profile-disconnected-row" id="profileGoogleDisconnected">
+                    <span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span>
+                  </div>
                   <button class="button app-button profile-google-button" id="profileConnectGoogle" type="button"><span class="app-icon icon-size-button is-brand google-button-icon" data-icon="icon-brand-google" aria-hidden="true"></span><span>Accedi con Google</span></button>
                   <div class="profile-account-details" id="profileAccountDetails" hidden>
                     <div class="profile-google-row profile-row"><span class="app-icon icon-size-logo-row is-brand brand-icon" data-icon="icon-brand-google" aria-hidden="true"></span><div class="profile-google-copy"><span class="profile-account-value" id="profileAccountEmail">—</span><span class="profile-connected"><span aria-hidden="true"></span>Collegato</span></div></div>
@@ -1784,10 +1885,13 @@
                 </div>
               </section>
 
-              <section class="profile-section" aria-labelledby="profileCardTraderTitle">
+              <section class="profile-section profile-account-section" aria-labelledby="profileCardTraderTitle">
                 <h3 class="profile-section-title" id="profileCardTraderTitle"><span class="app-icon icon-size-heading" data-icon="icon-user-cardtrader" aria-hidden="true"></span><span>Account CardTrader</span></h3>
+                <p class="profile-section-subtitle">Collega il tuo account CardTrader</p>
                 <div class="screen-card profile-account">
-                  <div class="profile-row profile-cardtrader-row"><span class="app-icon icon-size-logo-row is-brand brand-icon" data-icon="icon-brand-cardtrader" aria-hidden="true"></span><div class="profile-google-copy"><span class="profile-account-label">CardTrader</span><span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span></div></div>
+                  <div class="profile-disconnected-row">
+                    <span class="profile-connected is-disconnected"><span aria-hidden="true"></span>Non collegato</span>
+                  </div>
                   <button class="profile-action profile-row profile-link-action" id="profileConnectCardTrader" type="button"><span class="app-icon icon-size-row" data-icon="icon-link" aria-hidden="true"></span><span>Collega account</span></button>
                   <p class="profile-login-status" id="profileCardTraderStatus" role="status" aria-live="polite"></p>
                 </div>
@@ -2147,6 +2251,8 @@
       profileSyncStatus.textContent = active ? "Account collegato" : (googleAccountState.checking ? "Verifica account…" : "Account non collegato");
       profileSyncStatus.classList.toggle("is-active", active);
       profileConnectGoogle.hidden = active;
+      const profileGoogleDisconnected = document.getElementById("profileGoogleDisconnected");
+      if (profileGoogleDisconnected) profileGoogleDisconnected.hidden = active;
       profileAccountDetails.hidden = !active;
       profileAccountEmail.textContent = active ? (googleAccountState.account?.email || "Verifica account…") : "—";
       const date = googleAccountState.lastSyncAt ? new Date(googleAccountState.lastSyncAt) : null;
@@ -2677,7 +2783,7 @@
     }
 
     function getInitial(name) {
-      return name ? name.charAt(0).toLocaleUpperCase("it-IT") : "?";
+      return name ? name.charAt(0).toLocaleUpperCase("it-IT") : "";
     }
 
     function renderProfile() {
