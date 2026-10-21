@@ -2153,15 +2153,15 @@
       const green = "#20cf76";
       const black = "#000000";
       drawing.setAttribute("color", gray);
-      if (name !== "icon-user-synced" && name !== "icon-user-cloud") return;
+      if (name !== "icon-user-connected" && name !== "icon-user-cloud") return;
       const badge = drawing.querySelector("g[transform]");
       if (!badge) throw new Error(`Dettaglio di stato mancante: ${name}`);
-      if (name === "icon-user-synced") {
+      if (name === "icon-user-connected") {
         const disc = badge.querySelector("circle");
-        if (!disc) throw new Error("Pallino di sincronizzazione mancante");
+        if (!disc) throw new Error("Indicatore di account connesso mancante");
         disc.setAttribute("fill", green);
         disc.setAttribute("stroke", green);
-        badge.querySelectorAll("path").forEach((arrow) => arrow.setAttribute("stroke", black));
+        badge.querySelectorAll("path").forEach((check) => check.setAttribute("stroke", black));
       } else {
         const [cloud, check] = badge.querySelectorAll("path");
         if (!cloud || !check) throw new Error("Dettaglio cloud mancante");
@@ -2214,7 +2214,7 @@
       if (!iconSymbols.size) return;
       const name = element.dataset.icon;
       const palette = element.dataset.iconPalette || "";
-      const multicolor = palette === "profile-status" && (name === "icon-user-synced" || name === "icon-user-cloud");
+      const multicolor = palette === "profile-status" && (name === "icon-user-connected" || name === "icon-user-cloud");
       element.classList.toggle("is-brand", name.startsWith("icon-brand-"));
       element.classList.toggle("is-multicolor", multicolor);
       try {
@@ -2373,7 +2373,7 @@
       const drive = openProfile.classList.contains("is-drive-connected");
       document.getElementById("profileStatusIcon").dataset.icon = !active
         ? "icon-user-disconnected"
-        : (drive ? "icon-user-cloud" : "icon-user-synced");
+        : (drive ? "icon-user-cloud" : "icon-user-connected");
     }
 
     function renderAccountProfile() {
