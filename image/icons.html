@@ -265,6 +265,15 @@
 <symbol id="icon-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
   <path d="M13.3 3H6.8A2.3 2.3 0 0 0 4.5 5.3v13.4A2.3 2.3 0 0 0 6.8 21h10.4a2.3 2.3 0 0 0 2.3-2.3V9.2L13.3 3v4.1a2.1 2.1 0 0 0 2.1 2.1h4.1" stroke-width="1.2" stroke-linecap="butt" stroke-linejoin="round"/>
 </symbol>
+<symbol id="icon-user-connected" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="14.4" cy="12.9" r="5.8"/>
+    <path d="M3.2 29.7C5.5 22 11.4 19.7 18.9 22"/>
+    <g transform="translate(27.5 27)">
+      <circle r="7.1"/>
+      <path d="m22.8 28.7 2.2 2.1 4.2-4.3" stroke-width="2.2222222"  transform="translate(-23.4 -25.785) scale(.9)"/>
+    </g>
+  </symbol>
+
 <symbol id="icon-user-synced" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="14.4" cy="12.9" r="5.8"/>
     <path d="M3.2 29.7C5.5 22 11.4 19.7 18.9 22"/>
@@ -516,8 +525,13 @@
   </div>
 
   <div class="card">
+    <svg aria-hidden="true" focusable="false"><use href="#icon-user-connected"/></svg>
+    <div class="label">Profilo connesso</div>
+  </div>
+
+  <div class="card">
     <svg aria-hidden="true" focusable="false"><use href="#icon-user-synced"/></svg>
-    <div class="label">Profilo sincronizzato</div>
+    <div class="label">Sincronizzazione in corso</div>
   </div>
 
   <div class="card">
