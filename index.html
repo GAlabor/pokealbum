@@ -2153,16 +2153,16 @@
       const green = "#20cf76";
       const black = "#000000";
       drawing.setAttribute("color", gray);
+      if (name === "icon-user-disconnected") {
+        // Stessa ancora dell'omino delle due icone collegate, con spazio a destra
+        // riservato all'indicatore. Le icone collegate non vengono ricomposte.
+        const portrait = drawing.querySelector("g[transform]");
+        if (portrait) portrait.removeAttribute("transform");
+        return;
+      }
       if (name !== "icon-user-connected" && name !== "icon-user-cloud") return;
       const badge = drawing.querySelector("g[transform]");
       if (!badge) throw new Error(`Dettaglio di stato mancante: ${name}`);
-      // La base è sempre l'omino scollegato: posizione, sagoma e dimensioni fisse.
-      // Cambia soltanto il dettaglio sovrapposto, copiato dal relativo simbolo.
-      const portrait = iconSymbols.get("icon-user-disconnected");
-      if (!portrait) throw new Error("Icona base del profilo mancante");
-      drawing.replaceChildren(...Array.from(portrait.childNodes, (node) => node.cloneNode(true)), badge);
-      drawing.setAttribute("stroke-linecap", "round");
-      drawing.setAttribute("stroke-linejoin", "round");
       if (name === "icon-user-connected") {
         const disc = badge.querySelector("circle");
         if (!disc) throw new Error("Indicatore di account connesso mancante");
