@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="pokealbum-version" content="1.0.7">
   <meta name="theme-color" content="#060a12">
   <meta name="color-scheme" content="dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link rel="icon" type="image/png" href="image/favicon.png">
-  <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
-  <link rel="preload" as="image" href="image/splash-logo.webp" fetchpriority="high">
+  <link rel="icon" type="image/png" href="image/favicon.png?v=1.0.7">
+  <link rel="apple-touch-icon" href="image/apple-touch-icon.png?v=1.0.7">
+  <link rel="preload" as="image" href="image/splash-logo.webp?v=1.0.7" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i118: menu con icona e voce Profilo fisse; versione v1.0.5 -->
+  <!-- i120: aggiornamenti automatici della webapp; versione v1.0.7 -->
 
   <style>
     :root {
@@ -937,9 +938,9 @@
     .google-legal { margin: 14px 0 0; color: #8297c2; font-size: 10px; line-height: 1.5; }
     .google-legal a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
     .google-legal a:focus-visible, .drawer-legal a:focus-visible { outline: 2px solid #67b5ff; outline-offset: 4px; }
-    .drawer-legal { display: flex; flex-wrap: wrap; gap: 18px; margin: auto 20px 0; padding-top: 16px; flex-shrink: 0; border-top: 1px solid rgba(130, 151, 194, .2); font-size: 12px; }
+    .drawer-legal { display: flex; align-items: baseline; justify-content: center; gap: 8px; margin: auto 0 0; padding-top: 16px; flex-shrink: 0; border-top: 1px solid rgba(130, 151, 194, .2); font-size: 12px; text-align: center; white-space: nowrap; }
     .drawer-legal a { color: #a2b0d5; text-decoration: underline; text-underline-offset: 3px; }
-    .drawer-legal-terms { display: inline-flex; align-items: baseline; gap: 9px; white-space: nowrap; }
+    .drawer-legal-separator { color: #8e9ab0; flex-shrink: 0; user-select: none; }
     .drawer-legal .app-version { color: #8e9ab0; font-size: 11px; text-decoration: none; }
 
     /* Spazi più compatti sui telefoni con meno altezza disponibile. */
@@ -1789,14 +1790,36 @@
     #profileModal .profile-name-placeholder .app-icon { color: #aebdd0; }
     #profileModal .profile-name-input-wrap.has-value .profile-name-placeholder { opacity: 0; }
     #profileModal .profile-google-button { gap: 0; }
+    /* Avviso discreto per gli aggiornamenti della webapp. */
+    .app-update-status {
+      position: fixed;
+      left: 50%;
+      bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+      transform: translateX(-50%);
+      z-index: 120;
+      width: max-content;
+      max-width: calc(100vw - 32px);
+      padding: 11px 16px;
+      border: 1px solid rgba(130, 151, 194, .3);
+      border-radius: 12px;
+      background: #0b1220;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .3);
+      color: #f4f5f7;
+      font-size: 13px;
+      line-height: 1.4;
+      text-align: center;
+      pointer-events: none;
+    }
+    .app-update-status[hidden] { display: none; }
 </style>
 </head>
 
 <body>
+  <div class="app-update-status" id="appUpdateStatus" role="status" aria-live="polite" hidden></div>
   <div class="splash" id="splash" aria-hidden="true">
     <div class="splash-content">
       <div class="splash-logo">
-        <img src="image/splash-logo.webp" loading="eager" decoding="async" fetchpriority="high" alt="">
+        <img src="image/splash-logo.webp?v=1.0.7" loading="eager" decoding="async" fetchpriority="high" alt="">
       </div>
 
       <p class="splash-title">POKEALBUM</p>
@@ -1908,7 +1931,10 @@
       </nav>
       <nav class="drawer-legal" aria-label="Documenti legali">
         <a href="privacy.html" target="_blank" rel="noopener">Privacy</a>
-        <span class="drawer-legal-terms"><a href="termini.html" target="_blank" rel="noopener">Termini di servizio</a><span class="app-version" aria-label="Versione 1.0.5">v1.0.5</span></span>
+        <span class="drawer-legal-separator" aria-hidden="true">|</span>
+        <a href="termini.html" target="_blank" rel="noopener">Termini di servizio</a>
+        <span class="drawer-legal-separator" aria-hidden="true">|</span>
+        <span class="app-version" aria-label="Versione 1.0.7">v1.0.7</span>
       </nav>
     </aside>
 
@@ -2142,7 +2168,7 @@
   <script>
 
     // Unico catalogo: disegni, maschere e loghi vengono letti da questo file.
-    const ICON_CATALOG_URL = "image/icons.html";
+    const ICON_CATALOG_URL = `image/icons.html?v=${document.querySelector('meta[name="pokealbum-version"]').content}`;
     const iconSymbols = new Map();
     const iconAssets = new Map();
 
@@ -2246,7 +2272,7 @@
     });
     iconObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["data-icon", "data-icon-palette"] });
 
-    const iconsReady = fetch(ICON_CATALOG_URL).then(async (response) => {
+    const iconsReady = fetch(ICON_CATALOG_URL, { cache: "no-cache" }).then(async (response) => {
       if (!response.ok) throw new Error(`Catalogo icone: HTTP ${response.status}`);
       const catalog = new DOMParser().parseFromString(await response.text(), "text/html");
       const sprite = catalog.getElementById("pokealbum-icons");
@@ -3096,6 +3122,104 @@
     renderProfile();
     renderAccountProfile();
     playOpening().finally(checkGoogleConnection);
+  </script>
+  <script>
+    // i120: controlla l'HTML allo stesso indirizzo, anche tornando dalla Home del telefono.
+    (() => {
+      if (!/^https?:$/.test(location.protocol)) return;
+      const currentVersion = document.querySelector('meta[name="pokealbum-version"]').content;
+      const checkInterval = 120000;
+      const notice = document.getElementById("appUpdateStatus");
+      let pendingVersion = "";
+      let checking = false;
+      let reloading = false;
+      let lastCheck = 0;
+      let lastInteraction = Date.now();
+
+      function compareVersions(first, second) {
+        const a = first.split(".").map(Number);
+        const b = second.split(".").map(Number);
+        for (let i = 0; i < Math.max(a.length, b.length); i++) {
+          const difference = (a[i] || 0) - (b[i] || 0);
+          if (difference) return difference;
+        }
+        return 0;
+      }
+
+      function canApplyUpdate() {
+        if (document.hidden || navigator.onLine === false || Date.now() - lastInteraction < 5000) return false;
+        if (!document.querySelector('.page.active[data-page="home"]')) return false;
+        if (document.querySelector('.modal.open, .drawer.open, #cloudDetails:not([hidden]), #backupModeSheet:not([hidden]), #googleGate:not([hidden]), [aria-busy="true"]')) return false;
+        return !document.activeElement?.matches('input, textarea, select, [contenteditable]:not([contenteditable="false"])');
+      }
+
+      function applyUpdate() {
+        if (!pendingVersion || reloading || !canApplyUpdate()) return;
+        const destination = new URL(location.href);
+        // Se un server restituisce ancora la copia vecchia, evita ricaricamenti in ciclo.
+        if (destination.searchParams.get("pa_version") === pendingVersion) return;
+        destination.searchParams.delete("pa_check");
+        destination.searchParams.set("pa_version", pendingVersion);
+        reloading = true;
+        notice.textContent = "Aggiornamento in corso…";
+        notice.hidden = false;
+        window.setTimeout(() => {
+          // Un'interazione durante il messaggio rimanda l'aggiornamento.
+          if (!canApplyUpdate()) {
+            reloading = false;
+            notice.textContent = "Nuova versione pronta. Si aggiorna al ritorno alla Home.";
+            return;
+          }
+          location.replace(destination.href);
+        }, 900);
+      }
+
+      async function checkForUpdate() {
+        if (document.hidden || navigator.onLine === false || checking || reloading || Date.now() - lastCheck < 10000) return;
+        checking = true;
+        lastCheck = Date.now();
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 10000);
+        try {
+          const url = new URL(location.href);
+          url.hash = "";
+          url.searchParams.delete("pa_version");
+          url.searchParams.set("pa_check", String(Date.now()));
+          const response = await fetch(url.href, { cache: "no-store", credentials: "same-origin", signal: controller.signal });
+          if (!response.ok || !response.headers.get("content-type")?.includes("text/html")) return;
+          const receivedUrl = new URL(response.url || url.href);
+          if (receivedUrl.origin !== url.origin || receivedUrl.pathname !== url.pathname) return;
+          const text = await response.text();
+          if (!/<\/html\s*>\s*$/i.test(text.trim())) return;
+          const latest = new DOMParser().parseFromString(text, "text/html");
+          if (!latest.getElementById("profileDrawer")) return;
+          const version = latest.querySelector('meta[name="pokealbum-version"]')?.content || "";
+          if (!/^\d+\.\d+\.\d+$/.test(version) || compareVersions(version, currentVersion) <= 0) return;
+          if (pendingVersion && compareVersions(version, pendingVersion) < 0) return;
+          pendingVersion = version;
+          notice.textContent = "Nuova versione pronta. Si aggiorna al ritorno alla Home.";
+          notice.hidden = false;
+          applyUpdate();
+        } catch {
+          // Offline, timeout o server temporaneamente indisponibile: continua con la versione aperta.
+        } finally {
+          window.clearTimeout(timeout);
+          checking = false;
+        }
+      }
+
+      for (const type of ["pointerdown", "keydown", "input", "change"]) {
+        document.addEventListener(type, () => { lastInteraction = Date.now(); }, { capture: true, passive: true });
+      }
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) { checkForUpdate(); applyUpdate(); }
+      });
+      window.addEventListener("pageshow", () => { checkForUpdate(); applyUpdate(); });
+      window.addEventListener("online", checkForUpdate);
+      window.setInterval(checkForUpdate, checkInterval);
+      window.setInterval(applyUpdate, 1500);
+      checkForUpdate();
+    })();
   </script>
 </body>
 </html>
