@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="image/apple-touch-icon.png">
   <link rel="preload" as="image" href="image/splash-logo.webp" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i113: allineamento titoli Cloud reso coerente con la logica strutturale della schermata Profilo -->
+  <!-- i118: menu con icona e voce Profilo fisse; versione v1.0.5 -->
 
   <style>
     :root {
@@ -1871,13 +1871,12 @@
 
       <nav class="drawer-menu" aria-label="Menu POKEALBUM">
         <button class="menu-item app-button" id="openProfileEditor" type="button">
-          <span class="menu-item-icon menu-item-avatar" id="profileAvatarSmall">
-            <span class="avatar-initial" id="profileInitial"></span>
-            <img id="profileImageSmall" alt="">
+          <span class="menu-item-icon">
+            <span class="app-icon icon-size-menu" data-icon="icon-profile-section" aria-hidden="true"></span>
           </span>
 
           <span class="menu-item-copy">
-            <span class="menu-item-label" id="profileMenuLabel">Nome visualizzato</span>
+            <span class="menu-item-label" id="profileMenuLabel">Profilo</span>
             <span class="menu-item-value profile-sync-status" id="profileSyncStatus" role="status" aria-live="polite">Account non collegato</span>
           </span>
           <span class="app-icon icon-size-chevron menu-chevron" data-icon="icon-menu-enter" aria-hidden="true"></span>
@@ -1909,7 +1908,7 @@
       </nav>
       <nav class="drawer-legal" aria-label="Documenti legali">
         <a href="privacy.html" target="_blank" rel="noopener">Privacy</a>
-        <span class="drawer-legal-terms"><a href="termini.html" target="_blank" rel="noopener">Termini di servizio</a><span class="app-version" aria-label="Versione 1.0.4">v1.0.4</span></span>
+        <span class="drawer-legal-terms"><a href="termini.html" target="_blank" rel="noopener">Termini di servizio</a><span class="app-version" aria-label="Versione 1.0.5">v1.0.5</span></span>
       </nav>
     </aside>
 
@@ -2313,12 +2312,8 @@
     const closeProfile = document.getElementById("closeProfile");
 
     const greeting = document.getElementById("greeting");
-    const profileInitial = document.getElementById("profileInitial");
     const profileInitialLarge = document.getElementById("profileInitialLarge");
-    const profileMenuLabel = document.getElementById("profileMenuLabel");
-    const profileAvatarSmall = document.getElementById("profileAvatarSmall");
     const profileAvatarLarge = document.getElementById("profileAvatarLarge");
-    const profileImageSmall = document.getElementById("profileImageSmall");
     const profileImageLarge = document.getElementById("profileImageLarge");
     const openProfileEditor = document.getElementById("openProfileEditor");
 
@@ -2936,18 +2931,11 @@
       const initial = getInitial(name);
 
       greeting.textContent = name ? `Ciao, ${name}` : "Ciao";
-      profileMenuLabel.textContent = name || "Nome visualizzato";
       document.getElementById("profileDisplayName").textContent = name || "Nome visualizzato";
-      profileInitial.textContent = initial;
       profileInitialLarge.textContent = initial;
 
-      [profileAvatarSmall, profileAvatarLarge].forEach((avatar) => {
-        avatar.classList.toggle("has-image", Boolean(image));
-      });
-
-      [profileImageSmall, profileImageLarge].forEach((element) => {
-        element.src = image;
-      });
+      profileAvatarLarge.classList.toggle("has-image", Boolean(image));
+      profileImageLarge.src = image;
     }
 
     function saveProfile(name, image) {
