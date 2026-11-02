@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="pokealbum-version" content="1.2.7">
+  <meta name="pokealbum-version" content="1.2.8">
   <meta name="theme-color" content="#060a12">
   <meta name="color-scheme" content="dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link rel="icon" type="image/png" href="image/favicon.png?v=1.2.7">
-  <link rel="apple-touch-icon" href="image/apple-touch-icon.png?v=1.2.7">
-  <link rel="preload" as="image" href="image/splash-logo.webp?v=1.2.7" fetchpriority="high">
+  <link rel="icon" type="image/png" href="image/favicon.png?v=1.2.8">
+  <link rel="apple-touch-icon" href="image/apple-touch-icon.png?v=1.2.8">
+  <link rel="preload" as="image" href="image/splash-logo.webp?v=1.2.8" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i127: loghi dei set serviti soltanto dalla VM; versione v1.2.7 -->
+  <!-- i128: loghi dei set serviti soltanto dalla VM; versione v1.2.8 -->
 
   <style>
     :root {
@@ -1938,7 +1938,7 @@
   <div class="splash" id="splash" aria-hidden="true">
     <div class="splash-content">
       <div class="splash-logo">
-        <img src="image/splash-logo.webp?v=1.2.7" loading="eager" decoding="async" fetchpriority="high" alt="">
+        <img src="image/splash-logo.webp?v=1.2.8" loading="eager" decoding="async" fetchpriority="high" alt="">
       </div>
 
       <p class="splash-title">POKEALBUM</p>
@@ -2080,7 +2080,7 @@
         <span class="drawer-legal-separator" aria-hidden="true">|</span>
         <a href="termini.html" target="_blank" rel="noopener">Termini di servizio</a>
         <span class="drawer-legal-separator" aria-hidden="true">|</span>
-        <span class="app-version" aria-label="Versione 1.2.7">v1.2.7</span>
+        <span class="app-version" aria-label="Versione 1.2.8">v1.2.8</span>
       </nav>
     </aside>
 
@@ -3334,6 +3334,11 @@
         return node;
       }
 
+      function displaySetSeries(series) {
+        const value = typeof series === "string" ? series.trim() : "";
+        return value.toLocaleLowerCase("it") === "mega evolution" ? "Megaevoluzione" : value;
+      }
+
       function createSetRow(set) {
         // Una riga è un elemento di elenco: nessun link, pulsante o apertura scheda.
         const row = element("li", "set-row");
@@ -3356,7 +3361,7 @@
         }
         const copy = element("div", "set-copy");
         copy.append(element("h4", "set-title", set.name));
-        const subtitle = [set.series, set.code].filter(Boolean).join(" · ");
+        const subtitle = [displaySetSeries(set.series), set.code].filter(Boolean).join(" · ");
         if (subtitle) copy.append(element("p", "set-subtitle", subtitle));
         // Barra puramente grafica: non simula quantità possedute o avanzamenti salvati.
         const track = element("div", "set-preview-track");
@@ -3379,21 +3384,24 @@
         const terms = normalize(search.value.trim()).split(/\s+/).filter(Boolean);
         const regional = sets.filter((set) => set.region === selectedRegion && (selectedScope === "all" || ownedSetIds.has(set.id)));
         const visible = regional.filter((set) => {
-          const text = normalize(`${set.name} ${set.series} ${set.code}`);
+          const text = normalize(`${set.name} ${set.series} ${displaySetSeries(set.series)} ${set.code}`);
           return terms.every((term) => text.includes(term));
         });
         orderSets(visible);
         const fragment = document.createDocumentFragment();
-        let previousSeries = null;
+        // I set sono già ordinati per data: la prima occorrenza determina
+        // la posizione della serie, i suoi set rimangono nell'ordine scelto.
+        const groups = new Map();
         for (const set of visible) {
-          const series = set.series || (selectedRegion === "CIN" ? "Set cinesi" : "Altri set");
-          if (series !== previousSeries) {
-            const heading = element("li", "set-series-heading");
-            heading.append(element("h3", "", series));
-            fragment.append(heading);
-            previousSeries = series;
-          }
-          fragment.append(createSetRow(set));
+          const series = displaySetSeries(set.series) || (selectedRegion === "CIN" ? "Set cinesi" : "Altri set");
+          if (!groups.has(series)) groups.set(series, []);
+          groups.get(series).push(set);
+        }
+        for (const [series, group] of groups) {
+          const heading = element("li", "set-series-heading");
+          heading.append(element("h3", "", series));
+          fragment.append(heading);
+          for (const set of group) fragment.append(createSetRow(set));
         }
         list.replaceChildren(fragment);
         count.textContent = loaded ? (terms.length ? `${visible.length} di ${regional.length} set` : `${regional.length} set`) : "—";
