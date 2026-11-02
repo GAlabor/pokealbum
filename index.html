@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="pokealbum-version" content="1.2.8">
+  <meta name="pokealbum-version" content="1.2.9">
   <meta name="theme-color" content="#060a12">
   <meta name="color-scheme" content="dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <link rel="icon" type="image/png" href="image/favicon.png?v=1.2.8">
-  <link rel="apple-touch-icon" href="image/apple-touch-icon.png?v=1.2.8">
-  <link rel="preload" as="image" href="image/splash-logo.webp?v=1.2.8" fetchpriority="high">
+  <link rel="icon" type="image/png" href="image/favicon.png?v=1.2.9">
+  <link rel="apple-touch-icon" href="image/apple-touch-icon.png?v=1.2.9">
+  <link rel="preload" as="image" href="image/splash-logo.webp?v=1.2.9" fetchpriority="high">
   <title>PokeAlbum</title>
-  <!-- i128: loghi dei set serviti soltanto dalla VM; versione v1.2.8 -->
+  <!-- i129: loghi dei set serviti soltanto dalla VM; versione v1.2.9 -->
 
   <style>
     :root {
@@ -1938,7 +1938,7 @@
   <div class="splash" id="splash" aria-hidden="true">
     <div class="splash-content">
       <div class="splash-logo">
-        <img src="image/splash-logo.webp?v=1.2.8" loading="eager" decoding="async" fetchpriority="high" alt="">
+        <img src="image/splash-logo.webp?v=1.2.9" loading="eager" decoding="async" fetchpriority="high" alt="">
       </div>
 
       <p class="splash-title">POKEALBUM</p>
@@ -2080,7 +2080,7 @@
         <span class="drawer-legal-separator" aria-hidden="true">|</span>
         <a href="termini.html" target="_blank" rel="noopener">Termini di servizio</a>
         <span class="drawer-legal-separator" aria-hidden="true">|</span>
-        <span class="app-version" aria-label="Versione 1.2.8">v1.2.8</span>
+        <span class="app-version" aria-label="Versione 1.2.9">v1.2.9</span>
       </nav>
     </aside>
 
@@ -3443,6 +3443,11 @@
         } catch { return ""; }
       }
 
+      function isPocketSet(set) {
+        const series = typeof set.series === "string" ? set.series.trim() : "";
+        return /^pok[eé]mon\s+tcg\s+pocket$/i.test(series) || /^pa:eu-pocket-/i.test(set.id);
+      }
+
       function validateFeed(data) {
         if (!data || data.meta?.schema !== "pokealbum-set-feed" || data.meta?.version !== 1 || !Array.isArray(data.sets)) throw new Error("Formato catalogo non valido");
         if (data.meta.sourceSchema !== "pokealbum-global-db") throw new Error("Origine catalogo non valida");
@@ -3460,7 +3465,7 @@
               : Number.isInteger(set.totalCards) && set.totalCards >= 0 ? set.totalCards : null,
             logo: localSetLogo(set.logo)
           };
-        });
+        }).filter((set) => !isPocketSet(set));
       }
 
       async function loadCatalog(force = false) {
